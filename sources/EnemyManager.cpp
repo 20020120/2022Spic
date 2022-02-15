@@ -1,5 +1,5 @@
 #include"EnemyManager.h"
-
+#include"JsonFileManager.h"
 #include"imgui_include.h"
 //****************************************************************
 // 
@@ -45,7 +45,6 @@ void EnemyManager::fFinalize()
 
 void EnemyManager::fSpawn()
 {
-    
 }
 
 void EnemyManager::fEnemiesUpdate(float elapsedTime_)
@@ -88,5 +87,17 @@ void EnemyManager::fAllClear()
 void EnemyManager::fGuiMenu()
 {
     ImGui::Begin("EnemyManager");
+    ImGui::Text("WaveTimer");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mWaveTimer).c_str());
+
+    if(ImGui::CollapsingHeader("JsonTest"))
+    {
+        if (ImGui::Button("Create"))
+        {
+            JsonManager::CrateNewFile("Wave0Enemy");
+        }
+    }
+
     ImGui::End();
 }

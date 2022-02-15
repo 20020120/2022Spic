@@ -1,15 +1,21 @@
 
 #include"JsonFileManager.h"
 #include"json.hpp"
+#include<filesystem>
 #include <fstream>
 
 
 //--------------------<新しいファイルを作成>--------------------//
 void JsonManager::CrateNewFile(const char* FileName)
 {
+
+    
+    std::filesystem::path path = std::string("./resources/Data/") + FileName;
+    path.replace_extension(".json");
+
     // なければ作成
     std::ofstream ofs;
-    ofs.open(FileName);
+    ofs.open(path.c_str());
     if (ofs)
     {
         ofs.close();
@@ -20,6 +26,7 @@ void JsonManager::CrateNewFile(const char* FileName)
 void JsonManager::Write(const char* FileName)
 {
     // 指定されたファイルを開く
+
     std::ofstream ofs;
     ofs.open(FileName);
     if (ofs)
