@@ -264,6 +264,9 @@
     <ClCompile Include="sources\BaseEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
+    <ClCompile Include="sources\TestEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -423,6 +426,9 @@
       <Filter>Sources\character\player</Filter>
     </ClInclude>
     <ClInclude Include="sources\BaseEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\TestEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>

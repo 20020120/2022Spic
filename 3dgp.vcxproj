@@ -243,6 +243,7 @@
     <ClCompile Include="sources\sprite.cpp" />
     <ClCompile Include="sources\sprite_batch.cpp" />
     <ClCompile Include="sources\sprite_dissolve.cpp" />
+    <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -297,6 +298,7 @@
     <ClInclude Include="sources\sprite.h" />
     <ClInclude Include="sources\sprite_batch.h" />
     <ClInclude Include="sources\sprite_dissolve.h" />
+    <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\user.h" />
   </ItemGroup>
