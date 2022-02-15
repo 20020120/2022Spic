@@ -405,7 +405,7 @@ void GraphicsPipeline::set_pipeline_preset(SHADER_TYPES shader_type)
 	// VS
 	if(vertex_shaders.count(shader_type)) device_context->VSSetShader(vertex_shaders.at(shader_type).Get(), nullptr, 0);
 	// PS
-	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(6, 1, texture_maps.at(shader_type).GetAddressOf());
+	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(7, 1, texture_maps.at(shader_type).GetAddressOf());
 	if (pixel_shaders.count(shader_type)) device_context->PSSetShader(pixel_shaders.at(shader_type).Get(), nullptr, 0);
 }
 
@@ -441,7 +441,7 @@ void GraphicsPipeline::set_pipeline_preset(BLEND_STATE blend_state,
 	// VS
 	if (vertex_shaders.count(shader_type)) device_context->VSSetShader(vertex_shaders.at(shader_type).Get(), nullptr, 0);
 	// PS
-	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(6, 1, texture_maps.at(shader_type).GetAddressOf());
+	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(7, 1, texture_maps.at(shader_type).GetAddressOf());
 	if (pixel_shaders.count(shader_type)) device_context->PSSetShader(pixel_shaders.at(shader_type).Get(), nullptr, 0);
 }
 
@@ -456,6 +456,6 @@ void GraphicsPipeline::set_pipeline_preset(RASTERIZER_STATE rasterizer_state, DE
 	// VS
 	if (vertex_shaders.count(shader_type)) device_context->VSSetShader(vertex_shaders.at(shader_type).Get(), nullptr, 0);
 	// PS
-	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(6, 1, texture_maps.at(shader_type).GetAddressOf());
+	if (texture_maps.count(shader_type)) device_context->PSSetShaderResources(7, 1, texture_maps.at(shader_type).GetAddressOf());
 	if (pixel_shaders.count(shader_type)) device_context->PSSetShader(pixel_shaders.at(shader_type).Get(), nullptr, 0);
 }

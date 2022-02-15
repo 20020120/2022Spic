@@ -6,7 +6,7 @@
 #define ANISOTROPIC 2
 SamplerState sampler_states[3] : register(s0);
 texture2D texture_maps[4] : register(t0);
-texture2D toon_map : register(t6);
+texture2D toon_map : register(t7);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {

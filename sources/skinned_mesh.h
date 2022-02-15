@@ -183,7 +183,7 @@ public:
     void update_animation(float elapsed_time);
     bool end_of_animation() const { return anim_para.end_of_animation; }
 
-    void regeneration(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
+    void regeneration(ID3D11Device* device, const char* fbx_filename);
 private:
     //--------< 構造体 >--------//
     static const int MAX_BONE_INFLUENCES{ 4 };
@@ -195,6 +195,7 @@ private:
         DirectX::XMFLOAT4X4 bone_transforms[MAX_BONES]{
             {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1}
         };
+        DirectX::XMFLOAT4 emissive_color{ 1,1,1,1 }; // xyz:emissive_color w:emissive_strength
     };
     std::unique_ptr<Constants<GeometryConstants>> geometry_constants;
     // FBXファイルからメッシュが使用するマテリアル情報（色・テクスチャ）を抽出する
@@ -207,8 +208,8 @@ private:
         DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
         DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-        std::string texture_filenames[4];
-        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[4];
+        std::string texture_filenames[6];
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[6];
 
         template<class T>
         void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }

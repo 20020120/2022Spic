@@ -175,7 +175,7 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
 #endif
 }
 
-void SkinnedMesh::regeneration(ID3D11Device* device, const char* fbx_filename, bool triangulate, float sampling_rate)
+void SkinnedMesh::regeneration(ID3D11Device* device, const char* fbx_filename)
 {
     std::string texture_maps[4] = { "temporary\\Color.png" , "temporary\\Normal.png" , "temporary\\Metallic.png" , "temporary\\Roughness.png" };
     for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
@@ -197,16 +197,6 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
 {
     for (const mesh& mesh : meshes)
     {
-        //DirectX::XMFLOAT4X4 world_min_t;
-        //DirectX::XMStoreFloat4x4(&world_min_t,
-        //    DirectX::XMMatrixTranslation(mesh.bounding_box[1].x, mesh.bounding_box[1].y, mesh.bounding_box[1].z) * XMLoadFloat4x4(&world));
-        //DirectX::XMFLOAT3 world_min_bounding_box = { world_min_t._41, world_min_t._42, world_min_t._43 };
-
-        //DirectX::XMFLOAT4X4 world_max_t;
-        //DirectX::XMStoreFloat4x4(&world_max_t,
-        //    DirectX::XMMatrixTranslation(mesh.bounding_box[0].x, mesh.bounding_box[0].y, mesh.bounding_box[0].z) * XMLoadFloat4x4(&world));
-        //DirectX::XMFLOAT3 world_max_bounding_box = { world_max_t._41, world_max_t._42, world_max_t._43 };
-
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
         //{
         //    continue;
@@ -265,6 +255,8 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 dc->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
                 dc->PSSetShaderResources(2, 1, material.shader_resource_views[2].GetAddressOf());
                 dc->PSSetShaderResources(3, 1, material.shader_resource_views[3].GetAddressOf());
+                dc->PSSetShaderResources(4, 1, material.shader_resource_views[4].GetAddressOf());
+                dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
                 // 描画
                 dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
             }
@@ -365,6 +357,7 @@ void SkinnedMesh::fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes)
                 }
                 for (size_t influence_index = 0; influence_index < influences_per_control_point.size(); ++influence_index)
                 {
+#if 0
                     // ※影響を受けるボーンは最大４つまでとする
                     // ※下記コードは影響を受けるボーン数が４つを超える場合は、アサートを出している
                     assert(influence_index < MAX_BONE_INFLUENCES && "!ボーンの影響数が4を超えています!");
@@ -372,6 +365,30 @@ void SkinnedMesh::fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes)
                         vertex.bone_weights[influence_index] = influences_per_control_point.at(influence_index).bone_weight / bone_weight_total; // 正規化
                         vertex.bone_indices[influence_index] = influences_per_control_point.at(influence_index).bone_index;
                     }
+
+#endif // 0
+                    if (influence_index < MAX_BONE_INFLUENCES)
+                    {
+                        vertex.bone_weights[influence_index] = influences_per_control_point.at(influence_index).bone_weight / bone_weight_total;
+                        vertex.bone_indices[influence_index] = influences_per_control_point.at(influence_index).bone_index;
+                    }
+#if 1
+                    else
+                    {
+                        size_t minimum_value_index = 0;
+                        float minimum_value = FLT_MAX;
+                        for (size_t i = 0; i < MAX_BONE_INFLUENCES; ++i)
+                        {
+                            if (minimum_value > vertex.bone_weights[i])
+                            {
+                                minimum_value = vertex.bone_weights[i];
+                                minimum_value_index = i;
+                            }
+                        }
+                        vertex.bone_weights[minimum_value_index] += influences_per_control_point.at(influence_index).bone_weight / bone_weight_total;
+                        vertex.bone_indices[minimum_value_index] = influences_per_control_point.at(influence_index).bone_index;
+                    }
+#endif
                 }
                 // normal
                 //if (fbx_mesh->GenerateNormals(false))
@@ -511,20 +528,36 @@ void SkinnedMesh::fetch_materials(const char* fbx_filename, FbxScene* fbx_scene,
                 fbx_property = fbx_material->FindProperty(FbxSurfaceMaterial::sNormalMap);
                 if (fbx_property.IsValid())
                 {
-                    const FbxFileTexture* file_texture{ fbx_property.GetSrcObject<FbxFileTexture>() };
-                    material.texture_filenames[1] = file_texture ? file_texture->GetRelativeFileName() : "";
+                    std::string color_map_filename = material.texture_filenames[0];
+                    std::string normal_map_filename = "";
+                    if (color_map_filename.find("Color.png") != std::string::npos)
+                    {
+                        normal_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Normal.png";
+                    }
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + normal_map_filename;
+                    if (std::filesystem::exists(s.c_str()))
+                    {
+                        material.texture_filenames[1] = normal_map_filename;
+                    }
+                    else
+                    {
+                        const FbxFileTexture* file_texture{ fbx_property.GetSrcObject<FbxFileTexture>() };
+                        material.texture_filenames[1] = file_texture ? file_texture->GetRelativeFileName() : "";
+                    }
                 }
                 // metal map
                 {
                     std::string color_map_filename = material.texture_filenames[0];
                     std::string metallic_map_filename = "";
-                    if (color_map_filename.find("Base_color.png") != std::string::npos)
+                    if (color_map_filename.find("Color.png") != std::string::npos)
                     {
-                        metallic_map_filename = color_map_filename.erase(color_map_filename.find("Base_color.png")) + "Metallic.png";
+                        metallic_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Metalness.png";
                     }
-                    std::filesystem::path model_filename(fbx_filename);
-                    model_filename.remove_filename();
-                    std::string s = model_filename.string() + metallic_map_filename;
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + metallic_map_filename;
                     if (std::filesystem::exists(s.c_str()))
                     {
                         material.texture_filenames[2] = metallic_map_filename;
@@ -538,13 +571,13 @@ void SkinnedMesh::fetch_materials(const char* fbx_filename, FbxScene* fbx_scene,
                 {
                     std::string color_map_filename = material.texture_filenames[0];
                     std::string roughness_map_filename = "";
-                    if (color_map_filename.find("Base_color.png") != std::string::npos)
+                    if (color_map_filename.find("Color.png") != std::string::npos)
                     {
-                        roughness_map_filename = color_map_filename.erase(color_map_filename.find("Base_color.png")) + "Roughness.png";
+                        roughness_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Roughness.png";
                     }
-                    std::filesystem::path model_filename(fbx_filename);
-                    model_filename.remove_filename();
-                    std::string s = model_filename.string() + roughness_map_filename;
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + roughness_map_filename;
                     if (std::filesystem::exists(s.c_str()))
                     {
                         material.texture_filenames[3] = roughness_map_filename;
@@ -554,9 +587,46 @@ void SkinnedMesh::fetch_materials(const char* fbx_filename, FbxScene* fbx_scene,
                         material.texture_filenames[3] = "";
                     }
                 }
-
-
-
+                // AO map
+                {
+                    std::string color_map_filename = material.texture_filenames[0];
+                    std::string ao_map_filename = "";
+                    if (color_map_filename.find("Color.png") != std::string::npos)
+                    {
+                        ao_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Ao.png";
+                    }
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + ao_map_filename;
+                    if (std::filesystem::exists(s.c_str()))
+                    {
+                        material.texture_filenames[4] = ao_map_filename;
+                    }
+                    else
+                    {
+                        material.texture_filenames[4] = "";
+                    }
+                }
+                // Emissive map
+                {
+                    std::string color_map_filename = material.texture_filenames[0];
+                    std::string emissive_map_filename = "";
+                    if (color_map_filename.find("Color.png") != std::string::npos)
+                    {
+                        emissive_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Emissive.png";
+                    }
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + emissive_map_filename;
+                    if (std::filesystem::exists(s.c_str()))
+                    {
+                        material.texture_filenames[5] = emissive_map_filename;
+                    }
+                    else
+                    {
+                        material.texture_filenames[5] = "";
+                    }
+                }
 
                 materials.emplace(material.unique_id, std::move(material));
             }
@@ -738,7 +808,7 @@ void SkinnedMesh::create_com_objects(ID3D11Device* device, const char* fbx_filen
         for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
             iterator != materials.end(); ++iterator)
         {
-            for (size_t texture_index = 0; texture_index < 4; ++texture_index)
+            for (size_t texture_index = 0; texture_index < 6; ++texture_index)
             {
                 if (iterator->second.texture_filenames[texture_index].size() > 0)
                 {
@@ -750,8 +820,10 @@ void SkinnedMesh::create_com_objects(ID3D11Device* device, const char* fbx_filen
                 }
                 else
                 {
-                    make_dummy_texture(device, iterator->second.shader_resource_views[texture_index].GetAddressOf(),
-                        texture_index == 1 ? 0xFFFF7F7F : 0xFFFFFFFF, 16);
+                    DWORD tex_color = 0xFFFFFFFF;
+                    if (texture_index == 1) { tex_color = 0xFFFF7F7F; }
+                    if (texture_index == 5) { tex_color = 0x0000; }
+                    make_dummy_texture(device, iterator->second.shader_resource_views[texture_index].GetAddressOf(), tex_color, 16);
                 }
             }
         }

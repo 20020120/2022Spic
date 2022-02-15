@@ -8,8 +8,8 @@
 SamplerState sampler_states[3] : register(s0);
 texture2D texture_maps[4] : register(t0);
 
-Texture2D shadow_map : register(t4);
-SamplerState shadow_sampler_state : register(s4);
+Texture2D shadow_map : register(t6);
+SamplerState shadow_sampler_state : register(s6);
 
 
 float3 cast_shadow(in float3 color, float depth, float3 shadow_texcoord)
