@@ -204,6 +204,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
+    <ClCompile Include="sources\BasePlayer.cpp" />
     <ClCompile Include="sources\bloom.cpp" />
     <ClCompile Include="sources\camera.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
     <ClCompile Include="sources\effect_manager.cpp" />
+    <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
     <ClCompile Include="sources\framebuffer.cpp" />
@@ -253,6 +255,8 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="sources\audio.h" />
     <ClInclude Include="sources\audio_manager.h" />
+    <ClInclude Include="sources\BaseEnemy.h" />
+    <ClInclude Include="sources\BasePlayer.h" />
     <ClInclude Include="sources\bloom.h" />
     <ClInclude Include="sources\camera.h" />
     <ClInclude Include="sources\camera_shake.h" />
@@ -262,6 +266,7 @@
     <ClInclude Include="sources\debug_flags.h" />
     <ClInclude Include="sources\effect.h" />
     <ClInclude Include="sources\effect_manager.h" />
+    <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />
     <ClInclude Include="sources\framebuffer.h" />

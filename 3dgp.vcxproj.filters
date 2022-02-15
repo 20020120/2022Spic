@@ -103,6 +103,15 @@
     <Filter Include="Sources\debug\debug_figures">
       <UniqueIdentifier>{bf1f7b1d-7d48-4ec1-9c45-6d1efad95c29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character">
+      <UniqueIdentifier>{56c1d8a5-15fd-47f2-87a9-bc584267cb4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\character\enemy">
+      <UniqueIdentifier>{b16e18fd-7ee6-41c7-86e5-253dae85561f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\character\player">
+      <UniqueIdentifier>{26e910cf-9d24-4c9e-944b-33e2385b5ffd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -245,6 +254,12 @@
     </ClCompile>
     <ClCompile Include="sources\hit_stop.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\EnemyManager.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\BasePlayer.cpp">
+      <Filter>Sources\character\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -397,6 +412,15 @@
     </ClInclude>
     <ClInclude Include="sources\hit_stop.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemyManager.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BasePlayer.h">
+      <Filter>Sources\character\player</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BaseEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
