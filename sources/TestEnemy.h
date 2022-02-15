@@ -8,11 +8,6 @@
 // テストとサンプルを兼ねた敵の派生クラス 
 // 
 //****************************************************************
-
-typedef std::function<void()> InitFunc;
-typedef std::function<void(float)> UpdateFunc;
-typedef std::tuple<InitFunc,UpdateFunc > FunctionTuple;
-
 class TestEnemy final:public BaseEnemy
 {
     //****************************************************************
@@ -33,20 +28,12 @@ public:
     // 
     //****************************************************************
 private:
-    int mState{}; // 状態
-    bool mIsInitialize{ false }; // 初期化したかどうか
+    // ステートマシンを追加する関数
+    void fRegisterFunctions() override;
 
-    //****************************************************************
-    // 
-    // 簡易的なステートマシンを仮実装（実装速度が必要じゃないなら変えるかも）
-    // 
-    //****************************************************************
-    std::map<int, FunctionTuple> mFunctionMap{};
-    FunctionTuple mCurrentTuple{};
-
-    void fRegisterFunctions();
+    //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
 
-    void fChangeState(int i);
+    
 };

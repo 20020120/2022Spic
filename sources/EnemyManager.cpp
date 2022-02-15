@@ -1,7 +1,8 @@
 #include"EnemyManager.h"
 //#include "EnemyFileSystem.h"
-#include"imgui_include.h" 
 
+#include"TestEnemy.h"
+#include"imgui_include.h" 
 #include <fstream>
 
 
@@ -14,6 +15,7 @@
 void EnemyManager::fInitialize(ID3D11Device* pDevice_)
 {
     //--------------------<‰Šú‰»>--------------------//
+    mpDevice = pDevice_;
     fAllClear();
 
 
@@ -91,9 +93,26 @@ void EnemyManager::fAllClear()
 void EnemyManager::fGuiMenu()
 {
     ImGui::Begin("EnemyManager");
+
+    ImGui::Text("WaveNumber");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mCurrentWave).c_str());
     ImGui::Text("WaveTimer");
     ImGui::SameLine();
     ImGui::Text(std::to_string(mWaveTimer).c_str());
+
+    ImGui::Separator();
+
+    ImGui::Text("EnemyValues");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mEnemyVec.size()).c_str());
+
+    if (ImGui::Button("CreateEnemy"))
+    {
+        DirectX::XMFLOAT3 point{};
+
+        mEnemyVec.emplace_back(new TestEnemy(mpDevice, point));
+    }
 
     if(ImGui::CollapsingHeader("JsonTest"))
     {

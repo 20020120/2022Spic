@@ -23,15 +23,8 @@ void TestEnemy::fInitialize()
 void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
-
-    // ステートを初期化
-    if(!mIsInitialize)
-    {
-        std::get<0>(mCurrentTuple)();
-        mIsInitialize = true;
-    }
-    // ステートを更新
-    std::get<1>(mCurrentTuple)(elapsedTime_);
+    fUpdateStateMachine(elapsedTime_);
+   
 
 }
 
@@ -53,16 +46,11 @@ void TestEnemy::fRegisterFunctions()
 
 void TestEnemy::fIdleInit()
 {
-  
+    
 }
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
-    
+   
 }
 
-void TestEnemy::fChangeState(int i)
-{
-    mCurrentTuple = mFunctionMap.at(i);
-    mIsInitialize = false;
-}
