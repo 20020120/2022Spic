@@ -21,14 +21,6 @@ private:
     DirectX::XMFLOAT3 mPosition{};
 };
 
-struct EnemySource
-{
-    float mSpawnTimer{};  // 出現タイミングを記録
-    int mEmitterNumber{}; // 出現位置の番号
-    int mType{};          // 敵の種類
-};
-
-
 //****************************************************************
 // 
 // 敵の管理クラス 

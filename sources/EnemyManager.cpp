@@ -1,6 +1,10 @@
 #include"EnemyManager.h"
-#include"JsonFileManager.h"
-#include"imgui_include.h"
+//#include "EnemyFileSystem.h"
+#include"imgui_include.h" 
+
+#include <fstream>
+
+
 //****************************************************************
 // 
 // ìGÇÃä«óùÉNÉâÉX 
@@ -95,8 +99,23 @@ void EnemyManager::fGuiMenu()
     {
         if (ImGui::Button("Create"))
         {
-            JsonManager::CrateNewFile("Wave0Enemy");
         }
+        if (ImGui::Button("Test"))
+        {
+            std::ofstream ofs;
+            ofs.open("./resources/Data/Wave0Enemy.json");
+            if (ofs)
+            {
+               /* nlohmann::json json;
+                EnemySource source;
+                source.mEmitterNumber = 100;
+                source.mType = 0;
+                source.mSpawnTimer = 10.0f;
+                EnemyJson::to_json(json, source);
+                ofs << json;*/
+            }
+        }
+
     }
 
     ImGui::End();

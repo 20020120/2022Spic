@@ -440,6 +440,9 @@
     <ClInclude Include="sources\JsonFileManager.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="sources\EnemyFileSystem.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">

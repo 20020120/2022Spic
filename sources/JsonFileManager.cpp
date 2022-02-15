@@ -1,6 +1,5 @@
 
 #include"JsonFileManager.h"
-#include"json.hpp"
 #include<filesystem>
 #include <fstream>
 
@@ -31,9 +30,9 @@ void JsonManager::Write(const char* FileName)
     ofs.open(FileName);
     if (ofs)
     {
-        nlohmann::json json;
+       /* nlohmann::json json;
         json["HitPoint"] = 10;
-        ofs << json;
+        ofs << json;*/
     }
     else
     {
@@ -46,8 +45,3 @@ void JsonManager::Read(const char* FileName)
 {
     
 }
-
-
-
-
-
