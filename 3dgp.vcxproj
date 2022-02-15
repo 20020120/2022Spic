@@ -204,6 +204,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
+    <ClCompile Include="sources\BaseEnemy.cpp" />
     <ClCompile Include="sources\BasePlayer.cpp" />
     <ClCompile Include="sources\bloom.cpp" />
     <ClCompile Include="sources\camera.cpp" />

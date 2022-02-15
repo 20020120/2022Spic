@@ -261,6 +261,9 @@
     <ClCompile Include="sources\BasePlayer.cpp">
       <Filter>Sources\character\player</Filter>
     </ClCompile>
+    <ClCompile Include="sources\BaseEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
