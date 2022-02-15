@@ -267,6 +267,9 @@
     <ClCompile Include="sources\TestEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
+    <ClCompile Include="sources\JsonFileManager.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -430,6 +433,12 @@
     </ClInclude>
     <ClInclude Include="sources\TestEnemy.h">
       <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\json.hpp">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\JsonFileManager.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

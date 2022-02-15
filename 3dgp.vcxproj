@@ -225,6 +225,7 @@
     <ClCompile Include="sources\geometric_primitive.cpp" />
     <ClCompile Include="sources\hit_stop.cpp" />
     <ClCompile Include="sources\husk_particles.cpp" />
+    <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
@@ -280,6 +281,8 @@
     <ClInclude Include="sources\hit_stop.h" />
     <ClInclude Include="sources\husk_particles.h" />
     <ClInclude Include="sources\imgui_include.h" />
+    <ClInclude Include="sources\json.hpp" />
+    <ClInclude Include="sources\JsonFileManager.h" />
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\perlin_noise.h" />

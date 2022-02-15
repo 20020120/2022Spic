@@ -11,6 +11,8 @@ BaseEnemy::BaseEnemy(ID3D11Device* pDevice_, const char* ModelName_)
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, ModelName_);
 }
 
+BaseEnemy::~BaseEnemy() = default;
+
 void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
 {
     // ƒ[ƒ‹ƒhs—ñ‚ğì¬

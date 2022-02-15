@@ -2,12 +2,12 @@
 #include"skinned_mesh.h"
 #include<d3d11.h>
 #include<memory>
+
 //****************************************************************
 // 
 // “G‚ÌŠî’êƒNƒ‰ƒX 
 // 
 //****************************************************************
-
 class BaseEnemy
 {
     //****************************************************************
@@ -17,7 +17,7 @@ class BaseEnemy
     //****************************************************************
 public:
     BaseEnemy(ID3D11Device *pDevice_,const char* ModelName_);
-    virtual ~BaseEnemy() = default;
+    virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
@@ -30,7 +30,7 @@ public:
     //****************************************************************
 protected:
     DirectX::XMFLOAT3 mPosition{};    // ˆÊ’u
-    DirectX::XMFLOAT4 mOrientation{}; //‰ñ“]
+    DirectX::XMFLOAT4 mOrientation{}; // ‰ñ“]
     DirectX::XMFLOAT3 mScale{};       // ‘å‚«‚³
 private:
     // ƒ‚ƒfƒ‹
