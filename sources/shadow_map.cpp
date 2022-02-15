@@ -186,16 +186,16 @@ void ShadowMap::deactivate_shadowmap(GraphicsPipeline& graphics)
 
 void ShadowMap::set_shadowmap(GraphicsPipeline& graphics)
 {
-	graphics.get_dc()->PSSetShaderResources(4, 1, shadowmap_shader_resource_view.GetAddressOf());
-	graphics.get_dc()->PSSetSamplers(4, 1, shadowmap_sampler_state.GetAddressOf());
+	graphics.get_dc()->PSSetShaderResources(6, 1, shadowmap_shader_resource_view.GetAddressOf());
+	graphics.get_dc()->PSSetSamplers(6, 1, shadowmap_sampler_state.GetAddressOf());
 }
 
 void ShadowMap::clear_shadowmap(GraphicsPipeline& graphics)
 {
 	// 不要になったのでシャドウマップの設定を外しておく。
-    // そうしないと次回シャドウマップ生成時に警告が出てしまうため。
+	// そうしないと次回シャドウマップ生成時に警告が出てしまうため。
 	ID3D11ShaderResourceView* clear_shader_resource_view[]{ nullptr };
-	graphics.get_dc()->PSSetShaderResources(4, 1, clear_shader_resource_view);
+	graphics.get_dc()->PSSetShaderResources(6, 1, clear_shader_resource_view);
 }
 
 void ShadowMap::debug_imgui()

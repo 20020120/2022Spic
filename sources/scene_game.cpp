@@ -36,7 +36,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	skinned_meshes[0] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\blender_gis\\akihabara.fbx", true);
 	skinned_meshes[1] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\nico\\nico.fbx");
 	skinned_meshes[2] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\FactoryMachine\\FactoryMachine.fbx", true);
-	skinned_meshes[3] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\Player.fbx", true);
+	//skinned_meshes[3] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\stage1_1.fbx", true);
 	skinned_meshes[4] = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\sky\\cube.000.fbx", false);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\appear\\appear_blue.efk");
@@ -491,7 +491,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::Begin("PBR test");
 		if (ImGui::Button("regeneration"))
 		{
-			skinned_meshes[2]->regeneration(graphics.get_device().Get(), ".\\resources\\Models\\FactoryMachine\\FactoryMachine.fbx", true);
+			skinned_meshes[2]->regeneration(graphics.get_device().Get(), ".\\resources\\Models\\FactoryMachine\\FactoryMachine.fbx");
 		}
 		ImGui::Combo("shader type", &shader_type, shaders, IM_ARRAYSIZE(shaders));
 		if (ImGui::TreeNode("transform"))
@@ -515,35 +515,35 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	// player
 	{
-		// 拡大縮小（S）・回転（R）・平行移動（T）行列を計算する
-		static DirectX::XMFLOAT3  position = { 0,3,0 };
-		static DirectX::XMFLOAT3  angle = { 0,0,0 };
-		static DirectX::XMFLOAT3  scale = { 0.5f,0.5f,0.5f };
-		static DirectX::XMFLOAT4 material_color = { 1,1,1,1 };
-		static bool loop_anim = true;
-		const char* shaders[] = { "SPECULAR", "TOON", "HALF_LAMBERT", "PBR" };
-		static int shader_type = 3;
-#ifdef USE_IMGUI
-		ImGui::Begin("player");
-		ImGui::Combo("shader type", &shader_type, shaders, IM_ARRAYSIZE(shaders));
-		if (ImGui::TreeNode("transform"))
-		{
-			ImGui::DragFloat3("angle", &angle.x, 0.1f, -10, 10);
-			ImGui::DragFloat3("position", &position.x, 0.1f, -100, 100);
-			ImGui::DragFloat3("scale", &scale.x, 0.1f, -10, 10);
-			ImGui::ColorPicker4("material_color", &material_color.x);
-			ImGui::TreePop();
-		}
-		ImGui::End();
-#endif
-		// 描画ステート設定
-		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, (SHADER_TYPES)shader_type);
-		// スタティックメッシュ
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f)) };
-		DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix(scale, angle, position)) };
-		DirectX::XMStoreFloat4x4(&world, C * W);
-		skinned_meshes[3]->render(graphics.get_dc().Get(), world, material_color);
+//		// 拡大縮小（S）・回転（R）・平行移動（T）行列を計算する
+//		static DirectX::XMFLOAT3  position = { 0,3,0 };
+//		static DirectX::XMFLOAT3  angle = { 0,0,0 };
+//		static DirectX::XMFLOAT3  scale = { 0.5f,0.5f,0.5f };
+//		static DirectX::XMFLOAT4 material_color = { 1,1,1,1 };
+//		static bool loop_anim = true;
+//		const char* shaders[] = { "SPECULAR", "TOON", "HALF_LAMBERT", "PBR" };
+//		static int shader_type = 3;
+//#ifdef USE_IMGUI
+//		ImGui::Begin("player");
+//		ImGui::Combo("shader type", &shader_type, shaders, IM_ARRAYSIZE(shaders));
+//		if (ImGui::TreeNode("transform"))
+//		{
+//			ImGui::DragFloat3("angle", &angle.x, 0.1f, -10, 10);
+//			ImGui::DragFloat3("position", &position.x, 0.1f, -100, 100);
+//			ImGui::DragFloat3("scale", &scale.x, 0.1f, -10, 10);
+//			ImGui::ColorPicker4("material_color", &material_color.x);
+//			ImGui::TreePop();
+//		}
+//		ImGui::End();
+//#endif
+//		// 描画ステート設定
+//		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, (SHADER_TYPES)shader_type);
+//		// スタティックメッシュ
+//		DirectX::XMFLOAT4X4 world;
+//		DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f)) };
+//		DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix(scale, angle, position)) };
+//		DirectX::XMStoreFloat4x4(&world, C * W);
+//		skinned_meshes[3]->render(graphics.get_dc().Get(), world, material_color);
 	}
 	// point_light
 	{

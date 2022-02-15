@@ -55,7 +55,7 @@ private:
     struct SceneConstants
     {
         DirectX::XMFLOAT4X4 view_projection;              //ビュー・プロジェクション変換行列
-        DirectX::XMFLOAT4 light_direction{ 0, -1, 1, 0 }; //ライトの向き
+        DirectX::XMFLOAT4 light_direction{ 0, -1, 1, 1 }; //ライトの向き
         DirectX::XMFLOAT4 light_color{ 1,1,1,1 };         //ライトの色
         DirectX::XMFLOAT4 camera_position;
         DirectX::XMFLOAT4X4 shake_matrix;

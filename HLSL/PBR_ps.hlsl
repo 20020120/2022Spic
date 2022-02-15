@@ -1,17 +1,70 @@
 #include "skinned_mesh.hlsli"
 #include "constants.hlsli"
+#include "shading_functions.hlsli"
 
 #define POINT 0
 #define LINEAR 1
 #define ANISOTROPIC 2
+
+#define BASE_COLOR 0
+#define NORMAL     1
+#define METAL      2
+#define ROUGHNESS  3
+#define AO         4
+#define Emissive   5
+
 SamplerState sampler_states[3] : register(s0);
-texture2D texture_maps[4] : register(t0);
+texture2D texture_maps[6] : register(t0);
+
+Texture2D shadow_map : register(t6);
+SamplerState shadow_sampler_state : register(s6);
 
 static const float PI = 3.1415926f; // π
 
+float3 cast_shadow(in float3 color, float depth, float3 shadow_texcoord)
+{
+	// 深度値を比較して影かどうかを判定する
+    // if (pin.shadow_texcoord.z - depth > shadow_bias){}
+    float light_percentage = 0;
+
+    [unroll(50)]
+    for (int Scope = 0; Scope < number_of_trials; ++Scope)
+    {
+        float search_width = search_width_magnification * Scope;
+        float ratio = 1.0f / (number_of_trials * 4.0f);
+         //----今のピクセルの周りが影じゃなかったら影の色を薄めていく----//
+         // 左
+        float depth_around_left = shadow_map.Sample(shadow_sampler_state, float2(shadow_texcoord.x - search_width, shadow_texcoord.y)).r;
+        if (shadow_texcoord.z - depth_around_left < shadow_bias)
+        {
+            light_percentage += ratio;
+        }
+        // 右
+        float depth_around_right = shadow_map.Sample(shadow_sampler_state, float2(shadow_texcoord.x + search_width, shadow_texcoord.y)).r;
+        if (shadow_texcoord.z - depth_around_right < shadow_bias)
+        {
+            light_percentage += ratio;
+        }
+        // 上
+        float depth_around_up = shadow_map.Sample(shadow_sampler_state, float2(shadow_texcoord.x, shadow_texcoord.y - search_width)).r;
+        if (shadow_texcoord.z - depth_around_up < shadow_bias)
+        {
+            light_percentage += ratio;
+        }
+        // 下
+        float depth_around_down = shadow_map.Sample(shadow_sampler_state, float2(shadow_texcoord.x, shadow_texcoord.y + search_width)).r;
+        if (shadow_texcoord.z - depth_around_down < shadow_bias)
+        {
+            light_percentage += ratio;
+        }
+    }
+    //color.rgb *= shadow_color.rgb * (1 + light_percentage);
+    return color * light_percentage;
+}
+
 float3 get_normal(float3 normal, float3 tangent, float3 binormal, float2 uv)
 {
-    float3 bin_space_normal = texture_maps[1].SampleLevel(sampler_states[ANISOTROPIC], uv, 0.0f).xyz;
+    float3 bin_space_normal = texture_maps[NORMAL].SampleLevel(sampler_states[ANISOTROPIC], uv, 0.0f).xyz;
     bin_space_normal = (bin_space_normal * 2.0f) - 1.0f;
 
     float3 new_normal = tangent * bin_space_normal.x + binormal * bin_space_normal.y + normal * bin_space_normal.z;
@@ -91,10 +144,16 @@ float calc_diffuse_from_fresnel(float3 N, float3 L, float3 V)
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float4 color_map     = texture_maps[0].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
-    float4 normal_map    = texture_maps[1].Sample(sampler_states[LINEAR], pin.texcoord);
-    float4 metal_map     = texture_maps[2].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
-    float4 roughness_map = texture_maps[3].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 color_map = texture_maps[BASE_COLOR].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 normal_map = texture_maps[NORMAL].Sample(sampler_states[LINEAR], pin.texcoord);
+    float4 metal_map = texture_maps[METAL].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 roughness_map = texture_maps[ROUGHNESS].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 ao_map = texture_maps[AO].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 emissive_map = texture_maps[Emissive].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+
+    // shadow map
+    float depth = shadow_map.Sample(shadow_sampler_state, pin.shadow_texcoord.xy).r;
+    color_map.rgb = cast_shadow(color_map.rgb, depth, pin.shadow_texcoord);
 
     // 法線を計算
     float3 N = normalize(pin.world_normal.xyz);
@@ -110,22 +169,53 @@ float4 main(VS_OUT pin) : SV_TARGET
     // 視線に向かって伸びるベクトルを計算する
     float3 toEye = normalize(camera_position - pin.world_position);
     // シンプルなディズニーベースの拡散反射を実装する
-    float diffuseFromFresnel = calc_diffuse_from_fresnel(normal, -light_direction.xyz, toEye);
-    float NdotL = saturate(dot(normal, -light_direction.xyz));
+    float diffuseFromFresnel = calc_diffuse_from_fresnel(normal, -light_direction.xyz * 2.0f, toEye);
+    float NdotL = saturate(dot(normal, -light_direction.xyz * 2.0f));
     float3 lambertDiffuse = float4(1, 1, 1, 1) * NdotL / PI;
     float3 diffuse = color_map.rgb * diffuseFromFresnel * lambertDiffuse;
     // Cook-Torranceモデルを利用した鏡面反射率を計算する
-    float3 spec = cook_torrance_specular(-light_direction.xyz, toEye, normal, smooth) * float4(1, 1, 1, 1);
+    float3 spec = cook_torrance_specular(-light_direction.xyz * 2.0f, toEye, normal, smooth) * float4(1, 1, 1, 1);
     spec *= lerp(float3(1, 1, 1), color_map.rgb, metallic);
     // 滑らかさを使って、拡散反射光と鏡面反射光を合成する
     float3 lig = diffuse * (1.0f - smooth) + spec * 2;
+
+#if 0
+    // Inverse gamma process
+    const float GAMMA = 2.2;
+    color_map.rgb = pow(color_map.rgb, GAMMA);
+#endif
+
+        // 点光源の処理
+    float3 E = normalize(pin.world_position.xyz - camera_position.xyz);
+    float3 point_diffuse = 0;
+    float3 point_specular = 0;
+    for (int i = 0; i < POINT_LIGHT_COUNT; ++i)
+    {
+        float3 LP = pin.world_position.xyz - point_lights[i].position.xyz;
+        float len = length(LP);
+        if (len >= point_lights[i].range)
+            continue;
+        float attenuate_length = saturate(1.0f - len / point_lights[i].range);
+        float attenuation = attenuate_length * attenuate_length;
+        LP /= len;
+        point_diffuse += calc_lambert(pin.world_normal.xyz, LP, point_lights[i].color.rgb) * attenuation;
+        point_specular += calc_phong_specular(pin.world_normal.xyz, LP, E, point_lights[i].color.rgb) * attenuation;
+    }
+
+    lig += point_diffuse * 2.0f;
+    //lig += point_specular;
+
     // 環境光による底上げ
     lig += float3(0.4, 0.4, 0.4) * color_map.rgb;
 
     float4 finalColor = 1.0f;
-    finalColor.xyz = float4(lig, color_map.a);
+    finalColor.xyz = lig;
+
+    // emissive
+    float3 emissive = emissive_map.r * emissive_color.w * emissive_color.rgb;
+    finalColor.xyz += emissive;
     // ブルームで暴走しないように強制
     finalColor.xyz = min(finalColor.xyz, 6.0);
 
-    return finalColor * pin.color;
+    return float4(finalColor.rgb * ao_map.r * light_direction.w, finalColor.a) * pin.color;
 }

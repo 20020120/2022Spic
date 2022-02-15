@@ -6,7 +6,7 @@
 #define ANISOTROPIC 2
 SamplerState sampler_states[3] : register(s0);
 
-TextureCube skymap : register(t6);
+TextureCube skymap : register(t7);
 
 [earlydepthstencil]
 float4 main(VS_OUT pin) : SV_TARGET
