@@ -54,6 +54,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	stage.coordinate = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f);
 	// HuskParticles
 	particles = std::make_unique<HuskParticles>(graphics.get_device().Get());
+
 }
 
 void SceneGame::uninitialize() {}
@@ -549,6 +550,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
 		debug_figure->render_all_figures(graphics.get_dc().Get());
 	}
+
 
     // font demo
 #if 0

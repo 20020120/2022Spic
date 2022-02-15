@@ -7,11 +7,6 @@
 //****************************************************************
 BaseEnemy::BaseEnemy(ID3D11Device* pDevice_, const char* ModelName_)
 {
-    // ‚¢‚Á‚½‚ñ‰¼‚Å‰Šú‰»
-    mPosition = { 0.0f,0.0f,0.0f };
-    mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 1.0f,1.0f,1.0f };
-
     // ƒ‚ƒfƒ‹‚ğ‰Šú‰»
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, ModelName_);
 }

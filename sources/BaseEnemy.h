@@ -8,14 +8,6 @@
 // 
 //****************************************************************
 
-struct EnemySource
-{
-    float mSpawnTimer{};  // 出現タイミングを記録
-    int mEmitterNumber{}; // 出現位置の番号
-    int mType{};          // 敵の種類
-};
-
-
 class BaseEnemy
 {
     //****************************************************************
@@ -36,10 +28,11 @@ public:
     // 変数 
     // 
     //****************************************************************
-private:
-    // モデル
-    std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
     DirectX::XMFLOAT4 mOrientation{}; //回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
+private:
+    // モデル
+    std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
 };
