@@ -12,8 +12,9 @@
 #include "point_light.h"
 #include "husk_particles.h"
 #include "constants.h"
-
 #include "imgui_include.h"
+
+#include"EnemyManager.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -88,4 +89,13 @@ private:
     bool accumulate_husk_particles{ true };
     bool integrate_particles{ false };
     std::unique_ptr<HuskParticles> particles;
+
+
+    //****************************************************************
+    // 
+    // スピック開始後追加した変数 
+    // 
+    //****************************************************************
+
+    EnemyManager mEnemyManager{};
 };

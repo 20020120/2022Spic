@@ -204,6 +204,8 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
+    <ClCompile Include="sources\BaseEnemy.cpp" />
+    <ClCompile Include="sources\BasePlayer.cpp" />
     <ClCompile Include="sources\bloom.cpp" />
     <ClCompile Include="sources\camera.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
@@ -213,6 +215,7 @@
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
     <ClCompile Include="sources\effect_manager.cpp" />
+    <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
     <ClCompile Include="sources\framebuffer.cpp" />
@@ -222,6 +225,7 @@
     <ClCompile Include="sources\geometric_primitive.cpp" />
     <ClCompile Include="sources\hit_stop.cpp" />
     <ClCompile Include="sources\husk_particles.cpp" />
+    <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
@@ -240,6 +244,7 @@
     <ClCompile Include="sources\sprite.cpp" />
     <ClCompile Include="sources\sprite_batch.cpp" />
     <ClCompile Include="sources\sprite_dissolve.cpp" />
+    <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +258,8 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="sources\audio.h" />
     <ClInclude Include="sources\audio_manager.h" />
+    <ClInclude Include="sources\BaseEnemy.h" />
+    <ClInclude Include="sources\BasePlayer.h" />
     <ClInclude Include="sources\bloom.h" />
     <ClInclude Include="sources\camera.h" />
     <ClInclude Include="sources\camera_shake.h" />
@@ -262,6 +269,7 @@
     <ClInclude Include="sources\debug_flags.h" />
     <ClInclude Include="sources\effect.h" />
     <ClInclude Include="sources\effect_manager.h" />
+    <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />
     <ClInclude Include="sources\framebuffer.h" />
@@ -273,6 +281,8 @@
     <ClInclude Include="sources\hit_stop.h" />
     <ClInclude Include="sources\husk_particles.h" />
     <ClInclude Include="sources\imgui_include.h" />
+    <ClInclude Include="sources\json.hpp" />
+    <ClInclude Include="sources\JsonFileManager.h" />
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\perlin_noise.h" />
@@ -291,6 +301,7 @@
     <ClInclude Include="sources\sprite.h" />
     <ClInclude Include="sources\sprite_batch.h" />
     <ClInclude Include="sources\sprite_dissolve.h" />
+    <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\user.h" />
   </ItemGroup>

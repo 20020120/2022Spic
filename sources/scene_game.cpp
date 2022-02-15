@@ -54,6 +54,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	stage.coordinate = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f);
 	// HuskParticles
 	particles = std::make_unique<HuskParticles>(graphics.get_device().Get());
+
+	//--------------------<敵の管理クラスを初期化>--------------------//
+	mEnemyManager.fInitialize(graphics.get_device().Get());
 }
 
 void SceneGame::uninitialize() {}
@@ -86,12 +89,16 @@ DirectX::XMFLOAT4 convert_pixel_to_world(ID3D11DeviceContext* device_context,
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	//--------------------<敵の管理クラスの更新処理>--------------------//
+	mEnemyManager.fUpdate(elapsed_time);
+
 	// camera
 	camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
 
 	effect_manager->update(elapsed_time);
+
 	// effect demo
 #ifdef USE_IMGUI
 	{
@@ -550,6 +557,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		debug_figure->render_all_figures(graphics.get_dc().Get());
 	}
 
+
     // font demo
 #if 0
 	{
@@ -560,6 +568,9 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	}
 #endif // 0
 
+
+	//--------------------<敵の管理クラスの描画処理>--------------------//
+	mEnemyManager.fRender(graphics.get_dc().Get());
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
