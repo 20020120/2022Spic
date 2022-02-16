@@ -39,7 +39,7 @@ void EnemyFileSystem::fLoadFromJson(std::vector<EnemySource>& SourceVec_, const 
 void EnemyFileSystem::fSaveToJson(std::vector<EnemySource>& SourceVec_, const char* FileName_)
 {
     // Json‚É‚©‚«‚¾‚µ
-    std::filesystem::path path = FileName_;
+    std::filesystem::path path = (std::string("./resources/Data/")+FileName_);
     path.replace_extension(".json");
     std::ofstream ifs(path);
     if (ifs)

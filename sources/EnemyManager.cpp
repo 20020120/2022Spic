@@ -49,7 +49,7 @@ void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
 
 void EnemyManager::fFinalize()
 {
-    throw std::logic_error("Not implemented");
+    fAllClear();
 }
 
 void EnemyManager::fSpawn()
@@ -60,7 +60,7 @@ void EnemyManager::fSpawn()
     for (const auto data : mCurrentWaveVec)
     {
         // 出現条件を満たしていたら出す
-        if (data.mSpawnTimer >= mWaveTimer)
+        if (data.mSpawnTimer <= mWaveTimer)
         {
             fSpawn(data);
             spawnCounts++;
@@ -161,6 +161,11 @@ void EnemyManager::fGuiMenu()
         ImGui::Text("EnemyValues");
         ImGui::SameLine();
         ImGui::Text(std::to_string(mEnemyVec.size()).c_str());
+        ImGui::SameLine();
+        ImGui::Text("DataSize");
+        ImGui::SameLine();
+        ImGui::Text(std::to_string(mCurrentWaveVec.size()).c_str());
+        ImGui::Separator();
 
         if (ImGui::Button("CreateEnemy"))
         {
@@ -169,23 +174,16 @@ void EnemyManager::fGuiMenu()
             mEnemyVec.emplace_back(new TestEnemy(mpDevice, point));
         }
 
-        if (ImGui::CollapsingHeader("JsonTest"))
+        ImGui::InputInt("WaveNumber", &mCurrentWave);
+        if (ImGui::Button("StartWave"))
         {
-            if (ImGui::Button("Create"))
-            {
-                fLoad("./resources/Data/Test");
-            }
-            if (ImGui::Button("Test"))
-            {
-                std::vector<EnemySource> vec;
-                EnemySource src;
-                src.mEmitterNumber = -10;
-                src.mSpawnTimer = 100.0f;
-                src.mType = 9;
-                vec.emplace_back(src);
+            fStartWave(mCurrentWave);
+        }
 
-                EnemyFileSystem::fSaveToJson(vec, "./resources/Data/Test");
-            }
+        ImGui::Separator();
+        if (ImGui::Button("OpenEditor"))
+        {
+            mIsOpenEditor = !mIsOpenEditor;
         }
 
         if (ImGui::Button("Close"))
@@ -195,11 +193,60 @@ void EnemyManager::fGuiMenu()
         ImGui::End();
     }
 
+    fEditorGui();
+
+}
+
+void EnemyManager::fEditorGui()
+{
+    if (mIsOpenEditor)
+    {
+        ImGui::Begin("WaveEditor");
+
+        if (ImGui::CollapsingHeader("File"))
+        {
+            static char fileName[256]{};
+            ImGui::InputText("FileName", fileName, sizeof(char) * 256);
+            if (ImGui::Button("Save"))
+            {
+                EnemyFileSystem::fSaveToJson(mEditorSourceVec, fileName);
+            }
+            
+        }
+
+        if(ImGui::CollapsingHeader("Setting"))
+        {
+            static int emitterPoint = 0;
+            static float time = 0.0f;
+            int enemyType = 0;
+
+            ImGui::InputInt("EmitterNumber", &emitterPoint);
+            ImGui::DragFloat("SpawnTime", &time);
+            ImGui::InputInt("Type", &enemyType);
+
+            if (ImGui::Button("Add"))
+            {
+                EnemySource source;
+                source.mEmitterNumber = emitterPoint;
+                source.mSpawnTimer = time;
+                source.mType = enemyType;
+                mEditorSourceVec.emplace_back(source);
+            }
+        }
+
+
+        if (ImGui::Button("Close"))
+        {
+            mIsOpenEditor = false;
+        }
+        ImGui::End();
+    }
 }
 
 void EnemyManager::fStartWave(int WaveIndex_)
 {
     //--------------------<ウェーブを開始させる関数>--------------------//
+    fAllClear();
     mWaveTimer = 0.0f;
     fLoad(mWaveFileNameArray[WaveIndex_]);
 }
