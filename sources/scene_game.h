@@ -53,7 +53,6 @@ private:
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
     // スキンメッシュの実体
     std::shared_ptr<SkinnedMesh> sky_dome;
-    std::shared_ptr<SkinnedMesh> test;
     std::unique_ptr<Effect> test_effect;
     //****************************************************************
     //

@@ -27,7 +27,6 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
 	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
-	test = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\player\\player_proto.fbx", false);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
@@ -156,19 +155,15 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// skymap(オブジェクト描画の最初)
 	{
 		// 描画ステート設定
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::HALF_LAMBERT);
+		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
 		static float dimension{ 0.1f };
+#ifdef USE_IMGUI
 		ImGui::Begin("sky");
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
+#endif
 		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
 	}
-
-	{
-		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-		test->render(graphics.get_dc().Get(), Math::calc_world_matrix({ 0.03f,0.03f,0.03f }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
-	}
-
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	if (DebugFlags::get_wireframe_switching())

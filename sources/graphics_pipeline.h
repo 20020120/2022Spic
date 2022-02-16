@@ -47,6 +47,7 @@ enum class SHADER_TYPES
 	PBR,
 	POINT_LIGHT,
 	SKYMAP,
+	DEFAULT,
 };
 
 class GraphicsPipeline
