@@ -74,6 +74,11 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     float2 vignetting_pos;
     float vignetting_scope;
     float post_effect_pad7;
+    // dash_blur
+    float4 reference_position;
+    float zoom_power;
+    int focus_detail;
+    float2 post_effect_pad8;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)
