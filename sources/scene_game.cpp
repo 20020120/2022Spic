@@ -16,8 +16,6 @@
 
 void SceneGame::initialize(GraphicsPipeline& graphics)
 {
-	// カメラ
-	camera = std::make_unique<Camera>(graphics);
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
 	// post effect
@@ -33,6 +31,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mEnemyManager.fInitialize(graphics.get_device().Get());
 	player = std::make_unique<Player>(graphics);
+	// カメラ
+	camera = std::make_unique<Camera>(graphics,player.get());
+
 }
 
 void SceneGame::uninitialize()
@@ -47,7 +48,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->Update(elapsed_time);
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	// camera
-	camera->update_with_quaternion(elapsed_time);
+	camera->Update(elapsed_time,player.get());
+	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
 

@@ -11,6 +11,8 @@ class easing
     //end:I“_
     //d(duration):Œø‰ÊŠÔ
 
+    //https://easings.net/ja
+
 public:
 
     struct Sine
