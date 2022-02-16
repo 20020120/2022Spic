@@ -24,7 +24,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// ƒ‚ƒfƒ‹‚Ìƒ[ƒh
-	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
+	sky_dome = std::make_unique<SkyDome>(graphics);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
@@ -166,7 +166,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
 #endif
-		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
+		sky_dome->Render(graphics,elapsed_time);
 
 
 	}
