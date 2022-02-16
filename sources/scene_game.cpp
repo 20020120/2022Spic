@@ -26,7 +26,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
-	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\sky\\cube.fbx", false);
+	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
 	test = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\player\\player_proto.fbx", false);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
@@ -156,22 +156,17 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// skymap(オブジェクト描画の最初)
 	{
 		// 描画ステート設定
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::SKYMAP);
-		static float dimension{ 350.0f };
-		//ImGui::Begin("sky");
-		//ImGui::DragFloat("dimension", &dimension, 0.1f);
-		//ImGui::End();
-		sky_dome->render(graphics.get_dc().Get(),
-			{ dimension, 0.0f, 0.0f, 0.0f, 0.0f, dimension, 0.0f, 0.0f, 0.0f, 0.0f, dimension, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }, { 1,1,1,1 });
+		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::HALF_LAMBERT);
+		static float dimension{ 0.1f };
+		ImGui::Begin("sky");
+		ImGui::DragFloat("dimension", &dimension, 0.01f);
+		ImGui::End();
+		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
 	}
 
 	{
-		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-		DirectX::XMFLOAT4X4 world;
-		DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f)) };
-		DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix({1,1,1}, {0,0,0}, {0,0,0})) };
-		DirectX::XMStoreFloat4x4(&world, C * W);
-		test->render(graphics.get_dc().Get(), world, { 1,1,1,1 });
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+		test->render(graphics.get_dc().Get(), Math::calc_world_matrix({ 0.03f,0.03f,0.03f }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
 	}
 
 

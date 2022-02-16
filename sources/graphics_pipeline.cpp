@@ -342,7 +342,7 @@ void GraphicsPipeline::initialize(HWND hwnd)
 		// VS
 		{
 			Microsoft::WRL::ComPtr<ID3D11VertexShader> vertex_shader;
-			// NONE SPECULAR TOON HALF_LAMBERT PBR POINT_LIGHT
+			// NONE SPECULAR TOON HALF_LAMBERT PBR POINT_LIGHT DEFAULT
 			create_vs_from_cso(device.Get(), "./shaders/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
 				input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::NONE, vertex_shader));
