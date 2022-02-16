@@ -45,8 +45,6 @@ private:
     //カメラの向きをリセット
     bool camera_reset{ false };
 private:
-    //敵をロックオンしたかどうか
-    bool is_lock_on{ false };
     //敵に当たったかどうか
     bool is_enemy_hit{ false };
 private:
@@ -58,7 +56,13 @@ private:
     float attack_time{ 0 };
     //攻撃中の時間をどれだけ増やすか
     float attack_add_time{ 1.0f };
-
+private:
+    //回避が始まった時間
+    float avoidance_boost_time{ 0 };
+    //回避力
+    float  avoidance_velocity{ 15.0f };
+    //イージングの効果時間
+    float easing_time{ 1.0f };
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
@@ -79,6 +83,11 @@ public:
         camera_forward = c_forward;
         camera_right = c_right;
     }
+private:
+    //回避の加速
+    void AvoidanceAcceleration(float elapse_time);
+    //突進の加速(線形補間)
+    void ChargeAcceleration(float elapse_time);
 private:
     //-----------アニメーションに関係する関数,変数------------//
 

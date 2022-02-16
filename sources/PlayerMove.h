@@ -16,5 +16,13 @@ private:
     void UpdateHrizontalVelocity(float elasedFrame);
     //水平移動更新処理
     void UpdateHorizontalMove(float elapsedTime, DirectX::XMFLOAT3& position, SkyDome* sky_dome);
+    //ターゲットに向かって回転
+    void RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
+
+protected:
+    //敵をロックオンしたかどうか
+    bool is_lock_on{ false };
+    //ターゲット
+    DirectX::XMFLOAT3 target{};
 
 };

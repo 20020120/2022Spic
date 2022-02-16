@@ -1,6 +1,7 @@
 #include "Player.h"
 #include"imgui_include.h"
 #include"user.h"
+#include"easing.h"
 //プレイヤーの原点は腰
 
 Player::Player(GraphicsPipeline& graphics)
@@ -43,12 +44,21 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::TreePop();
             }
+            if (ImGui::TreeNode("PlayerDirection"))
+            {
+                ImGui::DragFloat3("forward", &forward.x);
+                ImGui::DragFloat3("right", &right.x);
+                ImGui::DragFloat3("up", &up.x);
+                ImGui::TreePop();
+            }
             if (ImGui::TreeNode("speed"))
             {
                 ImGui::DragFloat3("velocity", &velocity.x);
                 ImGui::DragFloat("max_speed", &move_speed);
                 ImGui::TreePop();
             }
+            float t = model->get_anim_para().animation_tick;
+            ImGui::InputFloat("current_keyframe", &t);
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
             ImGui::DragFloat("step_offset_z", &step_offset_z);
@@ -59,6 +69,8 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
                 ImGui::TreePop();
             }
+            ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time);
+            ImGui::DragFloat3("target", &target.x);
             ImGui::End();
         }
     }
@@ -68,7 +80,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     float mx{ velocity.x * step_offset_z * elapsed_time };
     float mz{ velocity.z * step_offset_z * elapsed_time };
 
-    Collision::sphere_vs_sphere(position, 1.0f, { position.x + mx,position.y,position.z + mz}, 1.0f);
+    Collision::sphere_vs_sphere(position, 1.0f, target, 1.0f);
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -95,3 +107,36 @@ void Player::GetPlayerDirections()
     XMStoreFloat3(&forward, forward_vec);
 
 }
+
+void Player::AvoidanceAcceleration(float elapse_time)
+{
+       avoidance_boost_time += 1.0f * elapse_time;
+    //入力がなければプレイヤーの前方向に加速
+    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        //velocity.x = forward.x * 30.0f;
+        //velocity.z = forward.z * 30.0f;
+        //DirectX::XMFLOAT3 end{ forward.x * 15.0f ,forward.y * 15.0f,forward.z * 15.0f };
+        //velocity.x = easing::Quart::easeOut(avoidance_boost_time, velocity.x,end.x, 2.0f);
+        //velocity.z = easing::Quart::easeOut(avoidance_boost_time, velocity.z,end.z, 2.0f);
+
+
+    }
+    //入力があれば入力方向に加速
+    else
+    {
+        //DirectX::XMVECTOR ve{ DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&velocity))};
+        //DirectX::XMFLOAT3 dire{};
+        //DirectX::XMStoreFloat3(&dire, ve);
+        //velocity.x = dire.x * 30.0f;
+        //velocity.z = dire.z * 30.0f;
+
+    }
+}
+
+void Player::ChargeAcceleration(float elapse_time)
+{
+    //位置を補間
+    position = Math::lerp(position, target, 1.0f * elapse_time);
+}
+
