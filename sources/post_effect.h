@@ -36,6 +36,7 @@ private:
 		BARREL_SHAPED,				// 樽状湾曲
 		GLITCH,                     // グリッチ
 		VIGNETTING,                 // ビネット
+		DASH_BLUR,                  // ダッシュブラー
 
 		PST_EFC_COUNT               //この定数が最後に
 	};
@@ -77,6 +78,11 @@ private:
 		DirectX::XMFLOAT2 vignetting_pos{ 0.5f, 0.5f };
 		float vignetting_scope{ 0.2f };
 		float pad7;
+		// dash_blur
+		DirectX::XMFLOAT4 reference_position{ 0.5f, 0.5f, 0, 0 };
+		float zoom_power{4};
+		int focus_detail{50};
+		DirectX::XMFLOAT2 pad8;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
     //--------< 関数 >--------//

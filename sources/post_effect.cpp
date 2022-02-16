@@ -24,6 +24,7 @@ PostEffect::PostEffect(ID3D11Device* device)
 		create_ps_from_cso(device, "shaders/barrel_shaped_bend_ps.cso", pixel_shaders[8].GetAddressOf());
 		create_ps_from_cso(device, "shaders/glitch_ps.cso", pixel_shaders[9].GetAddressOf());
 		create_ps_from_cso(device, "shaders/vignetting_ps.cso", pixel_shaders[10].GetAddressOf());
+		create_ps_from_cso(device, "shaders/dash_blur_ps.cso", pixel_shaders[11].GetAddressOf());
 	}
 	// 定数バッファ
 	effect_constants = std::make_unique<Constants<PostEffectConstants>>(device);
@@ -57,7 +58,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING"};
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR"};
 		static int effect_type[FRAMEBUFFERS_COUNT - 2] = { static_cast<int>(POST_EFFECT_TYPE::NONE) };
 		static int post_effect_count = 1;
 		static bool display_effect_imgui = false;
@@ -287,6 +288,26 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 #endif
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 10);
+			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR))
+			{
+#ifdef USE_IMGUI
+				std::string ss = "dash_blur " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat2("reference_pos", &effect_constants->data.reference_position.x, 0.01f);
+						ImGui::DragFloat("zoom_power", &effect_constants->data.zoom_power, 0.01f);
+						ImGui::DragInt("focus_detail", &effect_constants->data.focus_detail);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 11);
 			}
 		}
 		//----セットしたポストエフェクトを描画する---//
