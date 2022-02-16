@@ -9,7 +9,7 @@ PlayerMove::~PlayerMove()
 {
 }
 
-void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right)
+void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome)
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
@@ -19,9 +19,9 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     //経過フレーム
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);
-    UpdateVerticalMove(elapsed_time, position);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
     UpdateHrizontalVelocity(elapsed_frame);
-    UpdateHorizontalMove(elapsed_time, position);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
 }
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
@@ -29,8 +29,28 @@ void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
     //velocity.y += gravity * elapsed_frame;
 }
 
-void PlayerMove::UpdateVerticalMove(float elapsed_time, DirectX::XMFLOAT3& position)
+void PlayerMove::UpdateVerticalMove(float elapsed_time, DirectX::XMFLOAT3& position, SkyDome* sky_dome)
 {
+    //垂直方向の移動量
+    float my = velocity.y * elapsed_time;
+
+    if (my != 0.0f)
+    {
+        //レイの開始位置は足元より少し上
+        DirectX::XMFLOAT3 start = { position.x, position.y, position.z };
+        //レイの終点位置は移動後の位置
+        DirectX::XMFLOAT3 end = { position.x, position.y - my + step_offset_y, position.z };
+
+        if (sky_dome->RayCast(start, end, hit))
+        {
+            position.y = hit.position.y;
+            velocity.y = 0.0f;
+        }
+        else
+        {
+            position.y += my;
+        }
+    }
 }
 
 void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
@@ -83,16 +103,58 @@ void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
 
 }
 
-void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& position)
+void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& position, SkyDome* sky_dome)
 {
     using namespace DirectX;
-    position.x += velocity.x * elapsed_time;
-    position.y += velocity.y * elapsed_time;
-    position.z += velocity.z * elapsed_time;
+    // 水平速力計算
+    float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+        //水平移動値
+    float mx{ velocity.x*100.0f * elapsed_time };
+    float mz{ velocity.z*100.0f * elapsed_time };
+    if (velocity_length_xz > 0.0f)
+    {
+        // レイの開始位置と終点位置
+        DirectX::XMFLOAT3 start = { position.x, position.y, position.z };
+        DirectX::XMFLOAT3 end = { position.x + mx, start.y, position.z + mz};
 
-    //水平移動値
-    float mx{ velocity.x * elapsed_time };
-    float mz{ velocity.z * elapsed_time };
+        if (sky_dome->RayCast(start, end, hit))
+        {
+            using namespace DirectX;
+            // 壁までのベクトル
+            auto start_vec = XMLoadFloat3(&start);
+            auto end_vec = XMLoadFloat3(&end);
+            auto vec = end_vec - start_vec;
+            // 壁の法線
+            auto normal_vec = XMLoadFloat3(&hit.normal);
+            // 入射ベクトルを法線に射影
+            auto dot_vec = XMVector3Dot(vec, normal_vec);
+            // 補正位置の計算
+            auto corrected_position_vec = end_vec - (normal_vec * dot_vec);
+            XMVECTOR interpolationvec{ corrected_position_vec - start_vec };//壁ずりベクトルの向き
 
+            XMFLOAT3 corrected_position{};
+            XMStoreFloat3(&corrected_position, corrected_position_vec);
+            // レイの開始位置と終点位置
+            DirectX::XMFLOAT3 start2 = { position.x, position.y, position.z };
+            DirectX::XMFLOAT3 end2 = { corrected_position };
+            if (sky_dome->RayCast(start2, end2, hit))
+            {
+                position.x = hit.position.x;
+                position.z = hit.position.z;
+            }
+            else
+            {
+                XMFLOAT3 interpolation{};
+                XMStoreFloat3(&interpolation, interpolationvec);
+                position.x += interpolation.x;
+                position.z += interpolation.z;
 
+            }
+        }
+        else
+        {
+            position.x += velocity.x * elapsed_time;
+            position.z += velocity.z * elapsed_time;
+        }
+    }
 }

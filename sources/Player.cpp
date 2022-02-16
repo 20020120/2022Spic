@@ -1,6 +1,7 @@
 #include "Player.h"
 #include"imgui_include.h"
 #include"user.h"
+//プレイヤーの原点は腰
 
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
@@ -19,9 +20,9 @@ void Player::Initialize()
 {
 }
 
-void Player::Update(float elapsed_time)
+void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
-    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right);
+    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right, sky_dome);
     GetPlayerDirections();
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -45,12 +46,16 @@ void Player::Update(float elapsed_time)
             }
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
+            ImGui::DragFloat("step_offset_z", &step_offset_z);
             ImGui::Checkbox("camera_reset", &camera_reset);
             ImGui::End();
         }
     }
 #endif // USE_IMGUI
+    float mx{ velocity.x * step_offset_z * elapsed_time };
+    float mz{ velocity.z * step_offset_z * elapsed_time };
 
+    Collision::sphere_vs_sphere(position, 1.0f, { position.x + mx,position.y,position.z + mz}, 1.0f);
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)

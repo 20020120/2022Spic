@@ -11,7 +11,7 @@ public:
     ~Player();
 public:
     void Initialize()override;
-    void Update(float elapsed_time)override;
+    void Update(float elapsed_time, SkyDome* sky_dome)override;
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     DirectX::XMFLOAT3 camera_forward{};//ƒJƒƒ‰‚Ì‘O•ûŒü
