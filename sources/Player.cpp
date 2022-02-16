@@ -7,6 +7,7 @@ Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_proto.fbx");
+    model->play_animation(AnimationClips::Idle, true);
     scale = { 0.01f,0.01f,0.01f };
     GetPlayerDirections();
 }
@@ -20,8 +21,12 @@ void Player::Initialize()
 {
 }
 
+//このアップデートの中に書いていたらExecFuncUpdate関数で
+//どの関数が呼ばれていても確実に通る
+//アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
 void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ExecFuncUpdate(elapsed_time, sky_dome);
     UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right, sky_dome);
     GetPlayerDirections();
 #ifdef USE_IMGUI
@@ -47,11 +52,19 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
             ImGui::DragFloat("step_offset_z", &step_offset_z);
-            ImGui::Checkbox("camera_reset", &camera_reset);
+            if (ImGui::TreeNode("PlayerFlags"))
+            {
+                ImGui::Checkbox("camera_reset", &camera_reset);
+                ImGui::Checkbox("is_lock_on", &is_lock_on);
+                ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::TreePop();
+            }
             ImGui::End();
         }
     }
 #endif // USE_IMGUI
+
+    model->update_animation(elapsed_time);
     float mx{ velocity.x * step_offset_z * elapsed_time };
     float mz{ velocity.z * step_offset_z * elapsed_time };
 
