@@ -1,6 +1,5 @@
 #pragma once
 
-
 using GamePadButton = unsigned int;
 
 // ゲームパッド
