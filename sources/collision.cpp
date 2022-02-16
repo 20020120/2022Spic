@@ -714,3 +714,14 @@ bool Collision::ray_vs_model(const DirectX::XMFLOAT3& start, const DirectX::XMFL
     }
     return hit;
 }
+
+bool Collision::ray_vs_model(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const SkinnedMesh* model,
+    const DirectX::XMFLOAT3& model_position, const DirectX::XMFLOAT3& model_scale, const DirectX::XMFLOAT3& model_angle, HitResult& result)
+{
+    const DirectX::XMFLOAT4X4& model_coordinate
+        = { 1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 };
+    return ray_vs_model(start, end, model, model_position, model_scale, model_angle, model_coordinate, result);
+}
