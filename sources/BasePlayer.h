@@ -20,3 +20,6 @@ protected:
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
+
+
+
