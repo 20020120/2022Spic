@@ -296,10 +296,16 @@ void framework::calculate_frame_stats()
 		float fps = static_cast<float>(frames);
 		std::wostringstream outs;
 		outs.precision(6);
-		if (debug_flags->get_perspective_switching())
-			outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << " Debug";
-		else
-			outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << " Game";
+
+		LPCWSTR game_mode{ L"/Debug" };
+		LPCWSTR wire_flame{ L"/Wire Frame Off" };
+
+		if (debug_flags->get_perspective_switching()) game_mode = L"/Debug";
+		else game_mode = L"/Game";
+		if (debug_flags->get_wireframe_switching()) wire_flame = L"/Wire Frame On";
+		else wire_flame = L"/Wire Frame Off";
+
+		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << game_mode << wire_flame;
 		SetWindowTextW(hwnd, outs.str().c_str());
 
 		frames = 0;
