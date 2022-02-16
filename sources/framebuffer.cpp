@@ -92,9 +92,10 @@ FrameBuffer::FrameBuffer(ID3D11Device* device, uint32_t width, uint32_t height, 
 
 void FrameBuffer::clear(ID3D11DeviceContext* dc, FB_FLAG flags, DirectX::XMFLOAT4 color, float depth)
 {
+    DirectX::XMFLOAT4 c = { 0.5f,0.5f,0.5f,1 };
     if (flags & FB_FLAG::COLOR && render_target_view) // UNIT.99
     {
-        dc->ClearRenderTargetView(render_target_view.Get(), reinterpret_cast<const FLOAT*>(&color));
+        dc->ClearRenderTargetView(render_target_view.Get(), reinterpret_cast<const FLOAT*>(&c));
     }
     if (flags & FB_FLAG::DEPTH && depth_stencil_view) // UNIT.99
     {

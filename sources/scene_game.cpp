@@ -26,8 +26,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
-	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\sky\\cube.fbx", false);
-	test = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\player\\player_proto.fbx", false);
+	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
@@ -158,6 +157,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// skymap(オブジェクト描画の最初)
 	{
 		// 描画ステート設定
+<<<<<<< HEAD
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::SKYMAP);
 		static float dimension{ 350.0f };
 		//ImGui::Begin("sky");
@@ -174,8 +174,17 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		//DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix({1,1,1}, {0,0,0}, {0,0,0})) };
 		//DirectX::XMStoreFloat4x4(&world, C * W);
 		//test->render(graphics.get_dc().Get(), world, { 1,1,1,1 });
+=======
+		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
+		static float dimension{ 0.1f };
+#ifdef USE_IMGUI
+		ImGui::Begin("sky");
+		ImGui::DragFloat("dimension", &dimension, 0.01f);
+		ImGui::End();
+#endif
+		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
+>>>>>>> 25baf3f74cf0dfd92660f80618e4f29be769e4f8
 	}
-
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	if (DebugFlags::get_wireframe_switching())
