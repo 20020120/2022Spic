@@ -32,6 +32,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mEnemyManager.fInitialize(graphics.get_device().Get());
+	player = std::make_unique<Player>(graphics);
 }
 
 void SceneGame::uninitialize() {}
@@ -40,7 +41,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 	mEnemyManager.fUpdate(elapsed_time);
-
+	player->Update(elapsed_time);
+	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	// camera
 	camera->update_with_quaternion(elapsed_time);
 	// shadow_map
@@ -155,6 +157,22 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// skymap(オブジェクト描画の最初)
 	{
 		// 描画ステート設定
+		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::SKYMAP);
+		static float dimension{ 350.0f };
+		//ImGui::Begin("sky");
+		//ImGui::DragFloat("dimension", &dimension, 0.1f);
+		//ImGui::End();
+		sky_dome->render(graphics.get_dc().Get(),
+			{ dimension, 0.0f, 0.0f, 0.0f, 0.0f, dimension, 0.0f, 0.0f, 0.0f, 0.0f, dimension, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }, { 1,1,1,1 });
+	}
+
+	{
+		//graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+		//DirectX::XMFLOAT4X4 world;
+		//DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f)) };
+		//DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix({1,1,1}, {0,0,0}, {0,0,0})) };
+		//DirectX::XMStoreFloat4x4(&world, C * W);
+		//test->render(graphics.get_dc().Get(), world, { 1,1,1,1 });
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
 		static float dimension{ 0.1f };
 #ifdef USE_IMGUI
@@ -184,7 +202,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mEnemyManager.fRender(graphics.get_dc().Get());
-
+	player->Render(graphics, elapsed_time);
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
 	// シャドウマップの破棄

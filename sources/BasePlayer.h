@@ -3,8 +3,9 @@
 #include<DirectXMath.h>
 #include"graphics_pipeline.h"
 #include"skinned_mesh.h"
+#include "practical_entities.h"
 
-class BasePlayer
+class BasePlayer :public PracticalEntities
 {
 public:
     BasePlayer() {}
@@ -12,7 +13,7 @@ public:
 protected:
     virtual  void Initialize() = 0;
     virtual  void Update(float elapsed_time) = 0;
-    virtual void Render(GraphicsPipeline* graphics, float elapsed_time) = 0;
+    virtual void Render(GraphicsPipeline& graphics, float elapsed_time) = 0;
 protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
