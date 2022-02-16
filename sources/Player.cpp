@@ -43,6 +43,7 @@ void Player::Update(float elapsed_time)
             }
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
+            ImGui::Checkbox("camera_reset", &camera_reset);
             ImGui::End();
         }
     }

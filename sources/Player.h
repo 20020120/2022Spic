@@ -20,11 +20,16 @@ private:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up;
+    //カメラの向きをリセット
+    bool camera_reset{ false };
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }
     DirectX::XMFLOAT3 GetPosition() { return position; }
+    DirectX::XMFLOAT3 GetVelocity() { return velocity; }
+    bool GetCameraReset() { return camera_reset; }
+    void FalseCameraReset() { camera_reset = false; }
     HitResult& GetPlayerHitResult() { return hit; }
     void SetRaycast(bool r) { raycast = r; }
 private:

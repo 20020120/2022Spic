@@ -115,6 +115,9 @@
     <Filter Include="Sources\Move">
       <UniqueIdentifier>{cf62f38b-6772-4968-87b2-be2d402350c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\skydome">
+      <UniqueIdentifier>{a540791f-fe00-4091-9e33-caf26773ce9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -290,6 +293,9 @@
     </ClCompile>
     <ClCompile Include="sources\EnemyEditor.cpp">
       <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SkyDome.cpp">
+      <Filter>Sources\skydome</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -478,6 +484,9 @@
     </ClInclude>
     <ClInclude Include="sources\EnemiesEditor.h">
       <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SkyDome.h">
+      <Filter>Sources\skydome</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
