@@ -3,6 +3,7 @@
 #include"skinned_mesh.h"
 #include"practical_entities.h"
 #include"graphics_pipeline.h"
+#include"collision.h"
 class SkyDome : PracticalEntities
 {
 public:
@@ -10,6 +11,7 @@ public:
     ~SkyDome();
 public:
     void Render(GraphicsPipeline& grahics, float elapsed_time);
+    bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 private:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 scale{ 0.1f , 0.1f , 0.1f };
