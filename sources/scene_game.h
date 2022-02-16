@@ -15,6 +15,7 @@
 #include "imgui_include.h"
 
 #include"EnemyManager.h"
+#include"Player.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -61,4 +62,5 @@ private:
     //
     //****************************************************************
     EnemyManager mEnemyManager{};
+    std::unique_ptr<Player> player{ nullptr };
 };
