@@ -1,6 +1,7 @@
 #pragma once
 #include<memory>
 #include<DirectXMath.h>
+#include"graphics_pipeline.h"
 #include"skinned_mesh.h"
 
 class BasePlayer
@@ -11,7 +12,7 @@ public:
 protected:
     virtual  void Initialize() = 0;
     virtual  void Update(float elapsed_time) = 0;
-    virtual void Render(float elapsed_time) = 0;
+    virtual void Render(GraphicsPipeline* graphics, float elapsed_time) = 0;
 protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
@@ -19,3 +20,6 @@ protected:
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
+
+
+

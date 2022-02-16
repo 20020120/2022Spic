@@ -112,6 +112,9 @@
     <Filter Include="Sources\character\player">
       <UniqueIdentifier>{26e910cf-9d24-4c9e-944b-33e2385b5ffd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Move">
+      <UniqueIdentifier>{cf62f38b-6772-4968-87b2-be2d402350c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -272,6 +275,15 @@
     </ClCompile>
     <ClCompile Include="sources\EnemyFileSystem.cpp">
       <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Player.cpp">
+      <Filter>Sources\character\player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\MoveBehavior.cpp">
+      <Filter>Sources\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\PlayerMove.cpp">
+      <Filter>Sources\character\player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -445,6 +457,15 @@
     </ClInclude>
     <ClInclude Include="sources\EnemyFileSystem.h">
       <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Player.h">
+      <Filter>Sources\character\player</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\MoveBehavior.h">
+      <Filter>Sources\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\PlayerMove.h">
+      <Filter>Sources\character\player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
