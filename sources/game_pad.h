@@ -4,7 +4,7 @@ using GamePadButton = unsigned int;
 
 // ゲームパッド
 class GamePad
-{
+{ 
 public:
 	static const GamePadButton BTN_UP             = (1 << 0);
 	static const GamePadButton BTN_RIGHT          = (1 << 1);
