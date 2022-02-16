@@ -2,6 +2,7 @@
 #include <math.h>
 #include <Xinput.h>
 #include "game_pad.h"
+#include "debug_flags.h"
 
 void GamePad::update(float elapsed_time)
 {
@@ -42,7 +43,7 @@ void GamePad::update(float elapsed_time)
 		if (pad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)			newButtonState |= BTN_RIGHT_SHOULDER;
 		if (pad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)	newButtonState |= BTN_LEFT_TRIGGER;
 		if (pad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)	newButtonState |= BTN_RIGHT_TRIGGER;
-		 
+
 		if ((pad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && pad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
 			(pad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && pad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
 		{
@@ -193,6 +194,16 @@ void GamePad::update(float elapsed_time)
 		button_up = 0;	// ó£ÇµÇΩèuä‘
 	}
 }
+
+GamePadButton GamePad::get_button() { return DebugFlags::get_perspective_switching() ? 0 : button_state[0]; }
+GamePadButton GamePad::get_button_down() { return DebugFlags::get_perspective_switching() ? 0 : button_down; }
+GamePadButton GamePad::get_button_up() { return DebugFlags::get_perspective_switching() ? 0 : button_up; }
+float GamePad::get_axis_LX() { return DebugFlags::get_perspective_switching() ? 0 : axisLx; }
+float GamePad::get_axis_LY() { return DebugFlags::get_perspective_switching() ? 0 : axisLy; }
+float GamePad::get_axis_RX() { return DebugFlags::get_perspective_switching() ? 0 : axisRx; }
+float GamePad::get_axis_RY() { return DebugFlags::get_perspective_switching() ? 0 : axisRy; }
+float GamePad::get_trigger_L() { return DebugFlags::get_perspective_switching() ? 0 : triggerL; }
+float GamePad::get_trigger_R() { return DebugFlags::get_perspective_switching() ? 0 : triggerR; }
 
 bool GamePad::set_vibration(float R, float L, float StopTime)
 {

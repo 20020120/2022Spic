@@ -13,8 +13,19 @@ public:
    void Update(float elapsed_time)override;
    void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
-    DirectX::XMFLOAT3 camera_forward{};
-    DirectX::XMFLOAT3 camera_right{};
+    DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
+    DirectX::XMFLOAT3 camera_right{};//カメラの右方向
+
+    DirectX::XMFLOAT3 forward;
+    DirectX::XMFLOAT3 right;
+    DirectX::XMFLOAT3 up;
+public:
+    DirectX::XMFLOAT3 GetForward() { return forward; }
+    DirectX::XMFLOAT3 GetRight() { return right; }
+    DirectX::XMFLOAT3 GetUp() { return up; }
+    DirectX::XMFLOAT3 GetPosition() { return position; }
+private:
+    void GetPlayerDirections();
 public:
     void SetCameraDirection(const DirectX::XMFLOAT3& c_forward,  const DirectX::XMFLOAT3& c_right)
     {
