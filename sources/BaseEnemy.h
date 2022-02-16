@@ -8,6 +8,12 @@
 // 敵の基底クラス 
 // 
 //****************************************************************
+
+typedef std::function<void()> InitFunc;
+typedef std::function<void(float)> UpdateFunc;
+typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
+
+
 class BaseEnemy
 {
     //****************************************************************
@@ -23,6 +29,9 @@ public:
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
 
+protected:
+    void fUpdateStateMachine(float elapsedTime_);
+
     //****************************************************************
     // 
     // 変数 
@@ -35,4 +44,21 @@ protected:
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+
+    //--------------------<ステートマシンに関連する変数>--------------------//
+
+    int mState{}; // 状態
+    bool mIsInitialize{ false }; // 初期化したかどうか
+
+protected:
+    //****************************************************************
+    // 
+    // 簡易的なステートマシンを仮実装（実装速度が必要じゃないなら変えるかも）
+    // 
+    //****************************************************************
+    std::map<int, FunctionTuple> mFunctionMap{};
+    FunctionTuple mCurrentTuple{};
+
+    virtual void fRegisterFunctions() {}; 
+    void fChangeState(int i);
 };

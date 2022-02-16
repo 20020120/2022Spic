@@ -21,14 +21,6 @@ private:
     DirectX::XMFLOAT3 mPosition{};
 };
 
-struct EnemySource
-{
-    float mSpawnTimer{};  // 出現タイミングを記録
-    int mEmitterNumber{}; // 出現位置の番号
-    int mType{};          // 敵の種類
-};
-
-
 //****************************************************************
 // 
 // 敵の管理クラス 
@@ -45,7 +37,6 @@ class EnemyManager final
     enum class EnemyType
     {
         Test, // テスト用（本番では使わない）
-
     };
 
     //****************************************************************
@@ -89,7 +80,7 @@ private:
     std::map<int, Emitter> mEmitterMap{}; // 敵の出現口
 
     // 初期化用にポインタを保持
-    const ID3D11Device* mpDevice{ nullptr };
+    ID3D11Device* mpDevice{ nullptr };
 
     //--------------------<ウェーブに関する変数>--------------------//
     float mWaveTimer{}; // 各ウェーブ開始からの経過時間

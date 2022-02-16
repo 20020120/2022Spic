@@ -1,6 +1,11 @@
 #include"EnemyManager.h"
+//#include "EnemyFileSystem.h"
 
-#include"imgui_include.h"
+#include"TestEnemy.h"
+#include"imgui_include.h" 
+#include <fstream>
+
+
 //****************************************************************
 // 
 // ìGÇÃä«óùÉNÉâÉX 
@@ -10,6 +15,7 @@
 void EnemyManager::fInitialize(ID3D11Device* pDevice_)
 {
     //--------------------<èâä˙âª>--------------------//
+    mpDevice = pDevice_;
     fAllClear();
 
 
@@ -45,7 +51,6 @@ void EnemyManager::fFinalize()
 
 void EnemyManager::fSpawn()
 {
-    
 }
 
 void EnemyManager::fEnemiesUpdate(float elapsedTime_)
@@ -88,5 +93,49 @@ void EnemyManager::fAllClear()
 void EnemyManager::fGuiMenu()
 {
     ImGui::Begin("EnemyManager");
+
+    ImGui::Text("WaveNumber");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mCurrentWave).c_str());
+    ImGui::Text("WaveTimer");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mWaveTimer).c_str());
+
+    ImGui::Separator();
+
+    ImGui::Text("EnemyValues");
+    ImGui::SameLine();
+    ImGui::Text(std::to_string(mEnemyVec.size()).c_str());
+
+    if (ImGui::Button("CreateEnemy"))
+    {
+        DirectX::XMFLOAT3 point{};
+
+        mEnemyVec.emplace_back(new TestEnemy(mpDevice, point));
+    }
+
+    if(ImGui::CollapsingHeader("JsonTest"))
+    {
+        if (ImGui::Button("Create"))
+        {
+        }
+        if (ImGui::Button("Test"))
+        {
+            std::ofstream ofs;
+            ofs.open("./resources/Data/Wave0Enemy.json");
+            if (ofs)
+            {
+               /* nlohmann::json json;
+                EnemySource source;
+                source.mEmitterNumber = 100;
+                source.mType = 0;
+                source.mSpawnTimer = 10.0f;
+                EnemyJson::to_json(json, source);
+                ofs << json;*/
+            }
+        }
+
+    }
+
     ImGui::End();
 }

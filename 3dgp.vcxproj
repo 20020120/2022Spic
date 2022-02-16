@@ -177,6 +177,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>.\DirectXTK-master\Inc;C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include;.\cereal-master\include;.\Effekseer153a\include\Effekseer;.\Effekseer153a\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,6 +216,7 @@
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
     <ClCompile Include="sources\effect_manager.cpp" />
+    <ClCompile Include="sources\EnemyFileSystem.cpp" />
     <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
@@ -269,6 +271,7 @@
     <ClInclude Include="sources\debug_flags.h" />
     <ClInclude Include="sources\effect.h" />
     <ClInclude Include="sources\effect_manager.h" />
+    <ClInclude Include="sources\EnemyFileSystem.h" />
     <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />
