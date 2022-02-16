@@ -5,7 +5,7 @@
 Player::Player(GraphicsPipeline& graphics)
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_proto.fbx");
-    scale = { 0.03f,0.03f,0.03f };
+    scale = { 0.01f,0.01f,0.01f };
 }
 
 Player::~Player()
@@ -31,11 +31,16 @@ void Player::Update(float elapsed_time)
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
-                ImGui::DragFloat3("scale", &scale.x);
+                ImGui::DragFloat3("scale", &scale.x, 0.001f);
                 ImGui::DragFloat4("orientation", &orientation.x);
                 ImGui::TreePop();
             }
-            ImGui::DragFloat3("velocity", &velocity.x);
+            if (ImGui::TreeNode("speed"))
+            {
+                ImGui::DragFloat3("velocity", &velocity.x);
+                ImGui::DragFloat("max_speed", &move_speed);
+                ImGui::TreePop();
+            }
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
             ImGui::End();
