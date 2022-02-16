@@ -100,6 +100,8 @@ private:
     // 現在のウェーブのデータ
     std::vector<EnemySource> mCurrentWaveVec{};
 
+    EnemyEditor mEditor{};
+
     //****************************************************************
     // 
     // 定数

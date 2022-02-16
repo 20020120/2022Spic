@@ -51,6 +51,6 @@ void TestEnemy::fIdleInit()
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
-   
+    mPosition.z += 10.0f * elapsedTime_;
 }
 

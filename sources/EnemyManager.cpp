@@ -190,6 +190,7 @@ void EnemyManager::fGuiMenu()
         ImGui::End();
     }
 #endif
+    mEditor.fGuiMenu();
 }
 
 void EnemyManager::fStartWave(int WaveIndex_)
