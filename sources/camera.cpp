@@ -136,6 +136,18 @@ void Camera::update_with_quaternion(float elapsed_time)
 	XMVECTOR focus_vec = XMLoadFloat3(&target);
 	XMMATRIX view_mat = XMMatrixLookAtLH(eye_vec, focus_vec, XMLoadFloat3(&up)); // V
 	XMStoreFloat4x4(&view, view_mat);
+	//ビュー行列を逆行列かしワールド行列に戻す
+	DirectX::XMMATRIX world_vec = DirectX::XMMatrixInverse(nullptr, view_mat);
+	DirectX::XMFLOAT4X4 world;
+	DirectX::XMStoreFloat4x4(&world, world_vec);
+	this->right.x = world._11;
+	this->right.y = world._12;
+	this->right.z = world._13;
+
+	this->forward.x = world._31;
+	this->forward.y = world._32;
+	this->forward.z = world._33;
+
 	// プロジェクション行列を作成
 	float width = static_cast<float>(SCREEN_WIDTH);
 	float height = static_cast<float>(SCREEN_HEIGHT);

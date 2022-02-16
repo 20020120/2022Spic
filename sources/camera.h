@@ -45,6 +45,10 @@ public:
     }
     // near_far
     void set_near_far(const DirectX::XMFLOAT2& n_f) { near_far = n_f; }
+    //forward
+    DirectX::XMFLOAT3 GetForward() { return forward; }
+    //right
+    DirectX::XMFLOAT3 GetRight() { return right; }
 private:
     //--------< ŠÖ” >--------//
     void mouse_operation_with_euler_angles(float elapsed_time);
@@ -69,6 +73,8 @@ private:
     DirectX::XMFLOAT3 target{};
     DirectX::XMFLOAT3 angle{ 0.4f, 0, 0 };
     DirectX::XMFLOAT4 orientation;
+    DirectX::XMFLOAT3 forward{};
+    DirectX::XMFLOAT3 right{};
     float vertical_rotation_degree = 0;
     float horizon_rotation_degree = 0;
     float roll_speed{ DirectX::XMConvertToRadians(90) };

@@ -272,6 +272,7 @@
     <ClInclude Include="sources\constants.h" />
     <ClInclude Include="sources\debug_figures.h" />
     <ClInclude Include="sources\debug_flags.h" />
+    <ClInclude Include="sources\easing.h" />
     <ClInclude Include="sources\effect.h" />
     <ClInclude Include="sources\effect_manager.h" />
     <ClInclude Include="sources\EnemyFileSystem.h" />

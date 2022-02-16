@@ -467,6 +467,9 @@
     <ClInclude Include="sources\PlayerMove.h">
       <Filter>Sources\character\player</Filter>
     </ClInclude>
+    <ClInclude Include="sources\easing.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
