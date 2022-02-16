@@ -3,9 +3,11 @@
 #include"user.h"
 
 Player::Player(GraphicsPipeline& graphics)
+    :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_proto.fbx");
     scale = { 0.01f,0.01f,0.01f };
+    GetPlayerDirections();
 }
 
 Player::~Player()
