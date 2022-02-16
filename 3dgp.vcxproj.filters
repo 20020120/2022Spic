@@ -615,6 +615,9 @@
     <FxCompile Include="HLSL\default_mesh_ps.hlsl">
       <Filter>Shaders\model\skinned_mesh</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\dash_blur_ps.hlsl">
+      <Filter>Shaders\post_effect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
