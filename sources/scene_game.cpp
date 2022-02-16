@@ -156,13 +156,14 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
-		static float dimension{ 0.1f };
 #ifdef USE_IMGUI
 		ImGui::Begin("sky");
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
 #endif
 		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
+
+
 	}
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());

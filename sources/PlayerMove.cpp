@@ -94,4 +94,5 @@ void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& pos
     float mx{ velocity.x * elapsed_time };
     float mz{ velocity.z * elapsed_time };
 
+
 }
