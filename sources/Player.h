@@ -23,6 +23,7 @@ public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }
+    DirectX::XMFLOAT3 GetPosition() { return position; }
 private:
     void GetPlayerDirections();
 public:
