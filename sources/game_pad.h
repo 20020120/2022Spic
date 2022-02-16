@@ -1,10 +1,11 @@
 #pragma once
 
+
 using GamePadButton = unsigned int;
 
 // ゲームパッド
 class GamePad
-{ 
+{
 public:
 	static const GamePadButton BTN_UP             = (1 << 0);
 	static const GamePadButton BTN_RIGHT          = (1 << 1);
@@ -31,23 +32,23 @@ public:
 	// スロット設定
 	void set_slot(int slot) { this->slot = slot; }
 	// ボタン入力状態の取得
-	GamePadButton get_button() const { return button_state[0]; }
+	GamePadButton get_button();
 	// ボタン押下状態の取得
-	GamePadButton get_button_down() const { return button_down; }
+	GamePadButton get_button_down();
 	// ボタン押上状態の取得
-	GamePadButton get_button_up() const { return button_up; }
+	GamePadButton get_button_up();
 	// 左スティックX軸入力状態の取得
-	float get_axis_LX() const { return axisLx; }
+	float get_axis_LX();
 	// 左スティックY軸入力状態の取得
-	float get_axis_LY() const { return axisLy; }
+	float get_axis_LY();
 	// 右スティックX軸入力状態の取得
-	float get_axis_RX() const { return axisRx; }
+	float get_axis_RX();
 	// 右スティックY軸入力状態の取得
-	float get_axis_RY() const { return axisRy; }
+	float get_axis_RY();
 	// 左トリガー入力状態の取得
-	float get_trigger_L() const { return triggerL; }
+	float get_trigger_L();
 	// 右トリガー入力状態の取得
-	float get_trigger_R() const { return triggerR; }
+	float get_trigger_R();
 	// バイブレーション
 	bool set_vibration(float R, float L, float StopTime);
 	// 操作有効、無効
