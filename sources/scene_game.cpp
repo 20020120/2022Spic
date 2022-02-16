@@ -35,7 +35,10 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	player = std::make_unique<Player>(graphics);
 }
 
-void SceneGame::uninitialize() {}
+void SceneGame::uninitialize()
+{
+	mEnemyManager.fFinalize();
+}
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {

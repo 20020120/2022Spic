@@ -145,6 +145,7 @@ void EnemyManager::fGuiMenu()
 {
     imgui_menu_bar("Game", "EnemyManager", mOpenGuiMenu);
 
+#ifdef USE_IMGUI
     if (mOpenGuiMenu)
     {
         ImGui::Begin("EnemyManager");
@@ -181,10 +182,6 @@ void EnemyManager::fGuiMenu()
         }
 
         ImGui::Separator();
-        if (ImGui::Button("OpenEditor"))
-        {
-            mIsOpenEditor = !mIsOpenEditor;
-        }
 
         if (ImGui::Button("Close"))
         {
@@ -192,55 +189,7 @@ void EnemyManager::fGuiMenu()
         }
         ImGui::End();
     }
-
-    fEditorGui();
-
-}
-
-void EnemyManager::fEditorGui()
-{
-    if (mIsOpenEditor)
-    {
-        ImGui::Begin("WaveEditor");
-
-        if (ImGui::CollapsingHeader("File"))
-        {
-            static char fileName[256]{};
-            ImGui::InputText("FileName", fileName, sizeof(char) * 256);
-            if (ImGui::Button("Save"))
-            {
-                EnemyFileSystem::fSaveToJson(mEditorSourceVec, fileName);
-            }
-            
-        }
-
-        if(ImGui::CollapsingHeader("Setting"))
-        {
-            static int emitterPoint = 0;
-            static float time = 0.0f;
-            int enemyType = 0;
-
-            ImGui::InputInt("EmitterNumber", &emitterPoint);
-            ImGui::DragFloat("SpawnTime", &time);
-            ImGui::InputInt("Type", &enemyType);
-
-            if (ImGui::Button("Add"))
-            {
-                EnemySource source;
-                source.mEmitterNumber = emitterPoint;
-                source.mSpawnTimer = time;
-                source.mType = enemyType;
-                mEditorSourceVec.emplace_back(source);
-            }
-        }
-
-
-        if (ImGui::Button("Close"))
-        {
-            mIsOpenEditor = false;
-        }
-        ImGui::End();
-    }
+#endif
 }
 
 void EnemyManager::fStartWave(int WaveIndex_)

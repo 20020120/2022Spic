@@ -1,6 +1,7 @@
 #pragma once
 #include"BaseEnemy.h"
 #include"EnemyFileSystem.h"
+#include"EnemiesEditor.h"
 #include<map>
 #include<vector>
 #include <d3d11.h>
@@ -61,7 +62,6 @@ public:
 
     //--------------------<ImGui>--------------------//
     void fGuiMenu();
-    void fEditorGui();
     //--------------------<ウェーブ切り替え関数>--------------------//
     void fStartWave(int WaveIndex_);
 private:
@@ -80,8 +80,6 @@ private:
     //--------------------<管理クラス内で完結する処理>--------------------//
     void fAllClear(); // 敵を全削除する関数
 
-    //--------------------<エディタ用>--------------------//
-    std::vector<EnemySource> mEditorSourceVec;
 
     //****************************************************************
     // 
@@ -115,5 +113,5 @@ private:
 
     // ImGui
     bool mOpenGuiMenu{};
-    bool mIsOpenEditor{};
+   
 };

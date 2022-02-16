@@ -216,6 +216,7 @@
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
     <ClCompile Include="sources\effect_manager.cpp" />
+    <ClCompile Include="sources\EnemyEditor.cpp" />
     <ClCompile Include="sources\EnemyFileSystem.cpp" />
     <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
@@ -276,6 +277,7 @@
     <ClInclude Include="sources\easing.h" />
     <ClInclude Include="sources\effect.h" />
     <ClInclude Include="sources\effect_manager.h" />
+    <ClInclude Include="sources\EnemiesEditor.h" />
     <ClInclude Include="sources\EnemyFileSystem.h" />
     <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
