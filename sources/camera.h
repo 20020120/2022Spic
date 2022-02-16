@@ -45,6 +45,10 @@ public:
     }
     // near_far
     void set_near_far(const DirectX::XMFLOAT2& n_f) { near_far = n_f; }
+    //forward
+    DirectX::XMFLOAT3 GetForward() { return forward; }
+    //right
+    DirectX::XMFLOAT3 GetRight() { return right; }
 private:
     //--------< ŠÖ” >--------//
     void mouse_operation_with_euler_angles(float elapsed_time);
