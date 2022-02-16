@@ -1,6 +1,7 @@
 #pragma once
 #include"BasePlayer.h"
 #include"PlayerMove.h"
+#include"collision.h"
 #include"graphics_pipeline.h"
 
 class Player :public BasePlayer, private PlayerMove
@@ -9,9 +10,9 @@ public:
     Player(GraphicsPipeline& graphics);
     ~Player();
 public:
-   void Initialize()override;
-   void Update(float elapsed_time)override;
-   void Render(GraphicsPipeline& graphics, float elapsed_time)override;
+    void Initialize()override;
+    void Update(float elapsed_time)override;
+    void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -24,6 +25,8 @@ public:
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }
     DirectX::XMFLOAT3 GetPosition() { return position; }
+    HitResult& GetPlayerHitResult() { return hit; }
+    void SetRaycast(bool r) { raycast = r; }
 private:
     void GetPlayerDirections();
 public:

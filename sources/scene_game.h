@@ -62,4 +62,6 @@ private:
     //****************************************************************
     EnemyManager mEnemyManager{};
     std::unique_ptr<Player> player{ nullptr };
+    //skydome
+    float dimension{ 0.1f };
 };

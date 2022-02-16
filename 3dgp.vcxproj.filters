@@ -288,6 +288,9 @@
     <ClCompile Include="sources\PlayerAnimation.cpp">
       <Filter>Sources\character\player</Filter>
     </ClCompile>
+    <ClCompile Include="sources\EnemyEditor.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -472,6 +475,9 @@
     </ClInclude>
     <ClInclude Include="sources\easing.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemiesEditor.h">
+      <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #pragma once
 #include<DirectXMath.h>
+#include"collision.h"
 #include"practical_entities.h"
 class MoveBehavior : public PracticalEntities
 {
@@ -15,6 +16,11 @@ protected:
     float friction{0.5f};
     float move_speed{15.0f};
     float turn_speed{ DirectX::XMConvertToRadians(720) };
+    //レイキャストの変数
+    HitResult hit{};
+    bool raycast{ false };
+    DirectX::XMFLOAT3 start{};
+    DirectX::XMFLOAT3 end{};
 protected:
     //垂直速力更新処理
     virtual  void UpdateVerticalVelocity(float elapsedFrame) {};
