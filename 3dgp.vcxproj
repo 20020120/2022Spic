@@ -216,6 +216,7 @@
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
     <ClCompile Include="sources\effect_manager.cpp" />
+    <ClCompile Include="sources\EnemyFileSystem.cpp" />
     <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
