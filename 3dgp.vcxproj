@@ -233,6 +233,7 @@
     <ClCompile Include="sources\MoveBehavior.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
     <ClCompile Include="sources\Player.cpp" />
+    <ClCompile Include="sources\PlayerAnimation.cpp" />
     <ClCompile Include="sources\PlayerMove.cpp" />
     <ClCompile Include="sources\point_light.cpp" />
     <ClCompile Include="sources\post_effect.cpp" />

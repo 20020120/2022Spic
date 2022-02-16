@@ -13,7 +13,7 @@ protected:
     float move_vec_x{};
     float move_vec_z{};
     float friction{0.5f};
-    float move_speed{5.0f};
+    float move_speed{15.0f};
     float turn_speed{ DirectX::XMConvertToRadians(720) };
 protected:
     //‚’¼‘¬—ÍXVˆ—
