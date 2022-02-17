@@ -102,8 +102,8 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // XV
     for (const auto enemy : mEnemyVec)
     {
-        enemy->fUpdate(elapsedTime_);
         enemy->fSetPlayerPosition(mPlayerPosition);
+        enemy->fUpdate(elapsedTime_);
     }
     // íœ
 

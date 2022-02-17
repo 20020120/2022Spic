@@ -24,7 +24,7 @@ void TestEnemy::fInitialize()
 void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
-    fUpdateStateMachine(elapsedTime_);
+    fUpdateBase(elapsedTime_);
 
 }
 
