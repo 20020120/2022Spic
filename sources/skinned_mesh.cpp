@@ -193,8 +193,9 @@ void SkinnedMesh::regeneration(ID3D11Device* device, const char* fbx_filename)
     }
 }
 
-void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color)
+void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color, const DirectX::XMFLOAT4& emissive_color)
 {
+    geometry_constants->data.emissive_color = emissive_color;
     for (const mesh& mesh : meshes)
     {
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
@@ -247,7 +248,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
             {
                 using namespace DirectX;
                 const material& material{ materials.at(subset.material_unique_id) };
-
+                
                 XMStoreFloat4(&geometry_constants->data.material_color, XMLoadFloat4(&material_color) * XMLoadFloat4(&material.Kd));
                 geometry_constants->bind(dc, 0, CB_FLAG::PS_VS);
                 // シェーダーリソースビューのセット
