@@ -16,8 +16,6 @@
 
 void SceneGame::initialize(GraphicsPipeline& graphics)
 {
-	// カメラ
-	camera = std::make_unique<Camera>(graphics);
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
 	// post effect
@@ -26,13 +24,16 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
-	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
+	sky_dome = std::make_unique<SkyDome>(graphics);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mEnemyManager.fInitialize(graphics.get_device().Get());
 	player = std::make_unique<Player>(graphics);
+	// カメラ
+	camera = std::make_unique<Camera>(graphics,player.get());
+
 }
 
 void SceneGame::uninitialize()
@@ -44,9 +45,10 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 	mEnemyManager.fUpdate(elapsed_time);
-	player->Update(elapsed_time);
+	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	// camera
+	//camera->Update(elapsed_time,player.get());
 	camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
@@ -159,13 +161,14 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
 		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
-		static float dimension{ 0.1f };
 #ifdef USE_IMGUI
 		ImGui::Begin("sky");
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
 #endif
-		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
+		sky_dome->Render(graphics,elapsed_time);
+
+
 	}
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());

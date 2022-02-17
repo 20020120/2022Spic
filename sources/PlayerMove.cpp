@@ -9,19 +9,29 @@ PlayerMove::~PlayerMove()
 {
 }
 
-void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right)
+void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome)
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
-    //旋回処理
-    Turn(elapsed_time, movevec.x, movevec.z, turn_speed, orientation);
+
+    //敵にロックオンしたら敵の方向を向く
+    if (is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position,orientation);
+    }
+    //ロックオンしていなかったら入力方向を向く
+    else
+    {
+        //旋回処理
+        Turn(elapsed_time, movevec.x, movevec.z, turn_speed, orientation);
+    }
 
     //経過フレーム
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);
-    UpdateVerticalMove(elapsed_time, position);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
     UpdateHrizontalVelocity(elapsed_frame);
-    UpdateHorizontalMove(elapsed_time, position);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
 }
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
@@ -29,8 +39,28 @@ void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
     //velocity.y += gravity * elapsed_frame;
 }
 
-void PlayerMove::UpdateVerticalMove(float elapsed_time, DirectX::XMFLOAT3& position)
+void PlayerMove::UpdateVerticalMove(float elapsed_time, DirectX::XMFLOAT3& position, SkyDome* sky_dome)
 {
+    //垂直方向の移動量
+    float my = velocity.y * elapsed_time;
+
+    if (my != 0.0f)
+    {
+        //レイの開始位置は足元より少し上
+        DirectX::XMFLOAT3 start = { position.x, position.y, position.z };
+        //レイの終点位置は移動後の位置
+        DirectX::XMFLOAT3 end = { position.x, position.y - my + step_offset_y, position.z };
+
+        if (sky_dome->RayCast(start, end, hit))
+        {
+            position.y = hit.position.y;
+            velocity.y = 0.0f;
+        }
+        else
+        {
+            position.y += my;
+        }
+    }
 }
 
 void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
@@ -83,15 +113,126 @@ void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
 
 }
 
-void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& position)
+void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& position, SkyDome* sky_dome)
 {
     using namespace DirectX;
-    position.x += velocity.x * elapsed_time;
-    position.y += velocity.y * elapsed_time;
-    position.z += velocity.z * elapsed_time;
+    // 水平速力計算
+    float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+        //水平移動値
+    float mx{ velocity.x*100.0f * elapsed_time };
+    float mz{ velocity.z*100.0f * elapsed_time };
+    if (velocity_length_xz > 0.0f)
+    {
+        // レイの開始位置と終点位置
+        DirectX::XMFLOAT3 start = { position.x, position.y, position.z };
+        DirectX::XMFLOAT3 end = { position.x + mx, start.y, position.z + mz};
 
-    //水平移動値
-    float mx{ velocity.x * elapsed_time };
-    float mz{ velocity.z * elapsed_time };
+        if (sky_dome->RayCast(start, end, hit))
+        {
+            using namespace DirectX;
+            // 壁までのベクトル
+            auto start_vec = XMLoadFloat3(&start);
+            auto end_vec = XMLoadFloat3(&end);
+            auto vec = end_vec - start_vec;
+            // 壁の法線
+            auto normal_vec = XMLoadFloat3(&hit.normal);
+            // 入射ベクトルを法線に射影
+            auto dot_vec = XMVector3Dot(vec, normal_vec);
+            // 補正位置の計算
+            auto corrected_position_vec = end_vec - (normal_vec * dot_vec);
+            XMVECTOR interpolationvec{ corrected_position_vec - start_vec };//壁ずりベクトルの向き
 
+            XMFLOAT3 corrected_position{};
+            XMStoreFloat3(&corrected_position, corrected_position_vec);
+            // レイの開始位置と終点位置
+            DirectX::XMFLOAT3 start2 = { position.x, position.y, position.z };
+            DirectX::XMFLOAT3 end2 = { corrected_position };
+            if (sky_dome->RayCast(start2, end2, hit))
+            {
+                position.x = hit.position.x;
+                position.z = hit.position.z;
+            }
+            else
+            {
+                XMFLOAT3 interpolation{};
+                XMStoreFloat3(&interpolation, interpolationvec);
+                position.x += interpolation.x;
+                position.z += interpolation.z;
+
+            }
+        }
+        else
+        {
+            position.x += velocity.x * elapsed_time;
+            position.z += velocity.z * elapsed_time;
+        }
+    }
+}
+
+void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation)
+{
+    using namespace DirectX;
+
+    //ターゲットに向かって回転
+    XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
+    DirectX::XMVECTOR forward, right, up;
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    right = { m4x4._11, m4x4._12, m4x4._13 };
+    up = { m4x4._21, m4x4._22, m4x4._23 };
+    forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMVECTOR d;//目標への方向
+    XMVECTOR pos_vec;//自分の位置
+    XMVECTOR target_vec;//ターゲットの位置
+    pos_vec = XMLoadFloat3(&position);
+    target_vec = XMLoadFloat3(&target);
+    d = target_vec - pos_vec;
+    d = XMVector3Normalize(d);
+    //***********************************************************
+//現在の姿勢における前方(forward)をホーム方向とし
+//方向(d)への回転軸(axis)と回転角(angle)を求める
+//***********************************************************
+    XMVECTOR axis;//回転軸
+    float an;
+    axis = XMVector3Cross(forward,d);
+    forward = XMVector3Normalize(forward);
+
+    XMVECTOR a = XMVector3Dot(d, forward);
+    XMStoreFloat(&an, a);
+    an = static_cast<float>(acos(an));
+    XMFLOAT3 forw;//forwardの値をfloat3に
+    XMFLOAT3 d_;//dの値をfloat3に
+
+    XMStoreFloat3(&forw, forward);
+    XMStoreFloat3(&d_, d);
+
+    if (fabs(an) > XMConvertToRadians(5.0f))
+    {
+
+        float cross{ (forw.x * d_.z) - (forw.z * d_.x) };
+
+        //クオータニオンは回転の仕方(どの向きに)
+
+        if (cross < 0.0f)
+        {
+            //回転軸と回転角から回転クオータニオンを求める
+            XMVECTOR q;
+            q = XMQuaternionRotationAxis(axis, an);//正の方向に動くクオータニオン
+
+            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
+        }
+        else
+        {
+            XMVECTOR q;
+            q = XMQuaternionRotationAxis(axis, -an);//負の方向に動くクオータニオン
+            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
+        }
+    }
+
+    DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }

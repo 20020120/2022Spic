@@ -4,6 +4,7 @@
 #include"graphics_pipeline.h"
 #include"skinned_mesh.h"
 #include "practical_entities.h"
+#include"SkyDome.h"
 
 class BasePlayer :public PracticalEntities
 {
@@ -12,7 +13,7 @@ public:
     virtual ~BasePlayer() {}
 protected:
     virtual  void Initialize() = 0;
-    virtual  void Update(float elapsed_time) = 0;
+    virtual  void Update(float elapsed_time,SkyDome* sky_dome) = 0;
     virtual void Render(GraphicsPipeline& graphics, float elapsed_time) = 0;
 protected:
     DirectX::XMFLOAT3 position{};
