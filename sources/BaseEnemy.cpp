@@ -26,6 +26,11 @@ void BaseEnemy::fDamaged(int Damage_)
     mParam.mHitPoint -= Damage_;
 }
 
+void BaseEnemy::fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_)
+{
+    mLengthFromTargetEnemy = Math::calc_vector_AtoB_length(mPosition, NearPosition_);
+}
+
 bool BaseEnemy::fGetIsFrustum() const
 {
     return mIsFrustum;
