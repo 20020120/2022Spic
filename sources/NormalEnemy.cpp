@@ -42,9 +42,9 @@ void NormalEnemy::fRegisterFunctions()
         fIdleUpdate(elapsedTime_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(0, tuple));
+    mFunctionMap.insert(std::make_pair(IDLE, tuple));
 
-    mCurrentTuple = mFunctionMap.at(0);
+    mCurrentTuple = mFunctionMap.at(IDLE);
 }
 
 void NormalEnemy::fParamInitialize()
@@ -53,18 +53,48 @@ void NormalEnemy::fParamInitialize()
     mParam.mAttackPower = 10;   // UŒ‚—Í
     mParam.mMoveSpeed = 10;   // ˆÚ“®‘¬“x
     mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
-
+    
 }
 
-void NormalEnemy::fTurnToThePlayer()
+bool NormalEnemy::fIsTurnToThePlayer()
 {
     using namespace DirectX;
+    XMVECTOR orientation_vec = XMLoadFloat4(&mOrientation);
     XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
     XMVECTOR E_Pos = XMLoadFloat3(&mPosition);
     XMVECTOR Vec = P_Pos - E_Pos;
-    XMVECTOR Orientation = XMLoadFloat4(&mOrientation);
     XMVECTOR Forward = XMLoadFloat3(&forward);
+    XMVECTOR Up = XMLoadFloat3(&up);
     XMVECTOR Dot = XMVector3Dot(Vec, Forward);
+    float angle = XMVectorGetX(Dot);
+    angle = acos(angle);
+    if (fabs(angle) > 1e-8f)
+    {
+        DirectX::XMFLOAT3 f{};
+        DirectX::XMStoreFloat3(&f, Forward);
+        float cross{ f.x  - f.z  };
+
+        if (cross < 0.0f)
+        {
+            XMVECTOR q;
+            q = XMQuaternionRotationAxis(Up, angle);
+            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.05f);
+        }
+        else
+        {
+            XMVECTOR q;
+            q = XMQuaternionRotationAxis(Up, -angle);
+            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.05f);
+        }
+		XMStoreFloat4(&mOrientation, orientation_vec);
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 void NormalEnemy::fIdleInit()
@@ -74,6 +104,10 @@ void NormalEnemy::fIdleInit()
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
+    if(fIsTurnToThePlayer())
+    {
+        fChangeState(MOVE);
+    }
 }
 
 void NormalEnemy::fMoveInit()

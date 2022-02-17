@@ -59,11 +59,6 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat("max_speed", &move_speed);
                 ImGui::TreePop();
             }
-            float t = model->get_anim_para().animation_tick;
-            ImGui::InputFloat("current_keyframe", &t);
-            ImGui::InputFloat3("camera_f", &camera_forward.x);
-            ImGui::InputFloat3("camera_r", &camera_right.x);
-            ImGui::DragFloat("step_offset_z", &step_offset_z);
             if (ImGui::TreeNode("PlayerFlags"))
             {
                 ImGui::Checkbox("camera_reset", &camera_reset);
@@ -71,7 +66,15 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
                 ImGui::TreePop();
             }
+            float t = model->get_anim_para().animation_tick;
+            ImGui::InputFloat("current_keyframe", &t);
+            ImGui::InputFloat3("camera_f", &camera_forward.x);
+            ImGui::InputFloat3("camera_r", &camera_right.x);
+            ImGui::InputFloat3("avoidance_end", &avoidance_end.x);
+            ImGui::DragFloat("step_offset_z", &step_offset_z);
+
             ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time);
+            ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time,0.01f);
             ImGui::DragFloat3("target", &target.x);
             ImGui::End();
         }
@@ -82,7 +85,14 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     float mx{ velocity.x * step_offset_z * elapsed_time };
     float mz{ velocity.z * step_offset_z * elapsed_time };
 
-    Collision::sphere_vs_sphere(position, 1.0f, target, 1.0f);
+    //if (Collision::sphere_vs_sphere(position, 3.0f, target, 3.0f))
+    //{
+    //    is_enemy_hit = true;
+    //}
+    //else
+    //{
+    //    is_enemy_hit = false;
+    //}
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -91,9 +101,12 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 }
 
-void Player::SetTarget(BaseEnemy* target_enemy)
+void Player::SetTarget(const BaseEnemy* target_enemy)
 {
-    target = target_enemy->fGetPosition();
+    if (target_enemy != nullptr)
+    {
+        target = target_enemy->fGetPosition();
+    }
 }
 
 void Player::GetPlayerDirections()
@@ -115,32 +128,14 @@ void Player::GetPlayerDirections()
 
 }
 
-void Player::AvoidanceAcceleration(float elapse_time)
+void Player::AvoidanceAcceleration(float elapsed_time)
 {
-    //入力がなければプレイヤーの前方向に加速
-    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
-    {
-        //velocity.x = forward.x * 30.0f;
-        //velocity.z = forward.z * 30.0f;
-        DirectX::XMFLOAT3 end{ forward.x * 30.0f ,forward.y * 30.0f,forward.z * 30.0f };
-        //velocity.x = easing::Quart::easeOut(avoidance_boost_time, velocity.x,end.x, 2.0f);
-        //velocity.z = easing::Quart::easeOut(avoidance_boost_time, velocity.z,end.z, 2.0f);
-        if (avoidance_boost_time < 1.0f)
-        {
-            velocity.x = easing::Quart::easeOut(avoidance_boost_time, velocity.x,end.x, 1.0f);
-            velocity.z = easing::Quart::easeOut(avoidance_boost_time, velocity.z,end.z, 1.0f);
-        }
+    avoidance_boost_time += elapsed_time;
 
-    }
-    //入力があれば入力方向に加速
-    else
+    if (avoidance_boost_time < avoidance_easing_time)
     {
-        //DirectX::XMVECTOR ve{ DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&velocity))};
-        //DirectX::XMFLOAT3 dire{};
-        //DirectX::XMStoreFloat3(&dire, ve);
-        //velocity.x = dire.x * 30.0f;
-        //velocity.z = dire.z * 30.0f;
-
+        velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+        velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
     }
 }
 

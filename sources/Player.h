@@ -63,6 +63,10 @@ private:
     float  avoidance_velocity{ 15.0f };
     //イージングの効果時間
     float easing_time{ 1.0f };
+    //回避ブースト開始と到達
+    DirectX::XMFLOAT3 avoidance_start{};
+    DirectX::XMFLOAT3 avoidance_end{};
+    float avoidance_easing_time{ 0.6f };
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ 1 };
@@ -79,7 +83,7 @@ public:
     bool GetEnemyLockOn() { return is_lock_on; }
     void SetRaycast(bool r) { raycast = r; }
     //一番近い敵を持って来てその位置をセットする
-    void SetTarget(BaseEnemy* target_enemy);
+    void SetTarget(const BaseEnemy* target_enemy);
 public:
     void FalseCameraReset() { camera_reset = false; }
 private:

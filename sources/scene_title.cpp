@@ -29,6 +29,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	selecter2.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 	selecter2.position = { 950.0f, 515.0f };
 	selecter2.scale = { 0.7f, 0.3f };
+
+	arrival_pos1 = { 250.0f, 515.0f };
+	arrival_pos2 = { 950.0f, 515.0f };
 }
 
 void SceneTitle::uninitialize() {}
@@ -38,10 +41,18 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	switch (state)
 	{
 	case 0: // start
-		selecter1.position = { 250.0f, 515.0f };
-		selecter2.position = { 950.0f, 515.0f };
-		if (game_pad->get_button_down() & GamePad::BTN_DOWN) { state = 1; }
-		if (game_pad->get_axis_LY() < -0.5f) { state = 1; }
+		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		{
+			state = 1;
+			arrival_pos1 = { 315.0f, 630.0f };
+			arrival_pos2 = { 870.0f, 630.0f };
+		}
+		if (game_pad->get_axis_LY() < -0.5f)
+		{
+			state = 1;
+			arrival_pos1 = { 315.0f, 630.0f };
+			arrival_pos2 = { 870.0f, 630.0f };
+		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
 			SceneManager::scene_switching(new SceneLoading(new SceneGame()));
@@ -49,10 +60,18 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		break;
 	case 1: // exit
-		selecter1.position = { 315.0f, 630.0f };
-		selecter2.position = { 870.0f, 630.0f };
-		if (game_pad->get_button_down() & GamePad::BTN_UP) { state = 0; }
-		if (game_pad->get_axis_LY() > 0.5f) { state = 0; }
+		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		{
+			state = 0;
+			arrival_pos1 = { 250.0f, 515.0f };
+			arrival_pos2 = { 950.0f, 515.0f };
+		}
+		if (game_pad->get_axis_LY() > 0.5f)
+		{
+			state = 0;
+			arrival_pos1 = { 250.0f, 515.0f };
+			arrival_pos2 = { 950.0f, 515.0f };
+		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
 			PostQuitMessage(0);
@@ -60,6 +79,11 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		break;
 	}
+
+
+
+	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
+	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 }
 
 void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
