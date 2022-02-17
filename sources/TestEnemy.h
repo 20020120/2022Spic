@@ -35,5 +35,7 @@ private:
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
 
+    void fGuiMenu();
+
     
 };
