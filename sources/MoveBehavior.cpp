@@ -52,9 +52,6 @@ void MoveBehavior::Turn(float elapsed_time, float vx, float vz, float speed, Dir
     float length = sqrtf(vx * vx + vz * vz);
     if (length < 0.001f) return;
 
-    vx /= length;
-    vz /= length;
-
     DirectX::XMFLOAT4X4 m4x4 = {};
     DirectX::XMVECTOR forward, up;
     m4x4 = QuaternionConvertXMFLOAT4X4(orientation);
@@ -83,14 +80,14 @@ void MoveBehavior::Turn(float elapsed_time, float vx, float vz, float speed, Dir
             DirectX::XMVECTOR q;
             q = DirectX::XMQuaternionRotationAxis(axis_up, angle);
             DirectX::XMVECTOR Q = DirectX::XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = DirectX::XMQuaternionSlerp(orientation_vec, Q, 0.05f);
+            orientation_vec = DirectX::XMQuaternionSlerp(orientation_vec, Q, speed);
         }
         else
         {
             DirectX::XMVECTOR q;
             q = DirectX::XMQuaternionRotationAxis(axis_up, -angle);
             DirectX::XMVECTOR Q = DirectX::XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = DirectX::XMQuaternionSlerp(orientation_vec, Q, 0.05f);
+            orientation_vec = DirectX::XMQuaternionSlerp(orientation_vec, Q, speed);
         }
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);

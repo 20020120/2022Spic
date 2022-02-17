@@ -24,7 +24,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
-	sky_dome = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\back_proto.fbx", false);
+	sky_dome = std::make_unique<SkyDome>(graphics);
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
@@ -44,12 +44,25 @@ void SceneGame::uninitialize()
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
+	mEnemyManager.fSetPlayerPosition(player->GetPosition());
 	mEnemyManager.fUpdate(elapsed_time);
-	player->Update(elapsed_time);
+	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
+    const BaseEnemy* enemy = mEnemyManager.fGetNearestEnemyPosition();
+
+	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
+	player->SetTarget(enemy);
+
+	// 敵とのあたり判定
+	//mEnemyManager.fCalcPlayerCapsuleVsEnemies(
+    //カプセルの点A,
+    //カプセルの点B,
+    //カプセルの半径,
+    //プレイヤーの攻撃力)
+
 	// camera
-	camera->Update(elapsed_time,player.get());
-	//camera->update_with_quaternion(elapsed_time);
+	//camera->Update(elapsed_time,player.get());
+	camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
 
@@ -166,7 +179,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
 		ImGui::End();
 #endif
-		sky_dome->render(graphics.get_dc().Get(), Math::calc_world_matrix({ dimension,dimension,dimension }, { 0,0,0 }, { 0,0,0 }), { 1,1,1,1 });
+		sky_dome->Render(graphics,elapsed_time);
 
 
 	}
@@ -204,6 +217,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	// エフェクトをかける
 	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
+	post_effect->blit(graphics.get_dc().Get());
 	post_effect->scene_preview();
 #endif // DEBUG
 	// bloom

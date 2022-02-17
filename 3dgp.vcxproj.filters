@@ -297,6 +297,12 @@
     <ClCompile Include="sources\SkyDome.cpp">
       <Filter>Sources\skydome</Filter>
     </ClCompile>
+    <ClCompile Include="sources\codinate_convert.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\NormalEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -487,6 +493,15 @@
     </ClInclude>
     <ClInclude Include="sources\SkyDome.h">
       <Filter>Sources\skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\codinate_convert.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\NormalEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Operators.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

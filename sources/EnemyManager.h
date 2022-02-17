@@ -44,6 +44,11 @@ class EnemyManager final
     enum EnemyType
     {
         Test, // テスト用（本番では使わない）
+        // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
+        Normal,
+
+        // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
+        Count, // 種類の総量
     };
 
     //****************************************************************
@@ -59,6 +64,19 @@ public:
     void fUpdate(float elapsedTime_);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
+    //--------------------<当たり判定>--------------------//
+    int fCalcPlayerCapsuleVsEnemies(           // 戻り値 ： 当たった敵の数
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
+        float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
+        int PlayerAttackPower_                 // プレイヤーの攻撃力
+    );
+
+    //--------------------<ゲッター関数>--------------------//
+    [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
+    [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
+    //--------------------<セッター関数>--------------------//
+    void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
     //--------------------<ImGui>--------------------//
     void fGuiMenu();
@@ -70,6 +88,9 @@ private:
     void fSpawn(EnemySource Source_);
     void fEnemiesUpdate(float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(ID3D11DeviceContext* pDeviceContext_); // 敵の描画処理
+
+    //--------------------<敵をソートする>--------------------//
+    void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);
 
     //--------------------<敵を出す場所を作成する>--------------------//
     void fRegisterEmitter();
@@ -101,6 +122,9 @@ private:
     std::vector<EnemySource> mCurrentWaveVec{};
 
     EnemyEditor mEditor{};
+
+    //--------------------<プレイヤーの位置>--------------------//
+    DirectX::XMFLOAT3 mPlayerPosition{};
 
     //****************************************************************
     // 

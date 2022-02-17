@@ -297,6 +297,7 @@ void framework::calculate_frame_stats()
 		std::wostringstream outs;
 		outs.precision(6);
 
+#ifdef _DEBUG
 		LPCWSTR game_mode{ L"/Debug" };
 		LPCWSTR wire_flame{ L"/Wire Frame Off" };
 
@@ -306,6 +307,11 @@ void framework::calculate_frame_stats()
 		else wire_flame = L"/Wire Frame Off";
 
 		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << game_mode << wire_flame;
+#else
+		//outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
+		outs << APPLICATION_NAME;
+#endif // _DEBUG
+
 		SetWindowTextW(hwnd, outs.str().c_str());
 
 		frames = 0;

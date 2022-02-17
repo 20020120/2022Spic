@@ -2,10 +2,12 @@
 #include "EnemyFileSystem.h"
 
 #include"TestEnemy.h"
+#include"NormalEnemy.h"
 #include"imgui_include.h" 
-#include <fstream>
-
 #include "user.h"
+#include"collision.h"
+
+#include <fstream>
 
 
 //****************************************************************
@@ -20,8 +22,6 @@ void EnemyManager::fInitialize(ID3D11Device* pDevice_)
     mpDevice = pDevice_;
     fAllClear();
     fRegisterEmitter();
-
-
 }
 
 void EnemyManager::fUpdate(float elapsedTime_)
@@ -33,7 +33,7 @@ void EnemyManager::fUpdate(float elapsedTime_)
 
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(elapsedTime_);
-
+    
     //--------------------<敵のスポナー>--------------------//
     fSpawn();
 
@@ -50,6 +50,74 @@ void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
 void EnemyManager::fFinalize()
 {
     fAllClear();
+}
+int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
+{
+    //--------------------<プレイヤーと敵の攻撃の当たり判定>--------------------//
+    // 攻撃が何体の敵に当たったか
+    int  hitCounts = 0;
+
+    for(const auto enemy: mEnemyVec)
+    {
+        // 当たり判定をするか確認
+        if(enemy->fGetIsFrustum())
+        {
+            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
+
+            const bool result = Collision::capsule_vs_capsule(
+                PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                capsule.mPointA, capsule.mPointB, capsule.mRadius);
+
+            // 当たっていたら
+            if(result)
+            {
+                enemy->fDamaged(PlayerAttackPower_);
+                hitCounts++;
+            }
+        }
+    }
+
+    return hitCounts;
+}
+
+const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
+{
+    auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+    {
+        return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+    };
+    fSort(func);
+    for(const auto enemy :mEnemyVec)
+    {
+        if(enemy->fGetIsFrustum())
+        {
+            // この敵からの距離を計算する
+            for(const auto enemy2:mEnemyVec)
+            {
+                if (enemy2->fGetIsFrustum())
+                {
+                    if (enemy != enemy2)
+                    {
+                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                    }
+                }
+            }
+            return enemy;
+        }
+    }
+
+    return nullptr;
+}
+
+const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
+{
+    return nullptr;
+}
+
+void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
+{
+    mPlayerPosition = Position_;
 }
 
 void EnemyManager::fSpawn()
@@ -85,6 +153,9 @@ void EnemyManager::fSpawn(EnemySource Source_)
     case EnemyType::Test:
         mEnemyVec.emplace_back(new TestEnemy(mpDevice, point.fGetPosition()));
         break;
+    case EnemyType::Normal:
+        mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition()));
+        break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
         break;
@@ -97,10 +168,27 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // 更新
     for (const auto enemy : mEnemyVec)
     {
-        enemy->fUpdate(elapsedTime_);
+        if (enemy->fGetIsAlive())
+        {
+            enemy->fSetPlayerPosition(mPlayerPosition);
+            enemy->fUpdate(elapsedTime_);
+        }
+        else
+        {
+            mRemoveVec.emplace_back(enemy);
+        }
     }
-
     // 削除
+    for(const auto enemy: mRemoveVec)
+    {
+        auto e=std::find(mEnemyVec.begin(), mEnemyVec.end(), enemy);
+        if(e!=mEnemyVec.end())
+        {
+            safe_delete(*e);
+            mEnemyVec.erase(e);
+        }
+    }
+    mRemoveVec.clear();
 
 }
 
@@ -110,6 +198,12 @@ void EnemyManager::fEnemiesRender(ID3D11DeviceContext* pDeviceContext_)
     {
         enemy->fRender(pDeviceContext_);
     }
+}
+
+void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_)
+{
+    // プレイヤーとの距離順に敵をソート
+    std::sort(mEnemyVec.begin(), mEnemyVec.end(), Function_);
 }
 
 void EnemyManager::fRegisterEmitter()
@@ -168,11 +262,29 @@ void EnemyManager::fGuiMenu()
         ImGui::Text(std::to_string(mCurrentWaveVec.size()).c_str());
         ImGui::Separator();
 
+        ImGui::Separator();
+        if(ImGui::Button("Sort"))
+        {
+        }
+        if (ImGui::CollapsingHeader("List"))
+        {
+            for (const auto enemy : mEnemyVec)
+            {
+                ImGui::Text(std::to_string(enemy->fGetLengthFromPlayer()).c_str());
+            }
+        }
+        ImGui::Separator();
+        static int elem = EnemyType::Test;
+        const char* elems_names[EnemyType::Count] = { "Test","Normal"};
+        const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
+        ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
+
         if (ImGui::Button("CreateEnemy"))
         {
-            DirectX::XMFLOAT3 point{};
-
-            mEnemyVec.emplace_back(new TestEnemy(mpDevice, point));
+            EnemySource source{};
+            source.mEmitterNumber = 0;
+            source.mType = elem;
+            fSpawn(source);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);
