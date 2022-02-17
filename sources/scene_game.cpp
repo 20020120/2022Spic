@@ -53,12 +53,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	player->SetTarget(enemy);
 
-	// 敵とのあたり判定
-	//mEnemyManager.fCalcPlayerCapsuleVsEnemies(
-    //カプセルの点A,
-    //カプセルの点B,
-    //カプセルの半径,
-    //プレイヤーの攻撃力)
+	// 敵とのあたり判定(当たったらコンボ加算)
+	player->AddCombo(mEnemyManager.fCalcPlayerCapsuleVsEnemies(
+		player->GetCapsuleParam().start,
+		player->GetCapsuleParam().end,
+		player->GetCapsuleParam().rasius,
+		player->GetPlayerPower()));
 
 	// camera
 	//camera->Update(elapsed_time,player.get());

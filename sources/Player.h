@@ -73,13 +73,31 @@ private:
     DirectX::XMFLOAT3 avoidance_end{};
     float avoidance_easing_time{ 0.6f };
 private:
-    //ロックオンして回避した時
-
+    //後ろに回り込むための計算する関数
+    void BehindAvoidancePosition();
+    //スプライン曲線を使うための途中の点
+    DirectX::XMFLOAT3 behind_point_0{};//スタート
+    DirectX::XMFLOAT3 behind_point_1{};//中継地点
+    DirectX::XMFLOAT3 behind_point_2{};//中継地点
+    DirectX::XMFLOAT3 behind_point_3{};//ゴール
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ 1 };
     //コンボ数
     int combo_count{ 0 };
+private:
+    //カプセル敵との当たり判定
+    struct CapsuleParam
+    {
+        DirectX::XMFLOAT3 start{};
+        DirectX::XMFLOAT3 end{};
+        float rasius{ 1.2f };
+    }capsule_parm;
+    DirectX::XMFLOAT3 capsule_body_start{0,2.6f,0};
+    DirectX::XMFLOAT3 capsule_body_end{0,0.2f,0};
+
+    void BodyCapsule();
+
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
@@ -89,9 +107,12 @@ public:
     HitResult& GetPlayerHitResult() { return hit; }
     bool GetCameraReset() { return camera_reset; }
     bool GetEnemyLockOn() { return is_lock_on; }
+    CapsuleParam GetCapsuleParam() { return capsule_parm; }
     void SetRaycast(bool r) { raycast = r; }
+    int GetPlayerPower() { return player_attack_power; }
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(const BaseEnemy* target_enemy);
+    void AddCombo(int count) { combo_count += count; }
 public:
     void FalseCameraReset() { camera_reset = false; }
 private:

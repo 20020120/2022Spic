@@ -172,6 +172,7 @@ void Player::TransitionMove()
 
 void Player::TransitionAvoidance()
 {
+    BehindAvoidancePosition();
     avoidance_boost_time = 0;
     avoidance_start = velocity;
     avoidance_end = { forward.x * 10.0f ,forward.y * 10.0f,forward.z * 10.0f };

@@ -32,6 +32,9 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     GetPlayerDirections();
     //ƒƒbƒNƒIƒ“
     LockOn();
+
+    //‘Ì‚Ì‘å‚«‚³‚ÌƒJƒvƒZƒ‹ƒpƒ‰ƒ[ƒ^İ’è
+    BodyCapsule();
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -66,39 +69,83 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
                 ImGui::TreePop();
             }
-            float t = model->get_anim_para().animation_tick;
-            ImGui::InputFloat("current_keyframe", &t);
-            ImGui::InputFloat3("camera_f", &camera_forward.x);
-            ImGui::InputFloat3("camera_r", &camera_right.x);
-            ImGui::InputFloat3("avoidance_end", &avoidance_end.x);
-            ImGui::DragFloat("step_offset_z", &step_offset_z);
-
-            ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time);
-            ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time,0.01f);
+            if (ImGui::TreeNode("CapsuleParam"))
+            {
+                ImGui::DragFloat3("capsule_parm.start", &capsule_body_start.x, 0.1f);
+                ImGui::DragFloat3("capsule_parm.end", &capsule_body_end.x, 0.1f);
+                ImGui::DragFloat("capsule_parm.rasius", &capsule_parm.rasius,0.1f);
+                ImGui::TreePop();
+            }
             ImGui::DragFloat3("target", &target.x);
             ImGui::End();
         }
     }
 #endif // USE_IMGUI
-
     model->update_animation(elapsed_time);
-    float mx{ velocity.x * step_offset_z * elapsed_time };
-    float mz{ velocity.z * step_offset_z * elapsed_time };
 
-    //if (Collision::sphere_vs_sphere(position, 3.0f, target, 3.0f))
-    //{
-    //    is_enemy_hit = true;
-    //}
-    //else
-    //{
-    //    is_enemy_hit = false;
-    //}
+    if (is_lock_on)
+    {
+        //BehindAvoidancePosition();
+
+        if (Collision::sphere_vs_sphere(position, 1.0f, behind_point_3, 1.0f))
+        {
+            is_enemy_hit = true;
+        }
+        else
+        {
+            is_enemy_hit = false;
+        }
+        Collision::sphere_vs_sphere(behind_point_1, 1.0f, behind_point_2, 1.0f);
+    }
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
+}
+
+void Player::BehindAvoidancePosition()
+{
+    using namespace DirectX;
+    XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
+    float length_radius = Math::calc_vector_AtoB_length(p, target);//‹——£(”¼Œa)
+    float diameter = length_radius * 2.0f;//(’¼Œa)
+    //-----------------ƒS[ƒ‹’n“_---------------//
+    behind_point_3.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_3.y = target.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_3.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f))))* length_radius);//“G‚ÌŒã‚ë‘¤
+    //--------------------------------------------//
+    //----------------’†Œp‚P---------------------//
+    behind_point_1.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(330.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(330.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.y = target.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_1.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(330.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(330.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    //behind_point_1.x = position.x + ((right.x * cosf(DirectX::XMConvertToRadians(30.0f)) )* diameter);//“G‚ÌŒã‚ë‘¤
+    //behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
+    //behind_point_1.z = position.z + ((forward.z * sinf(DirectX::XMConvertToRadians(30.0f)) ) * diameter);//“G‚ÌŒã‚ë‘¤
+    //--------------------------------------------//
+    //----------------’†Œp2---------------------//
+    behind_point_2.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.y = target.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+
+    //--------------------------------------------//
+}
+
+void Player::BodyCapsule()
+{
+    capsule_parm.start =
+    {
+        position.x + capsule_body_start.x,
+        position.y + capsule_body_start.y,
+        position.z + capsule_body_start.z
+    };
+    capsule_parm.end =
+    {
+        position.x + capsule_body_end.x,
+        position.y + capsule_body_end.y,
+        position.z + capsule_body_end.z
+    };
 }
 
 void Player::SetTarget(const BaseEnemy* target_enemy)
@@ -149,11 +196,19 @@ void Player::AvoidanceAcceleration(float elapsed_time)
         //‚±‚Ì‹——£‚æ‚è¬‚³‚©‚Á‚½‚çŒã‚ë‚É‰ñ‚è‚Ş
         if (length < BEHIND_LANGE)
         {
-
+            //DirectX::XMVECTOR pos{};
+            //DirectX::XMVECTOR p_1{DirectX::XMLoadFloat3(&position)};
+            //DirectX::XMVECTOR p_2{DirectX::XMLoadFloat3(&behind_point_1)};
+            //DirectX::XMVECTOR p_3{ DirectX::XMLoadFloat3(&behind_point_2) };
+            //DirectX::XMVECTOR p_4{ DirectX::XMLoadFloat3(&behind_point_3) };
+            //pos = DirectX::XMVectorCatmullRom(p_1, p_2, p_3, p_4, 1.0f * elapsed_time);
+            //DirectX::XMStoreFloat3(&position, pos);
+            //velocity = {};
         }
         else
         {
-
+            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
         }
     }
 }
