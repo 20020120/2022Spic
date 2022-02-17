@@ -18,7 +18,12 @@ public:
     void begin(ID3D11DeviceContext* dc);
     void end(ID3D11DeviceContext* dc);
     void apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time);
+	void blit(ID3D11DeviceContext* dc);
 	void scene_preview();
+
+	void clear_post_effect();
+	void dash_post_effect();
+
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_depth_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_depth_map(); }
@@ -80,8 +85,8 @@ private:
 		float pad7;
 		// dash_blur
 		DirectX::XMFLOAT4 reference_position{ 0.5f, 0.5f, 0, 0 };
-		float zoom_power{4};
-		int focus_detail{50};
+		float zoom_power{ 4 };
+		int focus_detail{ 50 };
 		DirectX::XMFLOAT2 pad8;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
@@ -96,5 +101,8 @@ private:
 	// FullScreenQuad‚ÌŽÀ‘Ì
 	std::unique_ptr<FullScreenQuad> bit_block_transfer;
 
+	int post_effect_count = 1;
 	int last_pst_efc_index;
+	int effect_type[FRAMEBUFFERS_COUNT - 2] = { static_cast<int>(POST_EFFECT_TYPE::NONE) };
+	bool display_effect_imgui = false;
 };

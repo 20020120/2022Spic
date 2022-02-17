@@ -80,8 +80,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		break;
 	}
 
-
-
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 }
