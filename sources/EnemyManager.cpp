@@ -3,8 +3,10 @@
 
 #include"TestEnemy.h"
 #include"imgui_include.h" 
-#include <fstream>
 #include "user.h"
+#include"collision.h"
+
+#include <fstream>
 
 
 //****************************************************************
@@ -47,6 +49,36 @@ void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
 void EnemyManager::fFinalize()
 {
     fAllClear();
+}
+
+int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
+{
+    //--------------------<ÉvÉåÉCÉÑÅ[Ç∆ìGÇÃçUåÇÇÃìñÇΩÇËîªíË>--------------------//
+    // çUåÇÇ™âΩëÃÇÃìGÇ…ìñÇΩÇ¡ÇΩÇ©
+    int  hitCounts = 0;
+
+    for(const auto enemy: mEnemyVec)
+    {
+        // ìñÇΩÇËîªíËÇÇ∑ÇÈÇ©ämîF
+        if(enemy->fGetIsFrustum())
+        {
+            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
+
+            const bool result = Collision::capsule_vs_capsule(
+                PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                capsule.mPointA, capsule.mPointB, capsule.mRadius);
+
+            // ìñÇΩÇ¡ÇƒÇ¢ÇΩÇÁ
+            if(result)
+            {
+                enemy->fDamaged(PlayerAttackPower_);
+                hitCounts++;
+            }
+        }
+    }
+
+    return hitCounts;
 }
 
 const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
@@ -113,13 +145,27 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // çXêV
     for (const auto enemy : mEnemyVec)
     {
-        enemy->fSetPlayerPosition(mPlayerPosition);
-        enemy->fUpdate(elapsedTime_);
+        if (enemy->fGetIsAlive())
+        {
+            enemy->fSetPlayerPosition(mPlayerPosition);
+            enemy->fUpdate(elapsedTime_);
+        }
+        else
+        {
+            mRemoveVec.emplace_back(enemy);
+        }
     }
     // çÌèú
-    for(const auto enemy: mEnemyVec)
+    for(const auto enemy: mRemoveVec)
     {
+        auto e=std::find(mEnemyVec.begin(), mEnemyVec.end(), enemy);
+        if(e!=mEnemyVec.end())
+        {
+            safe_delete(*e);
+            mEnemyVec.erase(e);
+        }
     }
+    mRemoveVec.clear();
 
 }
 

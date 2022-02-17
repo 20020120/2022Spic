@@ -44,7 +44,7 @@ void SceneGame::uninitialize()
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
-	mEnemyManager.fSetPlayerPosition(player->GetPosition());\
+	mEnemyManager.fSetPlayerPosition(player->GetPosition());
 	mEnemyManager.fUpdate(elapsed_time);
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = mEnemyManager.fGetNearestEnemyPosition();
