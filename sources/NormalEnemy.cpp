@@ -1,4 +1,4 @@
-#include"TestEnemy.h"
+#include"NormalEnemy.h"
 #include"EnemyFileSystem.h"
 #include"imgui_include.h"
 //****************************************************************
@@ -6,7 +6,7 @@
 // テストとサンプルを兼ねた敵の派生クラス 
 // 
 //****************************************************************
-TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
+NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
     :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_3.fbx")
 {
     // 位置を初期化
@@ -17,18 +17,18 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
 
 }
 
-void TestEnemy::fInitialize()
+void NormalEnemy::fInitialize()
 {
 }
 
-void TestEnemy::fUpdate(float elapsedTime_)
+void NormalEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
     fUpdateStateMachine(elapsedTime_);
 
 }
 
-void TestEnemy::fRegisterFunctions()
+void NormalEnemy::fRegisterFunctions()
 {
     InitFunc Ini = [=]()->void
     {
@@ -44,13 +44,13 @@ void TestEnemy::fRegisterFunctions()
     mCurrentTuple = mFunctionMap.at(0);
 }
 
-void TestEnemy::fIdleInit()
+void NormalEnemy::fIdleInit()
 {
 
-}j
+}
 
 
-void TestEnemy::fIdleUpdate(float elapsedTime_)
+void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
     mPosition.z += 10.0f * elapsedTime_;
 }
