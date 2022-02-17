@@ -16,6 +16,7 @@
 
 #include"EnemyManager.h"
 #include"Player.h"
+#include"SkyDome.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -52,8 +53,8 @@ private:
         float bloom_options[2];
     };
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
-    // スキンメッシュの実体
-    std::shared_ptr<SkinnedMesh> sky_dome;
+    //// スキンメッシュの実体
+    //std::shared_ptr<SkinnedMesh> sky_dome;
     std::unique_ptr<Effect> test_effect;
     //****************************************************************
     //
@@ -62,6 +63,7 @@ private:
     //****************************************************************
     EnemyManager mEnemyManager{};
     std::unique_ptr<Player> player{ nullptr };
+    std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome
     float dimension{ 0.1f };
 };

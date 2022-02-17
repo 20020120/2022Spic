@@ -3,12 +3,13 @@
 #include <DirectXMath.h>
 #include "practical_entities.h"
 #include "constants.h"
+#include "Player.h"
 
 class Camera : public PracticalEntities
 {
 public:
     //--------<constructor/destructor>--------//
-    Camera(GraphicsPipeline& graphics);
+    Camera(GraphicsPipeline& graphics,Player* player);
     ~Camera() {}
 public:
     //--------< ŠÖ” >--------//
@@ -16,6 +17,9 @@ public:
     void update_with_quaternion(float elapsed_time);
     void calc_view_projection(GraphicsPipeline& graphics);
     void debug_gui();
+
+    void Update(float elapsedTime, Player* player);
+
     //--------<getter/setter>--------//
     // range
     void set_range(float r) { range = r; }

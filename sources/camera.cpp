@@ -5,7 +5,7 @@
 DirectX::XMFLOAT4X4 Camera::keep_view = {};
 DirectX::XMFLOAT4X4 Camera::keep_projection = {};
 
-Camera::Camera(GraphicsPipeline& graphics)
+Camera::Camera(GraphicsPipeline& graphics,Player* player)
 {
 	HRESULT hr{ S_OK };
 	//----定数バッファ----//
@@ -22,6 +22,34 @@ Camera::Camera(GraphicsPipeline& graphics)
 			cosf(angle / 2)
 		};
 	}
+	using namespace DirectX;
+	const DirectX::XMVECTOR Orientation = DirectX::XMLoadFloat4(&orientation);
+
+	DirectX::XMVECTOR Forward, Right, Up;
+	const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(Orientation);
+	DirectX::XMFLOAT4X4 m4x4 = {};
+	DirectX::XMStoreFloat4x4(&m4x4, m);
+
+	Right = { m4x4._11, m4x4._12, m4x4._13 };
+	Up = { 0, 1, 0 };
+	Forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+	DirectX::XMFLOAT3 playerForward = player->GetForward();
+	DirectX::XMFLOAT3 playerUp = player->GetUp();
+	DirectX::XMFLOAT3 playerRight = player->GetRight();
+	DirectX::XMFLOAT3 playerPosition = player->GetPosition();
+
+	DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
+	DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
+	DirectX::XMVECTOR PlayerRight = DirectX::XMLoadFloat3(&playerRight);
+	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
+
+	DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -5;
+	DirectX::XMStoreFloat3(&eye, Eye);
+
+	DirectX::XMVECTOR Target = PlayerPosition + Forward * 5;
+	DirectX::XMStoreFloat3(&target, Target);
+
 }
 
 void Camera::update_with_euler_angles(float elapsed_time)
@@ -353,4 +381,72 @@ void Camera::debug_gui()
 		ImGui::End();
 	}
 #endif
+}
+
+void Camera::Update(float elapsedTime, Player* player)
+{
+	using namespace DirectX;
+	const DirectX::XMVECTOR Orientation = DirectX::XMLoadFloat4(&orientation);
+
+	DirectX::XMVECTOR Forward, Right, Up;
+	const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(Orientation);
+	DirectX::XMFLOAT4X4 m4x4 = {};
+	DirectX::XMStoreFloat4x4(&m4x4, m);
+
+	Right = { m4x4._11, m4x4._12, m4x4._13 };
+	Up = { 0, 1, 0 };
+	Forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+	DirectX::XMFLOAT3 playerForward = player->GetForward();
+	DirectX::XMFLOAT3 playerUp = player->GetUp();
+	DirectX::XMFLOAT3 playerRight = player->GetRight();
+	DirectX::XMFLOAT3 playerPosition = player->GetPosition();
+	DirectX::XMFLOAT3 playerVelocity = player->GetVelocity();
+
+	DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
+	DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
+	DirectX::XMVECTOR PlayerRight = DirectX::XMLoadFloat3(&playerRight);
+	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
+	DirectX::XMVECTOR PlayerVelocity = DirectX::XMLoadFloat3(&playerVelocity);
+
+	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);
+	Eye += PlayerVelocity * elapsedTime;
+	DirectX::XMStoreFloat3(&eye, Eye);
+
+	if (player->GetCameraReset())
+	{
+		DirectX::XMVECTOR Target = PlayerPosition + PlayerForward * 5;
+		DirectX::XMStoreFloat3(&target, Target);
+		player->FalseCameraReset();
+	}
+
+	ImGui::Begin("Camera", false);
+	ImGui::InputFloat3("Position", &eye.x);
+	ImGui::InputFloat3("target", &target.x);
+	ImGui::End();
+
+	XMFLOAT3 up{ 0,1,0 };
+	XMVECTOR eye_vec = XMLoadFloat3(&eye);
+	XMVECTOR focus_vec = XMLoadFloat3(&target);
+	XMMATRIX view_mat = XMMatrixLookAtLH(eye_vec, focus_vec, XMLoadFloat3(&up)); // V
+	XMStoreFloat4x4(&view, view_mat);
+	//ビュー行列を逆行列かしワールド行列に戻す
+	DirectX::XMMATRIX world_vec = DirectX::XMMatrixInverse(nullptr, view_mat);
+	DirectX::XMFLOAT4X4 world;
+	DirectX::XMStoreFloat4x4(&world, world_vec);
+	this->right.x = world._11;
+	this->right.y = world._12;
+	this->right.z = world._13;
+
+	this->forward.x = world._31;
+	this->forward.y = world._32;
+	this->forward.z = world._33;
+
+	float width = static_cast<float>(SCREEN_WIDTH);
+	float height = static_cast<float>(SCREEN_HEIGHT);
+	float aspect_ratio{ width / height };
+
+	XMMATRIX projection_mat = XMMatrixPerspectiveFovLH(XMConvertToRadians(45), aspect_ratio, near_far.x, near_far.y); // P
+	XMStoreFloat4x4(&projection, projection_mat);
+
 }

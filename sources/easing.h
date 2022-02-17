@@ -11,6 +11,8 @@ class easing
     //end:I“_
     //d(duration):Œø‰ÊŠÔ
 
+    //https://easings.net/ja
+
 public:
 
     struct Sine
@@ -140,7 +142,7 @@ public:
             return (Ctime == d) ? start + end : end * (-pow(2, -10 * Ctime / d) + 1) + start;
         }
 
-        float easeInOut(float Ctime, float start, float end, float d)
+        static  float easeInOut(float Ctime, float start, float end, float d)
         {
             if (Ctime == 0) return start;
             if (Ctime == d) return start + end;
