@@ -75,6 +75,15 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     charge_time += charge_add_time * elapsed_time;
+    //ロックオン中はターゲットに向かって突進する
+    if (is_lock_on)
+    {
+        ChargeAcceleration(elapsed_time);
+    }
+    else
+    {
+
+    }
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
@@ -96,10 +105,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (is_enemy_hit)
         {
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
-            if (game_pad->get_button_down() & GamePad::BTN_B)
-            {
                 TransitionAttackType1(0);
-            }
         }
     }
 }
