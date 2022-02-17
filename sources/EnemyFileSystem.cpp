@@ -32,8 +32,6 @@ void EnemyFileSystem::fLoadFromJson(std::vector<EnemySource>& SourceVec_, const 
     {
         _ASSERT_EXPR(0, "Json Not Found");
     }
-
-
 }
 
 void EnemyFileSystem::fSaveToJson(std::vector<EnemySource>& SourceVec_, const char* FileName_)

@@ -8,10 +8,15 @@
 // 敵の基底クラス 
 // 
 //****************************************************************
-
 typedef std::function<void()> InitFunc;
 typedef std::function<void(float)> UpdateFunc;
 typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
+
+struct CubeData
+{
+    DirectX::XMFLOAT3 mPoint{};
+    DirectX::XMFLOAT3 mHalfSize{};
+};
 
 class BaseEnemy
 {
@@ -30,7 +35,7 @@ public:
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 protected:
     void fUpdateStateMachine(float elapsedTime_);
-
+    
     //****************************************************************
     // 
     // 変数 
@@ -41,6 +46,8 @@ protected:
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
+    float mLengthFromPlayer{};     // プレイヤーからの距離
+    
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
