@@ -31,6 +31,12 @@ class BaseEnemy
         float mMoveSpeed{};   // 移動速度
         float mAttackSpeed{}; // 攻撃間隔
     };
+    struct CapsuleCollider
+    {
+        DirectX::XMFLOAT3 mPointA{};
+        DirectX::XMFLOAT3 mPointB{};
+        float mRadius{};
+    };
 
     //****************************************************************
     // 
@@ -60,7 +66,7 @@ protected:
     void fUpdateStateMachine(float elapsedTime_);
     void fCalcFrustum();
     void fCalcLength();
-
+    virtual  void fSetCapsulePoint() = 0;
    virtual void fTurnToThePlayer(){}
     //****************************************************************
     // 
@@ -75,6 +81,7 @@ protected:
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
     Param mParam{};
+    CapsuleCollider mCapsuleCollider{};
 
     //プレイヤーの各方向
     DirectX::XMFLOAT3 forward;

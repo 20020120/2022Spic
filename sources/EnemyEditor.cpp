@@ -8,12 +8,12 @@ void EnemyEditor::fGuiMenu()
 {
 #ifdef USE_IMGUI
 
-    imgui_menu_bar("Game", "EnemyEditor", mIsOpenEditor);
+    imgui_menu_bar("Game","EnemyEditor", mIsOpenEditor);
 
     if (mIsOpenEditor)
     {
         ImGui::Begin("WaveEditor");
-
+        
         if (ImGui::CollapsingHeader("File"))
         {
             static char fileName[256]{};
@@ -47,7 +47,7 @@ void EnemyEditor::fGuiMenu()
 
         if (ImGui::CollapsingHeader("List"))
         {
-            for(auto source:mEditorSourceVec)
+            for(const auto source:mEditorSourceVec)
             {
                 ImGui::Text("Time");
                 ImGui::SameLine();

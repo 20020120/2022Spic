@@ -1,6 +1,7 @@
 #include"TestEnemy.h"
 #include"EnemyFileSystem.h"
 #include"imgui_include.h"
+#include"user.h"
 //****************************************************************
 // 
 // テストとサンプルを兼ねた敵の派生クラス 
@@ -65,6 +66,15 @@ void TestEnemy::fGuiMenu()
     ImGui::Checkbox("frustum", &a);
     ImGui::End();
 #endif
+
+}
+
+void TestEnemy::fSetCapsulePoint()
+{
+    const auto pointA=Math::calc_designated_point(mPosition, up, 3.0f);
+    
+    mCapsuleCollider.mPointA = pointA;
+
 
 }
 
