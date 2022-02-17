@@ -47,7 +47,10 @@ public:
 
 
     //--------------------<ゲッター関数>--------------------//
-
+    [[nodiscard]] bool fGetIsFrustum()const;
+    [[nodiscard]] float fGetLengthFromPlayer()const;
+    [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
+    [[nodiscard]] bool fGetIsAlive()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 

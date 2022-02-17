@@ -21,6 +21,26 @@ void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
     mpSkinnedMesh->render(pDeviceContext_, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
 }
 
+bool BaseEnemy::fGetIsFrustum() const
+{
+    return mIsFrustum;
+}
+
+float BaseEnemy::fGetLengthFromPlayer() const
+{
+    return mLengthFromPlayer;
+}
+
+DirectX::XMFLOAT3 BaseEnemy::fGetPosition() const
+{
+    return mPosition;
+}
+
+bool BaseEnemy::fGetIsAlive() const
+{
+    return true;
+}
+
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 {
     mPlayerPosition = PlayerPosition_;

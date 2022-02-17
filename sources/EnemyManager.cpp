@@ -20,8 +20,6 @@ void EnemyManager::fInitialize(ID3D11Device* pDevice_)
     mpDevice = pDevice_;
     fAllClear();
     fRegisterEmitter();
-
-
 }
 
 void EnemyManager::fUpdate(float elapsedTime_)
@@ -50,6 +48,20 @@ void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
 void EnemyManager::fFinalize()
 {
     fAllClear();
+}
+
+const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
+{
+    fSort();
+    for(const auto enemy :mEnemyVec)
+    {
+        if(enemy->fGetIsFrustum())
+        {
+            return enemy;
+        }
+    }
+
+    return nullptr;
 }
 
 void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
@@ -102,11 +114,15 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // 更新
     for (const auto enemy : mEnemyVec)
     {
+        
+
         enemy->fSetPlayerPosition(mPlayerPosition);
         enemy->fUpdate(elapsedTime_);
     }
     // 削除
-
+    for(const auto enemy: mEnemyVec)
+    {
+    }
 
 }
 
@@ -116,6 +132,16 @@ void EnemyManager::fEnemiesRender(ID3D11DeviceContext* pDeviceContext_)
     {
         enemy->fRender(pDeviceContext_);
     }
+}
+
+void EnemyManager::fSort()
+{
+    // プレイヤーとの距離順に敵をソート
+    std::sort(mEnemyVec.begin(), mEnemyVec.end(), [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+        {
+            return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+        }
+    );
 }
 
 void EnemyManager::fRegisterEmitter()
@@ -174,6 +200,19 @@ void EnemyManager::fGuiMenu()
         ImGui::Text(std::to_string(mCurrentWaveVec.size()).c_str());
         ImGui::Separator();
 
+        ImGui::Separator();
+        if(ImGui::Button("Sort"))
+        {
+            fSort();
+        }
+        if (ImGui::CollapsingHeader("List"))
+        {
+            for (const auto enemy : mEnemyVec)
+            {
+                ImGui::Text(std::to_string(enemy->fGetLengthFromPlayer()).c_str());
+            }
+        }
+        ImGui::Separator();
         static int elem = EnemyType::Test;
         const char* elems_names[EnemyType::Count] = { "Test" };
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
