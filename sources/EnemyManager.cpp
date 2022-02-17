@@ -20,8 +20,6 @@ void EnemyManager::fInitialize(ID3D11Device* pDevice_)
     mpDevice = pDevice_;
     fAllClear();
     fRegisterEmitter();
-
-
 }
 
 void EnemyManager::fUpdate(float elapsedTime_)
@@ -116,11 +114,15 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // XV
     for (const auto enemy : mEnemyVec)
     {
+        
+
         enemy->fSetPlayerPosition(mPlayerPosition);
         enemy->fUpdate(elapsedTime_);
     }
     // íœ
-
+    for(const auto enemy: mEnemyVec)
+    {
+    }
 
 }
 
