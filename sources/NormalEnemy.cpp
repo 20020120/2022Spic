@@ -8,7 +8,7 @@
 // 
 //****************************************************************
 NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
-    :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_4.fbx")
+    :BaseEnemy(pDevice_, "./resources/Models/stage/asa.fbx")
 {
     // ˆÊ’u‚ð‰Šú‰»
     mPosition = EmitterPoint_;
@@ -44,9 +44,20 @@ void NormalEnemy::fRegisterFunctions()
     FunctionTuple tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(IDLE, tuple));
 
-    mCurrentTuple = mFunctionMap.at(IDLE);
-}
+    Ini = [=]()->void
+    {
+        fMoveInit();
+    };
+    Up = [=](float elapsedTime_)->void
+    {
+        fmoveUpdate(elapsedTime_);
+    };
+    tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(MOVE, tuple));
 
+    fChangeState(IDLE);
+
+}
 void NormalEnemy::fParamInitialize()
 {
     mParam.mHitPoint = 10;      // ‘Ì—Í
@@ -104,10 +115,10 @@ void NormalEnemy::fIdleInit()
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
-    if(fIsTurnToThePlayer())
+   /* if(fIsTurnToThePlayer())
     {
         fChangeState(MOVE);
-    }
+    }*/
 }
 
 void NormalEnemy::fMoveInit()
@@ -117,5 +128,5 @@ void NormalEnemy::fMoveInit()
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
 {
-
+    mPosition.x += 2.0f * elapsedTime_;
 }
