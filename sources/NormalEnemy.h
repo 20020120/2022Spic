@@ -5,10 +5,10 @@
 #include<map>
 //****************************************************************
 // 
-// テストとサンプルを兼ねた敵の派生クラス 
+// 盾なし通常攻撃の雑魚敵の派生クラス 
 // 
 //****************************************************************
-class TestEnemy final :public BaseEnemy
+class NormalEnemy final :public BaseEnemy
 {
     //****************************************************************
     // 
@@ -17,7 +17,7 @@ class TestEnemy final :public BaseEnemy
     //****************************************************************
 public:
 
-    TestEnemy(ID3D11Device* pDevice_,
+    NormalEnemy(ID3D11Device* pDevice_,
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
 
     void fInitialize() override;
