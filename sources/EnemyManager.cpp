@@ -52,6 +52,11 @@ void EnemyManager::fFinalize()
     fAllClear();
 }
 
+void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
+{
+    mPlayerPosition = Position_;
+}
+
 void EnemyManager::fSpawn()
 {
     int spawnCounts = 0;
@@ -169,11 +174,17 @@ void EnemyManager::fGuiMenu()
         ImGui::Text(std::to_string(mCurrentWaveVec.size()).c_str());
         ImGui::Separator();
 
+        static int elem = EnemyType::Test;
+        const char* elems_names[EnemyType::Count] = { "Test" };
+        const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
+        ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
+
         if (ImGui::Button("CreateEnemy"))
         {
-            DirectX::XMFLOAT3 point{};
-
-            mEnemyVec.emplace_back(new TestEnemy(mpDevice, point));
+            EnemySource source{};
+            source.mEmitterNumber = 0;
+            source.mType = elem;
+            fSpawn(source);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);

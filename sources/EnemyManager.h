@@ -44,6 +44,11 @@ class EnemyManager final
     enum EnemyType
     {
         Test, // テスト用（本番では使わない）
+        // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+
+        // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
+        Count, // 種類の総量
     };
 
     //****************************************************************
@@ -59,6 +64,9 @@ public:
     void fUpdate(float elapsedTime_);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
+
+    //--------------------<セッター関数>--------------------//
+    void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
     //--------------------<ImGui>--------------------//
     void fGuiMenu();

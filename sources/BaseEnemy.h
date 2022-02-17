@@ -8,13 +8,31 @@
 // 敵の基底クラス 
 // 
 //****************************************************************
-
 typedef std::function<void()> InitFunc;
 typedef std::function<void(float)> UpdateFunc;
 typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
 
+struct CubeData
+{
+    DirectX::XMFLOAT3 mPoint{};
+    DirectX::XMFLOAT3 mHalfSize{};
+};
+
 class BaseEnemy
 {
+    //****************************************************************
+    // 
+    // 構造体
+    // 
+    //****************************************************************
+    struct Param
+    {
+        int mHitPoint{};      // 体力
+        int mAttackPower{};   // 攻撃力
+        float mMoveSpeed{};   // 移動速度
+        float mAttackSpeed{}; // 攻撃間隔
+    };
+
     //****************************************************************
     // 
     // 関数
@@ -30,7 +48,7 @@ public:
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 protected:
     void fUpdateStateMachine(float elapsedTime_);
-
+    
     //****************************************************************
     // 
     // 変数 
@@ -40,7 +58,10 @@ protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
+    
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
+    float mLengthFromPlayer{};     // プレイヤーからの距離
+    
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
