@@ -57,6 +57,8 @@ protected:
     void fUpdateStateMachine(float elapsedTime_);
     void fCalcFrustum();
     void fCalcLength();
+
+   virtual void fTurnToThePlayer(){}
     //****************************************************************
     // 
     // 変数 
@@ -69,6 +71,12 @@ protected:
 
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
+    Param mParam{};
+
+    //プレイヤーの各方向
+    DirectX::XMFLOAT3 forward;
+    DirectX::XMFLOAT3 right;
+    DirectX::XMFLOAT3 up;
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
@@ -90,4 +98,6 @@ protected:
 
     virtual void fRegisterFunctions() {}; 
     void fChangeState(int i);
+    void fGetEnemyDirections();
+
 };

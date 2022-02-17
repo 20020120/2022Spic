@@ -79,3 +79,22 @@ void BaseEnemy::fChangeState(int i)
     mCurrentTuple = mFunctionMap.at(i);
     mIsInitialize = false;
 }
+
+void BaseEnemy::fGetEnemyDirections()
+{
+    using namespace DirectX;
+    XMVECTOR orientation_vec{ XMLoadFloat4(&mOrientation) };
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    DirectX::XMVECTOR right_vec, forward_vec, up_vec;
+
+    right_vec = { m4x4._11, m4x4._12, m4x4._13 };
+    up_vec = { m4x4._21, m4x4._22, m4x4._23 };
+    forward_vec = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMStoreFloat3(&right, right_vec);
+    XMStoreFloat3(&up, up_vec);
+    XMStoreFloat3(&forward, forward_vec);
+
+}
