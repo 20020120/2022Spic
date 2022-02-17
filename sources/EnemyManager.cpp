@@ -50,7 +50,6 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
 }
-
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
@@ -83,15 +82,35 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
 
 const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 {
-    fSort();
+    auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+    {
+        return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+    };
+    fSort(func);
     for(const auto enemy :mEnemyVec)
     {
         if(enemy->fGetIsFrustum())
         {
+            // この敵からの距離を計算する
+            for(const auto enemy2:mEnemyVec)
+            {
+                if (enemy2->fGetIsFrustum())
+                {
+                    if (enemy != enemy2)
+                    {
+                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                    }
+                }
+            }
             return enemy;
         }
     }
 
+    return nullptr;
+}
+
+const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
+{
     return nullptr;
 }
 
@@ -177,14 +196,10 @@ void EnemyManager::fEnemiesRender(ID3D11DeviceContext* pDeviceContext_)
     }
 }
 
-void EnemyManager::fSort()
+void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_)
 {
     // プレイヤーとの距離順に敵をソート
-    std::sort(mEnemyVec.begin(), mEnemyVec.end(), [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
-        {
-            return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
-        }
-    );
+    std::sort(mEnemyVec.begin(), mEnemyVec.end(), Function_);
 }
 
 void EnemyManager::fRegisterEmitter()
@@ -246,7 +261,6 @@ void EnemyManager::fGuiMenu()
         ImGui::Separator();
         if(ImGui::Button("Sort"))
         {
-            fSort();
         }
         if (ImGui::CollapsingHeader("List"))
         {
