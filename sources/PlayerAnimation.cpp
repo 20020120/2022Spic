@@ -47,7 +47,6 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    avoidance_boost_time += elapsed_time;
     AvoidanceAcceleration(elapsed_time);
     //回避のアニメーションが終わったら
     if (model->end_of_animation())
@@ -192,6 +191,8 @@ void Player::TransitionMove()
 void Player::TransitionAvoidance()
 {
     avoidance_boost_time = 0;
+    avoidance_start = velocity;
+    avoidance_end = { forward.x * 30.0f ,forward.y * 30.0f,forward.z * 30.0f };
     model->play_animation(AnimationClips::Avoidance, false);
     player_activity = &Player::AvoidanceUpdate;
 }
