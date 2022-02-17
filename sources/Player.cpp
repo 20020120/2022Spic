@@ -30,6 +30,8 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     ExecFuncUpdate(elapsed_time, sky_dome);
     UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right, sky_dome);
     GetPlayerDirections();
+    //ロックオン
+    LockOn();
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -138,5 +140,22 @@ void Player::ChargeAcceleration(float elapse_time)
 {
     //位置を補間
     position = Math::lerp(position, target, 1.0f * elapse_time);
+}
+
+void Player::LockOn()
+{
+    //自分と敵の距離を見る
+    float length{ Math::calc_vector_AtoB_length(position, target) };
+
+    if (length < 20.0f)
+    {
+        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L()) is_lock_on = true;
+        else is_lock_on = false;
+    }
+    else
+    {
+        is_lock_on = false;
+    }
+
 }
 
