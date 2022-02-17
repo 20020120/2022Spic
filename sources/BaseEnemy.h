@@ -50,6 +50,7 @@ public:
     [[nodiscard]] bool fGetIsFrustum()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
+    
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 
