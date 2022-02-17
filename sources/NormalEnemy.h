@@ -41,6 +41,7 @@ private:
     void fMoveInit(); //ˆÚ“®‚Ì‰Šú‰»
     void fmoveUpdate(float elapsedTime_); //ˆÚ“®‚ÌXVˆ—
 
+    void fSetCapsulePoint() override{};
     enum State
     {
 	    IDLE,

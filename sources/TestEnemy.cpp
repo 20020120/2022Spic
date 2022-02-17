@@ -60,7 +60,7 @@ void TestEnemy::fIdleInit()
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
-
+    
 }
 
 void TestEnemy::fGuiMenu()
@@ -70,6 +70,10 @@ void TestEnemy::fGuiMenu()
     ImGui::Begin("TestEnemy");
     bool a = fGetIsFrustum();
     ImGui::Checkbox("frustum", &a);
+    if (ImGui::Button("Damaged"))
+    {
+        fDamaged(5);
+    }
     ImGui::End();
 #endif
 

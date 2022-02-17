@@ -55,6 +55,9 @@ public:
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     void fDamaged(int Damage_);
 
+    // プレイヤー敵との距離を計算する
+    void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
+
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetIsFrustum()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
@@ -84,9 +87,10 @@ protected:
 
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
+    float mLengthFromTargetEnemy{}; // プレイヤーがロックオンしている敵との距離
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
-
+    
     //プレイヤーの各方向
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;

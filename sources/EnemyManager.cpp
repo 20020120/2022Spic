@@ -2,6 +2,7 @@
 #include "EnemyFileSystem.h"
 
 #include"TestEnemy.h"
+#include"NormalEnemy.h"
 #include"imgui_include.h" 
 #include "user.h"
 #include"collision.h"
@@ -50,7 +51,6 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
 }
-
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
@@ -83,15 +83,35 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
 
 const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 {
-    fSort();
+    auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+    {
+        return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+    };
+    fSort(func);
     for(const auto enemy :mEnemyVec)
     {
         if(enemy->fGetIsFrustum())
         {
+            // この敵からの距離を計算する
+            for(const auto enemy2:mEnemyVec)
+            {
+                if (enemy2->fGetIsFrustum())
+                {
+                    if (enemy != enemy2)
+                    {
+                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                    }
+                }
+            }
             return enemy;
         }
     }
 
+    return nullptr;
+}
+
+const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
+{
     return nullptr;
 }
 
@@ -132,6 +152,9 @@ void EnemyManager::fSpawn(EnemySource Source_)
     {
     case EnemyType::Test:
         mEnemyVec.emplace_back(new TestEnemy(mpDevice, point.fGetPosition()));
+        break;
+    case EnemyType::Normal:
+        mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition()));
         break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
@@ -177,14 +200,10 @@ void EnemyManager::fEnemiesRender(ID3D11DeviceContext* pDeviceContext_)
     }
 }
 
-void EnemyManager::fSort()
+void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_)
 {
     // プレイヤーとの距離順に敵をソート
-    std::sort(mEnemyVec.begin(), mEnemyVec.end(), [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
-        {
-            return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
-        }
-    );
+    std::sort(mEnemyVec.begin(), mEnemyVec.end(), Function_);
 }
 
 void EnemyManager::fRegisterEmitter()
@@ -246,7 +265,6 @@ void EnemyManager::fGuiMenu()
         ImGui::Separator();
         if(ImGui::Button("Sort"))
         {
-            fSort();
         }
         if (ImGui::CollapsingHeader("List"))
         {
@@ -257,7 +275,7 @@ void EnemyManager::fGuiMenu()
         }
         ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test" };
+        const char* elems_names[EnemyType::Count] = { "Test","Normal"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 

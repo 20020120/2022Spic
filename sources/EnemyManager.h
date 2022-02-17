@@ -45,7 +45,7 @@ class EnemyManager final
     {
         Test, // テスト用（本番では使わない）
         // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
-
+        Normal,
 
         // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
         Count, // 種類の総量
@@ -74,6 +74,7 @@ public:
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
+    [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
@@ -89,7 +90,7 @@ private:
     void fEnemiesRender(ID3D11DeviceContext* pDeviceContext_); // 敵の描画処理
 
     //--------------------<敵をソートする>--------------------//
-    void fSort();
+    void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);
 
     //--------------------<敵を出す場所を作成する>--------------------//
     void fRegisterEmitter();
