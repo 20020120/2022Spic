@@ -210,6 +210,7 @@
     <ClCompile Include="sources\bloom.cpp" />
     <ClCompile Include="sources\camera.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
+    <ClCompile Include="sources\codinate_convert.cpp" />
     <ClCompile Include="sources\collision.cpp" />
     <ClCompile Include="sources\constants.cpp" />
     <ClCompile Include="sources\debug_figures.cpp" />
@@ -232,6 +233,7 @@
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\MoveBehavior.cpp" />
+    <ClCompile Include="sources\NormalEnemy.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\PlayerAnimation.cpp" />
@@ -271,6 +273,7 @@
     <ClInclude Include="sources\bloom.h" />
     <ClInclude Include="sources\camera.h" />
     <ClInclude Include="sources\camera_shake.h" />
+    <ClInclude Include="sources\codinate_convert.h" />
     <ClInclude Include="sources\collision.h" />
     <ClInclude Include="sources\constants.h" />
     <ClInclude Include="sources\debug_figures.h" />
@@ -297,6 +300,7 @@
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />
+    <ClInclude Include="sources\NormalEnemy.h" />
     <ClInclude Include="sources\perlin_noise.h" />
     <ClInclude Include="sources\Player.h" />
     <ClInclude Include="sources\PlayerMove.h" />
