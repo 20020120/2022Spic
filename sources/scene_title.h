@@ -41,7 +41,9 @@ private:
     Element exit;
     std::unique_ptr<SpriteBatch> sprite_string{ nullptr };
     Element selecter1;
+    DirectX::XMFLOAT2 arrival_pos1{};
     Element selecter2;
+    DirectX::XMFLOAT2 arrival_pos2{};
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
     int state = 0;
 };

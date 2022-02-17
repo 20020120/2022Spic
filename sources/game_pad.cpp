@@ -6,14 +6,14 @@
 
 void GamePad::update(float elapsed_time)
 {
-	stack_stop_vib_sec += elapsed_time;
-	if (vib_stack_sec <= stack_stop_vib_sec)
-	{
-		XINPUT_VIBRATION vib;
-		vib.wLeftMotorSpeed  = (SHORT)0.0f;
-		vib.wRightMotorSpeed = (SHORT)0.0f;;
-		XInputSetState(slot, &vib);
-	}
+	//stack_stop_vib_sec += elapsed_time;
+	//if (vib_stack_sec <= stack_stop_vib_sec)
+	//{
+	//	XINPUT_VIBRATION vib;
+	//	vib.wLeftMotorSpeed  = (SHORT)0.0f;
+	//	vib.wRightMotorSpeed = (SHORT)0.0f;
+	//	XInputSetState(slot, &vib);
+	//}
 
 	axisLx = axisLy = 0.0f;
 	axisRx = axisRy = 0.0f;
