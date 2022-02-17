@@ -12,7 +12,7 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.1f,0.1f,0.1f };
+    mScale = { 0.02f,0.02f,0.02f };
     fRegisterFunctions();
 
 }
@@ -53,7 +53,7 @@ void TestEnemy::fIdleInit()
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
-    mPosition.z += 10.0f * elapsedTime_;
+
 }
 
 void TestEnemy::fGuiMenu()

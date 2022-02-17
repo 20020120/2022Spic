@@ -36,6 +36,11 @@ DirectX::XMFLOAT3 BaseEnemy::fGetPosition() const
     return mPosition;
 }
 
+bool BaseEnemy::fGetIsAlive() const
+{
+    return true;
+}
+
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 {
     mPlayerPosition = PlayerPosition_;
