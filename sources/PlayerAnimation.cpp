@@ -128,15 +128,6 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType2(0);
         }
     }
-    else
-    {
-        //アニメーションが終わる前に押しても攻撃2撃目に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_B)
-        {
-            attack_time = 0;
-            TransitionAttackType2(0.1f);
-        }
-    }
 }
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
@@ -155,15 +146,6 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         {
             attack_time = 0;
             TransitionAttackType3(0);
-        }
-    }
-    else
-    {
-        //アニメーションが終わる前に押しても攻撃3撃目に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_B)
-        {
-            attack_time = 0;
-            TransitionAttackType3(0.1f);
         }
     }
 }
@@ -192,7 +174,7 @@ void Player::TransitionAvoidance()
 {
     avoidance_boost_time = 0;
     avoidance_start = velocity;
-    avoidance_end = { forward.x * 30.0f ,forward.y * 30.0f,forward.z * 30.0f };
+    avoidance_end = { forward.x * 10.0f ,forward.y * 10.0f,forward.z * 10.0f };
     model->play_animation(AnimationClips::Avoidance, false);
     player_activity = &Player::AvoidanceUpdate;
 }

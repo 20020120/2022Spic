@@ -33,6 +33,11 @@ private:
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.2f;
     //攻撃2撃目の猶予時間
     static constexpr float ATTACK_TYPE2_MAX_TIME = 0.3f;
+    //ロックオンできる距離
+    static constexpr float LOCK_ON_LANGE = 70.0f;
+    //後ろに回り込める距離
+    static constexpr float  BEHIND_LANGE = 20.0f;
+
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -67,6 +72,9 @@ private:
     DirectX::XMFLOAT3 avoidance_start{};
     DirectX::XMFLOAT3 avoidance_end{};
     float avoidance_easing_time{ 0.6f };
+private:
+    //ロックオンして回避した時
+
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ 1 };

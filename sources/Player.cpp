@@ -132,10 +132,29 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 {
     avoidance_boost_time += elapsed_time;
 
-    if (avoidance_boost_time < avoidance_easing_time)
+    //ロックオンしていないとき
+    if (is_lock_on == false)
     {
-        velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-        velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+        if (avoidance_boost_time < avoidance_easing_time)
+        {
+            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+        }
+    }
+    //ロックオンしている時
+    else
+    {
+        //自分と敵の距離を見る
+        float length{ Math::calc_vector_AtoB_length(position, target) };
+        //この距離より小さかったら後ろに回り込む
+        if (length < BEHIND_LANGE)
+        {
+
+        }
+        else
+        {
+
+        }
     }
 }
 
@@ -150,7 +169,7 @@ void Player::LockOn()
     //自分と敵の距離を見る
     float length{ Math::calc_vector_AtoB_length(position, target) };
 
-    if (length < 20.0f)
+    if (length < LOCK_ON_LANGE)
     {
         if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L()) is_lock_on = true;
         else is_lock_on = false;
