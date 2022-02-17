@@ -20,6 +20,11 @@ void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
     mpSkinnedMesh->render(pDeviceContext_, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
 }
 
+void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
+{
+    mPlayerPosition = PlayerPosition_;
+}
+
 void BaseEnemy::fUpdateStateMachine(float elapsedTime_)
 {
     // 中身が何も設定されていなかった場合の挙動は未知数なので気を付けて

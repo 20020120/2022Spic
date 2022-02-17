@@ -1,5 +1,5 @@
 #include"TestEnemy.h"
-
+#include"EnemyFileSystem.h"
 #include"imgui_include.h"
 //****************************************************************
 // 
@@ -14,6 +14,7 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mScale = { 0.1f,0.1f,0.1f };
     fRegisterFunctions();
+
 }
 
 void TestEnemy::fInitialize()
@@ -24,7 +25,6 @@ void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     fUpdateStateMachine(elapsedTime_);
-   
 
 }
 

@@ -196,7 +196,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
 //***********************************************************
     XMVECTOR axis;//‰ñ“]Ž²
     float an;
-    axis = up;
+    axis = XMVector3Cross(forward,d);
     forward = XMVector3Normalize(forward);
 
     XMVECTOR a = XMVector3Dot(d, forward);
