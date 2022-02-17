@@ -36,6 +36,6 @@ private:
     void fIdleUpdate(float elapsedTime_); // ‘Ò‹@‚ÌXVˆ—
 
     void fGuiMenu();
-
-    
+protected:
+    void fSetCapsulePoint() override;
 };

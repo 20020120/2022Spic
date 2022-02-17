@@ -4,7 +4,6 @@
 #include"TestEnemy.h"
 #include"imgui_include.h" 
 #include <fstream>
-
 #include "user.h"
 
 
@@ -31,7 +30,7 @@ void EnemyManager::fUpdate(float elapsedTime_)
 
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(elapsedTime_);
-
+    
     //--------------------<敵のスポナー>--------------------//
     fSpawn();
 
@@ -114,8 +113,6 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
     // 更新
     for (const auto enemy : mEnemyVec)
     {
-        
-
         enemy->fSetPlayerPosition(mPlayerPosition);
         enemy->fUpdate(elapsedTime_);
     }

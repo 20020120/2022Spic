@@ -301,6 +301,7 @@
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />
     <ClInclude Include="sources\NormalEnemy.h" />
+    <ClInclude Include="sources\Operators.h" />
     <ClInclude Include="sources\perlin_noise.h" />
     <ClInclude Include="sources\Player.h" />
     <ClInclude Include="sources\PlayerMove.h" />
