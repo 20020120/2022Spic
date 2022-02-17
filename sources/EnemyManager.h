@@ -64,6 +64,14 @@ public:
     void fUpdate(float elapsedTime_);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
+    //--------------------<当たり判定>--------------------//
+    int fCalcPlayerCapsuleVsEnemies(           // 戻り値 ： 当たった敵の数
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
+        float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
+        int PlayerAttackPower_                 // プレイヤーの攻撃力
+    );
+
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
     //--------------------<セッター関数>--------------------//

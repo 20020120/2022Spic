@@ -31,6 +31,7 @@ class BaseEnemy
         float mMoveSpeed{};   // 移動速度
         float mAttackSpeed{}; // 攻撃間隔
     };
+public:
     struct CapsuleCollider
     {
         DirectX::XMFLOAT3 mPointA{};
@@ -51,12 +52,15 @@ public:
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
 
+    //--------------------<プレイヤーからダメージを受ける>--------------------//
+    void fDamaged(int Damage_);
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetIsFrustum()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
     [[nodiscard]] bool fGetIsAlive()const;
+    [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 
@@ -67,7 +71,7 @@ protected:
     void fCalcFrustum();
     void fCalcLength();
     virtual  void fSetCapsulePoint() = 0;
-   virtual void fTurnToThePlayer(){}
+    virtual void fTurnToThePlayer(){}
     //****************************************************************
     // 
     // 変数 
