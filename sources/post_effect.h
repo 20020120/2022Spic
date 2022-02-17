@@ -22,7 +22,7 @@ public:
 	void scene_preview();
 
 	void clear_post_effect();
-	void dash_post_effect();
+	void dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }

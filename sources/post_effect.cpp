@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "framework.h"
 
+#include "codinate_convert.h"
 #include"user.h"
 
 PostEffect::PostEffect(ID3D11Device* device)
@@ -345,8 +346,13 @@ void PostEffect::clear_post_effect()
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::NONE);
 }
 
-void PostEffect::dash_post_effect()
+void PostEffect::dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos)
 {
+	D3D11_VIEWPORT viewport;
+	UINT num_viewports = 1;
+	dc->RSGetViewports(&num_viewports, &viewport);
+
+	effect_constants->data.reference_position = { conversion_2D(dc, pos).x / viewport.Width, conversion_2D(dc, pos).y / viewport.Height,0,0 };
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR);
 }
