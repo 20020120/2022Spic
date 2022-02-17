@@ -75,6 +75,15 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     charge_time += charge_add_time * elapsed_time;
+    //ロックオン中はターゲットに向かって突進する
+    if (is_lock_on)
+    {
+        ChargeAcceleration(elapsed_time);
+    }
+    else
+    {
+
+    }
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
