@@ -24,8 +24,9 @@ void TestEnemy::fInitialize()
 void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
-    fUpdateStateMachine(elapsedTime_);
+    fUpdateBase(elapsedTime_);
 
+    fGuiMenu();
 }
 
 void TestEnemy::fRegisterFunctions()
@@ -53,5 +54,17 @@ void TestEnemy::fIdleInit()
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
     mPosition.z += 10.0f * elapsedTime_;
+}
+
+void TestEnemy::fGuiMenu()
+{
+    // テスト用のImGUI
+#ifdef USE_IMGUI
+    ImGui::Begin("TestEnemy");
+    bool a = fGetIsFrustum();
+    ImGui::Checkbox("frustum", &a);
+    ImGui::End();
+#endif
+
 }
 
