@@ -217,6 +217,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	// エフェクトをかける
 	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
+	post_effect->blit(graphics.get_dc().Get());
 	post_effect->scene_preview();
 #endif // DEBUG
 	// bloom
