@@ -33,6 +33,7 @@ void GamePad::update(float elapsed_time)
 		if (pad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT)				newButtonState |= BTN_LEFT;
 		if (pad.wButtons & XINPUT_GAMEPAD_A)						newButtonState |= BTN_A;
 		if (pad.wButtons & XINPUT_GAMEPAD_B)						newButtonState |= BTN_B;
+		if (pad.wButtons & XINPUT_GAMEPAD_B)						newButtonState |= BTN_ATTACK_B;
 		if (pad.wButtons & XINPUT_GAMEPAD_X)						newButtonState |= BTN_X;
 		if (pad.wButtons & XINPUT_GAMEPAD_Y)						newButtonState |= BTN_Y;
 		if (pad.wButtons & XINPUT_GAMEPAD_START)					newButtonState |= BTN_START;
@@ -147,17 +148,18 @@ void GamePad::update(float elapsed_time)
 		if (GetAsyncKeyState('J') & 0x8000) rx = -1.0f;
 		if (GetAsyncKeyState('K') & 0x8000) ry = -1.0f;
 		if (GetAsyncKeyState('L') & 0x8000) rx = 1.0f;
-		if (GetAsyncKeyState('Z') & 0x8000) newButtonState |= BTN_A;
-		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_B;
-		if (GetAsyncKeyState('C') & 0x8000) newButtonState |= BTN_X;
+		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_A;
+		if (GetAsyncKeyState('Z') & 0x8000) newButtonState |= BTN_B;
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) newButtonState |= BTN_ATTACK_B;
+		if (GetAsyncKeyState('R') & 0x8000) newButtonState |= BTN_X;
 		if (GetAsyncKeyState('V') & 0x8000) newButtonState |= BTN_Y;
-		if (GetAsyncKeyState(VK_UP) & 0x8000)	  newButtonState |= BTN_UP;
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)  newButtonState |= BTN_RIGHT;
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000)   newButtonState |= BTN_DOWN;
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000)	  newButtonState |= BTN_LEFT;
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)  newButtonState |= BTN_RIGHT_SHOULDER;
-		if (GetAsyncKeyState(VK_TAB) & 0x8000)	  newButtonState |= BTN_START;
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000) newButtonState |= BTN_LEFT_SHOULDER;
+		if (GetAsyncKeyState(VK_UP) & 0x8000)	   newButtonState |= BTN_UP;
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)   newButtonState |= BTN_RIGHT;
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)    newButtonState |= BTN_DOWN;
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)	   newButtonState |= BTN_LEFT;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)   newButtonState |= BTN_RIGHT_SHOULDER;
+		if (GetAsyncKeyState(VK_TAB) & 0x8000)	   newButtonState |= BTN_START;
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) newButtonState |= BTN_LEFT_SHOULDER;
 #if 1
 		if (newButtonState & BTN_UP)    ly = 1.0f;
 		if (newButtonState & BTN_RIGHT) lx = 1.0f;
