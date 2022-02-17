@@ -96,10 +96,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (is_enemy_hit)
         {
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
-            if (game_pad->get_button_down() & GamePad::BTN_B)
-            {
                 TransitionAttackType1(0);
-            }
         }
     }
 }

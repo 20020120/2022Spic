@@ -47,7 +47,7 @@ void TestEnemy::fRegisterFunctions()
 void TestEnemy::fIdleInit()
 {
     
-}j
+}
 
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
