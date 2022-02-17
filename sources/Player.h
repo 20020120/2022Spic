@@ -2,6 +2,7 @@
 #include"BasePlayer.h"
 #include"PlayerMove.h"
 #include"collision.h"
+#include"BaseEnemy.h"
 #include"graphics_pipeline.h"
 
 class Player :public BasePlayer, private PlayerMove
@@ -32,7 +33,6 @@ private:
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.2f;
     //攻撃2撃目の猶予時間
     static constexpr float ATTACK_TYPE2_MAX_TIME = 0.3f;
-
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -63,6 +63,11 @@ private:
     float  avoidance_velocity{ 15.0f };
     //イージングの効果時間
     float easing_time{ 1.0f };
+private:
+    //プレイヤーの攻撃力(コンボによって変化していく)
+    int player_attack_power{ 1 };
+    //コンボ数
+    int combo_count{ 0 };
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
@@ -71,8 +76,10 @@ public:
     DirectX::XMFLOAT3 GetVelocity() { return velocity; }
     HitResult& GetPlayerHitResult() { return hit; }
     bool GetCameraReset() { return camera_reset; }
-    void SetRaycast(bool r) { raycast = r; }
     bool GetEnemyLockOn() { return is_lock_on; }
+    void SetRaycast(bool r) { raycast = r; }
+    //一番近い敵を持って来てその位置をセットする
+    void SetTarget(BaseEnemy* target_enemy);
 public:
     void FalseCameraReset() { camera_reset = false; }
 private:
@@ -88,6 +95,9 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
+private:
+    //ロックオン
+    void LockOn();
 private:
     //-----------アニメーションに関係する関数,変数------------//
 

@@ -196,10 +196,11 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
 //***********************************************************
     XMVECTOR axis;//回転軸
     float an;
-    axis = XMVector3Cross(forward,d);
+    axis = XMVector3Cross(d,forward);
+    //axis = up;
     forward = XMVector3Normalize(forward);
 
-    XMVECTOR a = XMVector3Dot(d, forward);
+    XMVECTOR a = XMVector3Dot(forward, d);
     XMStoreFloat(&an, a);
     an = static_cast<float>(acos(an));
     XMFLOAT3 forw;//forwardの値をfloat3に
@@ -208,19 +209,17 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
     XMStoreFloat3(&forw, forward);
     XMStoreFloat3(&d_, d);
 
-    if (fabs(an) > XMConvertToRadians(5.0f))
+    if (fabs(an) > 1e-8f)
     {
 
-        float cross{ (forw.x * d_.z) - (forw.z * d_.x) };
-
+        float cross{};
+        DirectX::XMStoreFloat(&cross, axis);
         //クオータニオンは回転の仕方(どの向きに)
-
         if (cross < 0.0f)
         {
             //回転軸と回転角から回転クオータニオンを求める
             XMVECTOR q;
             q = XMQuaternionRotationAxis(axis, an);//正の方向に動くクオータニオン
-
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
             orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
         }
@@ -229,7 +228,6 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
             XMVECTOR q;
             q = XMQuaternionRotationAxis(axis, -an);//負の方向に動くクオータニオン
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-
             orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
         }
     }

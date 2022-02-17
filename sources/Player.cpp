@@ -30,6 +30,8 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     ExecFuncUpdate(elapsed_time, sky_dome);
     UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right, sky_dome);
     GetPlayerDirections();
+    //ロックオン
+    LockOn();
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -89,6 +91,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 }
 
+void Player::SetTarget(BaseEnemy* target_enemy)
+{
+    target = target_enemy->fGetPosition();
+}
+
 void Player::GetPlayerDirections()
 {
     using namespace DirectX;
@@ -110,16 +117,19 @@ void Player::GetPlayerDirections()
 
 void Player::AvoidanceAcceleration(float elapse_time)
 {
-       avoidance_boost_time += 1.0f * elapse_time;
     //入力がなければプレイヤーの前方向に加速
     if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
         //velocity.x = forward.x * 30.0f;
         //velocity.z = forward.z * 30.0f;
-        //DirectX::XMFLOAT3 end{ forward.x * 15.0f ,forward.y * 15.0f,forward.z * 15.0f };
+        DirectX::XMFLOAT3 end{ forward.x * 30.0f ,forward.y * 30.0f,forward.z * 30.0f };
         //velocity.x = easing::Quart::easeOut(avoidance_boost_time, velocity.x,end.x, 2.0f);
         //velocity.z = easing::Quart::easeOut(avoidance_boost_time, velocity.z,end.z, 2.0f);
-
+        if (avoidance_boost_time < 1.0f)
+        {
+            velocity.x = easing::Quart::easeOut(avoidance_boost_time, velocity.x,end.x, 1.0f);
+            velocity.z = easing::Quart::easeOut(avoidance_boost_time, velocity.z,end.z, 1.0f);
+        }
 
     }
     //入力があれば入力方向に加速
@@ -138,5 +148,22 @@ void Player::ChargeAcceleration(float elapse_time)
 {
     //位置を補間
     position = Math::lerp(position, target, 1.0f * elapse_time);
+}
+
+void Player::LockOn()
+{
+    //自分と敵の距離を見る
+    float length{ Math::calc_vector_AtoB_length(position, target) };
+
+    if (length < 20.0f)
+    {
+        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L()) is_lock_on = true;
+        else is_lock_on = false;
+    }
+    else
+    {
+        is_lock_on = false;
+    }
+
 }
 

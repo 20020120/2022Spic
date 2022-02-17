@@ -12,7 +12,7 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
     // 位置を初期化
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.1f,0.1f,0.1f };
+    mScale = { 0.02f,0.02f,0.02f };
     fRegisterFunctions();
 
 }
@@ -24,8 +24,9 @@ void TestEnemy::fInitialize()
 void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
-    fUpdateStateMachine(elapsedTime_);
+    fUpdateBase(elapsedTime_);
 
+    fGuiMenu();
 }
 
 void TestEnemy::fRegisterFunctions()
@@ -52,6 +53,18 @@ void TestEnemy::fIdleInit()
 
 void TestEnemy::fIdleUpdate(float elapsedTime_)
 {
-    mPosition.z += 10.0f * elapsedTime_;
+
+}
+
+void TestEnemy::fGuiMenu()
+{
+    // テスト用のImGUI
+#ifdef USE_IMGUI
+    ImGui::Begin("TestEnemy");
+    bool a = fGetIsFrustum();
+    ImGui::Checkbox("frustum", &a);
+    ImGui::End();
+#endif
+
 }
 

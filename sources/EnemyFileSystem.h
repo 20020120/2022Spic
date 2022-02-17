@@ -27,26 +27,6 @@ struct EnemySource
     }
 };
 
-struct EnemyCommonParam
-{
-    int mHitPoint{};      // 体力
-    int mAttackPower{};   // 攻撃力
-    float mMoveSpeed{};   // 移動速度
-    float mAttackSpeed{}; // 攻撃速度
-
-     // シリアライズ
-    template<class Archive>
-    void serialize(Archive& archive)
-    {
-        archive(
-            cereal::make_nvp("HP", mHitPoint),
-            cereal::make_nvp("Power", mAttackPower),
-            cereal::make_nvp("MoveSpeed", mMoveSpeed),
-            cereal::make_nvp("AttackSpeed", mAttackSpeed)
-        );
-    }
-};
-
 namespace EnemyFileSystem
 {
     void fLoadFromJson(std::vector<EnemySource>& SourceVec_, const char* FileName_);
@@ -56,12 +36,5 @@ namespace EnemyFileSystem
     {
 
     }
-
-}
-
-namespace EnemyFileParam
-{
-    EnemyCommonParam fLoad(const char* FileName_);
-    void fCreate(const char* FileName_);
 
 }

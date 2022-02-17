@@ -64,6 +64,10 @@ public:
     void fUpdate(float elapsedTime_);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
+    //--------------------<ゲッター関数>--------------------//
+    [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
+    //--------------------<セッター関数>--------------------//
+    void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
     //--------------------<ImGui>--------------------//
     void fGuiMenu();
@@ -75,6 +79,9 @@ private:
     void fSpawn(EnemySource Source_);
     void fEnemiesUpdate(float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(ID3D11DeviceContext* pDeviceContext_); // 敵の描画処理
+
+    //--------------------<敵をソートする>--------------------//
+    void fSort();
 
     //--------------------<敵を出す場所を作成する>--------------------//
     void fRegisterEmitter();
