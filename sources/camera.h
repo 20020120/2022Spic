@@ -59,6 +59,16 @@ private:
     void keyboard_operation_with_euler_angles(float elapsed_time);
     void mouse_operation_with_quaternion(float elapsed_time);
     void keyboard_operation_with_quaternion(float elapsed_time);
+
+    void UpdateTarget(float elapsedTime);
+
+    void UpdateEye(float elapsedTime, DirectX::XMVECTOR Velocity);
+
+    void UpdateMove(float elapsedTime, DirectX::XMVECTOR PlayerPosition);
+
+    bool ResetEyeTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+
+    void UpdateOrientation(float elapsedTime);
     //--------< ’è”/\‘¢‘Ì >--------//
     struct SceneConstants
     {
@@ -91,4 +101,6 @@ private:
 
     static DirectX::XMFLOAT4X4 keep_view;
     static DirectX::XMFLOAT4X4 keep_projection;
+
+    DirectX::XMFLOAT3 eyeVector{};
 };
