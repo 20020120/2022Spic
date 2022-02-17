@@ -13,7 +13,6 @@ typedef std::function<void()> InitFunc;
 typedef std::function<void(float)> UpdateFunc;
 typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
 
-
 class BaseEnemy
 {
     //****************************************************************
@@ -28,7 +27,7 @@ public:
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
-
+    void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 protected:
     void fUpdateStateMachine(float elapsedTime_);
 
@@ -41,6 +40,7 @@ protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
+    DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
