@@ -52,6 +52,11 @@ void EnemyManager::fFinalize()
     fAllClear();
 }
 
+void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
+{
+    mPlayerPosition = Position_;
+}
+
 void EnemyManager::fSpawn()
 {
     int spawnCounts = 0;

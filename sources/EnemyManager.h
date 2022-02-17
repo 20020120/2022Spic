@@ -65,6 +65,9 @@ public:
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
 
+    //--------------------<セッター関数>--------------------//
+    void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
+
     //--------------------<ImGui>--------------------//
     void fGuiMenu();
     //--------------------<ウェーブ切り替え関数>--------------------//

@@ -22,6 +22,19 @@ class BaseEnemy
 {
     //****************************************************************
     // 
+    // 構造体
+    // 
+    //****************************************************************
+    struct Param
+    {
+        int mHitPoint{};      // 体力
+        int mAttackPower{};   // 攻撃力
+        float mMoveSpeed{};   // 移動速度
+        float mAttackSpeed{}; // 攻撃間隔
+    };
+
+    //****************************************************************
+    // 
     // 関数
     // 
     //****************************************************************
@@ -45,6 +58,7 @@ protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
+    
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
     

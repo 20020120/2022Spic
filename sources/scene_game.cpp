@@ -44,6 +44,7 @@ void SceneGame::uninitialize()
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
+	mEnemyManager.fSetPlayerPosition(player->GetPosition());
 	mEnemyManager.fUpdate(elapsed_time);
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
