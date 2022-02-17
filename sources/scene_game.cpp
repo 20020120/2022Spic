@@ -44,7 +44,7 @@ void SceneGame::uninitialize()
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//--------------------<敵の管理クラスの更新処理>--------------------//
-	mEnemyManager.fSetPlayerPosition(player->GetPosition());\
+	mEnemyManager.fSetPlayerPosition(player->GetPosition());
 	mEnemyManager.fUpdate(elapsed_time);
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = mEnemyManager.fGetNearestEnemyPosition();
@@ -52,6 +52,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	player->SetTarget(enemy);
+
+	// 敵とのあたり判定
+	//mEnemyManager.fCalcPlayerCapsuleVsEnemies(
+    //カプセルの点A,
+    //カプセルの点B,
+    //カプセルの半径,
+    //プレイヤーの攻撃力)
+
 	// camera
 	//camera->Update(elapsed_time,player.get());
 	camera->update_with_quaternion(elapsed_time);
@@ -209,6 +217,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	// エフェクトをかける
 	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
+	post_effect->blit(graphics.get_dc().Get());
 	post_effect->scene_preview();
 #endif // DEBUG
 	// bloom

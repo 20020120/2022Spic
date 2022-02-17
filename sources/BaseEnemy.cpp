@@ -21,6 +21,11 @@ void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
     mpSkinnedMesh->render(pDeviceContext_, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
 }
 
+void BaseEnemy::fDamaged(int Damage_)
+{
+    mParam.mHitPoint -= Damage_;
+}
+
 bool BaseEnemy::fGetIsFrustum() const
 {
     return mIsFrustum;
@@ -38,7 +43,12 @@ DirectX::XMFLOAT3 BaseEnemy::fGetPosition() const
 
 bool BaseEnemy::fGetIsAlive() const
 {
-    return true;
+    return mParam.mHitPoint > 0;
+}
+
+BaseEnemy::CapsuleCollider BaseEnemy::fGetCapsuleData() const
+{
+    return mCapsuleCollider;
 }
 
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
@@ -48,14 +58,16 @@ void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 
 void BaseEnemy::fUpdateBase(float elapsedTime_)
 {
+    //姿勢を更新
+    fGetEnemyDirections();
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
-
     //--------------------<ステートマシン>--------------------//
     fUpdateStateMachine(elapsedTime_);
-
     //--------------------<プレイヤーとの距離を計算>--------------------//
     fCalcLength();
+
+    fSetCapsulePoint();
 }
 
 void BaseEnemy::fUpdateStateMachine(float elapsedTime_)

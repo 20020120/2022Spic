@@ -2,6 +2,7 @@
 #include"EnemyFileSystem.h"
 #include"imgui_include.h"
 #include"user.h"
+#include"Operators.h"
 //****************************************************************
 // 
 // テストとサンプルを兼ねた敵の派生クラス 
@@ -16,6 +17,11 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
     mScale = { 0.02f,0.02f,0.02f };
     fRegisterFunctions();
 
+    // 各パラメータを初期化
+    mParam.mHitPoint = 10;
+    mParam.mAttackPower = 1;
+    mParam.mMoveSpeed = 10.0f;
+    mParam.mAttackSpeed = 1.0f;
 }
 
 void TestEnemy::fInitialize()
@@ -71,10 +77,8 @@ void TestEnemy::fGuiMenu()
 
 void TestEnemy::fSetCapsulePoint()
 {
-    const auto pointA=Math::calc_designated_point(mPosition, up, 3.0f);
-    
-    mCapsuleCollider.mPointA = pointA;
-
-
+    mCapsuleCollider.mPointA = Math::calc_designated_point(mPosition, up, 3.0f);
+    mCapsuleCollider.mPointB = Math::calc_designated_point(mPosition, -up, 3.0f);
+    mCapsuleCollider.mRadius = 1.0f;
 }
 

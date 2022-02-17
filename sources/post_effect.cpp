@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "framework.h"
 
+#include "codinate_convert.h"
 #include"user.h"
 
 PostEffect::PostEffect(ID3D11Device* device)
@@ -59,9 +60,6 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
 			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR"};
-		static int effect_type[FRAMEBUFFERS_COUNT - 2] = { static_cast<int>(POST_EFFECT_TYPE::NONE) };
-		static int post_effect_count = 1;
-		static bool display_effect_imgui = false;
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -310,15 +308,17 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 11);
 			}
 		}
-		//----セットしたポストエフェクトを描画する---//
-		{
-			// 一番後ろのframebufferを描画する
-			last_pst_efc_index = post_effect_count - 1;
-			bit_block_transfer->blit(dc,
-				framebuffers[last_pst_efc_index + 2]->get_color_map().GetAddressOf(),
-				0, 1, pixel_shaders[6].Get());
-		}
 	}
+}
+
+void PostEffect::blit(ID3D11DeviceContext* dc)
+{
+	//----セットしたポストエフェクトを描画する---//
+    // 一番後ろのframebufferを描画する
+	last_pst_efc_index = post_effect_count - 1;
+	bit_block_transfer->blit(dc,
+		framebuffers[last_pst_efc_index + 2]->get_color_map().GetAddressOf(),
+		0, 1, pixel_shaders[6].Get());
 }
 
 void PostEffect::scene_preview()
@@ -338,4 +338,21 @@ void PostEffect::scene_preview()
 		ImGui::End();
 	}
 #endif // USE_IMGUI
+}
+
+void PostEffect::clear_post_effect()
+{
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::NONE);
+}
+
+void PostEffect::dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos)
+{
+	D3D11_VIEWPORT viewport;
+	UINT num_viewports = 1;
+	dc->RSGetViewports(&num_viewports, &viewport);
+
+	effect_constants->data.reference_position = { conversion_2D(dc, pos).x / viewport.Width, conversion_2D(dc, pos).y / viewport.Height,0,0 };
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR);
 }
