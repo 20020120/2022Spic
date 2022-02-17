@@ -91,6 +91,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 }
 
+void Player::SetTarget(BaseEnemy* target_enemy)
+{
+    target = target_enemy->fGetPosition();
+}
+
 void Player::GetPlayerDirections()
 {
     using namespace DirectX;

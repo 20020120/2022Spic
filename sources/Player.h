@@ -2,6 +2,7 @@
 #include"BasePlayer.h"
 #include"PlayerMove.h"
 #include"collision.h"
+#include"BaseEnemy.h"
 #include"graphics_pipeline.h"
 
 class Player :public BasePlayer, private PlayerMove
@@ -75,8 +76,10 @@ public:
     DirectX::XMFLOAT3 GetVelocity() { return velocity; }
     HitResult& GetPlayerHitResult() { return hit; }
     bool GetCameraReset() { return camera_reset; }
-    void SetRaycast(bool r) { raycast = r; }
     bool GetEnemyLockOn() { return is_lock_on; }
+    void SetRaycast(bool r) { raycast = r; }
+    //一番近い敵を持って来てその位置をセットする
+    void SetTarget(BaseEnemy* target_enemy);
 public:
     void FalseCameraReset() { camera_reset = false; }
 private:
