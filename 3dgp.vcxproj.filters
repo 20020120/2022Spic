@@ -500,6 +500,9 @@
     <ClInclude Include="sources\NormalEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Operators.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
