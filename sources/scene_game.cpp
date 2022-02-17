@@ -52,6 +52,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	player->SetTarget(enemy);
+
+	// 敵とのあたり判定
+	//mEnemyManager.fCalcPlayerCapsuleVsEnemies(
+    //カプセルの点A,
+    //カプセルの点B,
+    //カプセルの半径,
+    //プレイヤーの攻撃力)
+
 	// camera
 	//camera->Update(elapsed_time,player.get());
 	camera->update_with_quaternion(elapsed_time);
