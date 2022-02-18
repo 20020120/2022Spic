@@ -60,11 +60,13 @@ private:
     void mouse_operation_with_quaternion(float elapsed_time);
     void keyboard_operation_with_quaternion(float elapsed_time);
 
-    void UpdateTarget(float elapsedTime);
+    void UpdateTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
 
     void UpdateEye(float elapsedTime, DirectX::XMVECTOR Velocity);
 
     void UpdateMove(float elapsedTime, DirectX::XMVECTOR PlayerPosition);
+
+    void UpdateDegree(float elapsedTime);
 
     bool ResetEyeTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
 
@@ -103,4 +105,6 @@ private:
     static DirectX::XMFLOAT4X4 keep_projection;
 
     DirectX::XMFLOAT3 eyeVector{};
+
+    float radius{};
 };
