@@ -3,6 +3,7 @@
 
 #include"TestEnemy.h"
 #include"NormalEnemy.h"
+#include"ChaseEnemy.h"
 #include"imgui_include.h" 
 #include "user.h"
 #include"collision.h"
@@ -22,6 +23,7 @@ void EnemyManager::fInitialize(ID3D11Device* pDevice_)
     mpDevice = pDevice_;
     fAllClear();
     fRegisterEmitter();
+    mUniqueCount = 0;
 }
 
 void EnemyManager::fUpdate(float elapsedTime_)
@@ -152,16 +154,19 @@ void EnemyManager::fSpawn(EnemySource Source_)
     switch (Source_.mType)
     {
     case EnemyType::Test:
-        mEnemyVec.emplace_back(new TestEnemy(mpDevice, point.fGetPosition()));
+        mEnemyVec.emplace_back(new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
         break;
     case EnemyType::Normal:
-        mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition()));
+        mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
+        break;
+    case EnemyType::Chase :
+        mEnemyVec.emplace_back(new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
         break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
         break;
     }
-
+    mUniqueCount++;
 }
 
 void EnemyManager::fEnemiesUpdate(float elapsedTime_)
@@ -264,19 +269,8 @@ void EnemyManager::fGuiMenu()
         ImGui::Separator();
 
         ImGui::Separator();
-        if(ImGui::Button("Sort"))
-        {
-        }
-        if (ImGui::CollapsingHeader("List"))
-        {
-            for (const auto enemy : mEnemyVec)
-            {
-                ImGui::Text(std::to_string(enemy->fGetLengthFromPlayer()).c_str());
-            }
-        }
-        ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal"};
+        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 
@@ -294,6 +288,22 @@ void EnemyManager::fGuiMenu()
             fStartWave(mCurrentWave);
         }
 
+        ImGui::Separator();
+        if (ImGui::CollapsingHeader("List"))
+        {
+            auto func = [=](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+            {
+                return A_->fGetUniqueId() < B_->fGetUniqueId();
+            };
+            std::sort(mEnemyVec.begin(), mEnemyVec.end(), func);
+
+            int index = 0;
+            for (const auto enemy : mEnemyVec)
+            {
+                enemy->fGuiMenu();
+                index++;
+            }
+        }
         ImGui::Separator();
 
         if (ImGui::Button("Close"))

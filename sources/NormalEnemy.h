@@ -18,15 +18,14 @@ class NormalEnemy final :public BaseEnemy
 public:
 
     NormalEnemy(ID3D11Device* pDevice_,
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
+    ,int UniqueId_
+        );
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
-    //****************************************************************
-    // 
-    // 変数 
-    // 
-    //****************************************************************
+    void fGuiMenu() override;
+   
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
@@ -49,4 +48,12 @@ private:
         MOVE,
         ATTACK
     };
+    //****************************************************************
+   // 
+   // 変数 
+   // 
+   //****************************************************************
+    State mNowState;
+    float mStayTimer;
+    bool mAttack_flg;
 };

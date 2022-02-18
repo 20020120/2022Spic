@@ -6,30 +6,8 @@
 // 
 //****************************************************************
 
-class TimerComponent final 
-{
-public:
-    void StartTimer(float LimitTimer_)
-    {
-      mStackTimer = 0.0f;
-      mLimitTime = LimitTimer_;
-    }
-    void fUpdate(float elapsedTime_)
-    {
-        mStackTimer += elapsedTime_;
-    }
 
-    [[nodiscard]] bool fGetOver()const
-    {
-        return mStackTimer > mLimitTime;
-    }
-private:
-    float mStackTimer{};
-    float mLimitTime{};
-};
-
-
-class NoneEnemy final : BaseEnemy
+class ChaseEnemy final :public  BaseEnemy
 {
     enum State
     {
@@ -44,8 +22,8 @@ class NoneEnemy final : BaseEnemy
     // 
     //****************************************************************
 public:
-    NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_);
-    ~NoneEnemy()override = default;
+    ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_);
+    ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
 protected:
@@ -53,6 +31,7 @@ protected:
 
 private:
     void fMove(float elapsedTime_);
+    void fRotate(float elapsedTime_);
     void fRegisterFunctions() override;
 
     //****************************************************************
@@ -62,6 +41,9 @@ private:
     //****************************************************************
     float mDistance{}; // プレイヤーとの距離（一定以下になったら追跡を止める）
     TimerComponent mTimerComponent{};
+    DirectX::XMFLOAT3 mChaseDirection{};  // 追跡するときのベクトル
+    DirectX::XMFLOAT3 mStartPosition{};   // 移動の始点
+    DirectX::XMFLOAT3 mEndPosition{};     // 移動の終焉 
 
     //****************************************************************
     // 
@@ -79,3 +61,4 @@ private:
 };
 
 
+ 

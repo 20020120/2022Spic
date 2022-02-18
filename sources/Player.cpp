@@ -105,6 +105,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+    DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 }
 
@@ -156,7 +157,9 @@ void Player::SetTarget(const BaseEnemy* target_enemy)
     if (target_enemy != nullptr)
     {
         target = target_enemy->fGetPosition();
+        is_enemy = true;
     }
+    else is_enemy = false;
 }
 
 void Player::GetPlayerDirections()

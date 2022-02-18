@@ -233,7 +233,7 @@
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\MoveBehavior.cpp" />
-    <ClCompile Include="sources\NoneEnemy.cpp" />
+    <ClCompile Include="sources\ChaseEnemy.cpp" />
     <ClCompile Include="sources\NormalEnemy.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
     <ClCompile Include="sources\Player.cpp" />
@@ -302,7 +302,7 @@
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />
-    <ClInclude Include="sources\NonerEnemy.h" />
+    <ClInclude Include="sources\ChaseEnemy.h" />
     <ClInclude Include="sources\NormalEnemy.h" />
     <ClInclude Include="sources\Operators.h" />
     <ClInclude Include="sources\perlin_noise.h" />

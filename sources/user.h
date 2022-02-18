@@ -387,6 +387,110 @@ namespace Math
         XMStoreFloat3(&v0_norm, XMVector3Normalize(v0_vec));
         return calc_designated_point(start, v0_norm, projection_length);
     }
+
+    //--------------------------------------------------------------
+    //  ベクトルを正規化する
+    //--------------------------------------------------------------
+    //  戻り値：長さが１のベクトル
+    //--------------------------------------------------------------
+    inline DirectX::XMFLOAT3 Normalize(DirectX::XMFLOAT3 V_)
+    {
+        auto V = DirectX::XMLoadFloat3(&V_);
+        V = DirectX::XMVector3Normalize(V);
+        DirectX::XMFLOAT3 ret{};
+        DirectX::XMStoreFloat3(&ret, V);
+        return ret;
+    }
+
+    //--------------------------------------------------------------
+    //  外積
+    //--------------------------------------------------------------
+    //
+    //  引数：ベクトル、ベクトル、正規化するかどうか
+    //
+    //--------------------------------------------------------------
+    //  戻り値：ベクトル
+    //--------------------------------------------------------------
+    inline DirectX::XMFLOAT3 Cross(DirectX::XMFLOAT3 A_, DirectX::XMFLOAT3 B_, bool IsNormalize_ = true)
+    {
+        const auto VA = DirectX::XMLoadFloat3(&A_);
+        const auto VB = DirectX::XMLoadFloat3(&B_);
+        auto Cross = DirectX::XMVector3Cross(VA, VB);
+        if (IsNormalize_)
+        {
+            Cross = DirectX::XMVector3Normalize(Cross);
+        }
+        DirectX::XMFLOAT3 cross{};
+        DirectX::XMStoreFloat3(&cross, Cross);
+        return cross;
+    }
+
+    //--------------------------------------------------------------
+    //  内積
+    //--------------------------------------------------------------
+    //
+    //  引数：ベクトル、ベクトル
+    //
+    //--------------------------------------------------------------
+    //  戻り値：角度（ラジアン）
+    //--------------------------------------------------------------
+    inline float Dot(const DirectX::XMFLOAT3 A, const DirectX::XMFLOAT3 B)
+    {
+        const DirectX::XMVECTOR V0 = DirectX::XMLoadFloat3(&A);
+        const DirectX::XMVECTOR V1 = DirectX::XMLoadFloat3(&B);
+        const DirectX::XMVECTOR Ans = DirectX::XMVector3Dot(V0, V1);
+        float ans{};
+        DirectX::XMStoreFloat(&ans, Ans);
+        return ans;
+    }
+    //--------------------------------------------------------------
+    //  `ベクトルの長さを計算する
+    //--------------------------------------------------------------
+    //
+    //  引数：ベクトル
+    //
+    //--------------------------------------------------------------
+    //  戻り値：長さ
+    //--------------------------------------------------------------
+    inline float Length(DirectX::XMFLOAT3 V_)
+    {
+        auto VL = DirectX::XMLoadFloat3(&V_);
+        VL = DirectX::XMVector3Length(VL);
+        float ret;
+        DirectX::XMStoreFloat(&ret, VL);
+        return ret;
+    }
+    //--------------------------------------------------------------
+    //  クォータニオン回転
+    //--------------------------------------------------------------
+    //
+    //  引数：現在の回転姿勢、軸、回転角
+    //
+    //--------------------------------------------------------------
+    //  戻り値：回転後の姿勢
+    //--------------------------------------------------------------
+    inline DirectX::XMFLOAT4 RotQuaternion(DirectX::XMFLOAT4 Orientation_,DirectX::XMFLOAT3 Axis_,float Radian_)
+    {
+
+        if (fabs(Radian_) > 1e-8f)
+        {
+            // 変換
+            const auto Axis = DirectX::XMLoadFloat3(&Axis_);
+            auto oriV = DirectX::XMLoadFloat4(&Orientation_);
+
+            // 回転クォータニオンを算出
+            const auto rotQua = DirectX::XMQuaternionRotationAxis(Axis, Radian_);
+            oriV = DirectX::XMQuaternionMultiply(oriV, rotQua);
+
+            DirectX::XMFLOAT4 ret{};
+            DirectX::XMStoreFloat4(&ret, oriV);
+            return ret;
+        }
+        return Orientation_;
+    }
+
+    
+
 }
 
 //--------------------------------------------------------------
@@ -447,3 +551,25 @@ inline void safe_release(T*& p)
         (p) = nullptr;
     }
 }
+
+
+class TimerComponent final
+{
+public:
+    void StartTimer(float LimitTimer_)
+    {
+        mStackTimer = 0.0f;
+        mLimitTime = LimitTimer_;
+    }
+    void fUpdate(float elapsedTime_)
+    {
+        mStackTimer += elapsedTime_;
+    }
+    [[nodiscard]] bool fGetOver()const
+    {
+        return mStackTimer > mLimitTime;
+    }
+private:
+    float mStackTimer{};
+    float mLimitTime{};
+};

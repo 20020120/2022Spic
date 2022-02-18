@@ -22,6 +22,8 @@ private:
 protected:
     //敵をロックオンしたかどうか
     bool is_lock_on{ false };
+    //敵がいるかどうか
+    bool is_enemy{ false };
     //ターゲット
     DirectX::XMFLOAT3 target{};
 
