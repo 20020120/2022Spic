@@ -29,9 +29,8 @@ void NormalEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
     fUpdateBase(elapsedTime_);
-
-
 }
+
 
 void NormalEnemy::fRegisterFunctions()
 {
@@ -77,43 +76,69 @@ void NormalEnemy::fParamInitialize()
     mParam.mAttackPower = 10;   // 攻撃力
     mParam.mMoveSpeed = 10;   // 移動速度
     mParam.mAttackSpeed = 2; // 攻撃間隔
-    
+    mStayTimer = 1.0f;
+    mAttack_flg = false;
 }
 
 
 void NormalEnemy::fIdleInit()
 {
+    mStayTimer = 1.0f;
+    mNowState = IDLE;
 }
-
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
-	if(fTurnToPlayer(elapsedTime_, 10))
+    mStayTimer -= elapsedTime_;
+    if (mStayTimer > 0.0f) return;
+#if 0
+    if (fTurnToPlayer(elapsedTime_, 10))
     {
+        //プレイヤーへの回転が完了したら移動ステートへ遷移
         fChangeState(MOVE);
     }
+#else
+    fChangeState(MOVE);
+#endif
+
 }
 
 void NormalEnemy::fMoveInit()
 {
-
+    mNowState = MOVE;
+    max_move_speed = mParam.mMoveSpeed;
 }
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
 {
-    velocity.x += forward.x * move_speed * elapsedTime_;
-    velocity.y += forward.y * move_speed * elapsedTime_;
-    velocity.z += forward.z * move_speed * elapsedTime_;
-    if (!fTurnToPlayer(elapsedTime_,5))
+    MovingProcess(forward.x, forward.z, max_move_speed);
+    fTurnToPlayer(elapsedTime_, 5);
+    if(mAttack_flg)
     {
-        fChangeState(IDLE);
+        fChangeState(ATTACK);
     }
 }
 
 void NormalEnemy::fAttackInit()
 {
+    mNowState = ATTACK;
 }
 
 void NormalEnemy::fAttackUpdate(float elapsedTime_)
 {
+}
+
+void NormalEnemy::fGuiMenu()
+{
+#ifdef USE_IMGUI
+    ImGui::Text("Name : Normal");
+    ImGui::DragFloat3("position", &mPosition.x);
+    ImGui::DragFloat3("angle", &mOrientation.x);
+    const char* state_list[] = { "IDLE","MOVE","ATTACK" };
+    std::string state =  state_list[static_cast<int>(mNowState)];
+    ImGui::Text("State"); ImGui::SameLine();
+    ImGui::Text(state.c_str());
+    ImGui::Checkbox("Attack", &mAttack_flg);
+#endif
+
 }

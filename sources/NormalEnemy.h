@@ -24,11 +24,8 @@ public:
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
-    //****************************************************************
-    // 
-    // 変数 
-    // 
-    //****************************************************************
+    void fGuiMenu() override;
+   
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
@@ -51,4 +48,12 @@ private:
         MOVE,
         ATTACK
     };
+    //****************************************************************
+   // 
+   // 変数 
+   // 
+   //****************************************************************
+    State mNowState;
+    float mStayTimer;
+    bool mAttack_flg;
 };

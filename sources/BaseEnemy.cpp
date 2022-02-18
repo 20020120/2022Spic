@@ -129,15 +129,14 @@ void BaseEnemy::fChangeState(int i)
 void BaseEnemy::fGetEnemyDirections()
 {
     using namespace DirectX;
-    XMVECTOR orientation_vec{ XMLoadFloat4(&mOrientation) };
-    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    const XMVECTOR orientation_vec{ XMLoadFloat4(&mOrientation) };
+    const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
     DirectX::XMFLOAT4X4 m4x4 = {};
     DirectX::XMStoreFloat4x4(&m4x4, m);
-    DirectX::XMVECTOR right_vec, forward_vec, up_vec;
 
-    right_vec = { m4x4._11, m4x4._12, m4x4._13 };
-    up_vec = { m4x4._21, m4x4._22, m4x4._23 };
-    forward_vec = { m4x4._31, m4x4._32, m4x4._33 };
+    const DirectX::XMVECTOR right_vec = {m4x4._11, m4x4._12, m4x4._13};
+    const DirectX::XMVECTOR up_vec = {m4x4._21, m4x4._22, m4x4._23};
+    const DirectX::XMVECTOR forward_vec = {m4x4._31, m4x4._32, m4x4._33};
 
     XMStoreFloat3(&right, right_vec);
     XMStoreFloat3(&up, up_vec);
@@ -165,6 +164,13 @@ bool BaseEnemy::fTurnToPlayer(float elapsedTime_, float end_turn_angle)
     XMVECTOR Dot = XMVector3Dot(Vec, forward);
     float angle = XMVectorGetX(Dot);
     angle = acos(angle);
+
+    //プレイヤーへの向きと敵の向きの角度がend_turn_angle度以下ならtrueを返す
+    if (angle < XMConvertToRadians(end_turn_angle))
+    {
+        return true;
+    }
+    //falseなら回転してからリターン
     if (fabs(angle) > 1e-8f)
     {
         DirectX::XMFLOAT3 f{};
@@ -172,30 +178,23 @@ bool BaseEnemy::fTurnToPlayer(float elapsedTime_, float end_turn_angle)
         DirectX::XMStoreFloat3(&f, forward);
         DirectX::XMStoreFloat3(&v, Vec);
         float cross{ (f.x * v.z) - (f.z * v.x) };
-
+        float turn_speed = 2.0f;
         if (cross < 0.0f)
         {
             XMVECTOR q;
             q = XMQuaternionRotationAxis(up, angle);
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.5f * elapsedTime_);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
         }
         else
         {
             XMVECTOR q;
             q = XMQuaternionRotationAxis(up, -angle);
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.5f * elapsedTime_);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
         }
         XMStoreFloat4(&mOrientation, orientation_vec);
     }
-    int a = XMConvertToDegrees(angle);
-    //プレイヤーへの向きと敵の向きの角度がend_turn_angle度以下ならtrueを返す
-    if (angle < XMConvertToRadians(end_turn_angle))
-    {
-        return true;
-    }
-
     return false;
 }
 
@@ -217,7 +216,7 @@ void BaseEnemy::fUpdateVerticalVelocity(float elapsedFrame)
 void BaseEnemy::fUpdateVerticalMove(float elapsedTime_, DirectX::XMFLOAT3& position)
 {
     //垂直方向の移動量
-    float my = velocity.y * elapsedTime_;
+    const float my = velocity.y * elapsedTime_;
 
     if (my != 0.0f)
     {
@@ -228,12 +227,12 @@ void BaseEnemy::fUpdateVerticalMove(float elapsedTime_, DirectX::XMFLOAT3& posit
 void BaseEnemy::fUpdateHrizontalVelocity(float elasedFrame_)
 {
     //XZ平面の速力を減速する
-    float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
+    const float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
     if (length > 0.0f)
     {
 
         //摩擦力
-        float friction{ this->friction * elasedFrame_ };
+        const float friction{ this->friction * elasedFrame_ };
         //摩擦による横方向の減速処理
         if (length > friction)
         {
@@ -251,19 +250,19 @@ void BaseEnemy::fUpdateHrizontalVelocity(float elasedFrame_)
     if (length <= max_move_speed)
     {
         //移動ベクトルが0でないなら加速する
-        float moveveclength{ sqrtf((move_vec_x * move_vec_x) + (move_vec_z * move_vec_z)) };
+        const float moveveclength{ sqrtf((move_vec_x * move_vec_x) + (move_vec_z * move_vec_z)) };
         if (moveveclength > 0.0f)
         {
             //加速力
-            float acceleration{ this->acceleration * elasedFrame_ };
+            const float acceleration{ this->acceleration * elasedFrame_ };
             //移動ベクトルによる加速処理
             velocity.x += move_vec_x * acceleration;
             velocity.z += move_vec_z * acceleration;
             float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
             if (length > max_move_speed)
             {
-                float vx{ velocity.x / length };
-                float vz{ velocity.z / length };
+	            const float vx{ velocity.x / length };
+	            const float vz{ velocity.z / length };
 
                 velocity.x = vx * max_move_speed;
                 velocity.z = vz * max_move_speed;
@@ -278,7 +277,7 @@ void BaseEnemy::fUpdateHorizontalMove(float elapsedTime_, DirectX::XMFLOAT3& pos
 {
     using namespace DirectX;
     // 水平速力計算
-    float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+    const float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
     //水平移動値
     float mx{ velocity.x * 100.0f * elapsedTime_ };
     float mz{ velocity.z * 100.0f * elapsedTime_ };
