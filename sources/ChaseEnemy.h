@@ -41,6 +41,9 @@ private:
     //****************************************************************
     float mDistance{}; // プレイヤーとの距離（一定以下になったら追跡を止める）
     TimerComponent mTimerComponent{};
+    DirectX::XMFLOAT3 mChaseDirection{};  // 追跡するときのベクトル
+    DirectX::XMFLOAT3 mStartPosition{};   // 移動の始点
+    DirectX::XMFLOAT3 mEndPosition{};     // 移動の終焉 
 
     //****************************************************************
     // 

@@ -442,8 +442,55 @@ namespace Math
         float ans{};
         DirectX::XMStoreFloat(&ans, Ans);
         return ans;
-
     }
+    //--------------------------------------------------------------
+    //  `ベクトルの長さを計算する
+    //--------------------------------------------------------------
+    //
+    //  引数：ベクトル
+    //
+    //--------------------------------------------------------------
+    //  戻り値：長さ
+    //--------------------------------------------------------------
+    inline float Length(DirectX::XMFLOAT3 V_)
+    {
+        auto VL = DirectX::XMLoadFloat3(&V_);
+        VL = DirectX::XMVector3Length(VL);
+        float ret;
+        DirectX::XMStoreFloat(&ret, VL);
+        return ret;
+    }
+    //--------------------------------------------------------------
+    //  クォータニオン回転
+    //--------------------------------------------------------------
+    //
+    //  引数：現在の回転姿勢、軸、回転角
+    //
+    //--------------------------------------------------------------
+    //  戻り値：回転後の姿勢
+    //--------------------------------------------------------------
+    inline DirectX::XMFLOAT4 RotQuaternion(DirectX::XMFLOAT4 Orientation_,DirectX::XMFLOAT3 Axis_,float Radian_)
+    {
+
+        if (fabs(Radian_) > 1e-8f)
+        {
+            // 変換
+            const auto Axis = DirectX::XMLoadFloat3(&Axis_);
+            auto oriV = DirectX::XMLoadFloat4(&Orientation_);
+
+            // 回転クォータニオンを算出
+            const auto rotQua = DirectX::XMQuaternionRotationAxis(Axis, Radian_);
+            oriV = DirectX::XMQuaternionMultiply(oriV, rotQua);
+
+            DirectX::XMFLOAT4 ret{};
+            DirectX::XMStoreFloat4(&ret, oriV);
+            return ret;
+        }
+        return Orientation_;
+    }
+
+    
+
 }
 
 //--------------------------------------------------------------

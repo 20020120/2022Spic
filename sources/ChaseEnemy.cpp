@@ -35,6 +35,7 @@ void ChaseEnemy::fInitialize()
 {
      fUpdateBase(elapsedTime_);
      mTimerComponent.fUpdate(elapsedTime_);
+     fRotate(elapsedTime_);
 }
 
  void ChaseEnemy::fSetCapsulePoint()
@@ -47,17 +48,21 @@ void ChaseEnemy::fInitialize()
    
 }
 
-void ChaseEnemy::fRotate(float elapsedTime_)
-{
-    // 回転軸を算出
-    const DirectX::XMFLOAT3 V1 = Math::Normalize(mPlayerPosition - mPosition);
-    const DirectX::XMFLOAT3 V2 = Math::Normalize(forward);
-    auto axis = Math::Cross(V1, V2);
-
-    // 回転角を算出
-    auto rad = Math::Dot(V1, V2);
-
-}
+ void ChaseEnemy::fRotate(float elapsedTime_)
+ {
+     // 回転軸を算出
+     const DirectX::XMFLOAT3 V1 = Math::Normalize(mPlayerPosition - mPosition);
+     const DirectX::XMFLOAT3 V2 = Math::Normalize(forward);
+      auto axis = Math::Cross(V2, V1, false);
+     if (Math::Length(axis) > 0.0f)
+     {
+         axis = Math::Normalize(axis);
+         // 回転角を算出
+         auto rad = Math::Dot(V1, V2);
+         rad = acosf(rad);
+         mOrientation = Math::RotQuaternion(mOrientation, axis, rad * elapsedTime_ * 10.0f);
+     }
+ }
 
 void ChaseEnemy::fRegisterFunctions()
 {
@@ -116,29 +121,25 @@ void ChaseEnemy::fStartUpdate(float elapsedTime_)
     {
         fChangeState(State::Chase);
     }
+    
 }
 
 void ChaseEnemy::fChaseInit()
 {
-    
+    mChaseDirection = Math::Normalize(mPlayerPosition - mPosition);
+    mTimerComponent.StartTimer(5.0f);
 }
 
 void ChaseEnemy::fChaseUpdate(float elapsedTime_)
 {
 
-    if (mLengthFromPlayer > mDistance)
+    if (!mTimerComponent.fGetOver())
     {
-
-        // 目標地点までのベクトルを取得
-        auto moveDirection = mPlayerPosition - mPosition;
-        moveDirection = Math::Normalize(moveDirection);
-
         // 位置を更新
-        mPosition += moveDirection * mParam.mMoveSpeed * elapsedTime_;
+        mPosition += mChaseDirection * mParam.mMoveSpeed * elapsedTime_;
     }
-    else
+    if(mLengthFromPlayer<mDistance)
     {
-        // 一定距離内になったら遷移する
         fChangeState(State::Intimidation);
     }
 }
