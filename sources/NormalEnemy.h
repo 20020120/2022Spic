@@ -18,7 +18,9 @@ class NormalEnemy final :public BaseEnemy
 public:
 
     NormalEnemy(ID3D11Device* pDevice_,
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
+    ,int UniqueId_
+        );
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
@@ -32,14 +34,15 @@ private:
     void fRegisterFunctions() override;
     //パラメータ初期化関数
     void fParamInitialize();
-    //プレイヤーのほうを向く処理
-    bool fIsTurnToThePlayer() ;
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
 
     void fMoveInit(); //移動の初期化
     void fmoveUpdate(float elapsedTime_); //移動の更新処理
+
+    void fAttackInit(); //移動の初期化
+    void fAttackUpdate(float elapsedTime_); //移動の更新処理
 
     void fSetCapsulePoint() override{};
     enum State

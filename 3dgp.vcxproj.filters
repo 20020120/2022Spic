@@ -118,6 +118,9 @@
     <Filter Include="Sources\skydome">
       <UniqueIdentifier>{a540791f-fe00-4091-9e33-caf26773ce9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\GameManager">
+      <UniqueIdentifier>{a9dbb287-bf3a-403d-8569-6ad68b039447}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -301,6 +304,12 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="sources\NormalEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\GameManager.cpp">
+      <Filter>Sources\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ChaseEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -502,6 +511,12 @@
     </ClInclude>
     <ClInclude Include="sources\Operators.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ChaseEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\GameManager.h">
+      <Filter>Sources\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

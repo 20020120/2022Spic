@@ -1,5 +1,6 @@
 #pragma once
 #include"skinned_mesh.h"
+#include "MoveBehavior.h"
 #include<d3d11.h>
 #include<memory>
 
@@ -17,7 +18,7 @@ struct CubeData
     DirectX::XMFLOAT3 mHalfSize{};
 };
 
-class BaseEnemy
+class BaseEnemy :public MoveBehavior
 {
     //****************************************************************
     // 
@@ -45,15 +46,18 @@ public:
     // 
     //****************************************************************
 public:
-    BaseEnemy(ID3D11Device *pDevice_,const char* ModelName_);
+    BaseEnemy(ID3D11Device *pDevice_,int UniqueId_,const char* ModelName_);
     virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
 
+    //--------------------<ImGui>--------------------//
+    virtual void fGuiMenu(){}
+
     //--------------------<プレイヤーからダメージを受ける>--------------------//
-    void fDamaged(int Damage_);
+    virtual void fDamaged(int Damage_);
 
     // プレイヤー敵との距離を計算する
     void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
@@ -64,6 +68,7 @@ public:
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
     [[nodiscard]] bool fGetIsAlive()const;
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
+    [[nodiscard]] int fGetUniqueId()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 
@@ -75,6 +80,19 @@ protected:
     void fCalcLength();
     virtual  void fSetCapsulePoint() = 0;
     virtual void fTurnToThePlayer(){}
+    //--------------------<移動処理関連>--------------------//
+    //プレイヤーのほうを向く処理
+    bool fTurnToPlayer(float elapsedTime_, float end_turn_angle);
+    void fUpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
+    //垂直速力更新処理
+    void fUpdateVerticalVelocity(float elapsedFrame);
+    //垂直移動更新処理
+    void fUpdateVerticalMove(float elapsedTime, DirectX::XMFLOAT3& position);
+    //水平速力更新処理
+    void fUpdateHrizontalVelocity(float elasedFrame);
+    //水平移動更新処理
+    void fUpdateHorizontalMove(float elapsedTime, DirectX::XMFLOAT3& position);
+
     //****************************************************************
     // 
     // 変数 
@@ -91,10 +109,12 @@ protected:
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
     
-    //プレイヤーの各方向
+    //エネミーの各方向
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
-    DirectX::XMFLOAT3 up;
+    DirectX::XMFLOAT3 up = {0.0f, 1.0f, 0.1f};
+
+    int mUniqueId{};
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };

@@ -76,6 +76,9 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat("capsule_parm.rasius", &capsule_parm.rasius,0.1f);
                 ImGui::TreePop();
             }
+            ImGui::InputFloat3("camera_f", &camera_forward.x);
+            ImGui::InputFloat3("camera_r", &camera_right.x);
+
             ImGui::DragFloat3("target", &target.x);
             ImGui::End();
         }

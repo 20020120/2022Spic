@@ -8,8 +8,8 @@
 // テストとサンプルを兼ねた敵の派生クラス 
 // 
 //****************************************************************
-TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
-    :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_3.fbx")
+TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_)
+    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_3.fbx")
 {
     // 位置を初期化
     mPosition = EmitterPoint_;
@@ -32,8 +32,13 @@ void TestEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
     fUpdateBase(elapsedTime_);
+}
 
-    fGuiMenu();
+void TestEnemy::fGuiMenu()
+{
+    ImGui::Text(("TestEnemy" + std::to_string(mUniqueId)).c_str());
+    ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
+    ImGui::Separator();
 }
 
 void TestEnemy::fRegisterFunctions()
@@ -63,26 +68,11 @@ void TestEnemy::fIdleUpdate(float elapsedTime_)
     
 }
 
-void TestEnemy::fGuiMenu()
-{
-    // テスト用のImGUI
-#ifdef USE_IMGUI
-    ImGui::Begin("TestEnemy");
-    bool a = fGetIsFrustum();
-    ImGui::Checkbox("frustum", &a);
-    if (ImGui::Button("Damaged"))
-    {
-        fDamaged(5);
-    }
-    ImGui::End();
-#endif
-
-}
-
 void TestEnemy::fSetCapsulePoint()
 {
-    mCapsuleCollider.mPointA = Math::calc_designated_point(mPosition, up, 3.0f);
-    mCapsuleCollider.mPointB = Math::calc_designated_point(mPosition, -up, 3.0f);
-    mCapsuleCollider.mRadius = 1.0f;
+    
+    //mCapsuleCollider.mPointA = Math::calc_designated_point(mPosition, up, 3.0f);
+    //mCapsuleCollider.mPointB = Math::calc_designated_point(mPosition, -up, 3.0f);
+    //mCapsuleCollider.mRadius = 1.0f;
 }
 
