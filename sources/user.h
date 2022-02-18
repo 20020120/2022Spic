@@ -447,3 +447,25 @@ inline void safe_release(T*& p)
         (p) = nullptr;
     }
 }
+
+
+class TimerComponent final
+{
+public:
+    void StartTimer(float LimitTimer_)
+    {
+        mStackTimer = 0.0f;
+        mLimitTime = LimitTimer_;
+    }
+    void fUpdate(float elapsedTime_)
+    {
+        mStackTimer += elapsedTime_;
+    }
+    [[nodiscard]] bool fGetOver()const
+    {
+        return mStackTimer > mLimitTime;
+    }
+private:
+    float mStackTimer{};
+    float mLimitTime{};
+};

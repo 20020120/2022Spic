@@ -28,16 +28,12 @@ NoneEnemy::NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int Uniqu
 
 void NoneEnemy::fInitialize()
 {
-    // 待機時間を設定
-    mTimerComponent.StartTimer(5.0f);
+   
 }
 
  void NoneEnemy::fUpdate(float elapsedTime_)
 {
-    if(mTimerComponent.fGetOver())
-    {
-        //fChangeState()
-    }
+   
 }
 
  void NoneEnemy::fSetCapsulePoint()
@@ -68,12 +64,16 @@ void NoneEnemy::fRegisterFunctions()
 
 void NoneEnemy::fStartInit()
 {
-    // 登場アニメーション
+    // 待機時間を設定
+    mTimerComponent.StartTimer(5.0f);
 }
 
 void NoneEnemy::fStartUpdate(float elapsedTime_)
 {
-   
+    if (mTimerComponent.fGetOver())
+    {
+        fChangeState(State::Chase);
+    }
 
 }
 
