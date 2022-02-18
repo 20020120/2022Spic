@@ -7,7 +7,7 @@
 //****************************************************************
 
 
-class NoneEnemy final : BaseEnemy
+class ChaseEnemy final :public  BaseEnemy
 {
     enum State
     {
@@ -22,8 +22,8 @@ class NoneEnemy final : BaseEnemy
     // 
     //****************************************************************
 public:
-    NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_);
-    ~NoneEnemy()override = default;
+    ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_);
+    ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
 protected:
@@ -31,6 +31,7 @@ protected:
 
 private:
     void fMove(float elapsedTime_);
+    void fRotate(float elapsedTime_);
     void fRegisterFunctions() override;
 
     //****************************************************************
@@ -57,3 +58,4 @@ private:
 };
 
 
+ 

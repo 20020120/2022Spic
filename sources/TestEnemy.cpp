@@ -70,8 +70,9 @@ void TestEnemy::fIdleUpdate(float elapsedTime_)
 
 void TestEnemy::fSetCapsulePoint()
 {
-    mCapsuleCollider.mPointA = Math::calc_designated_point(mPosition, up, 3.0f);
-    mCapsuleCollider.mPointB = Math::calc_designated_point(mPosition, -up, 3.0f);
-    mCapsuleCollider.mRadius = 1.0f;
+    
+    //mCapsuleCollider.mPointA = Math::calc_designated_point(mPosition, up, 3.0f);
+    //mCapsuleCollider.mPointB = Math::calc_designated_point(mPosition, -up, 3.0f);
+    //mCapsuleCollider.mRadius = 1.0f;
 }
 
