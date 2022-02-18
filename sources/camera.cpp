@@ -44,14 +44,17 @@ Camera::Camera(GraphicsPipeline& graphics,Player* player)
 	DirectX::XMVECTOR PlayerRight = DirectX::XMLoadFloat3(&playerRight);
 	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 
-	DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -5;
+	DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -10 + PlayerUp * 4;
 	DirectX::XMStoreFloat3(&eye, Eye);
 
-	DirectX::XMVECTOR Target = PlayerPosition + Forward * 5;
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
 	DirectX::XMStoreFloat3(&target, Target);
 
 	DirectX::XMVECTOR EyeVector = Eye - PlayerPosition;
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+
+
+
 
 }
 
@@ -412,12 +415,16 @@ void Camera::Update(float elapsedTime, Player* player)
 	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 	DirectX::XMVECTOR PlayerVelocity = DirectX::XMLoadFloat3(&playerVelocity);
 
+	DirectX::XMFLOAT3 forward{};
+	DirectX::XMStoreFloat3(&forward, Forward);
+
 	if (player->GetCameraReset())
 	{
-		DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -5;
-		DirectX::XMVECTOR Target = PlayerPosition + PlayerForward * 5;
-		DirectX::XMStoreFloat3(&eye, Eye);
-		DirectX::XMStoreFloat3(&target, Target);
+		//DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -5;
+		//DirectX::XMVECTOR Target = PlayerPosition + PlayerUp;
+		//DirectX::XMStoreFloat3(&eye, Eye);
+		//DirectX::XMStoreFloat3(&target, Target);
+		ResetEyeTarget(elapsedTime, PlayerPosition, PlayerForward, PlayerUp);
 		UpdateOrientation(elapsedTime);
         player->FalseCameraReset();
 
@@ -434,7 +441,7 @@ void Camera::Update(float elapsedTime, Player* player)
 		UpdateMove(elapsedTime, PlayerPosition);
 
 		UpdateEye(elapsedTime, PlayerPosition);
-		UpdateTarget(elapsedTime);
+		UpdateTarget(elapsedTime, PlayerPosition, PlayerUp);
 
 		UpdateOrientation(elapsedTime);
 
@@ -444,7 +451,8 @@ void Camera::Update(float elapsedTime, Player* player)
 	ImGui::Begin("Camera", false);
 	ImGui::SliderFloat3("Position", &eye.x, -10.0f, 10.0f);
 	ImGui::InputFloat3("target", &target.x);
-	
+
+	ImGui::InputFloat3("forward", &forward.x);
 	ImGui::End();
 #endif
 
@@ -475,7 +483,7 @@ void Camera::Update(float elapsedTime, Player* player)
 
 }
 
-void Camera::UpdateTarget(float elapsedTime)
+void Camera::UpdateTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp)
 {
 	using namespace DirectX;
 	const DirectX::XMVECTOR Orientation = DirectX::XMLoadFloat4(&orientation);
@@ -488,8 +496,11 @@ void Camera::UpdateTarget(float elapsedTime)
 	Forward = { m4x4._31, m4x4._32, m4x4._33 };
 
 	DirectX::XMVECTOR Eye = DirectX::XMLoadFloat3(&eye);
+	DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 
-	DirectX::XMVECTOR Target = Eye + Forward * 5;
+	//DirectX::XMVECTOR Target = Eye + Forward * 5;
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
+	//DirectX::XMVECTOR Target = Eye + -EyeVector;
 	DirectX::XMStoreFloat3(&target, Target);
 
 }
@@ -511,17 +522,7 @@ void Camera::UpdateMove(float elapsedTime, DirectX::XMVECTOR PlayerPosition)
 
 	DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 
-	float ax = game_pad->get_axis_RX();
-	float ay = game_pad->get_axis_RY();
-
-	if(ax >= 0.1f || ax < -0.1f)
-	{
-		horizon_rotation_degree = 180 * -ax * elapsedTime;
-	}
-	if(ay >= 0.1f || ay <= -0.1f)
-	{
-		vertical_rotation_degree = 180 * ay * elapsedTime;
-	}
+	UpdateDegree(elapsedTime);
 
 	XMVECTOR orientation_vec = XMLoadFloat4(&orientation);
 	//回転行列から各方向を出す
@@ -572,93 +573,55 @@ void Camera::UpdateMove(float elapsedTime, DirectX::XMVECTOR PlayerPosition)
 
 }
 
+void Camera::UpdateDegree(float elapsedTime)
+{
+	float ax = game_pad->get_axis_RX();
+	float ay = game_pad->get_axis_RY();
+
+	if (ax >= 0.1f || ax < -0.1f)
+	{
+		horizon_rotation_degree = 180 * -ax * elapsedTime;
+	}
+	if (ay >= 0.1f || ay <= -0.1f)
+	{
+		vertical_rotation_degree = 180 * ay * elapsedTime;
+	}
+
+}
+
 bool Camera::ResetEyeTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp)
 {
 	using namespace DirectX;
-	//現在のカメラ位置とターゲット位置
-	DirectX::XMVECTOR NowEye = DirectX::XMLoadFloat3(&eye);
-	DirectX::XMVECTOR NowTarget = DirectX::XMLoadFloat3(&target);
 
-	//リセット後のカメラ位置とターゲット位置
-	DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -5;
-	DirectX::XMVECTOR Target = PlayerPosition + PlayerForward * 5;
+	DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+	DirectX::XMVECTOR EyeVectorNormal = DirectX::XMVector3Normalize(EyeVector);
 
-	//プレイヤーからの現在のカメラ関連のベクトルと
-	//リセット後のカメラ関連のベクトルを求める
-	DirectX::XMVECTOR NowEyeVec = NowEye - PlayerPosition;
-	DirectX::XMVECTOR NowTargetVec = NowTarget - PlayerPosition;
+	DirectX::XMVECTOR Eye = PlayerPosition + PlayerForward * -10 + PlayerUp * 3;
 
-	DirectX::XMVECTOR EyeVec = Eye - PlayerPosition;
-	DirectX::XMVECTOR TargetVec = Target - PlayerPosition;
-	
-	DirectX::XMVECTOR N_NowEyeVec = DirectX::XMVector3Normalize(NowEyeVec);
-	DirectX::XMVECTOR N_NowTargetVec = DirectX::XMVector3Normalize(NowTargetVec);
-	DirectX::XMVECTOR N_EyeVec = DirectX::XMVector3Normalize(EyeVec);
-	DirectX::XMVECTOR N_TargetVec = DirectX::XMVector3Normalize(TargetVec);
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 2;
 
-	//回転角度を求める
-	DirectX::XMVECTOR EyeAngle = DirectX::XMVector3Dot(N_NowEyeVec, N_EyeVec);
-	DirectX::XMVECTOR TargetAngle = DirectX::XMVector3Dot(N_NowTargetVec, N_TargetVec);
-	float eyeAngle, targetAngle;
-	DirectX::XMStoreFloat(&eyeAngle, EyeAngle);
-	DirectX::XMStoreFloat(&targetAngle, TargetAngle);
+	DirectX::XMVECTOR EyeVector2 = Eye - PlayerPosition;
 
-	//回転角度が一定より小さくなった時、補完を終了する
-	//if (eyeAngle > 0.95f)
-	//{
-	//	DirectX::XMStoreFloat3(&eye, Eye);
-	//}
-	//if (targetAngle > 0.95f)
-	//{
-	//	DirectX::XMStoreFloat3(&target, Target);
-	//}
-	if(eyeAngle > 0.95f || targetAngle > 0.95f)
+	DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector2, EyeVectorNormal);
+	Axis = DirectX::XMVector3Normalize(Axis);
+
+	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EyeVectorNormal, EyeVector2);
+	float dot{};
+	DirectX::XMStoreFloat(&dot, Dot);
+	float angle = acosf(dot);
+
+	if (dot < 0.98f)
 	{
-		DirectX::XMStoreFloat3(&eye, Eye);
-		DirectX::XMStoreFloat3(&target, Target);
-
-		return true;
+		DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(Axis, angle);
+		EyeVector = DirectX::XMVector3Rotate(EyeVector, Q);
 	}
 
-	//補完するための回転軸を求める
-	DirectX::XMVECTOR EyeAxis = DirectX::XMVector3Cross(N_NowEyeVec, N_EyeVec);
-	DirectX::XMVECTOR TargetAxis = DirectX::XMVector3Cross(N_NowTargetVec, N_TargetVec);
-
-	//cosをdegreeに変換する
-	eyeAngle = acosf(eyeAngle);
-	targetAngle = acosf(targetAngle);
-	//eyeAngle = DirectX::XMConvertToDegrees(eyeAngle);
-	//targetAngle = DirectX::XMConvertToDegrees(targetAngle);
-	
-	//補完する
-	DirectX::XMVECTOR EyeQuaternion = DirectX::XMQuaternionRotationAxis(EyeAxis, eyeAngle);
-	DirectX::XMVECTOR TargetQuaternion = DirectX::XMQuaternionRotationAxis(TargetAxis, targetAngle);
-
-	DirectX::XMFLOAT4 o = { 0,0,0,1 };
-	DirectX::XMVECTOR O = DirectX::XMLoadFloat4(&o);
-
-	EyeQuaternion = DirectX::XMQuaternionSlerp(O, EyeQuaternion, 0.9f * elapsedTime);
-	TargetQuaternion = DirectX::XMQuaternionSlerp(O, TargetQuaternion, 0.9f * elapsedTime);
+	EyeVector = EyeVector2;
 
 
-	DirectX::XMVECTOR EyeRotateVec = DirectX::XMVector3Rotate(N_NowEyeVec, EyeQuaternion);
-	DirectX::XMVECTOR TargetRotateVec = DirectX::XMVector3Rotate(N_NowTargetVec, TargetQuaternion);
+	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
-	//EyeQuaternion = DirectX::XMQuaternionMultiply(NowEye, EyeQuaternion);
-	//TargetQuaternion = DirectX::XMQuaternionMultiply(NowTarget, TargetQuaternion);
-	//DirectX::XMVECTOR EyeMultiVec = DirectX::XMQuaternionSlerp(NowEye, EyeQuaternion, 0.5f * elapsedTime);
-	//DirectX::XMVECTOR TargetMultiVec = DirectX::XMQuaternionSlerp(NowTarget, TargetQuaternion, 0.5f * elapsedTime);
-
-	////プレイヤーからのベクトルを求めてるのでプレイヤーの位置ベクトルを足す
-	
-	EyeRotateVec *= 5;
-	EyeRotateVec += PlayerPosition;
-	TargetRotateVec *= 5;
-	TargetRotateVec += PlayerPosition;
-
-	DirectX::XMStoreFloat3(&eye, EyeRotateVec);
-	DirectX::XMStoreFloat3(&target, TargetRotateVec);
-	return false;
+	return true;
 }
 
 void Camera::UpdateOrientation(float elapsedTime)
@@ -680,12 +643,12 @@ void Camera::UpdateOrientation(float elapsedTime)
 	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Target, Forward);
 	float dot{};
 	DirectX::XMStoreFloat(&dot, Dot);
-	dot = acosf(dot);
+	float angle = acosf(dot);
 
-	DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(Forward, Target);
-	if (fabs(dot) > 0.98f)
+	if (fabs(angle) > 0.98f)
 	{
-		DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(Axis, dot);
+		DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(Forward, Target);
+		DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(Axis, angle);
 		Orientation = DirectX::XMQuaternionMultiply(Orientation, Q);
 	}
 	DirectX::XMStoreFloat4(&orientation, Orientation);
