@@ -60,17 +60,12 @@ private:
     void mouse_operation_with_quaternion(float elapsed_time);
     void keyboard_operation_with_quaternion(float elapsed_time);
 
-    void UpdateTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
+    void SetAngle(float elapsedTime);
+    void UpdateEyeVector(float elapsedTime,DirectX::XMVECTOR PlayerUp);
+    void AttitudeControl(float elapsedTime);
 
-    void UpdateEye(float elapsedTime, DirectX::XMVECTOR Velocity);
-
-    void UpdateMove(float elapsedTime, DirectX::XMVECTOR PlayerPosition);
-
-    void UpdateDegree(float elapsedTime);
-
-    bool ResetEyeTarget(float elapsedTime, DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
-
-    void UpdateOrientation(float elapsedTime);
+    void UpdateEye();
+    void UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
     //--------< ’è”/\‘¢‘Ì >--------//
     struct SceneConstants
     {
@@ -107,4 +102,7 @@ private:
     DirectX::XMFLOAT3 eyeVector{};
 
     float radius{};
+    float horizonDegree{};
+    float verticalDegree{};
+
 };
