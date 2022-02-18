@@ -55,7 +55,8 @@ void MoveBehavior::Turn(float elapsed_time, float vx, float vz, float speed, Dir
     DirectX::XMFLOAT4X4 m4x4 = {};
     DirectX::XMVECTOR forward, up;
     m4x4 = QuaternionConvertXMFLOAT4X4(orientation);
-    up = { m4x4._21, m4x4._22, m4x4._23 };
+    up = { 0, 1, 0 };
+    //up = { m4x4._21, m4x4._22, m4x4._23 };
     forward = { m4x4._31, m4x4._32, m4x4._33 };
 
     DirectX::XMVECTOR axis_up = up;//Y‚Ì‰ñ“]Ž²

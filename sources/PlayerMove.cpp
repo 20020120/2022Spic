@@ -172,21 +172,21 @@ void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& pos
 void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation)
 {
     using namespace DirectX;
-    // up
-        //ターゲットに向かって回転
+    //ターゲットに向かって回転
     XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
     DirectX::XMVECTOR forward, right, up;
     DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
     DirectX::XMFLOAT4X4 m4x4 = {};
     DirectX::XMStoreFloat4x4(&m4x4, m);
     right = { m4x4._11, m4x4._12, m4x4._13 };
-    up = { m4x4._21, m4x4._22, m4x4._23 };
+    //up = { m4x4._21, m4x4._22, m4x4._23 };
+    up = { 0, 1, 0 };
     forward = { m4x4._31, m4x4._32, m4x4._33 };
 
     XMVECTOR pos_vec = XMLoadFloat3(&position);//自分の位置
     DirectX::XMFLOAT3 front{};
     DirectX::XMStoreFloat3(&front, forward);
-    DirectX::XMFLOAT3 t{ target.x , target.y, target.z };
+    DirectX::XMFLOAT3 t{ target.x, target.y, target.z };
     XMVECTOR target_vec = XMLoadFloat3(&t);
     XMVECTOR d = XMVector3Normalize(target_vec - pos_vec);
     float d_length = Math::calc_vector_AtoB_length(position, t);
