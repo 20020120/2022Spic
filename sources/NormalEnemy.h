@@ -18,7 +18,9 @@ class NormalEnemy final :public BaseEnemy
 public:
 
     NormalEnemy(ID3D11Device* pDevice_,
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
+    ,int UniqueId_
+        );
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;

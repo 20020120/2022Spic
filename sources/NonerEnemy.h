@@ -44,7 +44,7 @@ class NoneEnemy final : BaseEnemy
     // 
     //****************************************************************
 public:
-    NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_);
+    NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_);
     ~NoneEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;

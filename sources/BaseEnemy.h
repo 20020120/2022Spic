@@ -46,12 +46,15 @@ public:
     // 
     //****************************************************************
 public:
-    BaseEnemy(ID3D11Device *pDevice_,const char* ModelName_);
+    BaseEnemy(ID3D11Device *pDevice_,int UniqueId_,const char* ModelName_);
     virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
+
+    //--------------------<ImGui>--------------------//
+    virtual void fGuiMenu(){}
 
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_);
@@ -65,6 +68,7 @@ public:
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
     [[nodiscard]] bool fGetIsAlive()const;
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
+    [[nodiscard]] int fGetUniqueId()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
 
@@ -109,6 +113,8 @@ protected:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up = {0.0f, 1.0f, 0.1f};
+
+    int mUniqueId{};
 private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };

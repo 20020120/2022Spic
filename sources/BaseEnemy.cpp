@@ -6,10 +6,11 @@
 // “G‚ÌŠî’êƒNƒ‰ƒX 
 // 
 //****************************************************************
-BaseEnemy::BaseEnemy(ID3D11Device* pDevice_, const char* ModelName_)
+BaseEnemy::BaseEnemy(ID3D11Device* pDevice_,int UniqueId_, const char* ModelName_)
 {
     // ƒ‚ƒfƒ‹‚ğ‰Šú‰»
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, ModelName_);
+    mUniqueId = UniqueId_;
 }
 
 BaseEnemy::~BaseEnemy() = default;
@@ -54,6 +55,11 @@ bool BaseEnemy::fGetIsAlive() const
 BaseEnemy::CapsuleCollider BaseEnemy::fGetCapsuleData() const
 {
     return mCapsuleCollider;
+}
+
+int BaseEnemy::fGetUniqueId() const
+{
+    return mUniqueId;
 }
 
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)

@@ -6,8 +6,8 @@
 // 
 //****************************************************************
 
-NoneEnemy::NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_)
-    :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_5.fbx")
+NoneEnemy::NoneEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int UniqueId_)
+    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_5.fbx")
 {
     //èâä˙âª
     mPosition = Point_;

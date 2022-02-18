@@ -18,10 +18,13 @@ class TestEnemy final:public BaseEnemy
 public:
     
     TestEnemy(ID3D11Device* pDevice_, 
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
+        int UniqueId_);
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
+
+    void fGuiMenu()override;
     //****************************************************************
     // 
     // 変数 
@@ -35,7 +38,7 @@ private:
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
 
-    void fGuiMenu();
+    
 protected:
     void fSetCapsulePoint() override;
 };

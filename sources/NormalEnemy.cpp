@@ -7,8 +7,8 @@
 // ‚‚È‚µ’ÊíUŒ‚‚ÌG‹›“G‚Ì”h¶ƒNƒ‰ƒX
 // 
 //****************************************************************
-NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
-    :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_4.fbx")
+NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_)
+    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;
