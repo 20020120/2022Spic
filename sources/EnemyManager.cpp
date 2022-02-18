@@ -112,6 +112,7 @@ const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 
 const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
 {
+
     return nullptr;
 }
 
