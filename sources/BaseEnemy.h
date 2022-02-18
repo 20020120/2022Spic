@@ -115,9 +115,9 @@ protected:
     DirectX::XMFLOAT3 up = {0.0f, 1.0f, 0.1f};
 
     int mUniqueId{};
-private:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+private:
 
     //--------------------<ステートマシンに関連する変数>--------------------//
     int mState{}; // 状態

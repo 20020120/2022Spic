@@ -73,6 +73,8 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
     fUpdateVelocity(elapsedTime_, mPosition, mOrientation);
     //--------------------<姿勢を更新>--------------------//
     fGetEnemyDirections();
+    //--------------------<アニメーション更新>--------------------//
+  //  mpSkinnedMesh->update_animation(elapsedTime_);
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
     //--------------------<ステートマシン>--------------------//

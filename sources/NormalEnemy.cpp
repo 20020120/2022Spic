@@ -65,7 +65,7 @@ void NormalEnemy::fRegisterFunctions()
         fAttackUpdate(elapsedTime_);
     };
     tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(MOVE, tuple));
+    mFunctionMap.insert(std::make_pair(ATTACK, tuple));
 
     fChangeState(IDLE);
 
@@ -85,6 +85,8 @@ void NormalEnemy::fIdleInit()
 {
     mStayTimer = 1.0f;
     mNowState = IDLE;
+    //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
+    
 }
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_)
@@ -107,6 +109,8 @@ void NormalEnemy::fMoveInit()
 {
     mNowState = MOVE;
     max_move_speed = mParam.mMoveSpeed;
+   / mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+
 }
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
@@ -122,6 +126,8 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_)
 void NormalEnemy::fAttackInit()
 {
     mNowState = ATTACK;
+   // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
+
 }
 
 void NormalEnemy::fAttackUpdate(float elapsedTime_)
