@@ -309,7 +309,7 @@
     <ClCompile Include="sources\GameManager.cpp">
       <Filter>Sources\GameManager</Filter>
     </ClCompile>
-    <ClCompile Include="sources\NoneEnemy.cpp">
+    <ClCompile Include="sources\ChaseEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
   </ItemGroup>
@@ -512,7 +512,7 @@
     <ClInclude Include="sources\Operators.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="sources\NonerEnemy.h">
+    <ClInclude Include="sources\ChaseEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
     <ClInclude Include="sources\GameManager.h">
