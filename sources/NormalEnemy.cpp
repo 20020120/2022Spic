@@ -8,10 +8,11 @@
 // 
 //****************************************************************
 NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_)
-    :BaseEnemy(pDevice_, "./resources/Models/stage/asa.fbx")
+    :BaseEnemy(pDevice_, "./resources/Models/Enemy/character_4.fbx")
 {
     // 位置を初期化
     mPosition = EmitterPoint_;
+    mPosition = { 10,0, 10 };
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mScale = { 0.1f,0.1f,0.1f };
     //パラメーターの初期化
@@ -27,7 +28,8 @@ void NormalEnemy::fInitialize()
 void NormalEnemy::fUpdate(float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
-    fUpdateStateMachine(elapsedTime_);
+    fUpdateBase(elapsedTime_);
+
 
 }
 
@@ -55,6 +57,17 @@ void NormalEnemy::fRegisterFunctions()
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(MOVE, tuple));
 
+    Ini = [=]()->void
+    {
+        fAttackInit();
+    };
+    Up = [=](float elapsedTime_)->void
+    {
+        fAttackUpdate(elapsedTime_);
+    };
+    tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(MOVE, tuple));
+
     fChangeState(IDLE);
 
 }
@@ -67,46 +80,6 @@ void NormalEnemy::fParamInitialize()
     
 }
 
-bool NormalEnemy::fIsTurnToThePlayer()
-{
-    using namespace DirectX;
-    XMVECTOR orientation_vec = XMLoadFloat4(&mOrientation);
-    XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
-    XMVECTOR E_Pos = XMLoadFloat3(&mPosition);
-    XMVECTOR Vec = P_Pos - E_Pos;
-    XMVECTOR Forward = XMLoadFloat3(&forward);
-    XMVECTOR Up = XMLoadFloat3(&up);
-    XMVECTOR Dot = XMVector3Dot(Vec, Forward);
-    float angle = XMVectorGetX(Dot);
-    angle = acos(angle);
-    if (fabs(angle) > 1e-8f)
-    {
-        DirectX::XMFLOAT3 f{};
-        DirectX::XMStoreFloat3(&f, Forward);
-        float cross{ f.x  - f.z  };
-
-        if (cross < 0.0f)
-        {
-            XMVECTOR q;
-            q = XMQuaternionRotationAxis(Up, angle);
-            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.05f);
-        }
-        else
-        {
-            XMVECTOR q;
-            q = XMQuaternionRotationAxis(Up, -angle);
-            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 0.05f);
-        }
-		XMStoreFloat4(&mOrientation, orientation_vec);
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
 
 void NormalEnemy::fIdleInit()
 {
@@ -115,10 +88,10 @@ void NormalEnemy::fIdleInit()
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
-   /* if(fIsTurnToThePlayer())
+	if(fTurnToPlayer(elapsedTime_, 10))
     {
         fChangeState(MOVE);
-    }*/
+    }
 }
 
 void NormalEnemy::fMoveInit()
@@ -128,5 +101,19 @@ void NormalEnemy::fMoveInit()
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
 {
-    mPosition.x += 2.0f * elapsedTime_;
+    velocity.x += forward.x * move_speed * elapsedTime_;
+    velocity.y += forward.y * move_speed * elapsedTime_;
+    velocity.z += forward.z * move_speed * elapsedTime_;
+    if (!fTurnToPlayer(elapsedTime_,5))
+    {
+        fChangeState(IDLE);
+    }
+}
+
+void NormalEnemy::fAttackInit()
+{
+}
+
+void NormalEnemy::fAttackUpdate(float elapsedTime_)
+{
 }
