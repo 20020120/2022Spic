@@ -112,6 +112,7 @@ public:
     int GetPlayerPower() { return player_attack_power; }
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(const BaseEnemy* target_enemy);
+    DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count) { combo_count += count; }
 public:
     void FalseCameraReset() { camera_reset = false; }
