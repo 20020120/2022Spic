@@ -121,6 +121,9 @@
     <Filter Include="Sources\GameManager">
       <UniqueIdentifier>{a9dbb287-bf3a-403d-8569-6ad68b039447}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\UI">
+      <UniqueIdentifier>{a4d67e3f-a4d1-465a-920c-b990ab7ced2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -311,6 +314,21 @@
     </ClCompile>
     <ClCompile Include="sources\ChaseEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\UI.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\enemy_hp_gauge.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\reticle.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\wave.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\number.cpp">
+      <Filter>Sources\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -517,6 +535,21 @@
     </ClInclude>
     <ClInclude Include="sources\GameManager.h">
       <Filter>Sources\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\UI.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\enemy_hp_gauge.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\reticle.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\wave.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\number.h">
+      <Filter>Sources\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -220,6 +220,7 @@
     <ClCompile Include="sources\EnemyEditor.cpp" />
     <ClCompile Include="sources\EnemyFileSystem.cpp" />
     <ClCompile Include="sources\EnemyManager.cpp" />
+    <ClCompile Include="sources\enemy_hp_gauge.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
     <ClCompile Include="sources\framebuffer.cpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="sources\MoveBehavior.cpp" />
     <ClCompile Include="sources\ChaseEnemy.cpp" />
     <ClCompile Include="sources\NormalEnemy.cpp" />
+    <ClCompile Include="sources\number.cpp" />
     <ClCompile Include="sources\perlin_noise.cpp" />
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\PlayerAnimation.cpp" />
@@ -243,6 +245,7 @@
     <ClCompile Include="sources\post_effect.cpp" />
     <ClCompile Include="sources\practical_entities.cpp" />
     <ClCompile Include="sources\resource_manager.cpp" />
+    <ClCompile Include="sources\reticle.cpp" />
     <ClCompile Include="sources\scene.cpp" />
     <ClCompile Include="sources\scene_game.cpp" />
     <ClCompile Include="sources\scene_loading.cpp" />
@@ -258,6 +261,8 @@
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
     <ClCompile Include="sources\GameManager.cpp" />
+    <ClCompile Include="sources\UI.cpp" />
+    <ClCompile Include="sources\wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h" />
@@ -286,6 +291,7 @@
     <ClInclude Include="sources\EnemiesEditor.h" />
     <ClInclude Include="sources\EnemyFileSystem.h" />
     <ClInclude Include="sources\EnemyManager.h" />
+    <ClInclude Include="sources\enemy_hp_gauge.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />
     <ClInclude Include="sources\framebuffer.h" />
@@ -304,6 +310,7 @@
     <ClInclude Include="sources\MoveBehavior.h" />
     <ClInclude Include="sources\ChaseEnemy.h" />
     <ClInclude Include="sources\NormalEnemy.h" />
+    <ClInclude Include="sources\number.h" />
     <ClInclude Include="sources\Operators.h" />
     <ClInclude Include="sources\perlin_noise.h" />
     <ClInclude Include="sources\Player.h" />
@@ -312,6 +319,7 @@
     <ClInclude Include="sources\post_effect.h" />
     <ClInclude Include="sources\practical_entities.h" />
     <ClInclude Include="sources\resource_manager.h" />
+    <ClInclude Include="sources\reticle.h" />
     <ClInclude Include="sources\scene.h" />
     <ClInclude Include="sources\scene_game.h" />
     <ClInclude Include="sources\scene_loading.h" />
@@ -327,7 +335,9 @@
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\GameManager.h" />
+    <ClInclude Include="sources\UI.h" />
     <ClInclude Include="sources\user.h" />
+    <ClInclude Include="sources\wave.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt" />
