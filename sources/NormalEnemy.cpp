@@ -109,7 +109,7 @@ void NormalEnemy::fMoveInit()
 {
     mNowState = MOVE;
     max_move_speed = mParam.mMoveSpeed;
-   / mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+    mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
 
 }
 
