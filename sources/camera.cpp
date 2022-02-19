@@ -380,14 +380,38 @@ void Camera::Update(float elapsedTime, Player* player)
 {
 	using namespace DirectX;
 
+	const DirectX::XMFLOAT3 playerForward = player->GetForward();
 	const DirectX::XMFLOAT3 playerUp = player->GetUp();
 	const DirectX::XMFLOAT3 playerPosition = player->GetPosition();
 
+	const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 	const DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 
-	SetAngle(elapsedTime);
-	UpdateEyeVector(elapsedTime, PlayerUp);
+	if(player->GetEnemyLockOn())
+	{
+		if (player->GetCameraReset())
+		{
+			if (RockOnCameraReset(elapsedTime, PlayerForward, PlayerUp))
+			{
+				player->FalseCameraReset();
+			}
+		}
+		SetAngle(elapsedTime);
+		RockOnUpdateEyeVector(elapsedTime, PlayerUp);
+	}
+	else
+	{
+		if (player->GetCameraReset())
+		{
+			if (CameraReset(elapsedTime, PlayerForward, PlayerUp))
+			{
+				player->FalseCameraReset();
+			}
+		}
+		SetAngle(elapsedTime);
+		UpdateEyeVector(elapsedTime, PlayerUp);
+	}
 	UpdateTarget(PlayerPosition, PlayerUp);
 	UpdateEye();
 	AttitudeControl(elapsedTime);
@@ -558,4 +582,146 @@ void Camera::UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR Pl
 
 	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
 	DirectX::XMStoreFloat3(&target, Target);
+}
+
+bool Camera::CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp)
+{
+	static float rotateTimer{ 0 };
+	using namespace DirectX;
+
+	if (rotateTimer < 0.1f)
+	{
+		rotateTimer += elapsedTime;
+		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+		DirectX::XMVECTOR RotateEyeVector = -PlayerForward * 10 + PlayerUp;
+		RotateEyeVector = DirectX::XMVector3Normalize(RotateEyeVector);
+
+		const DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EyeVector, RotateEyeVector);
+		float dot{};
+		DirectX::XMStoreFloat(&dot, Dot);
+		const float angle = acosf(dot);
+
+		const DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector, RotateEyeVector);
+
+		const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
+		EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+	}
+	else
+	{
+		DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
+		EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+		rotateTimer = 0;
+		return true;
+	}
+	return false;
+}
+
+bool Camera::RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp)
+{
+	static float rotateTimer{ 0 };
+	using namespace DirectX;
+
+	if (rotateTimer < 0.1f)
+	{
+		rotateTimer += elapsedTime;
+		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+		DirectX::XMVECTOR RotateEyeVector = DirectX::XMLoadFloat3(&rockOnEyeVector);
+		RotateEyeVector = DirectX::XMVector3Normalize(RotateEyeVector);
+
+		const DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EyeVector, RotateEyeVector);
+		float dot{};
+		DirectX::XMStoreFloat(&dot, Dot);
+		const float angle = acosf(dot);
+
+		const DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector, RotateEyeVector);
+
+		const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
+		EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+	}
+	else
+	{
+		DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
+		EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+		rotateTimer = 0;
+		return true;
+	}
+	return false;
+
+}
+
+void Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
+{
+	//変化が無ければスルー
+	if (horizonDegree < 0.1f && horizonDegree >-0.1f
+		&& verticalDegree < 0.1f && verticalDegree > -0.1f)return;
+
+	DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+	DirectX::XMFLOAT3 up = { 0,1,0 };
+	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
+
+	DirectX::XMVECTOR Right = DirectX::XMVector3Cross(Up, DirectX::XMVectorScale(EyeVector, -1));
+
+	//プレイヤーに対して縦方向の回転
+	//プレイヤーの真上と真下に近いときは回転しない
+	if (verticalDegree > 0.1f || verticalDegree < -0.1f)
+	{
+		DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVector3Normalize(PlayerUp), DirectX::XMVector3Normalize(EyeVector));
+		float dot{};
+		DirectX::XMStoreFloat(&dot, Dot);
+		//真上に近い時
+		if (dot > 0.9f)
+		{
+			if (verticalDegree < 0.1f)
+			{
+				DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+				DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+			}
+			verticalDegree = 0;
+		}
+		//真下に近い時
+		else if (dot < -0.9f)
+		{
+			if (verticalDegree > 0.1f)
+			{
+				DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+				DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+			}
+			verticalDegree = 0;
+		}
+		//通常時
+		else
+		{
+			DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+			DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+			verticalDegree = 0;
+		}
+	}
+	horizonDegree = 0;
+
+	//最後に一回だけ行う
+	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+
+}
+
+void Camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition)
+{
+	using namespace DirectX;
+
+	DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
+	Target -= PlayerPosition;
+	DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
+	PlayerToRockOn *= 0.8f;
+
+	DirectX::XMVECTOR RockOnEyeVector = PlayerToRockOn - Target;
+	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
+	RockOnEyeVector *= -1;
+
+	DirectX::XMStoreFloat3(&rockOnEyeVector, RockOnEyeVector);
 }

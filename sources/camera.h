@@ -66,6 +66,13 @@ private:
 
     void UpdateEye();
     void UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
+
+    bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+
+    void RockOnUpdateEyeVector(float elapsedTime,DirectX::XMVECTOR PlayerUp);
+    void RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition);
+
+    bool RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
     //--------< ’è”/\‘¢‘Ì >--------//
     struct SceneConstants
     {
@@ -100,6 +107,7 @@ private:
     static DirectX::XMFLOAT4X4 keep_projection;
 
     DirectX::XMFLOAT3 eyeVector{};
+    DirectX::XMFLOAT3 rockOnEyeVector{};
 
     float radius{};
     float horizonDegree{};
