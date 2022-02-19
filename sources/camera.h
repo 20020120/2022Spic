@@ -108,9 +108,12 @@ private:
 
     DirectX::XMFLOAT3 eyeVector{};
     DirectX::XMFLOAT3 rockOnEyeVector{};
+    DirectX::XMFLOAT3 playerToRockOn{};
 
     float radius{};
     float horizonDegree{};
     float verticalDegree{};
 
+    bool rockOnStart{ true };
+    float rockOnTimer{};
 };
