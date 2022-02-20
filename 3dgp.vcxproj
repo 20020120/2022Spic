@@ -262,7 +262,7 @@
     <ClCompile Include="sources\texture.cpp" />
     <ClCompile Include="sources\GameManager.cpp" />
     <ClCompile Include="sources\UI.cpp" />
-    <ClCompile Include="sources\wave.cpp" />
+    <ClCompile Include="sources\counter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h" />
@@ -337,7 +337,7 @@
     <ClInclude Include="sources\GameManager.h" />
     <ClInclude Include="sources\UI.h" />
     <ClInclude Include="sources\user.h" />
-    <ClInclude Include="sources\wave.h" />
+    <ClInclude Include="sources\counter.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt" />

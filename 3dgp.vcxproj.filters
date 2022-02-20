@@ -324,7 +324,7 @@
     <ClCompile Include="sources\reticle.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
-    <ClCompile Include="sources\wave.cpp">
+    <ClCompile Include="sources\counter.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
     <ClCompile Include="sources\number.cpp">
@@ -545,7 +545,7 @@
     <ClInclude Include="sources\reticle.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
-    <ClInclude Include="sources\wave.h">
+    <ClInclude Include="sources\counter.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
     <ClInclude Include="sources\number.h">

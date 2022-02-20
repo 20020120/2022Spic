@@ -37,6 +37,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
 	// reticle
 	reticle = std::make_unique<Reticle>(graphics);
+	// wave
+	wave = std::make_unique<Counter>(graphics, L".\\resources\\Sprites\\ui\\wave.png");
 }
 
 void SceneGame::uninitialize()
@@ -61,7 +63,29 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	reticle->update(graphics, elapsed_time);
 	reticle->focus(enemy, player->GetEnemyLockOn());
-
+	{
+		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };
+		static DirectX::XMFLOAT2 offset{ 50.0f, 0 };
+		static DirectX::XMFLOAT2 scale{ 0.5f,0.5f };
+		static DirectX::XMFLOAT4 color{ 1,1,1,1 };
+		static int value{};
+		static bool is_display_imgui = false;
+		imgui_menu_bar("UI", "wave", is_display_imgui);
+#ifdef USE_IMGUI
+		if (is_display_imgui)
+		{
+			ImGui::Begin("wave");
+			ImGui::DragFloat2("pos", &pos.x);
+			ImGui::DragFloat2("offset", &offset.x);
+			ImGui::DragFloat2("scale", &scale.x, 0.01f);
+			ImGui::DragInt("value", &value);
+			ImGui::ColorEdit4("color", &color.x);
+			ImGui::End();
+		}
+#endif
+		wave->set_positoin(pos); wave->set_offset(offset); wave->set_scale(scale); wave->set_value(value); wave->set_color(color);
+		wave->update(graphics, elapsed_time);
+	}
 	// 敵とのあたり判定(当たったらコンボ加算)
 	player->AddCombo(mEnemyManager.fCalcPlayerCapsuleVsEnemies(
 		player->GetCapsuleParam().start,
@@ -214,10 +238,13 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	mEnemyManager.fRender(graphics.get_dc().Get());
 	player->Render(graphics, elapsed_time);
 
+	//--------<ui>--------//
 	// enemy_hp_gauge
 	enemy_hp_gauge->render(graphics, elapsed_time);
 	// reticle
 	reticle->render(graphics, elapsed_time);
+	// wave
+	wave->render(graphics, elapsed_time);
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 

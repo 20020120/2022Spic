@@ -19,6 +19,7 @@
 #include"SkyDome.h"
 #include "enemy_hp_gauge.h"
 #include "reticle.h"
+#include "counter.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -72,4 +73,6 @@ private:
     std::unique_ptr<EnemyHpGauge> enemy_hp_gauge{ nullptr };
     // reticle
     std::unique_ptr<Reticle> reticle{ nullptr };
+    // counter
+    std::unique_ptr<Counter> wave{ nullptr };
 };
