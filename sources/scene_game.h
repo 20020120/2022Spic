@@ -17,6 +17,8 @@
 #include"EnemyManager.h"
 #include"Player.h"
 #include"SkyDome.h"
+#include "enemy_hp_gauge.h"
+#include "reticle.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -66,4 +68,8 @@ private:
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome
     float dimension{ 0.1f };
+    // enemy_hp_gauge
+    std::unique_ptr<EnemyHpGauge> enemy_hp_gauge{ nullptr };
+    // reticle
+    std::unique_ptr<Reticle> reticle{ nullptr };
 };

@@ -33,7 +33,10 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	player = std::make_unique<Player>(graphics);
 	// カメラ
 	camera = std::make_unique<Camera>(graphics,player.get());
-
+	// enemy_hp_gauge
+	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
+	// reticle
+	reticle = std::make_unique<Reticle>(graphics);
 }
 
 void SceneGame::uninitialize()
@@ -52,6 +55,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
 	player->SetTarget(enemy);
+
+	enemy_hp_gauge->update(graphics, elapsed_time);
+	enemy_hp_gauge->focus(enemy, player->GetEnemyLockOn());
+
+	reticle->update(graphics, elapsed_time);
+	reticle->focus(enemy, player->GetEnemyLockOn());
 
 	// 敵とのあたり判定(当たったらコンボ加算)
 	player->AddCombo(mEnemyManager.fCalcPlayerCapsuleVsEnemies(
@@ -204,6 +213,12 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mEnemyManager.fRender(graphics.get_dc().Get());
 	player->Render(graphics, elapsed_time);
+
+	// enemy_hp_gauge
+	enemy_hp_gauge->render(graphics, elapsed_time);
+	// reticle
+	reticle->render(graphics, elapsed_time);
+
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
 	// シャドウマップの破棄
