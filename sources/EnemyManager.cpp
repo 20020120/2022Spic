@@ -158,18 +158,19 @@ void EnemyManager::fSpawn(EnemySource Source_)
     {
     case EnemyType::Test:
     {
-        auto enemy = new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount);
-        enemy->fGetParam(enemy, mEditor.fGetFunction());
+        auto enemy = new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;
     case EnemyType::Normal:
-        mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
+    {
+        auto enemy = new NormalEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
         break;
     case EnemyType::Chase :
     {
-        auto enemy = new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount);
-        enemy->fGetParam(enemy, mEditor.fGetFunction());
+        auto enemy = new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;

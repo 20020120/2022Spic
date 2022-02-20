@@ -8,7 +8,8 @@
 // テストとサンプルを兼ねた敵の派生クラス 
 // 
 //****************************************************************
-TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_)
+TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
+    ParamGetFunction Function_)
     :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_3.fbx")
 {
     // 位置を初期化
@@ -16,14 +17,9 @@ TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_, in
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mScale = { 0.02f,0.02f,0.02f };
     fRegisterFunctions();
-
     // 各パラメータを初期化
-    mParam.mHitPoint = 10;
-    mParam.mAttackPower = 1;
-    mParam.mMoveSpeed = 10.0f;
-    mParam.mAttackSpeed = 1.0f;
+    fGetParam(this, Function_);
 }
-
 void TestEnemy::fInitialize()
 {
 }

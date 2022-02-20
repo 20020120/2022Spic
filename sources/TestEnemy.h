@@ -3,6 +3,8 @@
 #include<functional>
 #include<tuple>
 #include<map>
+
+#include "EnemiesEditor.h"
 //****************************************************************
 // 
 // テストとサンプルを兼ねた敵の派生クラス 
@@ -19,7 +21,8 @@ public:
     
     TestEnemy(ID3D11Device* pDevice_, 
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
-        int UniqueId_);
+        int UniqueId_,
+        ParamGetFunction Function_);
 
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;

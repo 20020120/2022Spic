@@ -1,5 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
+#include "EnemiesEditor.h"
 //****************************************************************
 // 
 // ˆÚ“®‚¾‚¯‚ÌƒUƒR“G 
@@ -22,7 +23,7 @@ class ChaseEnemy final :public  BaseEnemy
     // 
     //****************************************************************
 public:
-    ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_);
+    ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_, ParamGetFunction Function_);
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;

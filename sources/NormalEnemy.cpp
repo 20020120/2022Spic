@@ -7,7 +7,8 @@
 // ‚‚È‚µ’ÊíUŒ‚‚ÌG‹›“G‚Ì”h¶ƒNƒ‰ƒX
 // 
 //****************************************************************
-NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_)
+NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_, 
+    ParamGetFunction Function_)
     :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
@@ -18,7 +19,7 @@ NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_
     //ƒpƒ‰ƒ[ƒ^[‚Ì‰Šú‰»
 	fParamInitialize();
     fRegisterFunctions();
-
+    fGetParam(this, Function_);
 }
 
 void NormalEnemy::fInitialize()
@@ -78,6 +79,8 @@ void NormalEnemy::fParamInitialize()
     mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
     mStayTimer = 1.0f;
     mAttack_flg = false;
+
+    
 }
 
 

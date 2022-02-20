@@ -8,7 +8,7 @@
 // 
 //****************************************************************
 
-
+typedef std::function<EnemyData(std::string)> ParamGetFunction;
 class EnemyEditor final
 {
 public:
@@ -32,7 +32,7 @@ private:
     
     
     //--------------------<エディタ用>--------------------//
-    std::function<EnemyData(std::string)> mFunction{};
+    ParamGetFunction mFunction{};
     std::map<std::string, EnemyData> mKindsMap{}; //敵の種類ごとのマップ
     std::vector<EnemySource> mEditorSourceVec;
     bool mIsOpenEditor{};

@@ -6,7 +6,8 @@
 // 
 //****************************************************************
 
-ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int UniqueId_)
+ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int UniqueId_,
+    ParamGetFunction Function_)
     :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_5.fbx")
 {
     //初期化
@@ -15,10 +16,7 @@ ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int Uni
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
 
     // パラメーターを初期化
-    mParam.mAttackPower = 0;
-    mParam.mAttackSpeed = 0.0f;
-    mParam.mHitPoint = 10;
-    mParam.mMoveSpeed = static_cast<float>((rand() % 20) + 10.0f);
+    fGetParam(this, Function_);
 
     // 距離を初期化
     mDistance = static_cast<float>((rand() % 20) + 10.0f);
@@ -126,7 +124,6 @@ void ChaseEnemy::fChaseInit()
 
 void ChaseEnemy::fChaseUpdate(float elapsedTime_)
 {
-
     if (!mTimerComponent.fGetOver())
     {
         // 位置を更新

@@ -3,6 +3,8 @@
 #include<functional>
 #include<tuple>
 #include<map>
+
+#include "EnemiesEditor.h"
 //****************************************************************
 // 
 // 盾なし通常攻撃の雑魚敵の派生クラス 
@@ -19,7 +21,7 @@ public:
 
     NormalEnemy(ID3D11Device* pDevice_,
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
-    ,int UniqueId_
+    ,int UniqueId_, ParamGetFunction Function_
         );
 
     void fInitialize() override;
