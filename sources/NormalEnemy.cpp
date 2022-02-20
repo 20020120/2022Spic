@@ -68,6 +68,17 @@ void NormalEnemy::fRegisterFunctions()
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(ATTACK, tuple));
 
+    Ini = [=]()->void
+    {
+        fDauntedInit();
+    };
+    Up = [=](float elapsedTime_)->void
+    {
+        fDauntedUpdate(elapsedTime_);
+    };
+    tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(DAUNTED, tuple));
+
     fChangeState(IDLE);
 
 }
@@ -81,6 +92,12 @@ void NormalEnemy::fParamInitialize()
     mAttack_flg = false;
 
     
+}
+
+void NormalEnemy::fDamaged(int damage_)
+{
+    mParam.mHitPoint -= damage_;
+    fChangeState(DAUNTED);
 }
 
 
@@ -112,7 +129,7 @@ void NormalEnemy::fMoveInit()
 {
     mNowState = MOVE;
     max_move_speed = mParam.mMoveSpeed;
-    mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
 
 }
 
@@ -135,6 +152,28 @@ void NormalEnemy::fAttackInit()
 
 void NormalEnemy::fAttackUpdate(float elapsedTime_)
 {
+
+}
+
+void NormalEnemy::fDauntedInit()
+{
+    mNowState = DAUNTED;
+}
+static bool add_damage;
+void NormalEnemy::fDauntedUpdate(float elapsedTime_)
+{
+    using namespace DirectX;
+    XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
+    XMVECTOR E_Pos = XMLoadFloat3(&mPosition);
+    XMVECTOR Vec = E_Pos - P_Pos;
+    Vec = XMVector3Normalize(Vec);
+    XMFLOAT3 v;
+    XMStoreFloat3(&v, Vec);
+    velocity.x = 10.0f * v.x;
+    velocity.y = 10.0f * v.y;
+    velocity.z = 10.0f * v.z;
+
+    fChangeState(IDLE);
 }
 
 void NormalEnemy::fGuiMenu()
@@ -143,11 +182,15 @@ void NormalEnemy::fGuiMenu()
     ImGui::Text("Name : Normal");
     ImGui::DragFloat3("position", &mPosition.x);
     ImGui::DragFloat3("angle", &mOrientation.x);
-    const char* state_list[] = { "IDLE","MOVE","ATTACK" };
+    const char* state_list[] = { "IDLE","MOVE","ATTACK","DAUNTED"};
     std::string state =  state_list[static_cast<int>(mNowState)];
     ImGui::Text("State"); ImGui::SameLine();
     ImGui::Text(state.c_str());
     ImGui::Checkbox("Attack", &mAttack_flg);
+    if(ImGui::Button("dameged", { 70.0f,30.0f }))
+    {
+        fDamaged(1);
+    }
 #endif
 
 }

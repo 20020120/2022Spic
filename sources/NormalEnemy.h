@@ -33,6 +33,8 @@ private:
     void fRegisterFunctions() override;
     //パラメータ初期化関数
     void fParamInitialize();
+
+    void fDamaged(int damage_) override;
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
@@ -41,14 +43,18 @@ private:
     void fmoveUpdate(float elapsedTime_); //移動の更新処理
 
     void fAttackInit(); //移動の初期化
-    void fAttackUpdate(float elapsedTime_); //移動の更新処理
+    void fAttackUpdate(float elapsedTime_); //攻撃の更新処理
+
+    void fDauntedInit(); //移動の初期化
+    void fDauntedUpdate(float elapsedTime_); //ひるみの更新処理
 
     void fSetCapsulePoint() override{};
     enum State
     {
 	    IDLE,
         MOVE,
-        ATTACK
+        ATTACK,
+        DAUNTED,
     };
     //****************************************************************
    // 
