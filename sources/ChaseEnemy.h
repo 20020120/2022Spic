@@ -55,7 +55,8 @@ private:
     void fChaseUpdate(float elapsedTime_);        // í«ê’
     void fIntimidationInit();                     // à–äd
     void fIntimidationUpdate(float elapsedTime_); // à–äd
-
+public:
+    void fGuiMenu() override;
 };
 
 

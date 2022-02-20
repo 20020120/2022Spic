@@ -7,7 +7,7 @@
 #include"imgui_include.h" 
 #include "user.h"
 #include"collision.h"
-
+#include"Operators.h"
 #include <fstream>
 
 
@@ -285,7 +285,29 @@ void EnemyManager::fCollisionEnemyVsEnemy()
             // ‚à‚µ“–‚½‚Á‚½‚ç
             if(result)
             {
-                
+                // “–‚½‚Á‚½“GŠÔ‚ÌƒxƒNƒgƒ‹‚ðŽZo‚·‚é
+                DirectX::XMFLOAT3 vec = enemy2->fGetPosition() - enemy1->fGetPosition();
+                if (Math::Length(vec) <= 0.0f)
+                {
+                    vec = { 0.0f,0.0f,1.0f };
+                }
+                // ³‹K‰»
+                vec = Math::Normalize(vec);
+                // “ñ‘Ì‚Ì‚ß‚èž‚ñ‚Å‚¢‚é‹——£‚ðŒvŽZ‚·‚é
+
+                // “ñ‘Ì‚Ì”¼Œa‚Ì‡Œv
+                const float radiusAdd = capsule1.mRadius + capsule2.mRadius;
+                // “ñ‘Ì‚Ì‹——£
+                float length = Math::Length(
+                    enemy1->fGetPosition() - enemy2->fGetPosition());
+                if(length<=0.0f)
+                {
+                    length = 0.1f;
+                }
+                // ‚ß‚èž‚Ý‹——£
+                const float raidLength = radiusAdd - length;
+                DirectX::XMFLOAT3 res = enemy2->fGetPosition() + (vec * raidLength);
+                enemy2->fSetPosition(res);
             }
 
         }

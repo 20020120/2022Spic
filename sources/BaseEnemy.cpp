@@ -81,6 +81,11 @@ void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
     mPlayerPosition = PlayerPosition_;
 }
 
+void BaseEnemy::fSetPosition(DirectX::XMFLOAT3 Position_)
+{
+    mPosition = Position_;
+}
+
 void BaseEnemy::fUpdateBase(float elapsedTime_)
 {
     //--------------------<ˆÚ“®—Ê‚ðXV>--------------------//

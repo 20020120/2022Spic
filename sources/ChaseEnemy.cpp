@@ -19,7 +19,8 @@ ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int Uni
     fGetParam(this, Function_);
 
     // ãóó£Çèâä˙âª
-    mDistance = static_cast<float>((rand() % 20) + 10.0f);
+    mDistance = static_cast<float>((rand()/RAND_MAX));
+    
     fRegisterFunctions();
 }
 
@@ -147,4 +148,12 @@ void ChaseEnemy::fIntimidationUpdate(float elapsedTime_)
         fChangeState(State::Chase);
     }
     fRotate(elapsedTime_);
+}
+
+void ChaseEnemy::fGuiMenu()
+{
+    ImGui::Text(("ChaseEnemy" + std::to_string(mUniqueId)).c_str());
+    ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
+    ImGui::InputInt("Hp", &mParam.mHitPoint);
+    ImGui::Separator();
 }

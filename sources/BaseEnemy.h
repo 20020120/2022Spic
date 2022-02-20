@@ -121,7 +121,7 @@ public:
     [[nodiscard]] int fGetUniqueId()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
-
+    void fSetPosition(DirectX::XMFLOAT3 Position);
 protected:
     void fUpdateBase(float elapsedTime_);
 
