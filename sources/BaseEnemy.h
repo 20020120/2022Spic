@@ -159,6 +159,7 @@ protected:
     EnemyData mData{}; 
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
+    bool IsAttacked{};
     
     //エネミーの各方向
     DirectX::XMFLOAT3 forward;
