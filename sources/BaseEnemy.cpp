@@ -1,6 +1,8 @@
 #include "BaseEnemy.h"
 #include"user.h"
 #include"collision.h"
+#include"Operators.h"
+#include<typeinfo>
 //****************************************************************
 // 
 // 敵の基底クラス 
@@ -11,6 +13,7 @@ BaseEnemy::BaseEnemy(ID3D11Device* pDevice_,int UniqueId_, const char* ModelName
     // モデルを初期化
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, ModelName_);
     mUniqueId = UniqueId_;
+
 }
 
 BaseEnemy::~BaseEnemy() = default;
@@ -20,6 +23,13 @@ void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
     // ワールド行列を作成
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     mpSkinnedMesh->render(pDeviceContext_, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
+}
+
+void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)> Function_)
+{
+    // 敵のデータをロード
+    const type_info& id = typeid(*This_);
+    mData = Function_(id.name());
 }
 
 void BaseEnemy::fDamaged(int Damage_)
@@ -121,6 +131,12 @@ void BaseEnemy::fCalcLength()
     mLengthFromPlayer=Math::calc_vector_AtoB_length(mPlayerPosition, mPosition);
 }
 
+void BaseEnemy::fSetCapsulePoint()
+{
+    mCapsuleCollider.mRadius = mData.mCapsule.mRadius;
+    mCapsuleCollider.mPointA = mPosition + (up * mData.mCapsule.mLengthFromPositionA);
+    mCapsuleCollider.mPointB = mPosition - (up * mData.mCapsule.mLengthFromPositionB);
+}
 
 void BaseEnemy::fChangeState(int i)
 {

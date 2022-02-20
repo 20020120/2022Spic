@@ -1,6 +1,7 @@
 #pragma once
 #include"skinned_mesh.h"
 #include "MoveBehavior.h"
+
 #include<d3d11.h>
 #include<memory>
 
@@ -17,6 +18,44 @@ struct CubeData
 {
     DirectX::XMFLOAT3 mHalfSize{};
 };
+
+struct CapsuleSaveData
+{
+    float mLengthFromPositionA{};
+    float mLengthFromPositionB{};
+    float mRadius{};
+    // シリアライズ
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+        archive(
+            cereal::make_nvp("LengthA", mLengthFromPositionA),
+            cereal::make_nvp("LengthB", mLengthFromPositionB),
+            cereal::make_nvp("Radius", mRadius));
+    }
+
+};
+struct EnemyData
+{
+    std::string mDivideClass; // 派生クラスの名前かつデータのキー値（一応）
+    int mMaxHitPoint{};      // 体力
+    int mAttackPower{};   // 攻撃力
+    float mMoveSpeed{};   // 移動速度
+    float mAttackSpeed{}; // 攻撃間隔
+    CapsuleSaveData mCapsule{}; //カプセルのデータ
+    template<class Archive>
+        void serialize(Archive& archive)
+    {
+            archive(
+                cereal::make_nvp("Name", mDivideClass),
+                cereal::make_nvp("MaxHp", mMaxHitPoint),
+                cereal::make_nvp("AttackPower", mAttackPower),
+                cereal::make_nvp("MoveSpeed", mMoveSpeed),
+                cereal::make_nvp("AttackSpeed", mAttackSpeed),
+                cereal::make_nvp("Capsule", mCapsule));
+    }
+};
+
 
 class BaseEnemy :public MoveBehavior
 {
@@ -38,6 +77,16 @@ public:
         DirectX::XMFLOAT3 mPointA{};
         DirectX::XMFLOAT3 mPointB{};
         float mRadius{};
+        // シリアライズ
+        template<class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(
+                cereal::make_nvp("PointA", mPointA),
+                cereal::make_nvp("PointB", mPointB),
+                cereal::make_nvp("Radius", mRadius));
+        }
+
     };
 
     //****************************************************************
@@ -53,6 +102,7 @@ public:
     virtual void fUpdate(float elapsedTime_) = 0;
     void fRender(ID3D11DeviceContext* pDeviceContext_) const;
 
+    void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//
     virtual void fGuiMenu(){}
 
@@ -78,7 +128,7 @@ protected:
     void fUpdateStateMachine(float elapsedTime_);
     void fCalcFrustum();
     void fCalcLength();
-    virtual  void fSetCapsulePoint() = 0;
+    virtual  void fSetCapsulePoint();
     virtual void fTurnToThePlayer(){}
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
@@ -106,6 +156,7 @@ protected:
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
     float mLengthFromTargetEnemy{}; // プレイヤーがロックオンしている敵との距離
+    EnemyData mData{}; 
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
     

@@ -1,0 +1,49 @@
+{
+    "value0": [
+        {
+            "key": "Sample",
+            "value": {
+                "Name": "Sample",
+                "MaxHp": 0,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 0.0,
+                    "LengthB": 0.0,
+                    "Radius": 0.0
+                }
+            }
+        },
+        {
+            "key": "class ChaseEnemy",
+            "value": {
+                "Name": "class ChaseEnemy",
+                "MaxHp": 10,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 3.0,
+                    "LengthB": -1.0,
+                    "Radius": 1.0
+                }
+            }
+        },
+        {
+            "key": "class TestEnemy",
+            "value": {
+                "Name": "class TestEnemy",
+                "MaxHp": 10,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 0.0,
+                    "LengthB": 0.0,
+                    "Radius": 0.0
+                }
+            }
+        }
+    ]
+}

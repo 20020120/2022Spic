@@ -23,7 +23,6 @@ ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int Uni
     // ãóó£Çèâä˙âª
     mDistance = static_cast<float>((rand() % 20) + 10.0f);
     fRegisterFunctions();
-    
 }
 
 void ChaseEnemy::fInitialize()
@@ -35,12 +34,7 @@ void ChaseEnemy::fInitialize()
 {
      fUpdateBase(elapsedTime_);
      mTimerComponent.fUpdate(elapsedTime_);
-     fRotate(elapsedTime_);
-}
-
- void ChaseEnemy::fSetCapsulePoint()
-{
-    
+     
 }
 
  void ChaseEnemy::fMove(float elapsedTime_)
@@ -121,7 +115,7 @@ void ChaseEnemy::fStartUpdate(float elapsedTime_)
     {
         fChangeState(State::Chase);
     }
-    
+    fRotate(elapsedTime_);
 }
 
 void ChaseEnemy::fChaseInit()
@@ -155,4 +149,5 @@ void ChaseEnemy::fIntimidationUpdate(float elapsedTime_)
     {
         fChangeState(State::Chase);
     }
+    fRotate(elapsedTime_);
 }

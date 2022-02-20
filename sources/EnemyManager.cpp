@@ -35,7 +35,10 @@ void EnemyManager::fUpdate(float elapsedTime_)
 
     //--------------------<“G‚ÌXVˆ—>--------------------//
     fEnemiesUpdate(elapsedTime_);
-    
+
+    //--------------------<“G“¯Žm‚Ì“–‚½‚è”»’è>--------------------//
+    fCollisionEnemyVsEnemy();
+
     //--------------------<“G‚ÌƒXƒ|ƒi[>--------------------//
     fSpawn();
 
@@ -154,13 +157,21 @@ void EnemyManager::fSpawn(EnemySource Source_)
     switch (Source_.mType)
     {
     case EnemyType::Test:
-        mEnemyVec.emplace_back(new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
+    {
+        auto enemy = new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount);
+        enemy->fGetParam(enemy, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
         break;
     case EnemyType::Normal:
         mEnemyVec.emplace_back(new NormalEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
         break;
     case EnemyType::Chase :
-        mEnemyVec.emplace_back(new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount));
+    {
+        auto enemy = new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount);
+        enemy->fGetParam(enemy, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
         break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
@@ -224,6 +235,14 @@ void EnemyManager::fLoad(const char* FileName_)
     EnemyFileSystem::fLoadFromJson(mCurrentWaveVec, FileName_);
 }
 
+void EnemyManager::fReLoadEnemyParam()
+{
+    for(const auto enemy: mEnemyVec)
+    {
+        enemy->fGetParam(enemy, mEditor.fGetFunction());
+    }
+}
+
 void EnemyManager::fAllClear()
 {
     //--------------------<—v‘f‚ð‘Síœ>--------------------//
@@ -239,6 +258,38 @@ void EnemyManager::fAllClear()
     mEnemyVec.clear();
 }
 
+void EnemyManager::fCollisionEnemyVsEnemy()
+{
+    for(const auto enemy1 :mEnemyVec)
+    {
+        for (const auto enemy2 : mEnemyVec)
+        {
+            // Ž©•ªŽ©g‚Æ‚Í”»’è‚µ‚È‚¢
+            if (enemy1 == enemy2)
+            {
+                continue;
+            }
+            const auto capsule1 = enemy1->fGetCapsuleData();
+            const auto capsule2 = enemy2->fGetCapsuleData();
+            // ‚à‚µ”¼Œa‚ª‚OˆÈ‰º‚È‚çŒvŽZ‚µ‚È‚¢
+            if(capsule1.mRadius<=0.0f||capsule2.mRadius<=0.0f)
+            {
+                continue;
+            }
+
+            const bool result=Collision::capsule_vs_capsule(
+                capsule1.mPointA, capsule1.mPointB, capsule1.mRadius,
+                capsule2.mPointA, capsule2.mPointB, capsule2.mRadius);
+
+            // ‚à‚µ“–‚½‚Á‚½‚ç
+            if(result)
+            {
+                
+            }
+
+        }
+    }
+}
 
 
 void EnemyManager::fGuiMenu()
@@ -267,6 +318,12 @@ void EnemyManager::fGuiMenu()
         ImGui::SameLine();
         ImGui::Text(std::to_string(mCurrentWaveVec.size()).c_str());
         ImGui::Separator();
+
+        ImGui::Separator();
+        if(ImGui::Button("ReLoadEnemies"))
+        {
+            fReLoadEnemyParam();
+        }
 
         ImGui::Separator();
         static int elem = EnemyType::Test;
@@ -314,6 +371,7 @@ void EnemyManager::fGuiMenu()
     }
 #endif
     mEditor.fGuiMenu();
+    mEditor.fGui_ParamEditor();
 }
 
 void EnemyManager::fStartWave(int WaveIndex_)

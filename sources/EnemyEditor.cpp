@@ -4,6 +4,35 @@
 #include "user.h"
 
 
+EnemyEditor::EnemyEditor()
+{
+    // “G‚Ìƒf[ƒ^‚ðŽæ“¾
+    EnemyFileSystem::fLoadFromJson(mKindsMap, "./resources/Data/EnemiesParam");
+
+    mFunction = [=](std::string ClassName_)->EnemyData
+    {
+        EnemyFileSystem::fLoadFromJson(mKindsMap, "./resources/Data/EnemiesParam");
+        const auto it = mKindsMap.find(ClassName_);
+        if (it != mKindsMap.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            EnemyData data{};
+            data.mDivideClass = ClassName_;
+            data.mMaxHitPoint = 10;
+            mKindsMap.insert(std::make_pair(ClassName_, data));
+            return data;
+        }
+    };
+}
+
+EnemyEditor::~EnemyEditor()
+{
+    EnemyFileSystem::fSaveToJson(mKindsMap, "EnemiesParam");
+}
+
 void EnemyEditor::fGuiMenu()
 {
 #ifdef USE_IMGUI
@@ -64,6 +93,11 @@ void EnemyEditor::fGuiMenu()
             }
         }
 
+        if(ImGui::Button("OpenParamEditor"))
+        {
+            mParamEditor = true;
+        }
+
         if (ImGui::Button("Close"))
         {
             mIsOpenEditor = false;
@@ -72,4 +106,39 @@ void EnemyEditor::fGuiMenu()
     }
 #endif
 
+}
+
+void EnemyEditor::fGui_ParamEditor()
+{
+
+#ifdef USE_IMGUI
+    if (mParamEditor)
+    {
+        ImGui::Begin("ParamEditor");
+        static char name[256]{};
+        ImGui::InputText("Name", name,ARRAYSIZE(name));
+        if (ImGui::Button("Add"))
+        {
+            EnemyData enemyData{};
+            enemyData.mDivideClass = name;
+            mKindsMap.insert(std::make_pair(name, enemyData));
+        }
+
+        if(ImGui::Button("CreateFile"))
+        {
+            EnemyFileSystem::fSaveToJson(mKindsMap, "EnemiesParam");
+        }
+        ImGui::End();
+    }
+#endif
+}
+
+std::function<EnemyData(std::string)> EnemyEditor::fGetFunction()const
+{
+    return mFunction;
+}
+
+void EnemyEditor::fControlParams()
+{
+    throw std::logic_error("Not implemented");
 }

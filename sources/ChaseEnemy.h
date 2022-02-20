@@ -26,9 +26,6 @@ public:
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
-protected:
-    void fSetCapsulePoint() override;
-
 private:
     void fMove(float elapsedTime_);
     void fRotate(float elapsedTime_);
