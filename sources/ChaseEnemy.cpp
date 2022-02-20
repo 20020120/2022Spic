@@ -132,7 +132,7 @@ void ChaseEnemy::fChaseUpdate(float elapsedTime_)
         // ˆÊ’u‚ğXV
         mPosition += mChaseDirection * mParam.mMoveSpeed * elapsedTime_;
     }
-    if(mLengthFromPlayer<mDistance)
+    if(mLengthFromPlayer<mDistance||mTimerComponent.fGetOver())
     {
         fChangeState(State::Intimidation);
     }

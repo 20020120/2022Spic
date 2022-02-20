@@ -21,7 +21,7 @@
                 "Name": "class ChaseEnemy",
                 "MaxHp": 10,
                 "AttackPower": 0,
-                "MoveSpeed": 0.0,
+                "MoveSpeed": 10.0,
                 "AttackSpeed": 0.0,
                 "Capsule": {
                     "LengthA": 3.0,
