@@ -250,6 +250,7 @@
     <ClCompile Include="sources\scene_game.cpp" />
     <ClCompile Include="sources\scene_loading.cpp" />
     <ClCompile Include="sources\scene_manager.cpp" />
+    <ClCompile Include="sources\scene_option.cpp" />
     <ClCompile Include="sources\scene_title.cpp" />
     <ClCompile Include="sources\shader.cpp" />
     <ClCompile Include="sources\shadow_map.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="sources\scene_game.h" />
     <ClInclude Include="sources\scene_loading.h" />
     <ClInclude Include="sources\scene_manager.h" />
+    <ClInclude Include="sources\scene_option.h" />
     <ClInclude Include="sources\scene_title.h" />
     <ClInclude Include="sources\shader.h" />
     <ClInclude Include="sources\shadow_map.h" />

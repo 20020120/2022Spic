@@ -330,6 +330,9 @@
     <ClCompile Include="sources\number.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
+    <ClCompile Include="sources\scene_option.cpp">
+      <Filter>Sources\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -550,6 +553,9 @@
     </ClInclude>
     <ClInclude Include="sources\number.h">
       <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_option.h">
+      <Filter>Sources\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
