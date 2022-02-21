@@ -491,7 +491,7 @@ void Camera::UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
 	//プレイヤーの真上と真下に近いときは回転しない
 	if (verticalDegree > 0.1f || verticalDegree < -0.1f)
 	{
-		DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVector3Normalize(PlayerUp), DirectX::XMVector3Normalize(EyeVector));
+		DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVector3Normalize(Up), DirectX::XMVector3Normalize(EyeVector));
 		float dot{};
 		DirectX::XMStoreFloat(&dot, Dot);
 		//真上に近い時
@@ -528,7 +528,7 @@ void Camera::UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
 	//プレイヤーに対して横の回転
 	if (horizonDegree > 0.1f || horizonDegree < -0.1f)
 	{
-		DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(PlayerUp);
+		DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Up);
 		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(horizonDegree));
 		EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
 		horizonDegree = 0;
@@ -676,9 +676,16 @@ bool Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 			const float angle = acosf(dot);
 
 			const DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector, RotateEyeVector);
-
-			const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
-			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+			//if(DirectX::XMVector3Equal(DirectX::XMVectorZero(), Axis))
+			//{
+			//	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+			//	return false;
+			//}
+			if (dot < 0.98f)
+			{
+				const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
+				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+			}
 			DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 			return false;
 		}
