@@ -138,6 +138,8 @@ private:
 private:
     //ロックオン
     void LockOn();
+    //カメラリセット
+    void CameraReset();
 private:
     //-----------アニメーションに関係する関数,変数------------//
 

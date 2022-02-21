@@ -36,7 +36,7 @@ public:
     //---------コントローラーで移動する処理----------//
     DirectX::XMFLOAT3 SetMoveVec(const DirectX::XMFLOAT3& camera_forward,const DirectX::XMFLOAT3& camera_right);
     void MovingProcess(float vx, float vz, float speed);
-    virtual void Turn(float elapsed_time, float vx, float vz, float speed, DirectX::XMFLOAT4& orientation);
+    virtual void Turn(float elapsed_time, DirectX::XMFLOAT3 move_velocity, float speed, DirectX::XMFLOAT3 position,DirectX::XMFLOAT4& orientation);
     //--------------------------------------------//
 
 };

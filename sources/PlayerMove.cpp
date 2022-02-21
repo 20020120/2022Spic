@@ -13,7 +13,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
-    move_vec_y = movevec.y;
+    move_vec_y = movevec.y;//MovingProcessŠÖ”‚Í“G‚Å‚àŽg‚Á‚Ä‚é‚©‚ç‚±‚±‚É‘‚¢‚Ä‚¨‚­
     SetDirections(orientation);
     //“G‚ÉƒƒbƒNƒIƒ“‚µ‚½‚ç“G‚Ì•ûŒü‚ðŒü‚­
     if (is_enemy && is_lock_on)
@@ -24,7 +24,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     else
     {
         //ù‰ñˆ—
-        Turn(elapsed_time, movevec.x, movevec.z, turn_speed, orientation);
+        Turn(elapsed_time, movevec, turn_speed, position, orientation);
         PitchTurn(position, camera_pos, camera_forward, orientation, elapsed_time);
     }
 
@@ -34,6 +34,19 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     UpdateVerticalMove(elapsed_time, position, sky_dome);
     UpdateHrizontalVelocity(elapsed_frame);
     UpdateHorizontalMove(elapsed_time, position, sky_dome);
+}
+
+void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    SetDirections(orientation);
+
+    //Œo‰ßƒtƒŒ[ƒ€
+    float elapsed_frame = 60.0f * elapsed_time;
+    UpdateVerticalVelocity(elapsed_frame);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
+    UpdateHrizontalVelocity(elapsed_frame);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
+
 }
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
@@ -239,7 +252,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
 
-        if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
+        if (fabs(an) > DirectX::XMConvertToRadians(10.0f))
         {
             XMVECTOR q;
             DirectX::XMFLOAT3 a{};
@@ -276,7 +289,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         XMStoreFloat(&an, a);
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
-        if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(10.0f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
         {
             //‰ñ“]Ž²‚Æ‰ñ“]Šp‚©‚ç‰ñ“]ƒNƒI[ƒ^ƒjƒIƒ“‚ð‹‚ß‚é
             XMVECTOR q;
@@ -334,7 +347,7 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
     XMStoreFloat(&an, dot);
     an = acosf(an);
 
-    if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+    if (fabs(an) > DirectX::XMConvertToRadians(10.0f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
     {
         //‰ñ“]Ž²‚Æ‰ñ“]Šp‚©‚ç‰ñ“]ƒNƒI[ƒ^ƒjƒIƒ“‚ð‹‚ß‚é
         XMVECTOR q;
