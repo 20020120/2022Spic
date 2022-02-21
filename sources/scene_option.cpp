@@ -15,24 +15,24 @@ Option::Option(GraphicsPipeline& graphics)
 	game.pivot    = { game.texsize.x / 2.0f, 0 };
 	game.texpos   = { 0, 0 };
 	game.position = { 690.0f, 210.0f };
-	game.color = { 1,1,1,1 };
+	game.color = { 0,0,0,1 };
 
 	title.texsize = { static_cast<float>(sprite_string->get_texture2d_desc().Width), static_cast<float>(sprite_string->get_texture2d_desc().Height) / 2.0f };
 	title.pivot   = { title.texsize.x / 2.0f, 0 };
 	title.texpos  = { 0, title.texsize.y };
 	title.position = { 690.0f, 415.0f };
-	title.color = { 1,1,1,1 };
+	title.color    = { 0,0,0,1 };
 	//--selecter--//
 	sprite_selecter    = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\selecter.png", 2);
 	selecter1.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 	selecter1.position = { 265.0f, 260.0f };
 	selecter1.scale    = { 0.7f, 0.3f };
-	selecter1.color    = { 1,1,1,1 };
+	selecter1.color = { 0,0,0,1 };
 
 	selecter2.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 	selecter2.position = { 945.0f, 260.0f };
 	selecter2.scale    = { 0.7f, 0.3f };
-	selecter2.color    = { 1,1,1,1 };
+	selecter2.color = { 0,0,0,1 };
 
 	arrival_pos1       = { 265.0f, 260.0f };
 	arrival_pos2       = { 945.0f, 260.0f };
@@ -82,7 +82,7 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 
 void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 {
-	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	//--sprite_back--//
 	sprite_back->begin(graphics.get_dc().Get());
 	sprite_back->render(graphics.get_dc().Get(), back.position, back.scale, back.pivot, back.color, back.angle, back.texpos, back.texsize);
@@ -107,10 +107,12 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::Begin("selecter1");
 	ImGui::DragFloat2("pos", &selecter1.position.x);
 	ImGui::DragFloat2("scale", &selecter1.scale.x, 0.01f);
+	ImGui::ColorEdit4("color", &selecter1.color.x);
 	ImGui::End();
 	ImGui::Begin("selecter2");
 	ImGui::DragFloat2("pos", &selecter2.position.x);
 	ImGui::DragFloat2("scale", &selecter2.scale.x, 0.01f);
+	ImGui::ColorEdit4("color", &selecter2.color.x);
 	ImGui::End();
 #endif // USE_IMGUI
 	sprite_selecter->begin(graphics.get_dc().Get());

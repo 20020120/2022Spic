@@ -28,7 +28,7 @@ void Player::Initialize()
 void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
     ExecFuncUpdate(elapsed_time, sky_dome);
-    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right, sky_dome);
+    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right,camera_position ,sky_dome);
     GetPlayerDirections();
     //ƒƒbƒNƒIƒ“
     LockOn();
@@ -231,7 +231,7 @@ void Player::LockOn()
     //©•ª‚Æ“G‚Ì‹——£‚ğŒ©‚é
     float length{ Math::calc_vector_AtoB_length(position, target) };
 
-    if (length < LOCK_ON_LANGE)
+    if (is_enemy && length < LOCK_ON_LANGE)
     {
         if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
         {

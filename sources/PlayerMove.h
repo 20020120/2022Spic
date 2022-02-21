@@ -6,7 +6,7 @@ public:
     PlayerMove();
     ~PlayerMove();
 public:
-    void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation , const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome);
+    void UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation , const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right,const DirectX::XMFLOAT3& camera_pos ,SkyDome* sky_dome);
 private:
     //垂直速力更新処理
     void UpdateVerticalVelocity(float elapsedFrame);
@@ -18,7 +18,8 @@ private:
     void UpdateHorizontalMove(float elapsedTime, DirectX::XMFLOAT3& position, SkyDome* sky_dome);
     //ターゲットに向かって回転
     void RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
-
+    //ピッチ回転
+    void PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& camera_pos, const DirectX::XMFLOAT3& camera_forward, DirectX::XMFLOAT4& orientation, float elapsed_time);
 protected:
     //敵をロックオンしたかどうか
     bool is_lock_on{ false };

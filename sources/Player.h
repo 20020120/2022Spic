@@ -41,6 +41,7 @@ private:
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
+    DirectX::XMFLOAT3 camera_position{};//カメラの右方向
 private:
     //プレイヤーの各方向
     DirectX::XMFLOAT3 forward;
@@ -128,6 +129,7 @@ public:
         camera_forward = c_forward;
         camera_right = c_right;
     }
+    void SetCameraPosition(DirectX::XMFLOAT3 p) { camera_position = p; }
 private:
     //回避の加速
     void AvoidanceAcceleration(float elapse_time);

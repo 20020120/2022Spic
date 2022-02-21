@@ -71,6 +71,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
+	player->SetCameraPosition(camera->get_eye());
 	player->SetTarget(enemy);
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
