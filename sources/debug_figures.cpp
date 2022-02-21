@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "misc.h"
 #include "user.h"
+#include "debug_flags.h"
 
 DebugFigures::DebugFigures(ID3D11Device* device)
 {
@@ -59,7 +60,7 @@ void DebugFigures::render_all_figures(ID3D11DeviceContext* context)
 		DirectX::XMStoreFloat4x4(&figure_constants->data.world, W);
 
 		figure_constants->bind(context, 0, CB_FLAG::VS);
-		context->Draw(sphere_vertex_count, 0);
+		if (DebugFlags::get_wireframe_switching()) context->Draw(sphere_vertex_count, 0);
 	}
 	spheres.clear();
 	// ‰~’Œ•`‰æ
@@ -75,7 +76,7 @@ void DebugFigures::render_all_figures(ID3D11DeviceContext* context)
 		DirectX::XMStoreFloat4x4(&figure_constants->data.world, W);
 
 		figure_constants->bind(context, 0, CB_FLAG::VS);
-		context->Draw(cylinder_vertex_count, 0);
+		if (DebugFlags::get_wireframe_switching()) context->Draw(cylinder_vertex_count, 0);
 	}
 	cylinders.clear();
 	// ’¼•û‘Ì•`‰æ
@@ -95,7 +96,7 @@ void DebugFigures::render_all_figures(ID3D11DeviceContext* context)
 		figure_constants->bind(context, 0, CB_FLAG::VS);
 		D3D11_BUFFER_DESC buffer_desc{};
 		cuboid_index_buffer->GetDesc(&buffer_desc);
-		context->DrawIndexed(buffer_desc.ByteWidth / sizeof(uint32_t), 0, 0);
+		if (DebugFlags::get_wireframe_switching()) context->DrawIndexed(buffer_desc.ByteWidth / sizeof(uint32_t), 0, 0);
 	}
 	cuboids.clear();
 	// ƒJƒvƒZƒ‹•`‰æ
@@ -147,7 +148,7 @@ void DebugFigures::render_all_figures(ID3D11DeviceContext* context)
 		XMStoreFloat4x4(&figure_constants->data.world, W);
 
 		figure_constants->bind(context, 0, CB_FLAG::VS);
-		context->Draw(capsule_vertex_count, 0);
+		if (DebugFlags::get_wireframe_switching()) context->Draw(capsule_vertex_count, 0);
 	}
 	capsules.clear();
 #endif // _DEBUG

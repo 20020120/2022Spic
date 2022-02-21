@@ -227,12 +227,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	}
 
-	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
-	if (DebugFlags::get_wireframe_switching())
-	{
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
-		debug_figure->render_all_figures(graphics.get_dc().Get());
-	}
 
     // font demo
 #if 0
@@ -255,6 +249,12 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	reticle->render(graphics, elapsed_time);
 	// wave
 	wave->render(graphics, elapsed_time);
+
+
+
+	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
+	debug_figure->render_all_figures(graphics.get_dc().Get());
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
