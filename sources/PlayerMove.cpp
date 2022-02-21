@@ -9,7 +9,7 @@ PlayerMove::~PlayerMove()
 {
 }
 
-void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, SkyDome* sky_dome)
+void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right,const DirectX::XMFLOAT3& camera_pos ,SkyDome* sky_dome)
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
@@ -24,6 +24,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     {
         //旋回処理
         Turn(elapsed_time, movevec.x, movevec.z, turn_speed, orientation);
+        PitchTurn(position, camera_pos, camera_forward, orientation, elapsed_time);
     }
 
     //経過フレーム
@@ -259,6 +260,64 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
+
+void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& camera_pos, const DirectX::XMFLOAT3& camera_forward, DirectX::XMFLOAT4& orientation,float elapsed_time)
+{
+    using namespace DirectX;
+
+    //ターゲットに向かって回転
+    XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
+    DirectX::XMVECTOR f, right;
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    right = { m4x4._11, m4x4._12, m4x4._13 };
+    f = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMFLOAT3 forw{};
+    XMStoreFloat3(&forw, f);
+    forw.x = camera_forward.x;
+    forw.z = camera_forward.z;
+
+
+    XMVECTOR camera_forward_vec{ XMVector3Normalize(XMLoadFloat3(&camera_forward)) };
+    XMVECTOR player_forward_vec{ XMVector3Normalize(XMLoadFloat3(&forw)) };
+
+    DirectX::XMFLOAT3 point1 = Math::calc_designated_point(position, Math::Normalize(forw), Math::Length(Math::Normalize(forw)));
+    DirectX::XMVECTOR point1_vec = DirectX::XMLoadFloat3(&point1);
+    DirectX::XMVECTOR d = point1_vec - DirectX::XMLoadFloat3(&position);
+
+    DirectX::XMFLOAT3 point2 = Math::calc_designated_point(position, Math::Normalize(camera_forward), Math::Length(Math::Normalize(camera_forward)));
+    DirectX::XMVECTOR point2_vec = DirectX::XMLoadFloat3(&point2);
+    DirectX::XMVECTOR d2 = point2_vec - DirectX::XMLoadFloat3(&position);
+
+    debug_figure->create_sphere(point1, 1, { 1,0,0,1 });
+    debug_figure->create_sphere(point2, 1, { 0,0,1,1 });
+
+    float an;
+    XMVECTOR dot{ XMVector3Dot(d,d2) };
+    //XMVECTOR dot{ XMVector3Dot(player_forward_vec,camera_forward_vec) };
+    XMStoreFloat(&an, dot);
+    an = acosf(an);
+
+    if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+    {
+        //回転軸と回転角から回転クオータニオンを求める
+        XMVECTOR q;
+        if (point2.y < point1.y)
+        {
+            q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
+        }
+        else
+        {
+            q = XMQuaternionRotationAxis(right, -an);//
+        }
+        XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+        orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 1.0f * elapsed_time);
+    }
+    DirectX::XMStoreFloat4(&orientation, orientation_vec);
+}
+
 
 void PlayerMove::SetDirections(DirectX::XMFLOAT4 o)
 {

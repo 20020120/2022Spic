@@ -19,7 +19,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionAvoidance();
     }
     //“ËiŠJŽn‚É‘JˆÚ
-    if (game_pad->get_button_down() & GamePad::BTN_B)
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
     {
         TransitionChargeInit();
     }
@@ -38,7 +38,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionAvoidance();
     }
     //“ËiŠJŽn‚É‘JˆÚ
-    if (game_pad->get_button_down() & GamePad::BTN_B)
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
     {
         TransitionChargeInit();
     }
@@ -122,7 +122,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚2Œ‚–Ú‚É‘JˆÚ
-        if (game_pad->get_button_down() & GamePad::BTN_B)
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
             TransitionAttackType2(0);
@@ -142,7 +142,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚3Œ‚–Ú‚É‘JˆÚ
-        if (game_pad->get_button_down() & GamePad::BTN_B)
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
             TransitionAttackType3(0);
