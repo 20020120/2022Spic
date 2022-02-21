@@ -26,6 +26,7 @@ void EnemyHpGauge::update(GraphicsPipeline& graphics, float elapsed_time)
         ImGui::DragFloat2("scale", &gauge.scale.x, 0.01f);
         ImGui::DragFloat2("offset", &offset.x, 0.1f);
         ImGui::DragFloat("hp_percent", &hp_percent, 0.1f, 0.0f, 1.0f);
+        ImGui::Text("length:%f", length_player_to_enemy);
         ImGui::End();
     }
 #endif // USE_IMGUI
@@ -49,8 +50,8 @@ void EnemyHpGauge::render(GraphicsPipeline& graphics, float elapsed_time)
     back->end(graphics.get_dc().Get());
     //--body--//
     body->begin(graphics.get_dc().Get());
-    body->render(graphics.get_dc().Get(), gauge.position + offset, gauge.scale, gauge.pivot, gauge.color,
-        gauge.angle, gauge.texpos, { gauge.texsize.x * hp_percent, gauge.texsize.y });
+    body->render(graphics.get_dc().Get(), gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos,
+        { gauge.texsize.x * hp_percent, gauge.texsize.y });
     body->end(graphics.get_dc().Get());
     //--frame--//
     frame->begin(graphics.get_dc().Get());
@@ -65,7 +66,7 @@ void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
         animation = lockon;
         focus_position = target_enemy->fGetPosition();
         hp_percent = target_enemy->fGetPercentHitPoint();
-
+        length_player_to_enemy = target_enemy->fGetLengthFromPlayer();
         if (target_enemy->fGetType() == "class ChaseEnemy") { offset = { 0, -80.0f }; }
         else { offset = { 0, -70.0f }; }
     }

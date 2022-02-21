@@ -23,6 +23,7 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time)
         ImGui::DragFloat2("pos", &element.position.x);
         ImGui::DragFloat2("scale", &element.scale.x, 0.01f);
         ImGui::DragFloat2("offset", &offset.x, 0.1f);
+        ImGui::Text("length:%f", length_player_to_enemy);
         ImGui::End();
     }
 #endif // USE_IMGUI
@@ -57,6 +58,7 @@ void Reticle::focus(const BaseEnemy* target_enemy, bool lockon)
         animation = lockon;
         focus_position = target_enemy->fGetPosition();
         offset = { 0, -26.0f };
+        length_player_to_enemy = target_enemy->fGetLengthFromPlayer();
     }
     else
     {

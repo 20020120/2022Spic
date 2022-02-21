@@ -22,4 +22,5 @@ private:
     DirectX::XMFLOAT3 focus_position{};
     DirectX::XMFLOAT2 offset{};
     bool animation = false;
+    float length_player_to_enemy = 0;
 };

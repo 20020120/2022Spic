@@ -25,4 +25,5 @@ private:
     float hp_percent = 1.0f;
     DirectX::XMFLOAT2 offset{};
     bool animation = false;
+    float length_player_to_enemy = 0;
 };
