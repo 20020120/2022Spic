@@ -263,7 +263,7 @@ LRESULT framework::handle_message(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpa
 	case WM_KEYDOWN:
 		if (wparam == VK_ESCAPE)
 		{
-			PostMessage(hwnd, WM_CLOSE, 0, 0);
+			//PostMessage(hwnd, WM_CLOSE, 0, 0);
 		}
 		break;
 	case WM_ENTERSIZEMOVE:
