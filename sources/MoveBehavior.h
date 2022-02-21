@@ -13,6 +13,7 @@ protected:
     float acceleration{1.0f};
     float max_move_speed{5.0f};
     float move_vec_x{};
+    float move_vec_y{};
     float move_vec_z{};
     float friction{0.5f};
     float move_speed{15.0f};
