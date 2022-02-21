@@ -118,6 +118,29 @@ const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 
 const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
 {
+    auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+    {
+        return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+    };
+    fSort(func);
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->fGetIsFrustum())
+        {
+            // ‚±‚Ì“G‚©‚ç‚Ì‹——£‚ðŒvŽZ‚·‚é
+            for (const auto enemy2 : mEnemyVec)
+            {
+                if (enemy2->fGetIsFrustum())
+                {
+                    if (enemy != enemy2)
+                    {
+                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                    }
+                }
+            }
+            return enemy;
+        }
+    }
 
     return nullptr;
 }

@@ -119,6 +119,7 @@ public:
     [[nodiscard]] bool fGetIsAlive()const;
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     [[nodiscard]] int fGetUniqueId()const;
+    [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
