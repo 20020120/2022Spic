@@ -1,5 +1,5 @@
 #pragma once 
-#include <stdexcept>
+#include"EnemyManager.h"
 //****************************************************************
 // 
 // ウェーブを管理するクラス
@@ -21,11 +21,16 @@ public:
     // クリア処理
     void fClear();
     // ウェーブ開始
+    void fStartWave();
 
+    //--------------------<ゲッター関数>--------------------//
+    [[nodiscard]] const EnemyManager* fGetEnemyManager() const;
 
 private:
     // 現在のウェーブ
     int mCurrentWave{};
+
+    EnemyManager mEnemyManager{};
 };
 
 

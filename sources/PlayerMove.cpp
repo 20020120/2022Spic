@@ -13,6 +13,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
+    move_vec_y = movevec.y;
     SetDirections(orientation);
     //敵にロックオンしたら敵の方向を向く
     if (is_enemy && is_lock_on)
@@ -37,7 +38,40 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
 {
-    //velocity.y += gravity * elapsed_frame;
+    float length{ sqrtf(velocity.y * velocity.y)};
+    if (length > 0.0f)
+    {
+        //摩擦力
+        float friction{ this->friction * elapsed_frame };
+        //摩擦による横方向の減速処理
+        if (length > friction)
+        {
+            (velocity.y < 0.0f) ? velocity.y += friction : velocity.y -= friction;
+        }
+        else
+        {
+            velocity.y = 0;
+        }
+    }
+    if (length <= max_move_speed)
+    {
+        //移動ベクトルが0でないなら加速する
+        float moveveclength{ sqrtf((move_vec_y * move_vec_y)) };
+        if (moveveclength > 0.0f)
+        {
+            //加速力
+            float acceleration{ this->acceleration * elapsed_frame };
+            //移動ベクトルによる加速処理
+            velocity.y += move_vec_y * acceleration;
+            float length{ sqrtf((velocity.y * velocity.y)) };
+            if (length > max_move_speed)
+            {
+                float vy{ velocity.y / length };
+                velocity.y = vy * max_move_speed;
+            }
+        }
+    }
+    move_vec_y = 0.0f;
 }
 
 void PlayerMove::UpdateVerticalMove(float elapsed_time, DirectX::XMFLOAT3& position, SkyDome* sky_dome)
@@ -313,7 +347,7 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
             q = XMQuaternionRotationAxis(right, -an);//
         }
         XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-        orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 1.0f * elapsed_time);
+        orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
