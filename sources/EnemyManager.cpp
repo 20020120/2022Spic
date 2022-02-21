@@ -145,6 +145,12 @@ const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
     return nullptr;
 }
 
+const bool EnemyManager::fGetClearWave() const
+{
+    // 残りデータが０かつフィールドに敵が残っていない
+    return (mCurrentWaveVec.size() <= 0 && mEnemyVec.size() <= 0);
+}
+
 void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
 {
     mPlayerPosition = Position_;
@@ -348,7 +354,8 @@ void EnemyManager::fProtoSpawn()
     {
         auto enemy = new ChaseEnemy(mpDevice, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
-
+        auto enemy1 = new NormalEnemy(mpDevice, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy1);
         IsSpawn = true;
     }
     else if(separateTime == 2)

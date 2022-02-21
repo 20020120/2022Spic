@@ -13,6 +13,7 @@
 #include "husk_particles.h"
 #include "constants.h"
 #include "imgui_include.h"
+#include"WaveManager.h"
 
 #include"EnemyManager.h"
 #include"Player.h"
@@ -65,7 +66,9 @@ private:
     // スピック開始後追加した変数
     //
     //****************************************************************
-    EnemyManager mEnemyManager{};
+    //EnemyManager mEnemyManager{};
+    WaveManager mWaveManager{};
+
     std::unique_ptr<Player> player{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

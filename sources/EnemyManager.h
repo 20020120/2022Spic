@@ -75,6 +75,7 @@ public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
     [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
+    [[nodiscard]] const bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
