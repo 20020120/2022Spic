@@ -26,5 +26,9 @@ protected:
     bool is_enemy{ false };
     //ターゲット
     DirectX::XMFLOAT3 target{};
-
+private:
+    //プレイヤーの前方向
+    DirectX::XMFLOAT3 player_forward{};
+    //方向取得
+    void SetDirections(DirectX::XMFLOAT4 o);
 };

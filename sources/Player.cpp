@@ -66,6 +66,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             {
                 ImGui::Checkbox("camera_reset", &camera_reset);
                 ImGui::Checkbox("is_lock_on", &is_lock_on);
+                ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
                 ImGui::TreePop();
             }
@@ -232,11 +233,17 @@ void Player::LockOn()
 
     if (length < LOCK_ON_LANGE)
     {
-        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L()) is_lock_on = true;
+        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
+        {
+            if (is_lock_on == false) is_camera_lock_on = true;
+            is_lock_on = true;
+        }
+
         else is_lock_on = false;
     }
     else
     {
+        is_camera_lock_on = false;
         is_lock_on = false;
     }
 

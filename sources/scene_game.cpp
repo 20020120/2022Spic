@@ -94,8 +94,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetPlayerPower()));
 
 	// camera
-	//camera->Update(elapsed_time,player.get());
-	camera->update_with_quaternion(elapsed_time);
+	camera->Update(elapsed_time,player.get());
+	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
 

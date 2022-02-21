@@ -49,6 +49,8 @@ private:
 private:
     //カメラの向きをリセット
     bool camera_reset{ false };
+    //敵をロックオンしたかどうか(カメラ用のロックオンしたかどうか)
+    bool is_camera_lock_on{ false };
 private:
     //敵に当たったかどうか
     bool is_enemy_hit{ false };
@@ -106,6 +108,7 @@ public:
     DirectX::XMFLOAT3 GetVelocity() { return velocity; }
     HitResult& GetPlayerHitResult() { return hit; }
     bool GetCameraReset() { return camera_reset; }
+    bool GetCameraLockOn() { return is_camera_lock_on; }
     bool GetEnemyLockOn() { return is_lock_on; }
     CapsuleParam GetCapsuleParam() { return capsule_parm; }
     void SetRaycast(bool r) { raycast = r; }
@@ -116,6 +119,7 @@ public:
     void AddCombo(int count) { combo_count += count; }
 public:
     void FalseCameraReset() { camera_reset = false; }
+    void FalseCameraLockOn() { is_camera_lock_on = false; }
 private:
     void GetPlayerDirections();
 public:
