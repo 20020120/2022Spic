@@ -34,7 +34,7 @@ private:
     //パラメータ初期化関数
     void fParamInitialize();
 
-    void fDamaged(int damage_) override;
+    void fDamaged(int damage_, float InvinsibleTime_) override;
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理

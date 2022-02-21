@@ -56,6 +56,7 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
 }
+
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
@@ -77,7 +78,7 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if(result)
             {
-                enemy->fDamaged(PlayerAttackPower_);
+                enemy->fDamaged(PlayerAttackPower_,0.3f);
                 hitCounts++;
             }
         }
@@ -117,6 +118,29 @@ const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 
 const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
 {
+    auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
+    {
+        return A_->fGetLengthFromPlayer() < B_->fGetLengthFromPlayer();
+    };
+    fSort(func);
+    for (const auto enemy : mEnemyVec)
+    {
+        if (enemy->fGetIsFrustum())
+        {
+            // ‚±‚Ì“G‚©‚ç‚Ì‹——£‚ðŒvŽZ‚·‚é
+            for (const auto enemy2 : mEnemyVec)
+            {
+                if (enemy2->fGetIsFrustum())
+                {
+                    if (enemy != enemy2)
+                    {
+                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                    }
+                }
+            }
+            return enemy;
+        }
+    }
 
     return nullptr;
 }
