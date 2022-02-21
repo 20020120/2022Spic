@@ -437,6 +437,11 @@ void EnemyManager::fGuiMenu()
         ImGui::Separator();
 
         ImGui::Checkbox("ProtoSpawn", &mIsProtoSpawn);
+        if (ImGui::Button("AllClear"))
+        {
+            fAllClear();
+        }
+
 
         if (ImGui::Button("Close"))
         {
