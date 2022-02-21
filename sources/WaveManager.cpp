@@ -1,13 +1,19 @@
 #include"WaveManager.h"
+#define ProtoType
 void WaveManager::fInitialize()
 {
     // ‰Šú‰»
-
+    
 }
 
 void WaveManager::fUpdate(float elapsedTime_)
 {
-    throw std::logic_error("Not implemented");
+#ifdef ProtoType
+    mEnemyManager.fUpdate(elapsedTime_);
+
+#else
+
+#endif
 }
 
 void WaveManager::fFinalize()
@@ -18,4 +24,9 @@ void WaveManager::fFinalize()
 void WaveManager::fClear()
 {
     throw std::logic_error("Not implemented");
+}
+
+const EnemyManager* WaveManager::fGetEnemyManager() const
+{
+    return &mEnemyManager;
 }

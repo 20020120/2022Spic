@@ -40,8 +40,8 @@ void EnemyManager::fUpdate(float elapsedTime_)
     fCollisionEnemyVsEnemy();
 
     //--------------------<敵のスポナー>--------------------//
-    fSpawn();
-
+    // fSpawn();
+    fProtoSpawn();
     // ImGuiのメニュー
     fGuiMenu();
 }
@@ -338,6 +338,25 @@ void EnemyManager::fCollisionEnemyVsEnemy()
     }
 }
 
+void EnemyManager::fProtoSpawn()
+{
+    if (!mIsProtoSpawn) return;
+
+    static bool  IsSpawn{};
+    const int separateTime = static_cast<int>(mWaveTimer) % 3;
+    if(separateTime==1&&!IsSpawn)
+    {
+        auto enemy = new ChaseEnemy(mpDevice, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+
+        IsSpawn = true;
+    }
+    else if(separateTime == 2)
+    {
+        IsSpawn = false;
+    }
+}
+
 
 void EnemyManager::fGuiMenu()
 {
@@ -409,6 +428,8 @@ void EnemyManager::fGuiMenu()
             }
         }
         ImGui::Separator();
+
+        ImGui::Checkbox("ProtoSpawn", &mIsProtoSpawn);
 
         if (ImGui::Button("Close"))
         {
