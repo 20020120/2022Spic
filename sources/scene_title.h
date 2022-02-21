@@ -6,8 +6,6 @@
 #include "sprite_batch.h"
 #include "practical_entities.h"
 
-class SpriteBatch;
-
 class SceneTitle : public Scene , public PracticalEntities
 {
 public:
