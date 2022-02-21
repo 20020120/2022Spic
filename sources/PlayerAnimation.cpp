@@ -204,6 +204,7 @@ void Player::TransitionAvoidance()
     else avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     //-----------------------------------------------------------------------------------------//
     model->play_animation(AnimationClips::Avoidance, false);
+    is_avoidance = true;
     player_activity = &Player::AvoidanceUpdate;
 }
 

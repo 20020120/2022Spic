@@ -77,6 +77,8 @@ private:
     float avoidance_easing_time{ 0.6f };
     //ブーストの倍率
     float leverage{ 15.0f };
+    //カメラ用の回避した瞬間
+    bool is_avoidance{ false };
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
@@ -116,6 +118,7 @@ public:
     bool GetCameraReset() { return camera_reset; }
     bool GetCameraLockOn() { return is_camera_lock_on; }
     bool GetEnemyLockOn() { return is_lock_on; }
+    bool GetAvoidance() { return is_avoidance; }
     CapsuleParam GetCapsuleParam() { return capsule_parm; }
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
@@ -127,6 +130,7 @@ public:
 public:
     void FalseCameraReset() { camera_reset = false; }
     void FalseCameraLockOn() { is_camera_lock_on = false; }
+    void FalseAvoidance() { is_avoidance = false; }
 private:
     void GetPlayerDirections();
 public:
