@@ -95,6 +95,14 @@ float BaseEnemy::fGetLengthFromNearEstEnemy() const
     return  mLengthFromTargetEnemy;
 }
 
+float BaseEnemy::fGetPercentHitPoint()
+{
+    if (mParam.mHitPoint <= 0)
+        return 0.0f;
+    else
+        return static_cast<float>(mParam.mHitPoint) / static_cast<float>(mData.mMaxHitPoint);
+}
+
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 {
     mPlayerPosition = PlayerPosition_;
