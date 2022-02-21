@@ -120,8 +120,8 @@ public:
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     [[nodiscard]] int fGetUniqueId()const;
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
-    [[nodiscard]] float fGetPercentHitPoint();
-
+    [[nodiscard]] const float fGetPercentHitPoint()const;
+    [[nodiscard]] std::string fGetType()const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
@@ -169,7 +169,7 @@ protected:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up = {0.0f, 1.0f, 0.1f};
-
+    
     int mUniqueId{};
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
