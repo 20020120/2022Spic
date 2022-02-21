@@ -36,9 +36,23 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
     mParam.mMoveSpeed = mData.mMoveSpeed;
 }
 
-void BaseEnemy::fDamaged(int Damage_)
+void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 {
+    //ダメージが0の場合は健康状態を変更する必要がない
+    if (Damage_ == 0)return ;
+
+    //死亡している場合は健康状態を変更しない
+    if (mParam.mHitPoint <= 0)return ;
+
+
+    if (mInvinsibleTimer > 0.0f)return ;
+
+    //無敵時間設定
+    mInvinsibleTimer = InvinsibleTime_;
+    //ダメージ処理
     mParam.mHitPoint -= Damage_;
+
+    
 }
 
 void BaseEnemy::fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_)
@@ -92,6 +106,8 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
     fUpdateVelocity(elapsedTime_, mPosition, mOrientation);
     //--------------------<姿勢を更新>--------------------//
     fGetEnemyDirections();
+    //--------------------<無敵時間の更新>--------------------//
+    fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
   //  mpSkinnedMesh->update_animation(elapsedTime_);
     //--------------------<視錐台カリング>--------------------//
@@ -145,6 +161,18 @@ void BaseEnemy::fSetCapsulePoint()
     mCapsuleCollider.mRadius = mData.mCapsule.mRadius;
     mCapsuleCollider.mPointA = mPosition + (up * mData.mCapsule.mLengthFromPositionA);
     mCapsuleCollider.mPointB = mPosition - (up * mData.mCapsule.mLengthFromPositionB);
+}
+
+void BaseEnemy::fUpdateInvicibleTimer(float elapsedTime_)
+{
+    if (mInvinsibleTimer > 0.0f)
+    {
+        mInvinsibleTimer -= elapsedTime_;
+    }
+    else
+    {
+        mInvinsibleTimer = 0.0f;
+    }
 }
 
 void BaseEnemy::fChangeState(int i)

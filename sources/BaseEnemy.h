@@ -107,7 +107,7 @@ public:
     virtual void fGuiMenu(){}
 
     //--------------------<プレイヤーからダメージを受ける>--------------------//
-    virtual void fDamaged(int Damage_);
+    virtual void fDamaged(int Damage_, float InvinsibleTime_);
 
     // プレイヤー敵との距離を計算する
     void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
@@ -130,6 +130,7 @@ protected:
     void fCalcLength();
     virtual  void fSetCapsulePoint();
     virtual void fTurnToThePlayer(){}
+    void fUpdateInvicibleTimer(float elapsedTime_);
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
     bool fTurnToPlayer(float elapsedTime_, float end_turn_angle);
@@ -137,11 +138,11 @@ protected:
     //垂直速力更新処理
     void fUpdateVerticalVelocity(float elapsedFrame);
     //垂直移動更新処理
-    void fUpdateVerticalMove(float elapsedTime, DirectX::XMFLOAT3& position);
+    void fUpdateVerticalMove(float elapsedTime_, DirectX::XMFLOAT3& position);
     //水平速力更新処理
     void fUpdateHrizontalVelocity(float elasedFrame);
     //水平移動更新処理
-    void fUpdateHorizontalMove(float elapsedTime, DirectX::XMFLOAT3& position);
+    void fUpdateHorizontalMove(float elapsedTime_, DirectX::XMFLOAT3& position);
 
     //****************************************************************
     // 
@@ -160,7 +161,7 @@ protected:
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
     bool IsAttacked{};
-    
+    float mInvinsibleTimer = 0.0f;//無敵時間
     //エネミーの各方向
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;

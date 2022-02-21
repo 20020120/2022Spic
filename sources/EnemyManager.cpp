@@ -56,6 +56,7 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
 }
+
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
@@ -77,7 +78,7 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if(result)
             {
-                enemy->fDamaged(PlayerAttackPower_);
+                enemy->fDamaged(PlayerAttackPower_,0.3f);
                 hitCounts++;
             }
         }

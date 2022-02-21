@@ -94,9 +94,21 @@ void NormalEnemy::fParamInitialize()
     
 }
 
-void NormalEnemy::fDamaged(int damage_)
+void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 {
-    mParam.mHitPoint -= damage_;
+    //ダメージが0の場合は健康状態を変更する必要がない
+    if (Damage_ == 0)return;
+
+    //死亡している場合は健康状態を変更しない
+    if (mParam.mHitPoint <= 0)return;
+
+
+    if (mInvinsibleTimer > 0.0f)return;
+
+    //無敵時間設定
+    mInvinsibleTimer = InvinsibleTime_;
+    //ダメージ処理
+    mParam.mHitPoint -= Damage_;
     fChangeState(DAUNTED);
 }
 
@@ -159,7 +171,8 @@ void NormalEnemy::fDauntedInit()
 {
     mNowState = DAUNTED;
 }
-static bool add_damage;
+
+
 void NormalEnemy::fDauntedUpdate(float elapsedTime_)
 {
     using namespace DirectX;
@@ -189,7 +202,7 @@ void NormalEnemy::fGuiMenu()
     ImGui::Checkbox("Attack", &mAttack_flg);
     if(ImGui::Button("dameged", { 70.0f,30.0f }))
     {
-        fDamaged(1);
+        fDamaged(1,0.1f);
     }
 #endif
 
