@@ -235,5 +235,6 @@ void ChaseEnemy::fGuiMenu()
         fDamaged(1,0.0f);
     }
     ImGui::Text(std::to_string(fGetPercentHitPoint()).c_str());
+    ImGui::Text(fGetType().c_str());
     ImGui::Separator();
 }
