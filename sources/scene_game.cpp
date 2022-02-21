@@ -39,6 +39,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	reticle = std::make_unique<Reticle>(graphics);
 	// wave
 	wave = std::make_unique<Counter>(graphics, L".\\resources\\Sprites\\ui\\wave.png");
+	// option
+	option = std::make_unique<Option>(graphics);
 }
 
 void SceneGame::uninitialize()
@@ -48,6 +50,19 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	if (option->get_validity())
+	{
+		option->update(graphics, elapsed_time);
+		return;
+	}
+	else
+	{
+		if (game_pad->get_button_down() & GamePad::BTN_START)
+		{
+			option->set_validity(true);
+			return;
+		}
+	}
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 	mEnemyManager.fSetPlayerPosition(player->GetPosition());
 	mEnemyManager.fUpdate(elapsed_time);
@@ -140,13 +155,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 #endif // USE_IMGUI
 
-	// gamepad
-	if (game_pad->get_button_down() & GamePad::BTN_A)
-	{
-		// 押した瞬間
-		SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE2, 0.5f);
-		return;
-	}
 
 	// audio デモ
 	static float bgm_volume = 0.2f;
@@ -284,6 +292,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
+
+	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 }
 
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)

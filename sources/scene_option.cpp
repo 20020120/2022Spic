@@ -14,42 +14,46 @@ Option::Option(GraphicsPipeline& graphics)
 	game.texsize  = { static_cast<float>(sprite_string->get_texture2d_desc().Width), static_cast<float>(sprite_string->get_texture2d_desc().Height) / 2.0f };
 	game.pivot    = { game.texsize.x / 2.0f, 0 };
 	game.texpos   = { 0, 0 };
-	game.position = { 650.0f, 460.0f };
+	game.position = { 690.0f, 210.0f };
+	game.color = { 1,1,1,1 };
 
 	title.texsize = { static_cast<float>(sprite_string->get_texture2d_desc().Width), static_cast<float>(sprite_string->get_texture2d_desc().Height) / 2.0f };
 	title.pivot   = { title.texsize.x / 2.0f, 0 };
 	title.texpos  = { 0, title.texsize.y };
-	title.position = { 730.0f, 575.0f };
+	title.position = { 690.0f, 415.0f };
+	title.color = { 1,1,1,1 };
 	//--selecter--//
 	sprite_selecter    = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\selecter.png", 2);
 	selecter1.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	selecter1.position = { 250.0f, 515.0f };
+	selecter1.position = { 265.0f, 260.0f };
 	selecter1.scale    = { 0.7f, 0.3f };
+	selecter1.color    = { 1,1,1,1 };
 
 	selecter2.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	selecter2.position = { 950.0f, 515.0f };
+	selecter2.position = { 945.0f, 260.0f };
 	selecter2.scale    = { 0.7f, 0.3f };
+	selecter2.color    = { 1,1,1,1 };
 
-	arrival_pos1       = { 250.0f, 515.0f };
-	arrival_pos2       = { 950.0f, 515.0f };
+	arrival_pos1       = { 265.0f, 260.0f };
+	arrival_pos2       = { 945.0f, 260.0f };
 }
 
 void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	if (game_pad->get_button_down() & GamePad::BTN_START)
+	{
+		validity = false;
+		return;
+	}
+
 	switch (state)
 	{
 	case 0: // game
-		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
 		{
 			state = 1;
-			arrival_pos1 = { 315.0f, 630.0f };
-			arrival_pos2 = { 870.0f, 630.0f };
-		}
-		if (game_pad->get_axis_LY() < -0.5f)
-		{
-			state = 1;
-			arrival_pos1 = { 315.0f, 630.0f };
-			arrival_pos2 = { 870.0f, 630.0f };
+			arrival_pos1 = { 265.0f, 465.0f };
+			arrival_pos2 = { 945.0f, 465.0f };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
@@ -58,17 +62,11 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		break;
 	case 1: // title
-		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
 		{
 			state = 0;
-			arrival_pos1 = { 250.0f, 515.0f };
-			arrival_pos2 = { 950.0f, 515.0f };
-		}
-		if (game_pad->get_axis_LY() > 0.5f)
-		{
-			state = 0;
-			arrival_pos1 = { 250.0f, 515.0f };
-			arrival_pos2 = { 950.0f, 515.0f };
+			arrival_pos1 = { 265.0f, 260.0f };
+			arrival_pos2 = { 945.0f, 260.0f };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
