@@ -185,6 +185,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 #endif
 	audio_manager->set_volume_bgm(BGM_INDEX::ENDING, bgm_volume);
+	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume);
 	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
 }
 
