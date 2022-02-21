@@ -23,6 +23,8 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -42,6 +44,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
 
@@ -49,7 +52,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     AvoidanceAcceleration(elapsed_time);
     //回避のアニメーションが終わったら
-    if (model->end_of_animation())
+    if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
     {
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -62,6 +65,8 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
+    UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -70,6 +75,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionCharge();
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -108,6 +114,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType1(0);
         }
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
@@ -128,6 +135,8 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType2(0);
         }
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
@@ -148,6 +157,8 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType3(0);
         }
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
@@ -156,6 +167,8 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionIdle();
     }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::TransitionIdle()
@@ -175,7 +188,7 @@ void Player::TransitionAvoidance()
     BehindAvoidancePosition();
     avoidance_boost_time = 0;
     avoidance_start = velocity;
-    avoidance_end = { forward.x * 10.0f ,forward.y * 10.0f,forward.z * 10.0f };
+    avoidance_end = { forward.x * 25.0f ,forward.y * 25.0f,forward.z * 25.0f };
     model->play_animation(AnimationClips::Avoidance, false);
     player_activity = &Player::AvoidanceUpdate;
 }

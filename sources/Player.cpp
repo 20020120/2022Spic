@@ -27,14 +27,16 @@ void Player::Initialize()
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
 void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
+
     ExecFuncUpdate(elapsed_time, sky_dome);
-    UpdateVelocity(elapsed_time, position, orientation,camera_forward,camera_right,camera_position ,sky_dome);
     GetPlayerDirections();
     //ロックオン
     LockOn();
-
+    //カメラリセット
+    CameraReset();
     //体の大きさのカプセルパラメータ設定
     BodyCapsule();
+
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -77,6 +79,17 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat("capsule_parm.rasius", &capsule_parm.rasius,0.1f);
                 ImGui::TreePop();
             }
+            if (ImGui::TreeNode("easing"))
+            {
+                ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time,0.1f);
+                ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time,0.1f);
+                ImGui::TreePop();
+            }
+
+
+
+
+
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
 
@@ -87,20 +100,20 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
 #endif // USE_IMGUI
     model->update_animation(elapsed_time);
 
-    if (is_lock_on)
-    {
-        //BehindAvoidancePosition();
+    //if (is_lock_on)
+    //{
+    //    //BehindAvoidancePosition();
 
-        if (Collision::sphere_vs_sphere(position, 1.0f, behind_point_3, 1.0f))
-        {
-            is_enemy_hit = true;
-        }
-        else
-        {
-            is_enemy_hit = false;
-        }
-        Collision::sphere_vs_sphere(behind_point_1, 1.0f, behind_point_2, 1.0f);
-    }
+    //    if (Collision::sphere_vs_sphere(position, 1.0f, behind_point_3, 1.0f))
+    //    {
+    //        is_enemy_hit = true;
+    //    }
+    //    else
+    //    {
+    //        is_enemy_hit = false;
+    //    }
+    //    Collision::sphere_vs_sphere(behind_point_1, 1.0f, behind_point_2, 1.0f);
+    //}
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -191,30 +204,33 @@ void Player::AvoidanceAcceleration(float elapsed_time)
     {
         if (avoidance_boost_time < avoidance_easing_time)
         {
-            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+            //一切入力がない
+            if (sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) <= 0.0f)
+            {
+                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+            }
+            else
+            {
+                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.y = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
+                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+            }
         }
     }
     //ロックオンしている時
     else
     {
-        //自分と敵の距離を見る
-        float length{ Math::calc_vector_AtoB_length(position, target) };
-        //この距離より小さかったら後ろに回り込む
-        if (length < BEHIND_LANGE)
+        //一切入力がない
+        if (sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) <= 0.0f)
         {
-            //DirectX::XMVECTOR pos{};
-            //DirectX::XMVECTOR p_1{DirectX::XMLoadFloat3(&position)};
-            //DirectX::XMVECTOR p_2{DirectX::XMLoadFloat3(&behind_point_1)};
-            //DirectX::XMVECTOR p_3{ DirectX::XMLoadFloat3(&behind_point_2) };
-            //DirectX::XMVECTOR p_4{ DirectX::XMLoadFloat3(&behind_point_3) };
-            //pos = DirectX::XMVectorCatmullRom(p_1, p_2, p_3, p_4, 1.0f * elapsed_time);
-            //DirectX::XMStoreFloat3(&position, pos);
-            //velocity = {};
+            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
         }
         else
         {
             velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+            velocity.y = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
             velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
         }
     }
@@ -249,3 +265,10 @@ void Player::LockOn()
 
 }
 
+void Player::CameraReset()
+{
+    if (game_pad->get_button_down() & GamePad::BTN_X)
+    {
+        camera_reset = true;
+    }
+}
