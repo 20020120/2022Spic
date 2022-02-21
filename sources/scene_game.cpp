@@ -29,8 +29,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
 	//--------------------<敵の管理クラスを初期化>--------------------//
-	mEnemyManager.fInitialize(graphics.get_device().Get());
-	player = std::make_unique<Player>(graphics);
+	mWaveManager.fInitialize(graphics.get_device().Get());
+    player = std::make_unique<Player>(graphics);
 	// カメラ
 	camera = std::make_unique<Camera>(graphics,player.get());
 	// enemy_hp_gauge
@@ -45,7 +45,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 void SceneGame::uninitialize()
 {
-	mEnemyManager.fFinalize();
+	mWaveManager.fFinalize();
 }
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -64,10 +64,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 	//--------------------<敵の管理クラスの更新処理>--------------------//
-	mEnemyManager.fSetPlayerPosition(player->GetPosition());
-	mEnemyManager.fUpdate(elapsed_time);
+
+	auto enemyManager = mWaveManager.fGetEnemyManager();
+	enemyManager->fSetPlayerPosition(player->GetPosition());
+	mWaveManager.fUpdate(elapsed_time);
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
-    const BaseEnemy* enemy = mEnemyManager.fGetNearestEnemyPosition();
+    const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
 	player->Update(elapsed_time, sky_dome.get());
 	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
@@ -103,7 +105,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		wave->update(graphics, elapsed_time);
 	}
 	// 敵とのあたり判定(当たったらコンボ加算)
-	player->AddCombo(mEnemyManager.fCalcPlayerCapsuleVsEnemies(
+	player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
 		player->GetCapsuleParam().start,
 		player->GetCapsuleParam().end,
 		player->GetCapsuleParam().rasius,
@@ -227,12 +229,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	}
 
-	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
-	if (DebugFlags::get_wireframe_switching())
-	{
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
-		debug_figure->render_all_figures(graphics.get_dc().Get());
-	}
 
     // font demo
 #if 0
@@ -245,7 +241,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 #endif // 0
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
-	mEnemyManager.fRender(graphics.get_dc().Get());
+	mWaveManager.fGetEnemyManager()->fRender(graphics.get_dc().Get());
 	player->Render(graphics, elapsed_time);
 
 	//--------<ui>--------//
@@ -255,6 +251,12 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	reticle->render(graphics, elapsed_time);
 	// wave
 	wave->render(graphics, elapsed_time);
+
+
+
+	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
+	debug_figure->render_all_figures(graphics.get_dc().Get());
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 

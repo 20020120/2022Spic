@@ -75,6 +75,7 @@ public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
     [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
+    [[nodiscard]] const bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
@@ -105,7 +106,9 @@ private:
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
 
-
+    //--------------------<プロト>--------------------//
+    void fProtoSpawn();
+    
 
     //****************************************************************
     // 
@@ -132,6 +135,9 @@ private:
     DirectX::XMFLOAT3 mPlayerPosition{};
 
     int mUniqueCount{};
+
+    //--------------------<プロト>--------------------//
+    bool mIsProtoSpawn{ true };
     //****************************************************************
     // 
     // 定数
