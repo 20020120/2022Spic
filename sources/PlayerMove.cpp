@@ -13,7 +13,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
-
+    SetDirections(orientation);
     //“G‚ÉƒƒbƒNƒIƒ“‚µ‚½‚ç“G‚Ì•ûŒü‚ðŒü‚­
     if (is_enemy && is_lock_on)
     {
@@ -195,8 +195,6 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         //point.y = target.y;
         DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
 
-        debug_figure->create_sphere(point, 1.0f, { 1,1,0,1 });
-        debug_figure->create_sphere(t, 1.0f, { 0,0,1,1 });
 
         XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
 
@@ -205,9 +203,6 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         XMStoreFloat(&an, a);
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
-        ImGui::Begin("degree");
-        ImGui::DragFloat("angle horizon", &de);
-        ImGui::End();
 
         if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
         {
@@ -238,8 +233,6 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         //point.z = target.z;
         DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
 
-        //debug_figure->create_sphere(point, 1.0f, { 1,1,0,1 });
-        //debug_figure->create_sphere(t, 1.0f, { 0,0,1,1 });
 
         XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
 
@@ -248,9 +241,6 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         XMStoreFloat(&an, a);
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
-        ImGui::Begin("degree");
-        ImGui::DragFloat("angle", &de);
-        ImGui::End();
         if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
         {
             //‰ñ“]Ž²‚Æ‰ñ“]Šp‚©‚ç‰ñ“]ƒNƒI[ƒ^ƒjƒIƒ“‚ð‹‚ß‚é
@@ -268,4 +258,19 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         }
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
+}
+
+void PlayerMove::SetDirections(DirectX::XMFLOAT4 o)
+{
+    using namespace DirectX;
+    //ƒ^[ƒQƒbƒg‚ÉŒü‚©‚Á‚Ä‰ñ“]
+    XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&o);
+    DirectX::XMVECTOR forward;
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMStoreFloat3(&player_forward, forward);
+
 }
