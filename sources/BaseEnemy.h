@@ -105,7 +105,7 @@ public:
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//
     virtual void fGuiMenu(){}
-
+    
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_, float InvinsibleTime_);
 
