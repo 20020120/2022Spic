@@ -76,6 +76,9 @@ private:
     DirectX::XMFLOAT3 avoidance_end{};
     float avoidance_easing_time{ 0.6f };
 private:
+    //ターゲットの敵
+    const  BaseEnemy* target_enemy;
+private:
     //後ろに回り込むための計算する関数
     void BehindAvoidancePosition();
     //スプライン曲線を使うための途中の点

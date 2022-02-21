@@ -252,7 +252,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
 
-        if (fabs(an) > DirectX::XMConvertToRadians(10.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
         {
             XMVECTOR q;
             DirectX::XMFLOAT3 a{};
@@ -289,7 +289,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         XMStoreFloat(&an, a);
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
-        if (fabs(an) > DirectX::XMConvertToRadians(10.0f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
         {
             //‰ñ“]Ž²‚Æ‰ñ“]Šp‚©‚ç‰ñ“]ƒNƒI[ƒ^ƒjƒIƒ“‚ð‹‚ß‚é
             XMVECTOR q;

@@ -166,14 +166,14 @@ void Player::BodyCapsule()
     };
 }
 
-void Player::SetTarget(const BaseEnemy* target_enemy)
+void Player::SetTarget(const BaseEnemy* target_enemys)
 {
-    if (target_enemy != nullptr)
+    //ターゲットを設定するのはロックオンした瞬間だけ
+    if (is_lock_on == false && target_enemys != nullptr)
     {
-        target = target_enemy->fGetPosition();
-        is_enemy = true;
+        target_enemy = target_enemys;
     }
-    else is_enemy = false;
+
 }
 
 void Player::GetPlayerDirections()
@@ -244,6 +244,13 @@ void Player::ChargeAcceleration(float elapse_time)
 
 void Player::LockOn()
 {
+    if (target_enemy != nullptr)
+    {
+        target = target_enemy->fGetPosition();
+        is_enemy = true;
+    }
+    else is_enemy = false;
+
     //自分と敵の距離を見る
     float length{ Math::calc_vector_AtoB_length(position, target) };
 
@@ -251,10 +258,9 @@ void Player::LockOn()
     {
         if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
         {
-            if (is_lock_on == false) is_camera_lock_on = true;
+            if (is_lock_on == false)is_camera_lock_on = true;
             is_lock_on = true;
         }
-
         else is_lock_on = false;
     }
     else
