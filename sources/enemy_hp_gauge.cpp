@@ -65,6 +65,7 @@ void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
         animation = lockon;
         focus_position = target_enemy->fGetPosition();
         offset = { 0,-70.0f };
+        //hp_percent = target_enemy->fGetPercentHitPoint();
     }
     else
     {
