@@ -120,6 +120,8 @@ public:
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     [[nodiscard]] int fGetUniqueId()const;
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
+    [[nodiscard]] float fGetPercentHitPoint();
+
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
@@ -179,6 +181,9 @@ private:
 
     bool mIsFrustum{}; // カリングされているか
     CubeData mCubeData{};
+
+
+
 protected:
     //****************************************************************
     // 

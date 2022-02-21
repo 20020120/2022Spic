@@ -230,5 +230,10 @@ void ChaseEnemy::fGuiMenu()
     ImGui::Text(("ChaseEnemy" + std::to_string(mUniqueId)).c_str());
     ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
     ImGui::InputInt("Hp", &mParam.mHitPoint);
+    if (ImGui::Button("Damaged"))
+    {
+        fDamaged(1,0.0f);
+    }
+    ImGui::Text(std::to_string(fGetPercentHitPoint()).c_str());
     ImGui::Separator();
 }

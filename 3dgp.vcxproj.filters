@@ -118,11 +118,11 @@
     <Filter Include="Sources\skydome">
       <UniqueIdentifier>{a540791f-fe00-4091-9e33-caf26773ce9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\GameManager">
-      <UniqueIdentifier>{a9dbb287-bf3a-403d-8569-6ad68b039447}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\UI">
       <UniqueIdentifier>{a4d67e3f-a4d1-465a-920c-b990ab7ced2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\WaveManager">
+      <UniqueIdentifier>{a9dbb287-bf3a-403d-8569-6ad68b039447}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -309,8 +309,8 @@
     <ClCompile Include="sources\NormalEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
-    <ClCompile Include="sources\GameManager.cpp">
-      <Filter>Sources\GameManager</Filter>
+    <ClCompile Include="sources\WaveManager.cpp">
+      <Filter>Sources\WaveManager</Filter>
     </ClCompile>
     <ClCompile Include="sources\ChaseEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
@@ -536,8 +536,8 @@
     <ClInclude Include="sources\ChaseEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="sources\GameManager.h">
-      <Filter>Sources\GameManager</Filter>
+    <ClInclude Include="sources\WaveManager.h">
+      <Filter>Sources\WaveManager</Filter>
     </ClInclude>
     <ClInclude Include="sources\UI.h">
       <Filter>Sources\UI</Filter>

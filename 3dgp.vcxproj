@@ -261,7 +261,7 @@
     <ClCompile Include="sources\sprite_dissolve.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
-    <ClCompile Include="sources\GameManager.cpp" />
+    <ClCompile Include="sources\WaveManager.cpp" />
     <ClCompile Include="sources\UI.cpp" />
     <ClCompile Include="sources\counter.cpp" />
   </ItemGroup>
@@ -336,7 +336,7 @@
     <ClInclude Include="sources\sprite_dissolve.h" />
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
-    <ClInclude Include="sources\GameManager.h" />
+    <ClInclude Include="sources\WaveManager.h" />
     <ClInclude Include="sources\UI.h" />
     <ClInclude Include="sources\user.h" />
     <ClInclude Include="sources\counter.h" />
