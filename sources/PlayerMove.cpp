@@ -38,6 +38,11 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 
 void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
+    if (is_enemy && is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+    }
+
     SetDirections(orientation);
 
     //åoâﬂÉtÉåÅ[ÉÄ

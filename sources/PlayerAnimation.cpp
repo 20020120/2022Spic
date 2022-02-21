@@ -186,9 +186,23 @@ void Player::TransitionMove()
 void Player::TransitionAvoidance()
 {
     BehindAvoidancePosition();
+    //--------------------------イージング加速の変数初期化---------------------------------//
     avoidance_boost_time = 0;
     avoidance_start = velocity;
-    avoidance_end = { forward.x * 25.0f ,forward.y * 25.0f,forward.z * 25.0f };
+    if (is_lock_on)
+    {
+        DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+        if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
+        {
+            avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
+        }
+        else
+        {
+            avoidance_end = { movevec.x * leverage ,movevec.y * leverage,movevec.z * leverage };
+        }
+    }
+    else avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
+    //-----------------------------------------------------------------------------------------//
     model->play_animation(AnimationClips::Avoidance, false);
     player_activity = &Player::AvoidanceUpdate;
 }

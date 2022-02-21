@@ -83,6 +83,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             {
                 ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time,0.1f);
                 ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time,0.1f);
+                ImGui::DragFloat("leverage", &leverage,0.1f);
                 ImGui::TreePop();
             }
 
@@ -199,9 +200,6 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 {
     avoidance_boost_time += elapsed_time;
 
-    //ロックオンしていないとき
-    if (is_lock_on == false)
-    {
         if (avoidance_boost_time < avoidance_easing_time)
         {
             //一切入力がない
@@ -217,23 +215,6 @@ void Player::AvoidanceAcceleration(float elapsed_time)
                 velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
             }
         }
-    }
-    //ロックオンしている時
-    else
-    {
-        //一切入力がない
-        if (sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) <= 0.0f)
-        {
-            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
-        }
-        else
-        {
-            velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-            velocity.y = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
-            velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
-        }
-    }
 }
 
 void Player::ChargeAcceleration(float elapse_time)

@@ -75,6 +75,8 @@ private:
     DirectX::XMFLOAT3 avoidance_start{};
     DirectX::XMFLOAT3 avoidance_end{};
     float avoidance_easing_time{ 0.6f };
+    //ブーストの倍率
+    float leverage{ 15.0f };
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
@@ -117,6 +119,7 @@ public:
     CapsuleParam GetCapsuleParam() { return capsule_parm; }
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
+    const  BaseEnemy* GetPlayerTargetEnemy() const { return target_enemy; }
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(const BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
