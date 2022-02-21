@@ -64,8 +64,10 @@ void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
     {
         animation = lockon;
         focus_position = target_enemy->fGetPosition();
-        offset = { 0,-70.0f };
-        //hp_percent = target_enemy->fGetPercentHitPoint();
+        hp_percent = target_enemy->fGetPercentHitPoint();
+
+        if (target_enemy->fGetType() == "class ChaseEnemy") { offset = { 0, -80.0f }; }
+        else { offset = { 0, -70.0f }; }
     }
     else
     {
