@@ -43,18 +43,93 @@ void ChaseEnemy::fInitialize()
 
  void ChaseEnemy::fRotate(float elapsedTime_)
  {
-     // 回転軸を算出
-     const DirectX::XMFLOAT3 V1 = Math::Normalize(mPlayerPosition - mPosition);
-     const DirectX::XMFLOAT3 V2 = Math::Normalize(forward);
-      auto axis = Math::Cross(V2, V1, false);
-     if (Math::Length(axis) > 0.0f)
+     using namespace DirectX;
+     //ターゲットに向かって回転
+     XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&mOrientation);
+     DirectX::XMVECTOR forward, right, up;
+     DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+     DirectX::XMFLOAT4X4 m4x4 = {};
+     DirectX::XMStoreFloat4x4(&m4x4, m);
+     right = { m4x4._11, m4x4._12, m4x4._13 };
+     //up = { m4x4._21, m4x4._22, m4x4._23 };
+     up = { 0, 1, 0 };
+     forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+     XMVECTOR pos_vec = XMLoadFloat3(&mPosition);//自分の位置
+     DirectX::XMFLOAT3 front{};
+     DirectX::XMStoreFloat3(&front, forward);
+     DirectX::XMFLOAT3 t{ mPlayerPosition };
+     XMVECTOR target_vec = XMLoadFloat3(&t);
+     XMVECTOR d = XMVector3Normalize(target_vec - pos_vec);
+     float d_length = Math::calc_vector_AtoB_length(mPosition, t);
      {
-         axis = Math::Normalize(axis);
-         // 回転角を算出
-         auto rad = Math::Dot(V1, V2);
-         rad = acosf(rad);
-         mOrientation = Math::RotQuaternion(mOrientation, axis, rad * elapsedTime_ * 10.0f);
+         DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
+         //point.y = target.y;
+         DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
+
+
+         XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
+
+         float an;
+         XMVECTOR a = XMVector3Dot(d2, d);
+         XMStoreFloat(&an, a);
+         an = acosf(an);
+         float de = DirectX::XMConvertToDegrees(an);
+
+         if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
+         {
+             XMVECTOR q;
+             DirectX::XMFLOAT3 a{};
+             DirectX::XMStoreFloat3(&a, d2);
+             DirectX::XMFLOAT3 b{};
+             DirectX::XMStoreFloat3(&b, d);
+             float cross{ (b.x * a.z) - (b.z * a.x) };
+
+             if (cross > 0)
+             {
+                 q = XMQuaternionRotationAxis(up, an);//正の方向に動くクオータニオン
+             }
+             else
+             {
+                 q = XMQuaternionRotationAxis(up, -an);//正の方向に動くクオータニオン
+             }
+             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+             orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
+         }
      }
+     //right
+     {
+
+         DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
+         //point.x = target.x;
+         //point.z = target.z;
+         DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
+
+
+         XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
+
+         float an;
+         XMVECTOR a = XMVector3Dot(d2, d);
+         XMStoreFloat(&an, a);
+         an = acosf(an);
+         float de = DirectX::XMConvertToDegrees(an);
+         if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+         {
+             //回転軸と回転角から回転クオータニオンを求める
+             XMVECTOR q;
+             if (point.y > mPlayerPosition.y)
+             {
+                 q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
+             }
+             else
+             {
+                 q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
+             }
+             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+             orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
+         }
+     }
+     DirectX::XMStoreFloat4(&mOrientation, orientation_vec);
  }
 
 void ChaseEnemy::fRegisterFunctions()

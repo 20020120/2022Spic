@@ -401,7 +401,10 @@ void Camera::Update(float elapsedTime, Player* player)
 		const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
 		const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
 		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
-		RockOnUpdateEyeVector(elapsedTime, PlayerUp);
+		if(RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn()))
+		{
+		    player->FalseCameraLockOn();
+		}
 	}
 	else
 	{
@@ -656,7 +659,7 @@ bool Camera::RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForwar
 
 }
 
-void Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
+bool Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp,bool rockOnStart)
 {
 	if (rockOnStart)
 	{
@@ -677,12 +680,13 @@ void Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 			const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
 			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
 			DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+			return false;
 		}
 		else
 		{
 			eyeVector = rockOnEyeVector;
 			rockOnTimer = 0;
-			rockOnStart = false;
+			return true;
 		}
 	}
 	else
@@ -751,7 +755,7 @@ void Camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 		}
 		//ç≈å„Ç…àÍâÒÇæÇØçsÇ§
 		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
-
+		return false;
 	}
 }
 

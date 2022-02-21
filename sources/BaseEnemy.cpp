@@ -36,9 +36,23 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
     mParam.mMoveSpeed = mData.mMoveSpeed;
 }
 
-void BaseEnemy::fDamaged(int Damage_)
+void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 {
+    //ダメージが0の場合は健康状態を変更する必要がない
+    if (Damage_ == 0)return ;
+
+    //死亡している場合は健康状態を変更しない
+    if (mParam.mHitPoint <= 0)return ;
+
+
+    if (mInvinsibleTimer > 0.0f)return ;
+
+    //無敵時間設定
+    mInvinsibleTimer = InvinsibleTime_;
+    //ダメージ処理
     mParam.mHitPoint -= Damage_;
+
+    
 }
 
 void BaseEnemy::fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_)
@@ -76,6 +90,11 @@ int BaseEnemy::fGetUniqueId() const
     return mUniqueId;
 }
 
+float BaseEnemy::fGetLengthFromNearEstEnemy() const
+{
+    return  mLengthFromTargetEnemy;
+}
+
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 {
     mPlayerPosition = PlayerPosition_;
@@ -92,6 +111,8 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
     fUpdateVelocity(elapsedTime_, mPosition, mOrientation);
     //--------------------<姿勢を更新>--------------------//
     fGetEnemyDirections();
+    //--------------------<無敵時間の更新>--------------------//
+    fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
   //  mpSkinnedMesh->update_animation(elapsedTime_);
     //--------------------<視錐台カリング>--------------------//
@@ -147,6 +168,18 @@ void BaseEnemy::fSetCapsulePoint()
     mCapsuleCollider.mPointB = mPosition - (up * mData.mCapsule.mLengthFromPositionB);
 }
 
+void BaseEnemy::fUpdateInvicibleTimer(float elapsedTime_)
+{
+    if (mInvinsibleTimer > 0.0f)
+    {
+        mInvinsibleTimer -= elapsedTime_;
+    }
+    else
+    {
+        mInvinsibleTimer = 0.0f;
+    }
+}
+
 void BaseEnemy::fChangeState(int i)
 {
     mCurrentTuple = mFunctionMap.at(i);
@@ -175,53 +208,92 @@ void BaseEnemy::fGetEnemyDirections()
 bool BaseEnemy::fTurnToPlayer(float elapsedTime_, float end_turn_angle)
 {
     using namespace DirectX;
-    XMVECTOR orientation_vec = XMLoadFloat4(&mOrientation);
-
-    DirectX::XMFLOAT4X4 m4x4 = {};
-    DirectX::XMVECTOR forward, up;
+    //ターゲットに向かって回転
+    XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&mOrientation);
+    DirectX::XMVECTOR forward, right, up;
     DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
     DirectX::XMStoreFloat4x4(&m4x4, m);
-    up = { m4x4._21, m4x4._22, m4x4._23 };
+    right = { m4x4._11, m4x4._12, m4x4._13 };
+    //up = { m4x4._21, m4x4._22, m4x4._23 };
+    up = { 0, 1, 0 };
     forward = { m4x4._31, m4x4._32, m4x4._33 };
 
-    XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
-    XMVECTOR E_Pos = XMLoadFloat3(&mPosition);
-    XMVECTOR Vec = P_Pos - E_Pos;
-    Vec = XMVector3Normalize(Vec);
-    XMVECTOR Dot = XMVector3Dot(Vec, forward);
-    float angle = XMVectorGetX(Dot);
-    angle = acos(angle);
+    XMVECTOR pos_vec = XMLoadFloat3(&mPosition);//自分の位置
+    DirectX::XMFLOAT3 front{};
+    DirectX::XMStoreFloat3(&front, forward);
+    DirectX::XMFLOAT3 t{ mPlayerPosition };
+    XMVECTOR target_vec = XMLoadFloat3(&t);
+    XMVECTOR d = XMVector3Normalize(target_vec - pos_vec);
+    float d_length = Math::calc_vector_AtoB_length(mPosition, t);
+    {
+        DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
+        //point.y = target.y;
+        DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
 
-    //プレイヤーへの向きと敵の向きの角度がend_turn_angle度以下ならtrueを返す
-    if (angle < XMConvertToRadians(end_turn_angle))
-    {
-        return true;
-    }
-    //falseなら回転してからリターン
-    if (fabs(angle) > 1e-8f)
-    {
-        DirectX::XMFLOAT3 f{};
-        DirectX::XMFLOAT3 v{};
-        DirectX::XMStoreFloat3(&f, forward);
-        DirectX::XMStoreFloat3(&v, Vec);
-        float cross{ (f.x * v.z) - (f.z * v.x) };
-        float turn_speed = 2.0f;
-        if (cross < 0.0f)
+
+        XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
+
+        float an;
+        XMVECTOR a = XMVector3Dot(d2, d);
+        XMStoreFloat(&an, a);
+        an = acosf(an);
+        float de = DirectX::XMConvertToDegrees(an);
+
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
         {
             XMVECTOR q;
-            q = XMQuaternionRotationAxis(up, angle);
+            DirectX::XMFLOAT3 a{};
+            DirectX::XMStoreFloat3(&a, d2);
+            DirectX::XMFLOAT3 b{};
+            DirectX::XMStoreFloat3(&b, d);
+            float cross{ (b.x * a.z) - (b.z * a.x) };
+
+            if (cross > 0)
+            {
+                q = XMQuaternionRotationAxis(up, an);//正の方向に動くクオータニオン
+            }
+            else
+            {
+                q = XMQuaternionRotationAxis(up, -an);//正の方向に動くクオータニオン
+            }
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
         }
-        else
-        {
-            XMVECTOR q;
-            q = XMQuaternionRotationAxis(up, -angle);
-            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
-        }
-        XMStoreFloat4(&mOrientation, orientation_vec);
     }
+    //right
+    {
+
+        DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
+        //point.x = target.x;
+        //point.z = target.z;
+        DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
+
+
+        XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
+
+        float an;
+        XMVECTOR a = XMVector3Dot(d2, d);
+        XMStoreFloat(&an, a);
+        an = acosf(an);
+        float de = DirectX::XMConvertToDegrees(an);
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+        {
+            //回転軸と回転角から回転クオータニオンを求める
+            XMVECTOR q;
+            if (point.y > mPlayerPosition.y)
+            {
+                q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
+            }
+            else
+            {
+                q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
+            }
+            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
+        }
+    }
+    DirectX::XMStoreFloat4(&mOrientation, orientation_vec);
     return false;
 }
 

@@ -69,7 +69,7 @@ private:
 
     bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
 
-    void RockOnUpdateEyeVector(float elapsedTime,DirectX::XMVECTOR PlayerUp);
+    bool RockOnUpdateEyeVector(float elapsedTime,DirectX::XMVECTOR PlayerUp, bool rockOnStart);
     void RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition);
 
     bool RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);

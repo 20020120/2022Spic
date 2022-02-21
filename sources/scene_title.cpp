@@ -41,13 +41,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	switch (state)
 	{
 	case 0: // start
-		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
-		{
-			state = 1;
-			arrival_pos1 = { 315.0f, 630.0f };
-			arrival_pos2 = { 870.0f, 630.0f };
-		}
-		if (game_pad->get_axis_LY() < -0.5f)
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
 		{
 			state = 1;
 			arrival_pos1 = { 315.0f, 630.0f };
@@ -60,13 +54,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		break;
 	case 1: // exit
-		if (game_pad->get_button_down() & GamePad::BTN_UP)
-		{
-			state = 0;
-			arrival_pos1 = { 250.0f, 515.0f };
-			arrival_pos2 = { 950.0f, 515.0f };
-		}
-		if (game_pad->get_axis_LY() > 0.5f)
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
 		{
 			state = 0;
 			arrival_pos1 = { 250.0f, 515.0f };

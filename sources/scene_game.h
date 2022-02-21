@@ -20,6 +20,7 @@
 #include "enemy_hp_gauge.h"
 #include "reticle.h"
 #include "counter.h"
+#include "scene_option.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -75,4 +76,6 @@ private:
     std::unique_ptr<Reticle> reticle{ nullptr };
     // counter
     std::unique_ptr<Counter> wave{ nullptr };
+    // option
+    std::unique_ptr<Option> option{ nullptr };
 };

@@ -1,26 +1,24 @@
 #pragma once
 
-#include <memory>
-
-#include "scene.h"
+#include <DirectXMath.h>
+#include "graphics_pipeline.h"
 #include "sprite_batch.h"
 #include "practical_entities.h"
 
-class SceneTitle : public Scene , public PracticalEntities
+class Option : public PracticalEntities
 {
 public:
     //--------<constructor/destructor>--------//
-    SceneTitle() {}
-    ~SceneTitle() override {}
+    Option(GraphicsPipeline& graphics);
+    ~Option() override {}
     //--------< ä÷êî >--------//
-    //èâä˙âª
-    void initialize(GraphicsPipeline& graphics) override;
-    //èIóπâª
-    void uninitialize() override;
     //çXêVèàóù
-    void update(GraphicsPipeline& graphics, float elapsed_time) override;
+    void update(GraphicsPipeline& graphics, float elapsed_time);
     //ï`âÊèàóù
-    void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    void render(GraphicsPipeline& graphics, float elapsed_time);
+    //--------<getter/setter>--------//
+    bool get_validity() const { return validity; }
+    void set_validity(bool v) { validity = v; }
 private:
     //--------< ïœêî >--------//
     struct Element
@@ -35,13 +33,15 @@ private:
     };
     Element back;
     std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
-    Element start;
-    Element exit;
+    Element game;
+    Element title;
     std::unique_ptr<SpriteBatch> sprite_string{ nullptr };
     Element selecter1;
     DirectX::XMFLOAT2 arrival_pos1{};
     Element selecter2;
     DirectX::XMFLOAT2 arrival_pos2{};
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
+
     int state = 0;
+    bool validity = false;
 };
