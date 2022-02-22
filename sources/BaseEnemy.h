@@ -100,7 +100,7 @@ public:
 
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
-    void fRender(ID3D11DeviceContext* pDeviceContext_) const;
+    virtual void fRender(ID3D11DeviceContext* pDeviceContext_);
 
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//

@@ -57,6 +57,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout> mInputLayout{ nullptr };
     Microsoft::WRL::ComPtr<ID3D11Buffer> mVertexBuffer{ nullptr };
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mShaderResourceView{ nullptr };
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mTrailNormalSrv{ nullptr };
     D3D11_TEXTURE2D_DESC mTexture2DDesc{};
 
     //****************************************************************
@@ -64,5 +65,5 @@ private:
     // íËêî
     // 
     //****************************************************************
-    const int mMaxTrailCount = 60;
+    const int mMaxTrailCount = 120;
 };

@@ -22,6 +22,7 @@ ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int Uni
     mDistance = static_cast<float>((rand()/RAND_MAX));
     
     fRegisterFunctions();
+    mSwordTrail.fInitialize(pDevice_, L"./resources/TexMaps/SwordTrail/scape_Normal.png");
 }
 
 void ChaseEnemy::fInitialize()
@@ -33,10 +34,29 @@ void ChaseEnemy::fInitialize()
 {
      fUpdateBase(elapsedTime_);
      mTimerComponent.fUpdate(elapsedTime_);
-     
+
+
+     mSwordTrail.fUpdate(elapsedTime_);
+     mSwordTrail.fAddTrailPoint(mCapsuleCollider.mPointA, mCapsuleCollider.mPointB);
+     mTrailTimer += elapsedTime_;
+    if(mTrailTimer>0.05f)
+    {
+        mSwordTrail.fEraseTrailPoint();
+        mTrailTimer = 0.0f;
+    }
+    
 }
 
- void ChaseEnemy::fMove(float elapsedTime_)
+void ChaseEnemy::fRender(ID3D11DeviceContext* device_context)
+{
+    // ƒ[ƒ‹ƒhs—ñ‚ðì¬
+    const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    mpSkinnedMesh->render(device_context, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
+
+    mSwordTrail.fRender(device_context);
+}
+
+void ChaseEnemy::fMove(float elapsedTime_)
 {
    
 }

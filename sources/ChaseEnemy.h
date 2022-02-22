@@ -1,6 +1,7 @@
 #pragma once
 #include"BaseEnemy.h"
 #include "EnemiesEditor.h"
+#include"SwordTrail.h"
 //****************************************************************
 // 
 // 移動だけのザコ敵 
@@ -27,6 +28,7 @@ public:
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
+    void fRender(ID3D11DeviceContext* pDeviceContext_) override;
 private:
     void fMove(float elapsedTime_);
     void fRotate(float elapsedTime_);
@@ -43,6 +45,8 @@ private:
     DirectX::XMFLOAT3 mStartPosition{};   // 移動の始点
     DirectX::XMFLOAT3 mEndPosition{};     // 移動の終焉 
 
+    float mTrailTimer{};
+    SwordTrail mSwordTrail{};
     //****************************************************************
     // 
     // ステートマシンの関数

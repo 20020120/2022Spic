@@ -42,15 +42,17 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_)
     };
 
     //頂点シェーダーオブジェクトの生成
-    const char* cso_name{ "./shaders/SwordTrailPs.cso" };
+    const char* cso_name{ "./shaders/SwordTrailVs.cso" };
     hr = create_vs_from_cso(pDevice_, cso_name, mVertexShader.GetAddressOf(), mInputLayout.GetAddressOf(),
         inputElementDesc, _countof(inputElementDesc));
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
+    
     //ピクセルシェーダーオブジェクトの生成
-    const char* cso_ps_name{ "./shaders/SwordTrailVs.cso" };
+    const char* cso_ps_name{ "./shaders/SwordTrailPs.cso" };
     hr = create_ps_from_cso(pDevice_, cso_ps_name, mPixelShader.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+   
 }
 
 void SwordTrail::fUpdate(float elapsedTime_)
@@ -138,7 +140,7 @@ void SwordTrail::fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom
     TrailData data;
     data.mTopPoint = Top_;
     data.mBottomPoint = Bottom_;
-    if (mDataVec.size() < 10)
+    if (mDataVec.size() < mMaxTrailCount/6)
     {
         mDataVec.emplace_back(data);
     }
