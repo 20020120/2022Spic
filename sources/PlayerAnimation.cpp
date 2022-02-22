@@ -14,9 +14,13 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionMove();
     }
     //回避に遷移
+    float length{ Math::calc_vector_AtoB_length(position, target) };
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
-        TransitionAvoidance();
+        //後ろに回り込める距離なら回り込みようのUpdate
+        if (length < BEHIND_LANGE) TransitionBehindAvoidance();
+        //そうじゃなかったら普通の回避
+        else TransitionAvoidance();
     }
     //突進開始に遷移
     if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -67,6 +71,18 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
+}
+
+void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    debug_figure->create_sphere(behind_point_1, 1.0f, { 1.0f,0,0,1.0 });
+    debug_figure->create_sphere(behind_point_2, 1.0f, { 0,1.0f,0,1.0 });
+    debug_figure->create_sphere(behind_point_3, 1.0f, { 1.0f,0,1.0f,1.0 });
+    InterpolateCatmullRomSpline(elapsed_time);
+    if (behind_timer > 1.5f)
+    {
+        TransitionIdle();
+    }
 }
 
 void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -185,7 +201,6 @@ void Player::TransitionMove()
 
 void Player::TransitionAvoidance()
 {
-    BehindAvoidancePosition();
     //--------------------------イージング加速の変数初期化---------------------------------//
     avoidance_boost_time = 0;
     avoidance_start = velocity;
@@ -206,6 +221,14 @@ void Player::TransitionAvoidance()
     model->play_animation(AnimationClips::Avoidance, false);
     is_avoidance = true;
     player_activity = &Player::AvoidanceUpdate;
+}
+
+void Player::TransitionBehindAvoidance()
+{
+    BehindAvoidancePosition();
+    is_avoidance = true;
+    behind_timer = 0;
+    player_activity = &Player::BehindAvoidanceUpdate;;
 }
 
 void Player::TransitionChargeInit()

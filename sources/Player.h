@@ -90,6 +90,9 @@ private:
     DirectX::XMFLOAT3 behind_point_1{};//中継地点
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
+    void InterpolateCatmullRomSpline(float elapsed_time);
+    //背後に回り込むときに進むタイマー
+    float behind_timer{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ 1 };
@@ -164,6 +167,7 @@ private:
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);//待機アニメーション中の更新処理
     void MoveUpdate(float elapsed_time, SkyDome* sky_dome);//移動アニメーション中の更新処理
     void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);//回避アニメーション中の更新処理
+    void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);//後ろに回り込む回避の更新処理
     void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);//突進開始アニメーション中の更新処理
     void ChargeUpdate(float elapsed_time, SkyDome* sky_dome);//突進中の更新処理
     void AttackType1Update(float elapsed_time, SkyDome* sky_dome);//攻撃1撃目の更新処理
@@ -174,6 +178,7 @@ private:
     void TransitionIdle();
     void TransitionMove();
     void TransitionAvoidance();
+    void TransitionBehindAvoidance();//背後に回り込む回避
     void TransitionChargeInit();
     void TransitionCharge();
     void TransitionAttackType1(float blend_seconds);
