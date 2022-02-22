@@ -124,6 +124,9 @@
     <Filter Include="Sources\WaveManager">
       <UniqueIdentifier>{a9dbb287-bf3a-403d-8569-6ad68b039447}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\sword-trail">
+      <UniqueIdentifier>{20f8f511-98a1-4d90-a058-2d3ca6d4e62e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -335,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="sources\EnemyMove.cpp">
       <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SwordTrail.cpp">
+      <Filter>Sources\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -563,6 +569,9 @@
     <ClInclude Include="sources\EnemyMove.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
+    <ClInclude Include="sources\SwordTrail.h">
+      <Filter>Sources\shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
@@ -711,6 +720,12 @@
     <FxCompile Include="HLSL\dash_blur_ps.hlsl">
       <Filter>Shaders\post_effect</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\SwordTrailPs.hlsl">
+      <Filter>Shaders\sword-trail</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SwordTrailVs.hlsl">
+      <Filter>Shaders\sword-trail</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
@@ -742,6 +757,9 @@
     </None>
     <None Include="HLSL\skinned_mesh.hlsli">
       <Filter>Shaders\model\skinned_mesh</Filter>
+    </None>
+    <None Include="HLSL\SwordTrail.hlsli">
+      <Filter>Shaders\sword-trail</Filter>
     </None>
   </ItemGroup>
 </Project>

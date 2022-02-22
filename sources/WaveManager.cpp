@@ -60,6 +60,7 @@ void WaveManager::fStartWave()
 
 void WaveManager::fClearUpdate(float elapsedTime_)
 {
+#ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     if (ImGui::Button("NextWave"))
     {
@@ -69,4 +70,5 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
 
     ImGui::End();
+#endif
 }
