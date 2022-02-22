@@ -38,6 +38,11 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 
 void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
+    if (is_enemy && is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+    }
+
     SetDirections(orientation);
 
     //経過フレーム
@@ -47,6 +52,23 @@ void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& 
     UpdateHrizontalVelocity(elapsed_frame);
     UpdateHorizontalMove(elapsed_time, position, sky_dome);
 
+}
+
+void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    if (is_enemy && is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+    }
+
+    SetDirections(orientation);
+
+    //経過フレーム
+    float elapsed_frame = 60.0f * elapsed_time;
+    //UpdateVerticalVelocity(elapsed_frame);
+    //UpdateVerticalMove(elapsed_time, position, sky_dome);
+    //UpdateHrizontalVelocity(elapsed_frame);
+    //UpdateHorizontalMove(elapsed_time, position, sky_dome);
 }
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
@@ -252,7 +274,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
 
-        if (fabs(an) > DirectX::XMConvertToRadians(10.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f))
         {
             XMVECTOR q;
             DirectX::XMFLOAT3 a{};
@@ -289,7 +311,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         XMStoreFloat(&an, a);
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
-        if (fabs(an) > DirectX::XMConvertToRadians(10.0f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
         {
             //回転軸と回転角から回転クオータニオンを求める
             XMVECTOR q;
