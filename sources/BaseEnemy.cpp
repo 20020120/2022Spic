@@ -123,7 +123,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
     //--------------------<移動量を更新>--------------------//
     fUpdateVelocity(elapsedTime_, mPosition, mOrientation);
     //--------------------<姿勢を更新>--------------------//
-    fGetEnemyDirections();
+    fGetDirections(mOrientation);
     //--------------------<無敵時間の更新>--------------------//
     fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
@@ -199,23 +199,6 @@ void BaseEnemy::fChangeState(int i)
     mIsInitialize = false;
 }
 
-void BaseEnemy::fGetEnemyDirections()
-{
-    using namespace DirectX;
-    const XMVECTOR orientation_vec{ XMLoadFloat4(&mOrientation) };
-    const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
-    DirectX::XMFLOAT4X4 m4x4 = {};
-    DirectX::XMStoreFloat4x4(&m4x4, m);
-
-    const DirectX::XMVECTOR right_vec = {m4x4._11, m4x4._12, m4x4._13};
-    const DirectX::XMVECTOR up_vec = {m4x4._21, m4x4._22, m4x4._23};
-    const DirectX::XMVECTOR forward_vec = {m4x4._31, m4x4._32, m4x4._33};
-
-    XMStoreFloat3(&right, right_vec);
-    XMStoreFloat3(&up, up_vec);
-    XMStoreFloat3(&forward, forward_vec);
-
-}
 
 
 bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
@@ -310,78 +293,21 @@ bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
     return false;
 }
 
-void BaseEnemy::fUpdateVelocity(float elapsedTime_, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation)
-{
-    //経過フレーム
-    float elapsed_frame = 60.0f * elapsedTime_;
-    fCalcVelocity(elapsed_frame);
-    fUpdateMove(elapsedTime_, position);
-}
 
-void BaseEnemy::fCalcVelocity(float elasedFrame_)
-{
-    //XZ平面の速力を減速する
-    const float length{ sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) };
-    if (length > 0.0f)
-    {
-
-        //摩擦力
-        const float friction{ this->friction * elasedFrame_ };
-        //摩擦による横方向の減速処理
-        if (length > friction)
-        {
-            (velocity.x < 0.0f) ? velocity.x += friction : velocity.x -= friction;
-            (velocity.y < 0.0f) ? velocity.y += friction : velocity.y -= friction;
-            (velocity.z < 0.0f) ? velocity.z += friction : velocity.z -= friction;
-        }
-        //横方向の速力が摩擦力以下になったので速力を無効化 GetMoveVec()
-        else
-        {
-            velocity.x = 0;
-            velocity.y = 0;
-            velocity.z = 0;
-        }
-    }
-    //XZ平面の速力を加速する
-    if (length <= max_move_speed)
-    {
-        //移動ベクトルが0でないなら加速する
-        const float moveveclength{ sqrtf((move_vec_x * move_vec_x) + (move_vec_y * move_vec_y) + (move_vec_z * move_vec_z)) };
-        if (moveveclength > 0.0f)
-        {
-            //加速力
-            const float acceleration{ this->acceleration * elasedFrame_ };
-            //移動ベクトルによる加速処理
-            velocity.x += move_vec_x * acceleration;
-            velocity.y += move_vec_y * acceleration;
-            velocity.z += move_vec_z * acceleration;
-            float length{ sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) };
-            if (length > max_move_speed)
-            {
-                const float vx{ velocity.x / length };
-                const float vy{ velocity.y / length };
-                const float vz{ velocity.z / length };
-
-                velocity.x = vx * max_move_speed;
-                velocity.y = vy * max_move_speed;
-                velocity.z = vz * max_move_speed;
-            }
-        }
-    }
-    move_vec_x = 0.0f;
-    move_vec_y = 0.0f;
-    move_vec_z = 0.0f;
-}
-
-void BaseEnemy::fUpdateMove(float elapsedTime_, DirectX::XMFLOAT3& position)
+void BaseEnemy::fGetDirections(DirectX::XMFLOAT4& o_)
 {
     using namespace DirectX;
-    // 水平速力計算
-    const float velocity_length_xyz = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z));
-    if (velocity_length_xyz > 0.0f)
-    {
-        position.x += velocity.x * elapsedTime_;
-        position.y += velocity.y * elapsedTime_;
-        position.z += velocity.z * elapsedTime_;
-    }
+    const XMVECTOR orientation_vec{ XMLoadFloat4(&o_) };
+    const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+
+    const DirectX::XMVECTOR right_vec = { m4x4._11, m4x4._12, m4x4._13 };
+    const DirectX::XMVECTOR up_vec = { m4x4._21, m4x4._22, m4x4._23 };
+    const DirectX::XMVECTOR forward_vec = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMStoreFloat3(&right, right_vec);
+    XMStoreFloat3(&up, up_vec);
+    XMStoreFloat3(&forward, forward_vec);
+
 }

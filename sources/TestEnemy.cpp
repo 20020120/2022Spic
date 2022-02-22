@@ -32,10 +32,13 @@ void TestEnemy::fUpdate(float elapsedTime_)
 
 void TestEnemy::fGuiMenu()
 {
+#ifdef USE_IMGUI
     ImGui::Text(("TestEnemy" + std::to_string(mUniqueId)).c_str());
     ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
     ImGui::
 	Separator();
+#endif
+
 }
 
 void TestEnemy::fRegisterFunctions()

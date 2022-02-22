@@ -226,6 +226,7 @@ void ChaseEnemy::fIntimidationUpdate(float elapsedTime_)
 
 void ChaseEnemy::fGuiMenu()
 {
+#ifdef USE_IMGUI
     ImGui::Text(("ChaseEnemy" + std::to_string(mUniqueId)).c_str());
     ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
     ImGui::InputInt("Hp", &mParam.mHitPoint);
@@ -236,4 +237,5 @@ void ChaseEnemy::fGuiMenu()
     ImGui::Text(std::to_string(fGetPercentHitPoint()).c_str());
     ImGui::Text(fGetType().c_str());
     ImGui::Separator();
+#endif
 }

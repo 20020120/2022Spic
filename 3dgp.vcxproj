@@ -260,6 +260,7 @@
     <ClCompile Include="sources\sprite.cpp" />
     <ClCompile Include="sources\sprite_batch.cpp" />
     <ClCompile Include="sources\sprite_dissolve.cpp" />
+    <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
     <ClCompile Include="sources\WaveManager.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="sources\sprite.h" />
     <ClInclude Include="sources\sprite_batch.h" />
     <ClInclude Include="sources\sprite_dissolve.h" />
+    <ClInclude Include="sources\SwordTrail.h" />
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\WaveManager.h" />
@@ -600,6 +602,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="HLSL\SwordTrailPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\SwordTrailVs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="HLSL\toon_shader_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
@@ -630,6 +640,7 @@
     <None Include="HLSL\skinned_mesh.hlsli" />
     <None Include="HLSL\sprite.hlsli" />
     <None Include="HLSL\sprite_dissolve.hlsli" />
+    <None Include="HLSL\SwordTrail.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

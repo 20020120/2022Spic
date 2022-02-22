@@ -146,10 +146,9 @@ void NormalEnemy::fMoveInit()
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
 {
-    move_vec_y = forward.y;
-    MovingProcess(forward.x, forward.z, max_move_speed);
+    MovingProcess(forward, max_move_speed);
     fTurnToPlayer(elapsedTime_);
-    if(mLengthFromPlayer < 2.0f)
+    if(mLengthFromPlayer < 4.0f)
     {
         fChangeState(ATTACK);
     }
