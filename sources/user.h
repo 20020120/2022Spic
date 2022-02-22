@@ -108,11 +108,12 @@ namespace Math
     inline auto calc_world_matrix(const DirectX::XMFLOAT3& scale,
         const DirectX::XMFLOAT3& rotate, const DirectX::XMFLOAT3& trans)
     {
+        DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&conversion_coordinate_system(COORDINATE_SYSTEM::RHS_YUP, 1.0f)) };
         DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
         DirectX::XMMATRIX R{ DirectX::XMMatrixRotationRollPitchYaw(rotate.x, rotate.y, rotate.z) };
         DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(trans.x, trans.y, trans.z) };
         DirectX::XMFLOAT4X4 world;
-        DirectX::XMStoreFloat4x4(&world, S * R * T);
+        DirectX::XMStoreFloat4x4(&world, C * S * R * T);
         return world;
     }
     //--------------------------------------------------------------
@@ -125,6 +126,7 @@ namespace Math
         const DirectX::XMFLOAT3& child_scale, const DirectX::XMFLOAT3& child_rotate,
         const DirectX::XMFLOAT3& child_trans)
     {
+        DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&conversion_coordinate_system(COORDINATE_SYSTEM::RHS_YUP, 1.0f)) };
         DirectX::XMMATRIX P_S{ DirectX::XMMatrixScaling(parent_scale.x, parent_scale.y, parent_scale.z) };
         DirectX::XMMATRIX P_R{ DirectX::XMMatrixRotationRollPitchYaw(parent_rotate.x, parent_rotate.y, parent_rotate.z) };
         DirectX::XMMATRIX P_T{ DirectX::XMMatrixTranslation(parent_trans.x, parent_trans.y, parent_trans.z) };
@@ -136,7 +138,7 @@ namespace Math
         DirectX::XMMATRIX P_W = P_S * P_R * P_T;
         DirectX::XMMATRIX C_W = C_S * C_R * C_T;
         DirectX::XMFLOAT4X4 world;
-        DirectX::XMStoreFloat4x4(&world, C_W * P_W);
+        DirectX::XMStoreFloat4x4(&world, C * C_W * P_W);
 
         return world;
     }
@@ -148,11 +150,12 @@ namespace Math
     inline auto calc_world_matrix(const DirectX::XMFLOAT3& scale,
         const DirectX::XMFLOAT4& orien, const DirectX::XMFLOAT3& trans)
     {
+        DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&conversion_coordinate_system(COORDINATE_SYSTEM::RHS_YUP, 1.0f)) };
         DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
         DirectX::XMMATRIX R{ DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&orien)) };
         DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(trans.x, trans.y, trans.z) };
         DirectX::XMFLOAT4X4 world;
-        DirectX::XMStoreFloat4x4(&world, S * R * T);
+        DirectX::XMStoreFloat4x4(&world, C * S * R * T);
 
         return world;
     }
@@ -166,6 +169,7 @@ namespace Math
         const DirectX::XMFLOAT3& child_scale, const DirectX::XMFLOAT4& child_orien,
         const DirectX::XMFLOAT3& child_trans)
     {
+        DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&conversion_coordinate_system(COORDINATE_SYSTEM::RHS_YUP, 1.0f)) };
         DirectX::XMMATRIX P_S{ DirectX::XMMatrixScaling(parent_scale.x, parent_scale.y, parent_scale.z) };
         DirectX::XMMATRIX P_R{ DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&parent_orien)) };
         DirectX::XMMATRIX P_T{ DirectX::XMMatrixTranslation(parent_trans.x, parent_trans.y, parent_trans.z) };
@@ -177,7 +181,7 @@ namespace Math
         DirectX::XMMATRIX P_W = P_S * P_R * P_T;
         DirectX::XMMATRIX C_W = C_S * C_R * C_T;
         DirectX::XMFLOAT4X4 world;
-        DirectX::XMStoreFloat4x4(&world, C_W * P_W);
+        DirectX::XMStoreFloat4x4(&world, C * C_W * P_W);
 
         return world;
     }
@@ -490,7 +494,7 @@ namespace Math
         return Orientation_;
     }
 
-    
+
     inline DirectX::XMFLOAT3 HermiteFloat3(std::vector<DirectX::XMFLOAT3>& controllPoints, float ratio)
     {
         using namespace DirectX;

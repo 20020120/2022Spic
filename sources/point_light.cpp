@@ -65,10 +65,7 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::POINT_LIGHT);
 		// スタティックメッシュ
 		DirectX::XMFLOAT4X4 world;
-		DirectX::XMMATRIX C{ DirectX::XMLoadFloat4x4(&Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP, 0.1f)) };
 		DirectX::XMFLOAT3 position = { plig_constants->data.point_lights[i].position.x, plig_constants->data.point_lights[i].position.y, plig_constants->data.point_lights[i].position.z };
-		DirectX::XMMATRIX W{ DirectX::XMLoadFloat4x4(&Math::calc_world_matrix(scale, angle, position)) };
-		DirectX::XMStoreFloat4x4(&world, C * W);
-		light_sources[i]->render(graphics.get_dc().Get(), world, plig_constants->data.point_lights[i].color);
+		light_sources[i]->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, angle, position), plig_constants->data.point_lights[i].color);
 	}
 }

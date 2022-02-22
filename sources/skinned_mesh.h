@@ -186,7 +186,7 @@ public:
 
     void regeneration(ID3D11Device* device, const char* fbx_filename);
 
-    bool find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
+    void find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
 private:
     //--------< \‘¢‘Ì >--------//
     static const int MAX_BONE_INFLUENCES{ 4 };
