@@ -91,9 +91,12 @@ private:
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
     std::vector<DirectX::XMFLOAT3> behind_point{};
+    std::vector<DirectX::XMFLOAT3> behind_point_create{};
     void InterpolateCatmullRomSpline(float elapsed_time);
     //背後に回り込むときに進むタイマー
     float behind_timer{};
+    //背後に回り込むときのレート
+    float behind_late{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ 1 };

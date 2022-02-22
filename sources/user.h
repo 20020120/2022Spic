@@ -551,7 +551,7 @@ namespace Math
 
         XMVECTOR Out;
 
-        const float power = 0.5f; // Usually power is 0.5f
+        const float power = 1.0f; // Usually power is 0.5f
         XMVECTOR P0 = XMLoadFloat3(&controllPoints.at(sectionNum - 1));
         XMVECTOR P1 = XMLoadFloat3(&controllPoints.at(sectionNum + 0));
         XMVECTOR P2 = XMLoadFloat3(&controllPoints.at(sectionNum + 1));

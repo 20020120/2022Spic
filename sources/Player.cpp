@@ -25,6 +25,8 @@ void Player::Initialize()
 //‚±‚ÌƒAƒbƒvƒf[ƒg‚Ì’†‚É‘‚¢‚Ä‚¢‚½‚çExecFuncUpdateŠÖ”‚Å
 //‚Ç‚ÌŠÖ”‚ªŒÄ‚Î‚ê‚Ä‚¢‚Ä‚àŠmŽÀ‚É’Ê‚é
 //ƒAƒjƒ[ƒVƒ‡ƒ“‚²‚Æ‚É“®‚«‚ð•Ï‚¦‚½‚¢‚È‚ç‚»‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ÌŽž‚É‚µ‚©ŒÄ‚Î‚ê‚È‚¢ŠÖ”‚Å‘‚­
+float a_1;
+float a_2;
 void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
 
@@ -85,6 +87,9 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::TreePop();
             }
             ImGui::DragFloat("behind_timer", &behind_timer);
+            ImGui::DragFloat("behind_late", &behind_late);
+            ImGui::DragFloat("a_1", &a_1);
+            ImGui::DragFloat("a_2", &a_2);
 
 
 
@@ -98,6 +103,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     }
 #endif // USE_IMGUI
     model->update_animation(elapsed_time);
+
 
     //if (is_lock_on)
     //{
@@ -135,17 +141,14 @@ void Player::BehindAvoidancePosition()
     behind_point_3.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f))))* length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp‚P---------------------//
-    behind_point_1.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(330.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(330.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     behind_point_1.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_1.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(330.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(330.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    //behind_point_1.x = position.x + ((right.x * cosf(DirectX::XMConvertToRadians(30.0f)) )* diameter);//“G‚ÌŒã‚ë‘¤
-    //behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
-    //behind_point_1.z = position.z + ((forward.z * sinf(DirectX::XMConvertToRadians(30.0f)) ) * diameter);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp2---------------------//
-    behind_point_2.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     behind_point_2.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
 
     behind_point_0 = position;
 
@@ -155,7 +158,7 @@ void Player::BehindAvoidancePosition()
 void Player::InterpolateCatmullRomSpline(float elapsed_time)
 {
     using namespace DirectX;
-    behind_timer += 2.0f * elapsed_time;
+    behind_late = easing::Expo::easeInOut(behind_timer, 0, 1.0f, 2.0f);
 #if 0
     const float power = 1.0f; // Usually power is 0.5f
     XMVECTOR p0 = XMLoadFloat3(&position);

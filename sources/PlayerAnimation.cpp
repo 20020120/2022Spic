@@ -18,7 +18,10 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-        if (length < BEHIND_LANGE) TransitionBehindAvoidance();
+        if (length < BEHIND_LANGE)
+        {
+            TransitionBehindAvoidance();
+        }
         //‚»‚¤‚¶‚á‚È‚©‚Á‚½‚ç•’Ê‚Ì‰ñ”ğ
         else TransitionAvoidance();
     }
@@ -46,7 +49,10 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-        if (length < BEHIND_LANGE) TransitionBehindAvoidance();
+        if (length < BEHIND_LANGE)
+        {
+            TransitionBehindAvoidance();
+        }
         //‚»‚¤‚¶‚á‚È‚©‚Á‚½‚ç•’Ê‚Ì‰ñ”ğ
         else TransitionAvoidance();
     }
@@ -86,9 +92,8 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    debug_figure->create_sphere(behind_point_1, 1.0f, { 1.0f,0,0,1.0 });
-    debug_figure->create_sphere(behind_point_2, 1.0f, { 0,1.0f,0,1.0 });
-    debug_figure->create_sphere(behind_point_3, 1.0f, { 1.0f,0,1.0f,1.0 });
+    behind_timer += 2.0f * elapsed_time;
+
     InterpolateCatmullRomSpline(elapsed_time);
 
     if (behind_timer > 1.0f)
@@ -245,6 +250,7 @@ void Player::TransitionBehindAvoidance()
     BehindAvoidancePosition();
     is_avoidance = true;
     behind_timer = 0;
+    behind_late = 0;
     velocity = {};
     player_activity = &Player::BehindAvoidanceUpdate;;
 }
