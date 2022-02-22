@@ -390,13 +390,16 @@ void Camera::Update(float elapsedTime, Player* player)
 
 	if(player->GetEnemyLockOn())
 	{
-		//if (player->GetCameraReset())
-		//{
-		//	if (RockOnCameraReset(elapsedTime, PlayerForward, PlayerUp))
-		//	{
-		//		player->FalseCameraReset();
-		//	}
-		//}
+		if (player->GetCameraReset())
+		{
+			const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
+			const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
+			RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
+			if (RockOnCameraReset(elapsedTime, PlayerForward, PlayerUp))
+			{
+				player->FalseCameraReset();
+			}
+		}
 		SetAngle(elapsedTime);
 		//const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
 		//const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
@@ -611,8 +614,11 @@ bool Camera::CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, Dir
 
 		const DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector, RotateEyeVector);
 
-		const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
-		EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+		if (dot < 0.98f)
+		{
+			const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
+			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+		}
 		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 	}
 	else
