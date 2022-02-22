@@ -34,8 +34,6 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     LockOn();
     //カメラリセット
     CameraReset();
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -159,7 +157,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
     behind_timer += 1.0f * elapsed_time;
 #if 1
     const float power = 1.0f; // Usually power is 0.5f
-    XMVECTOR p0 = XMLoadFloat3(&behind_point_0);
+    XMVECTOR p0 = XMLoadFloat3(&position);
     XMVECTOR p1 = XMLoadFloat3(&behind_point_1);
     XMVECTOR p2 = XMLoadFloat3(&behind_point_2);
     XMVECTOR p3 = XMLoadFloat3(&behind_point_3);
@@ -175,7 +173,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
         p += t * v0 + p1;
         XMFLOAT3 interpolated_point{};
         XMStoreFloat3(&interpolated_point, p);
-        position = Math::lerp(position, interpolated_point, 1.0f);
+        position = Math::lerp(position, interpolated_point, 2.0f * elapsed_time);
     }
 #else
     XMVECTOR P0 = XMLoadFloat3(&behind_point_0);
@@ -210,6 +208,21 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 }
 
 void Player::BodyCapsule()
+{
+    capsule_parm.start =
+    {
+        position.x + capsule_body_start.x,
+        position.y + capsule_body_start.y,
+        position.z + capsule_body_start.z
+    };
+    capsule_parm.end =
+    {
+        position.x + capsule_body_end.x,
+        position.y + capsule_body_end.y,
+        position.z + capsule_body_end.z
+    };
+}
+void Player::SoardCapsule()
 {
     capsule_parm.start =
     {

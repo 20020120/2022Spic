@@ -110,7 +110,8 @@ private:
     DirectX::XMFLOAT3 capsule_body_end{0,0.2f,0};
 
     void BodyCapsule();
-
+    //Œ•‚ÌƒJƒvƒZƒ‹”»’è
+    void SoardCapsule();
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
