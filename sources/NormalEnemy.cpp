@@ -15,7 +15,7 @@ NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_
     mPosition = EmitterPoint_;
     mPosition = { 10,0, 10 };
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.1f,0.1f,0.1f };
+    mScale = { 0.05f,0.05f,0.05f };
     //パラメーターの初期化
 	fParamInitialize();
     fRegisterFunctions();
@@ -82,6 +82,7 @@ void NormalEnemy::fRegisterFunctions()
     fChangeState(IDLE);
 
 }
+
 void NormalEnemy::fParamInitialize()
 {
     mParam.mHitPoint = 10;      // 体力
@@ -89,9 +90,7 @@ void NormalEnemy::fParamInitialize()
     mParam.mMoveSpeed = 10;   // 移動速度
     mParam.mAttackSpeed = 2; // 攻撃間隔
     mStayTimer = 1.0f;
-    mAttack_flg = false;
-
-    
+    mAttack_flg = false;    
 }
 
 void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
@@ -147,9 +146,10 @@ void NormalEnemy::fMoveInit()
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
 {
+    move_vec_y = forward.y;
     MovingProcess(forward.x, forward.z, max_move_speed);
-    fTurnToPlayer(elapsedTime_, 5);
-    if(mAttack_flg)
+    fTurnToPlayer(elapsedTime_);
+    if(mLengthFromPlayer < 2.0f)
     {
         fChangeState(ATTACK);
     }
@@ -159,12 +159,17 @@ void NormalEnemy::fAttackInit()
 {
     mNowState = ATTACK;
    // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
-
+    mAttackingTime = 0.0f;
 }
 
 void NormalEnemy::fAttackUpdate(float elapsedTime_)
 {
-
+    mAttackingTime += elapsedTime_;
+   
+    if (mAttackingTime > 2.0f)
+    {
+        fChangeState(IDLE);
+    }
 }
 
 void NormalEnemy::fDauntedInit()
@@ -182,9 +187,9 @@ void NormalEnemy::fDauntedUpdate(float elapsedTime_)
     Vec = XMVector3Normalize(Vec);
     XMFLOAT3 v;
     XMStoreFloat3(&v, Vec);
-    velocity.x = 10.0f * v.x;
-    velocity.y = 10.0f * v.y;
-    velocity.z = 10.0f * v.z;
+    velocity.x = 20.0f * v.x;
+    velocity.y = 20.0f * v.y;
+    velocity.z = 20.0f * v.z;
 
     fChangeState(IDLE);
 }
@@ -202,7 +207,7 @@ void NormalEnemy::fGuiMenu()
     ImGui::Checkbox("Attack", &mAttack_flg);
     if(ImGui::Button("dameged", { 70.0f,30.0f }))
     {
-        fDamaged(1,0.1f);
+        fDamaged(1,0.6f);
     }
 #endif
 

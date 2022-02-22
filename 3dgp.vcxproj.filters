@@ -333,6 +333,9 @@
     <ClCompile Include="sources\scene_option.cpp">
       <Filter>Sources\scene</Filter>
     </ClCompile>
+    <ClCompile Include="sources\EnemyMove.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -556,6 +559,9 @@
     </ClInclude>
     <ClInclude Include="sources\scene_option.h">
       <Filter>Sources\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemyMove.h">
+      <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

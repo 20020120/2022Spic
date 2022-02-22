@@ -34,7 +34,8 @@ void TestEnemy::fGuiMenu()
 {
     ImGui::Text(("TestEnemy" + std::to_string(mUniqueId)).c_str());
     ImGui::DragFloat3(("Position" + std::to_string(mUniqueId)).c_str(), &mPosition.x);
-    ImGui::Separator();
+    ImGui::
+	Separator();
 }
 
 void TestEnemy::fRegisterFunctions()
