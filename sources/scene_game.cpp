@@ -218,7 +218,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
-		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
+		graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
 #ifdef USE_IMGUI
 		ImGui::Begin("sky");
 		ImGui::DragFloat("dimension", &dimension, 0.01f);
