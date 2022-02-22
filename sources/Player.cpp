@@ -34,8 +34,6 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     LockOn();
     //カメラリセット
     CameraReset();
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -86,7 +84,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat("leverage", &leverage,0.1f);
                 ImGui::TreePop();
             }
-
+            ImGui::DragFloat("behind_timer", &behind_timer);
 
 
 
@@ -115,6 +113,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     //    }
     //    Collision::sphere_vs_sphere(behind_point_1, 1.0f, behind_point_2, 1.0f);
     //}
+
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -148,10 +147,92 @@ void Player::BehindAvoidancePosition()
     behind_point_2.y = target.y;//敵の後ろ側
     behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//敵の後ろ側
 
+    behind_point_0 = position;
+
     //--------------------------------------------//
 }
 
+void Player::InterpolateCatmullRomSpline(float elapsed_time)
+{
+    using namespace DirectX;
+    behind_timer += 2.0f * elapsed_time;
+#if 0
+    const float power = 1.0f; // Usually power is 0.5f
+    XMVECTOR p0 = XMLoadFloat3(&position);
+    XMVECTOR p1 = XMLoadFloat3(&behind_point_1);
+    XMVECTOR p2 = XMLoadFloat3(&behind_point_2);
+    XMVECTOR p3 = XMLoadFloat3(&behind_point_3);
+
+    XMVECTOR v0 = (p2 - p0) * power;
+    XMVECTOR v1 = (p3 - p1) * power;
+    if (behind_timer < 1.5f)
+    {
+        const float t = behind_timer;
+        XMVECTOR p;
+        p = t * t * t * (2 * p1 - 2 * p2 + v0 + v1);
+        p += t * t * (-3 * p1 + 3 * p2 - 2 * v0 - v1);
+        p += t * v0 + p1;
+        XMFLOAT3 interpolated_point{};
+        XMStoreFloat3(&interpolated_point, p);
+        position = Math::lerp(position, interpolated_point, 2.0f * elapsed_time);
+    }
+    XMVECTOR P0 = XMLoadFloat3(&behind_point_0);
+    XMVECTOR P1 = XMLoadFloat3(&behind_point_1);
+    XMVECTOR P2 = XMLoadFloat3(&behind_point_2);
+    XMVECTOR P3 = XMLoadFloat3(&behind_point_3);
+
+    for (size_t step = 0; step < 100; ++step)
+    {
+        float t = static_cast<float>(step) / 100;
+        float alpha = .5f; /* between 0 and 1 */
+
+        XMVECTOR T0 = XMVectorZero();
+        XMVECTOR T1 = XMVectorPow(XMVector3LengthSq(P1 - P0), XMLoadFloat(&alpha) * .5f) + T0;
+        XMVECTOR T2 = XMVectorPow(XMVector3LengthSq(P2 - P1), XMLoadFloat(&alpha) * .5f) + T1;
+        XMVECTOR T3 = XMVectorPow(XMVector3LengthSq(P3 - P2), XMLoadFloat(&alpha) * .5f) + T2;
+        XMVECTOR T = XMVectorLerp(T1, T2, t);
+        XMVECTOR A1 = (T1 - T) / (T1 - T0) * P0 + (T - T0) / (T1 - T0) * P1;
+        XMVECTOR A2 = (T2 - T) / (T2 - T1) * P1 + (T - T1) / (T2 - T1) * P2;
+        XMVECTOR A3 = (T3 - T) / (T3 - T2) * P2 + (T - T2) / (T3 - T2) * P3;
+        XMVECTOR B1 = (T2 - T) / (T2 - T0) * A1 + (T - T0) / (T2 - T0) * A2;
+        XMVECTOR B2 = (T3 - T) / (T3 - T1) * A2 + (T - T1) / (T3 - T1) * A3;
+        XMVECTOR C = (T2 - T) / (T2 - T1) * B1 + (T - T1) / (T2 - T1) * B2;
+
+        XMFLOAT3 interpolated_point{};
+        XMStoreFloat3(&position, C);
+    }
+
+#else
+    behind_point.emplace_back(position);
+    behind_point.emplace_back(behind_point_1);
+    behind_point.emplace_back(behind_point_2);
+    behind_point.emplace_back(behind_point_3);
+
+    if (behind_timer < 1.0f)
+    {
+        position = Math::HermiteFloat3(behind_point, behind_timer);
+    }
+    behind_point.clear();
+#endif
+
+}
+
 void Player::BodyCapsule()
+{
+    capsule_parm.start =
+    {
+        position.x + capsule_body_start.x,
+        position.y + capsule_body_start.y,
+        position.z + capsule_body_start.z
+    };
+    capsule_parm.end =
+    {
+        position.x + capsule_body_end.x,
+        position.y + capsule_body_end.y,
+        position.z + capsule_body_end.z
+    };
+}
+void Player::SoardCapsule()
 {
     capsule_parm.start =
     {
@@ -225,7 +306,7 @@ void Player::ChargeAcceleration(float elapse_time)
 
 void Player::LockOn()
 {
-    if (target_enemy != nullptr)
+    if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
     {
         target = target_enemy->fGetPosition();
         is_enemy = true;

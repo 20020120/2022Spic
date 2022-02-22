@@ -64,9 +64,8 @@ void ChaseEnemy::fInitialize()
      float d_length = Math::calc_vector_AtoB_length(mPosition, t);
      {
          DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
-         //point.y = target.y;
+         point.y = mPlayerPosition.y;
          DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
-
 
          XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
 
@@ -101,8 +100,8 @@ void ChaseEnemy::fInitialize()
      {
 
          DirectX::XMFLOAT3 point = Math::calc_designated_point(mPosition, front, d_length);
-         //point.x = target.x;
-         //point.z = target.z;
+         point.x = mPlayerPosition.x;
+         point.z = mPlayerPosition.z;
          DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
 
 

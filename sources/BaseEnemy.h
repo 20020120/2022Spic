@@ -132,20 +132,15 @@ protected:
     void fCalcFrustum();
     void fCalcLength();
     virtual  void fSetCapsulePoint();
-    virtual void fTurnToThePlayer(){}
     void fUpdateInvicibleTimer(float elapsedTime_);
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
-    bool fTurnToPlayer(float elapsedTime_, float end_turn_angle);
+    bool fTurnToPlayer(float elapsedTime_);
     void fUpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
-    //垂直速力更新処理
-    void fUpdateVerticalVelocity(float elapsedFrame);
-    //垂直移動更新処理
-    void fUpdateVerticalMove(float elapsedTime_, DirectX::XMFLOAT3& position);
-    //水平速力更新処理
-    void fUpdateHrizontalVelocity(float elasedFrame);
-    //水平移動更新処理
-    void fUpdateHorizontalMove(float elapsedTime_, DirectX::XMFLOAT3& position);
+    //速力計算処理
+    void fCalcVelocity(float elasedFrame);
+    //移動更新処理
+    void fUpdateMove(float elapsedTime_, DirectX::XMFLOAT3& position);
 
     //****************************************************************
     // 

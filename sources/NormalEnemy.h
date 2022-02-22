@@ -63,5 +63,6 @@ private:
    //****************************************************************
     State mNowState;
     float mStayTimer;
+    float mAttackingTime;
     bool mAttack_flg;
 };
