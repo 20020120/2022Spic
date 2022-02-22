@@ -25,8 +25,6 @@ void Player::Initialize()
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
-float a_1;
-float a_2;
 void Player::Update(float elapsed_time, SkyDome* sky_dome)
 {
 
@@ -88,8 +86,6 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             }
             ImGui::DragFloat("behind_timer", &behind_timer);
             ImGui::DragFloat("behind_late", &behind_late);
-            ImGui::DragFloat("a_1", &a_1);
-            ImGui::DragFloat("a_2", &a_2);
 
 
 
@@ -124,7 +120,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
-    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 }
@@ -234,21 +230,20 @@ void Player::BodyCapsule()
         position.y + capsule_body_end.y,
         position.z + capsule_body_end.z
     };
+    capsule_parm.rasius = 1.2f;
 }
 void Player::SoardCapsule()
 {
-    capsule_parm.start =
-    {
-        position.x + capsule_body_start.x,
-        position.y + capsule_body_start.y,
-        position.z + capsule_body_start.z
-    };
-    capsule_parm.end =
-    {
-        position.x + capsule_body_end.x,
-        position.y + capsule_body_end.y,
-        position.z + capsule_body_end.z
-    };
+    DirectX::XMFLOAT3 pos, up = {};
+    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "sword_r_rig", pos, up);
+    static float r = 2.3f;
+    static float r2 = 0.3f;
+    DirectX::XMFLOAT3 end = Math::calc_designated_point(pos, up, r);
+    //debug_figure->create_capsule(pos, end, r2, { 1,1,0,1 });
+
+    capsule_parm.start = pos;
+    capsule_parm.end = end;
+    capsule_parm.rasius = 0.5f;
 }
 
 void Player::SetTarget(const BaseEnemy* target_enemys)
