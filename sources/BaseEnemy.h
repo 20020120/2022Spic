@@ -1,6 +1,6 @@
 #pragma once
 #include"skinned_mesh.h"
-#include "MoveBehavior.h"
+#include "EnemyMove.h"
 
 #include<d3d11.h>
 #include<memory>
@@ -57,7 +57,7 @@ struct EnemyData
 };
 
 
-class BaseEnemy :public MoveBehavior
+class BaseEnemy :public EnemyMove
 {
     //****************************************************************
     // 
@@ -136,11 +136,8 @@ protected:
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
     bool fTurnToPlayer(float elapsedTime_);
-    void fUpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation);
-    //速力計算処理
-    void fCalcVelocity(float elasedFrame);
-    //移動更新処理
-    void fUpdateMove(float elapsedTime_, DirectX::XMFLOAT3& position);
+    //方向取得
+    void fGetDirections(DirectX::XMFLOAT4& o);
 
     //****************************************************************
     // 
@@ -163,8 +160,8 @@ protected:
     //エネミーの各方向
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
-    DirectX::XMFLOAT3 up = {0.0f, 1.0f, 0.1f};
-    
+    DirectX::XMFLOAT3 up = { 0.0f, 1.0f, 0.1f };
+
     int mUniqueId{};
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
@@ -190,6 +187,5 @@ protected:
 
     virtual void fRegisterFunctions() {}; 
     void fChangeState(int i);
-    void fGetEnemyDirections();
 
 };
