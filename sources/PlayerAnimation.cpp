@@ -217,12 +217,14 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 void Player::TransitionIdle()
 {
     model->play_animation(AnimationClips::Idle, true);
+    is_attack = false;
     player_activity = &Player::IdleUpdate;
 }
 
 void Player::TransitionMove()
 {
     model->play_animation(AnimationClips::Move, true);
+    is_attack = false;
     player_activity = &Player::MoveUpdate;
 }
 
@@ -247,6 +249,7 @@ void Player::TransitionAvoidance()
     //-----------------------------------------------------------------------------------------//
     model->play_animation(AnimationClips::Avoidance, false);
     is_avoidance = true;
+    is_attack = false;
     player_activity = &Player::AvoidanceUpdate;
 }
 
@@ -257,35 +260,41 @@ void Player::TransitionBehindAvoidance()
     behind_timer = 0;
     behind_late = 0;
     velocity = {};
+    is_attack = false;
     player_activity = &Player::BehindAvoidanceUpdate;;
 }
 
 void Player::TransitionChargeInit()
 {
     model->play_animation(AnimationClips::ChargeInit, false);
+    is_attack = true;
     player_activity = &Player::ChargeInitUpdate;
 }
 
 void Player::TransitionCharge()
 {
     model->play_animation(AnimationClips::Charge, false,0);
+    is_attack = true;
     player_activity = &Player::ChargeUpdate;
 }
 
 void Player::TransitionAttackType1(float blend_seconds)
 {
     model->play_animation(AnimationClips::AttackType1, false, 0);
+    is_attack = true;
     player_activity = &Player::AttackType1Update;
 }
 
 void Player::TransitionAttackType2(float blend_seconds)
 {
     model->play_animation(AnimationClips::AttackType2, false, 0);
+    is_attack = true;
     player_activity = &Player::AttackType2Update;
 }
 
 void Player::TransitionAttackType3(float blend_seconds)
 {
     model->play_animation(AnimationClips::AttackType3, false, 0);
+    is_attack = true;
     player_activity = &Player::AttackType3Update;
 }

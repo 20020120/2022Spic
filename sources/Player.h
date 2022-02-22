@@ -37,7 +37,10 @@ private:
     static constexpr float LOCK_ON_LANGE = 70.0f;
     //後ろに回り込める距離
     static constexpr float  BEHIND_LANGE = 20.0f;
-
+    //攻撃力の最低値
+    static const int MIN_PLAYER_ATTACK_POWER = 1;
+    //攻撃力の最大値
+    static const int MAX_PLAYER_ATTACK_POWER = 100;
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -99,9 +102,22 @@ private:
     float behind_late{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
-    int player_attack_power{ 1 };
+    int player_attack_power{ MIN_PLAYER_ATTACK_POWER };
     //コンボ数
     int combo_count{ 0 };
+    //プレイヤーが今攻撃中かそうでないか
+    bool is_attack{ false };
+    //プレイヤーの体力
+    int player_health = 100;
+    //無敵時間
+    float invincible_timer{};
+    //コンボの持続時間
+    float duration_combo_timer{};
+private:
+    //攻撃力の変化
+    void InflectionPower(float elapsed_time);
+    //コンボの変化
+    void InflectionCombo(float elapsed_time);
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
@@ -141,7 +157,7 @@ public:
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(const BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count) { combo_count += count; }
+    void AddCombo(int count);
 public:
     void FalseCameraReset() { camera_reset = false; }
     void FalseCameraLockOn() { is_camera_lock_on = false; }

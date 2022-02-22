@@ -34,6 +34,10 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     LockOn();
     //カメラリセット
     CameraReset();
+    //攻撃力の変動
+    InflectionPower(elapsed_time);
+    //無敵時間の減少
+    invincible_timer -= 1.0f * elapsed_time;
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -84,12 +88,19 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::DragFloat("leverage", &leverage,0.1f);
                 ImGui::TreePop();
             }
+            if (ImGui::TreeNode("PlayerGameParm"))
+            {
+                ImGui::DragInt("player_health", &player_health);
+                ImGui::DragInt("combo", &combo_count);
+                ImGui::DragInt("player_attack_power", &player_attack_power);
+                ImGui::DragFloat("invincible_timer", &invincible_timer);
+                ImGui::TreePop();
+            }
+
+
+
             ImGui::DragFloat("behind_timer", &behind_timer);
             ImGui::DragFloat("behind_late", &behind_late);
-
-
-
-
             ImGui::InputFloat3("camera_f", &camera_forward.x);
             ImGui::InputFloat3("camera_r", &camera_right.x);
 
@@ -101,20 +112,6 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     model->update_animation(elapsed_time);
 
 
-    //if (is_lock_on)
-    //{
-    //    //BehindAvoidancePosition();
-
-    //    if (Collision::sphere_vs_sphere(position, 1.0f, behind_point_3, 1.0f))
-    //    {
-    //        is_enemy_hit = true;
-    //    }
-    //    else
-    //    {
-    //        is_enemy_hit = false;
-    //    }
-    //    Collision::sphere_vs_sphere(behind_point_1, 1.0f, behind_point_2, 1.0f);
-    //}
 
 }
 
@@ -216,6 +213,28 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 
 }
 
+void Player::InflectionPower(float elapsed_time)
+{
+    static float timer = 0;
+    timer += 1.0f * elapsed_time;
+    player_attack_power = combo_count * 1.1f;
+
+    if (timer > 0.5f)
+    {
+        player_attack_power -= 1;
+        timer = 0;
+    }
+    player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
+}
+
+void Player::InflectionCombo(float elapsed_time)
+{
+    duration_combo_timer -= 1.0f * elapsed_time;
+    if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
+    //コンボ中タイマーが0になったらコンボは0にする
+    if (duration_combo_timer <= 0) combo_count = 0;
+}
+
 void Player::BodyCapsule()
 {
     capsule_parm.start =
@@ -243,7 +262,7 @@ void Player::SoardCapsule()
 
     capsule_parm.start = pos;
     capsule_parm.end = end;
-    capsule_parm.rasius = 0.5f;
+    capsule_parm.rasius = 0.7f;
 }
 
 void Player::SetTarget(const BaseEnemy* target_enemys)
@@ -254,6 +273,30 @@ void Player::SetTarget(const BaseEnemy* target_enemys)
         target_enemy = target_enemys;
     }
 
+}
+
+void Player::AddCombo(int count)
+{
+    if (count != 0)
+    {
+        //攻撃中じゃないとき
+        if (!is_attack)
+        {
+            //無敵時間がなかったらダメージ受けて無敵時間設定，コンボ0に
+            if (invincible_timer < 0)
+            {
+                invincible_timer = 3.0f;
+                player_health -= 1;
+                combo_count = 0;
+            }
+        }
+        else
+        {
+            combo_count += count;
+        }
+        is_enemy_hit = true;
+    }
+    else is_enemy_hit = false;
 }
 
 void Player::GetPlayerDirections()
@@ -299,7 +342,7 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 void Player::ChargeAcceleration(float elapse_time)
 {
     //位置を補間
-    position = Math::lerp(position, target, 1.0f * elapse_time);
+    position = Math::lerp(position, target, 3.0f * elapse_time);
 }
 
 void Player::LockOn()
