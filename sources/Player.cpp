@@ -148,14 +148,15 @@ void Player::BehindAvoidancePosition()
     behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(30.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(30.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
 
     behind_point_0 = position;
+
     //--------------------------------------------//
 }
 
 void Player::InterpolateCatmullRomSpline(float elapsed_time)
 {
     using namespace DirectX;
-    behind_timer += 1.0f * elapsed_time;
-#if 1
+    behind_timer += 2.0f * elapsed_time;
+#if 0
     const float power = 1.0f; // Usually power is 0.5f
     XMVECTOR p0 = XMLoadFloat3(&position);
     XMVECTOR p1 = XMLoadFloat3(&behind_point_1);
@@ -175,7 +176,6 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
         XMStoreFloat3(&interpolated_point, p);
         position = Math::lerp(position, interpolated_point, 2.0f * elapsed_time);
     }
-#else
     XMVECTOR P0 = XMLoadFloat3(&behind_point_0);
     XMVECTOR P1 = XMLoadFloat3(&behind_point_1);
     XMVECTOR P2 = XMLoadFloat3(&behind_point_2);
@@ -202,7 +202,17 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
         XMStoreFloat3(&position, C);
     }
 
+#else
+    behind_point.emplace_back(position);
+    behind_point.emplace_back(behind_point_1);
+    behind_point.emplace_back(behind_point_2);
+    behind_point.emplace_back(behind_point_3);
 
+    if (behind_timer < 1.0f)
+    {
+        position = Math::HermiteFloat3(behind_point, behind_timer);
+    }
+    behind_point.clear();
 #endif
 
 }
@@ -296,7 +306,7 @@ void Player::ChargeAcceleration(float elapse_time)
 
 void Player::LockOn()
 {
-    if (target_enemy != nullptr)
+    if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
     {
         target = target_enemy->fGetPosition();
         is_enemy = true;
