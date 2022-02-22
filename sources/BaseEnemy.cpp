@@ -18,7 +18,7 @@ BaseEnemy::BaseEnemy(ID3D11Device* pDevice_,int UniqueId_, const char* ModelName
 
 BaseEnemy::~BaseEnemy() = default;
 
-void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) const
+void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) 
 {
     // ƒ[ƒ‹ƒhs—ñ‚ğì¬
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
