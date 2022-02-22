@@ -15,6 +15,7 @@
 #include <bitset>
 #include <assert.h>
 #include <DirectXMath.h>
+#include<vector>
 #include "imgui_include.h"
 //------< inline function >-----------------------------------------------------
 namespace Math
@@ -490,6 +491,84 @@ namespace Math
     }
 
     
+    inline DirectX::XMFLOAT3 HermiteFloat3(std::vector<DirectX::XMFLOAT3>& controllPoints, float ratio)
+    {
+        using namespace DirectX;
+        const size_t size = controllPoints.size();
+
+        if (size == 0)assert("Not ControllPoint");
+        if (size == 1)return controllPoints.at(0);
+
+        //-----< ¡‚Ç‚±‚Ì‹æŠÔ‚É‚¢‚é‚© >-----//
+        std::vector<float> sectionLength;
+        float length = 0.0f;
+        //Še‹æŠÔ‚Ì’·‚³‚ğ‹‚ß‚é
+        for (int i = 0; i < size - 1; i++)
+        {
+            const DirectX::XMFLOAT3 v = {
+        controllPoints.at(i + 1).x - controllPoints.at(i).x,
+        controllPoints.at(i + 1).y - controllPoints.at(i).y,
+        controllPoints.at(i + 1).z - controllPoints.at(i).z };
+            const float l = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+
+            sectionLength.emplace_back(l);
+            length += l;
+        }
+        std::vector<float> sections;
+        //Še‹æŠÔ‚ÌŠ„‡‚ğ‹‚ß‚é
+        for (int i = 0; i < size - 1; i++)
+        {
+            sections.emplace_back(sectionLength.at(i) / length);
+        }
+
+        int sectionNum = 0;
+        float r = 0.0f;
+        for (sectionNum; sectionNum < sections.size(); sectionNum++)
+        {
+            r += sections.at(sectionNum);
+            if ((ratio - r) <= 0.00001f)
+            {
+                break;
+            }
+        }
+
+        XMFLOAT3 dummy = {
+            2.0f * controllPoints.at(0).x - controllPoints.at(1).x,
+            2.0f * controllPoints.at(0).y - controllPoints.at(1).y,
+            2.0f * controllPoints.at(0).z - controllPoints.at(1).z,
+        };
+        const auto it = controllPoints.begin();
+        controllPoints.insert(it, dummy);
+        dummy = {
+        2.0f * controllPoints.at(size - 1).x - controllPoints.at(size - 2).x,
+        2.0f * controllPoints.at(size - 1).y - controllPoints.at(size - 2).y,
+        2.0f * controllPoints.at(size - 1).z - controllPoints.at(size - 2).z,
+        };
+        controllPoints.emplace_back(dummy);
+
+        sectionNum++;
+        float sectionRatio = (ratio - (r - sections.at(sectionNum - 1))) / sections.at(sectionNum - 1);
+
+        XMVECTOR Out;
+
+        const float power = 0.5f; // Usually power is 0.5f
+        XMVECTOR P0 = XMLoadFloat3(&controllPoints.at(sectionNum - 1));
+        XMVECTOR P1 = XMLoadFloat3(&controllPoints.at(sectionNum + 0));
+        XMVECTOR P2 = XMLoadFloat3(&controllPoints.at(sectionNum + 1));
+        XMVECTOR P3 = XMLoadFloat3(&controllPoints.at(sectionNum + 2));
+        XMVECTOR V0 = XMVectorScale(XMVectorSubtract(P2, P0), power);
+        XMVECTOR V1 = XMVectorScale(XMVectorSubtract(P3, P1), power);
+
+        Out = powf(sectionRatio, 3.0f) * (2.0f * P1 - 2.0f * P2 + V0 + V1);
+        Out += powf(sectionRatio, 2.0f) * (-3.0f * P1 + 3.0f * P2 - 2.0f * V0 - V1);
+        Out += sectionRatio * V0 + P1;
+
+
+        XMFLOAT3 out{};
+        XMStoreFloat3(&out, Out);
+
+        return out;
+    }
 
 }
 
