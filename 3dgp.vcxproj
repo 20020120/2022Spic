@@ -220,6 +220,7 @@
     <ClCompile Include="sources\EnemyEditor.cpp" />
     <ClCompile Include="sources\EnemyFileSystem.cpp" />
     <ClCompile Include="sources\EnemyManager.cpp" />
+    <ClCompile Include="sources\EnemyMove.cpp" />
     <ClCompile Include="sources\enemy_hp_gauge.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
@@ -292,6 +293,7 @@
     <ClInclude Include="sources\EnemiesEditor.h" />
     <ClInclude Include="sources\EnemyFileSystem.h" />
     <ClInclude Include="sources\EnemyManager.h" />
+    <ClInclude Include="sources\EnemyMove.h" />
     <ClInclude Include="sources\enemy_hp_gauge.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />

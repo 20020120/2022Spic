@@ -218,7 +218,7 @@ void BaseEnemy::fGetEnemyDirections()
 }
 
 
-bool BaseEnemy::fTurnToPlayer(float elapsedTime_, float end_turn_angle)
+bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
 {
     using namespace DirectX;
     //ターゲットに向かって回転
@@ -314,32 +314,14 @@ void BaseEnemy::fUpdateVelocity(float elapsedTime_, DirectX::XMFLOAT3& position,
 {
     //経過フレーム
     float elapsed_frame = 60.0f * elapsedTime_;
-    fUpdateVerticalVelocity(elapsed_frame);
-    fUpdateVerticalMove(elapsedTime_, position);
-    fUpdateHrizontalVelocity(elapsed_frame);
-    fUpdateHorizontalMove(elapsedTime_, position);
+    fCalcVelocity(elapsed_frame);
+    fUpdateMove(elapsedTime_, position);
 }
 
-void BaseEnemy::fUpdateVerticalVelocity(float elapsedFrame)
-{
-    //特に処理なし
-}
-
-void BaseEnemy::fUpdateVerticalMove(float elapsedTime_, DirectX::XMFLOAT3& position)
-{
-    //垂直方向の移動量
-    const float my = velocity.y * elapsedTime_;
-
-    if (my != 0.0f)
-    {
-    	position.y += my;
-    }
-}
-
-void BaseEnemy::fUpdateHrizontalVelocity(float elasedFrame_)
+void BaseEnemy::fCalcVelocity(float elasedFrame_)
 {
     //XZ平面の速力を減速する
-    const float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
+    const float length{ sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) };
     if (length > 0.0f)
     {
 
@@ -349,12 +331,14 @@ void BaseEnemy::fUpdateHrizontalVelocity(float elasedFrame_)
         if (length > friction)
         {
             (velocity.x < 0.0f) ? velocity.x += friction : velocity.x -= friction;
+            (velocity.y < 0.0f) ? velocity.y += friction : velocity.y -= friction;
             (velocity.z < 0.0f) ? velocity.z += friction : velocity.z -= friction;
         }
         //横方向の速力が摩擦力以下になったので速力を無効化 GetMoveVec()
         else
         {
             velocity.x = 0;
+            velocity.y = 0;
             velocity.z = 0;
         }
     }
@@ -362,40 +346,42 @@ void BaseEnemy::fUpdateHrizontalVelocity(float elasedFrame_)
     if (length <= max_move_speed)
     {
         //移動ベクトルが0でないなら加速する
-        const float moveveclength{ sqrtf((move_vec_x * move_vec_x) + (move_vec_z * move_vec_z)) };
+        const float moveveclength{ sqrtf((move_vec_x * move_vec_x) + (move_vec_y * move_vec_y) + (move_vec_z * move_vec_z)) };
         if (moveveclength > 0.0f)
         {
             //加速力
             const float acceleration{ this->acceleration * elasedFrame_ };
             //移動ベクトルによる加速処理
             velocity.x += move_vec_x * acceleration;
+            velocity.y += move_vec_y * acceleration;
             velocity.z += move_vec_z * acceleration;
-            float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
+            float length{ sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) };
             if (length > max_move_speed)
             {
-	            const float vx{ velocity.x / length };
-	            const float vz{ velocity.z / length };
+                const float vx{ velocity.x / length };
+                const float vy{ velocity.y / length };
+                const float vz{ velocity.z / length };
 
                 velocity.x = vx * max_move_speed;
+                velocity.y = vy * max_move_speed;
                 velocity.z = vz * max_move_speed;
             }
         }
     }
     move_vec_x = 0.0f;
+    move_vec_y = 0.0f;
     move_vec_z = 0.0f;
 }
 
-void BaseEnemy::fUpdateHorizontalMove(float elapsedTime_, DirectX::XMFLOAT3& position)
+void BaseEnemy::fUpdateMove(float elapsedTime_, DirectX::XMFLOAT3& position)
 {
     using namespace DirectX;
     // 水平速力計算
-    const float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //水平移動値
-    float mx{ velocity.x * 100.0f * elapsedTime_ };
-    float mz{ velocity.z * 100.0f * elapsedTime_ };
-    if (velocity_length_xz > 0.0f)
+    const float velocity_length_xyz = sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z));
+    if (velocity_length_xyz > 0.0f)
     {
         position.x += velocity.x * elapsedTime_;
+        position.y += velocity.y * elapsedTime_;
         position.z += velocity.z * elapsedTime_;
     }
 }
