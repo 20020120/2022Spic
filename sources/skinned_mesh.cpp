@@ -193,12 +193,10 @@ void SkinnedMesh::regeneration(ID3D11Device* device, const char* fbx_filename)
     }
 }
 
-bool SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
 {
     for (const mesh& mesh : meshes)
     {
-        const animation::keyframe::node& mesh_node{ (&anim_para.current_keyframe)->nodes.at(mesh.node_index) };
-
         if (&anim_para.current_keyframe && (&anim_para.current_keyframe)->nodes.size() > 0)
         {
             const size_t bone_count{ mesh.bind_pose.bones.size() };
@@ -210,9 +208,8 @@ bool SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::strin
                 {
                     const animation::keyframe::node& bone_node{ (&anim_para.current_keyframe)->nodes.at(bone.node_index) };
                     DirectX::XMFLOAT4X4 w;
-                    DirectX::XMMATRIX local_w = XMLoadFloat4x4(&bone.offset_transform) * XMLoadFloat4x4(&bone_node.global_transform)
-                        * XMMatrixInverse(nullptr, XMLoadFloat4x4(&mesh.default_global_transform));
-                    XMStoreFloat4x4(&w, local_w * (XMLoadFloat4x4(&mesh_node.global_transform) * XMLoadFloat4x4(&world)));
+                    XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
+
                     pos = { w._41,w._42,w._43 };
                     DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
 
@@ -222,15 +219,15 @@ bool SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::strin
 
                     DirectX::XMFLOAT4X4 r = {};
                     DirectX::XMStoreFloat4x4(&r, R);
-                    DirectX::XMVECTOR up_vec = { r._21, r._22, r._23 };
-                    XMStoreFloat3(&up, up_vec);
+                    DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
+                    XMStoreFloat3(&up, right_vec);
 
-                    return true;
+                    return;
                 }
             }
         }
     }
-    return false;
+    assert("指定された名前のボーンがありません");
 }
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color, const DirectX::XMFLOAT4& emissive_color)

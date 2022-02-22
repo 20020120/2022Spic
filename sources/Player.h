@@ -90,6 +90,7 @@ private:
     DirectX::XMFLOAT3 behind_point_1{};//中継地点
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
+    std::vector<DirectX::XMFLOAT3> behind_point{};
     void InterpolateCatmullRomSpline(float elapsed_time);
     //背後に回り込むときに進むタイマー
     float behind_timer{};
@@ -126,7 +127,14 @@ public:
     CapsuleParam GetCapsuleParam() { return capsule_parm; }
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
-    const  BaseEnemy* GetPlayerTargetEnemy() const { return target_enemy; }
+    const  BaseEnemy* GetPlayerTargetEnemy() const
+    {
+        if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
+        {
+            return target_enemy;
+        }
+        return nullptr;
+    }
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(const BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };

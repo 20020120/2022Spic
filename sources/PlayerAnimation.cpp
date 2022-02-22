@@ -42,9 +42,13 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionIdle();
     }
     //âÒîÇ…ëJà⁄
+    float length{ Math::calc_vector_AtoB_length(position, target) };
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
-        TransitionAvoidance();
+        //å„ÇÎÇ…âÒÇËçûÇﬂÇÈãóó£Ç»ÇÁâÒÇËçûÇ›ÇÊÇ§ÇÃUpdate
+        if (length < BEHIND_LANGE) TransitionBehindAvoidance();
+        //ÇªÇ§Ç∂Ç·Ç»Ç©Ç¡ÇΩÇÁïÅí ÇÃâÒî
+        else TransitionAvoidance();
     }
     //ìÀêiäJénÇ…ëJà⁄
     if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -86,7 +90,8 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     debug_figure->create_sphere(behind_point_2, 1.0f, { 0,1.0f,0,1.0 });
     debug_figure->create_sphere(behind_point_3, 1.0f, { 1.0f,0,1.0f,1.0 });
     InterpolateCatmullRomSpline(elapsed_time);
-    if (behind_timer > 1.5f)
+
+    if (behind_timer > 1.0f)
     {
         TransitionIdle();
     }
@@ -240,6 +245,7 @@ void Player::TransitionBehindAvoidance()
     BehindAvoidancePosition();
     is_avoidance = true;
     behind_timer = 0;
+    velocity = {};
     player_activity = &Player::BehindAvoidanceUpdate;;
 }
 
