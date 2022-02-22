@@ -4,17 +4,35 @@
 #include<vector>
 #include<wrl.h>
 //****************************************************************
-// 
-// 剣の軌跡クラス 
-// 
+//
+// 剣の軌跡クラス
+//
 //****************************************************************
+
+class CatmullRomSpline
+{
+private:
+    std::vector<DirectX::XMFLOAT3> control_points;
+public:
+    CatmullRomSpline(const std::vector<DirectX::XMFLOAT3>& data);
+    virtual ~CatmullRomSpline() = default;
+    CatmullRomSpline(const CatmullRomSpline&) = delete;
+    CatmullRomSpline& operator=(const CatmullRomSpline&) = delete;
+    CatmullRomSpline(CatmullRomSpline&&) noexcept = delete;
+    CatmullRomSpline& operator=(CatmullRomSpline&&) noexcept = delete;
+
+    const size_t segment_count;
+    void interpolate(std::vector<DirectX::XMFLOAT3>& interpolated_data, size_t steps);
+    void interpolate(size_t segment, std::vector<DirectX::XMFLOAT3>& interpolated_data, size_t steps);
+};
+
 
 class SwordTrail final
 {
    //****************************************************************
-   // 
+   //
    // 構造体
-   // 
+   //
    //****************************************************************
     struct TrailData
     {
@@ -28,9 +46,9 @@ class SwordTrail final
     };
 
     //****************************************************************
-    // 
+    //
     //  関数
-    // 
+    //
     //****************************************************************
 public:
     SwordTrail() = default;
@@ -42,15 +60,21 @@ public:
 
     void fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom_);
     void fEraseTrailPoint();
+private:
+    void fInterpolate(size_t steps);
 
     //****************************************************************
-    // 
-    // 変数 
-    // 
+    //
+    // 変数
+    //
     //****************************************************************
-private:
     std::vector<TrailData> mDataVec{}; // 軌跡データのコンテナ
     std::vector<TrailVertex> mTrailVertexVec{}; // 頂点データのコンテナ
+
+    std::vector<DirectX::XMFLOAT3> mTopPoints;
+    std::vector<DirectX::XMFLOAT3> mIinterpolatedTopPoints;
+    std::vector<DirectX::XMFLOAT3> mBottomPoints;
+    std::vector<DirectX::XMFLOAT3> mIinterpolatedBottomPoints;
 
     Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader{ nullptr };
     Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader{ nullptr };
@@ -61,9 +85,9 @@ private:
     D3D11_TEXTURE2D_DESC mTexture2DDesc{};
 
     //****************************************************************
-    // 
+    //
     // 定数
-    // 
+    //
     //****************************************************************
     const int mMaxTrailCount = 120;
 };
