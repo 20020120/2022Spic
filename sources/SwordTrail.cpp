@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include<memory>
 #include "misc.h"
+#include "imgui_include.h"
 
 CatmullRomSpline::CatmullRomSpline(const std::vector<DirectX::XMFLOAT3>& data) : segment_count(data.size() - 1)
 {
@@ -129,9 +130,9 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_)
 
 }
 
-void SwordTrail::fUpdate(float elapsedTime_)
+void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
 {
-    fInterpolate(5);
+    fInterpolate(steps);
 
     mTrailVertexVec.clear();
     // 剣の位置データから頂点を生成する
@@ -220,7 +221,6 @@ void SwordTrail::fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom
 
 void SwordTrail::fEraseTrailPoint()
 {
-    //mDataVec.erase(mDataVec.begin());
     mTopPoints.erase(mTopPoints.begin());
     mBottomPoints.erase(mBottomPoints.begin());
 }

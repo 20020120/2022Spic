@@ -55,7 +55,7 @@ public:
     ~SwordTrail() = default;
 
     void fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_);
-    void fUpdate(float elapsedTime_);
+    void fUpdate(float elapsedTime_, size_t steps);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
 
     void fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom_);
@@ -89,5 +89,5 @@ private:
     // íËêî
     //
     //****************************************************************
-    const int mMaxTrailCount = 120;
+    const int mMaxTrailCount = 1000;
 };
