@@ -342,6 +342,12 @@
     <ClCompile Include="sources\SwordTrail.cpp">
       <Filter>Sources\shader</Filter>
     </ClCompile>
+    <ClCompile Include="sources\BaseCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\CameraManager.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -571,6 +577,12 @@
     </ClInclude>
     <ClInclude Include="sources\SwordTrail.h">
       <Filter>Sources\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BaseCamera.h">
+      <Filter>Sources\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\CameraManager.h">
+      <Filter>Sources\camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
