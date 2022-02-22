@@ -205,10 +205,12 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
+    <ClCompile Include="sources\BaseCamera.cpp" />
     <ClCompile Include="sources\BaseEnemy.cpp" />
     <ClCompile Include="sources\BasePlayer.cpp" />
     <ClCompile Include="sources\bloom.cpp" />
     <ClCompile Include="sources\camera.cpp" />
+    <ClCompile Include="sources\CameraManager.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
     <ClCompile Include="sources\codinate_convert.cpp" />
     <ClCompile Include="sources\collision.cpp" />
@@ -278,10 +280,12 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="sources\audio.h" />
     <ClInclude Include="sources\audio_manager.h" />
+    <ClInclude Include="sources\BaseCamera.h" />
     <ClInclude Include="sources\BaseEnemy.h" />
     <ClInclude Include="sources\BasePlayer.h" />
     <ClInclude Include="sources\bloom.h" />
     <ClInclude Include="sources\camera.h" />
+    <ClInclude Include="sources\CameraManager.h" />
     <ClInclude Include="sources\camera_shake.h" />
     <ClInclude Include="sources\codinate_convert.h" />
     <ClInclude Include="sources\collision.h" />
