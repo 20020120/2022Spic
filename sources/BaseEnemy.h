@@ -76,9 +76,9 @@ protected:
     // ステートの名前を定義する
     struct StateTag
     {
-        const std::string Idle = "Idle";
-        const std::string Move = "Move";
-        const std::string Damaged = "Damaged";
+        inline static constexpr std::string Idle = "Idle";
+        inline static constexpr std::string Move = "Move";
+        inline static constexpr std::string Damaged = "Damaged";
     };
 
 public:
@@ -176,8 +176,6 @@ protected:
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
 
-    // 敵のステートの定数
-    StateTag mStateTag{};
     private:
 
     //--------------------<ステートマシンに関連する変数>--------------------//
