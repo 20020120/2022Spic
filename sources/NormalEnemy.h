@@ -29,7 +29,7 @@ public:
     void fGuiMenu() override;
 
     void fDamaged(int damage_, float InvinsibleTime_) override;
-
+ 
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
@@ -46,15 +46,14 @@ private:
     void fAttackInit(); //移動の初期化
     void fAttackUpdate(float elapsedTime_); //攻撃の更新処理
 
-    void fDauntedInit(); //移動の初期化
-    void fDauntedUpdate(float elapsedTime_); //ひるみの更新処理
+    void fDamagedInit(); //移動の初期化
+    void fDamagedUpdate(float elapsedTime_); //ひるみの更新処理
 
-    enum State
+  
+    // ステートの名前を定義する
+    struct  State : public BaseEnemy::StateTag
     {
-	    IDLE,
-        MOVE,
-        ATTACK,
-        DAUNTED,
+       inline static const std::string Attack = "Attack";
     };
     //****************************************************************
    // 
