@@ -52,9 +52,9 @@ void TestEnemy::fRegisterFunctions()
         fIdleUpdate(elapsedTime_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(0,tuple));
+    mFunctionMap.insert(std::make_pair("Sample",tuple));
 
-    mCurrentTuple = mFunctionMap.at(0);
+    mCurrentTuple = mFunctionMap.at("Sample");
 }
 
 void TestEnemy::fIdleInit()

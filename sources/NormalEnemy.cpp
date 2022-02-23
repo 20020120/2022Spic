@@ -14,7 +14,7 @@ NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_
     // 位置を初期化
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.05f,0.05f,0.05f };
+    mScale = { 0.03f,0.03f,0.03f };
     //パラメーターの初期化
 	fParamInitialize();
     fGetParam(this, Function_);
@@ -44,7 +44,7 @@ void NormalEnemy::fRegisterFunctions()
         fIdleUpdate(elapsedTime_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(IDLE, tuple));
+    mFunctionMap.insert(std::make_pair(State::Idle, tuple));
 
     Ini = [=]()->void
     {
@@ -55,7 +55,7 @@ void NormalEnemy::fRegisterFunctions()
         fmoveUpdate(elapsedTime_);
     };
     tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(MOVE, tuple));
+    mFunctionMap.insert(std::make_pair(State::Move, tuple));
 
     Ini = [=]()->void
     {
@@ -66,20 +66,20 @@ void NormalEnemy::fRegisterFunctions()
         fAttackUpdate(elapsedTime_);
     };
     tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(ATTACK, tuple));
+    mFunctionMap.insert(std::make_pair(State::Attack, tuple));
 
     Ini = [=]()->void
     {
-        fDauntedInit();
+        fDamagedInit();
     };
     Up = [=](float elapsedTime_)->void
     {
-        fDauntedUpdate(elapsedTime_);
+        fDamagedUpdate(elapsedTime_);
     };
     tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DAUNTED, tuple));
+    mFunctionMap.insert(std::make_pair(State::Damaged, tuple));
 
-    fChangeState(IDLE);
+    fChangeState(State::Idle);
 
 }
 
@@ -108,14 +108,13 @@ void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     mInvinsibleTimer = InvinsibleTime_;
     //ダメージ処理
     mParam.mHitPoint -= Damage_;
-    fChangeState(DAUNTED);
+    fChangeState(State::Damaged);
 }
 
 
 void NormalEnemy::fIdleInit()
 {
     mStayTimer = 1.0f;
-    mNowState = IDLE;
     //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
     
 }
@@ -131,16 +130,15 @@ void NormalEnemy::fIdleUpdate(float elapsedTime_)
         fChangeState(MOVE);
     }
 #else
-    fChangeState(MOVE);
+    fChangeState(State::Move);
 #endif
 
 }
 
 void NormalEnemy::fMoveInit()
 {
-    mNowState = MOVE;
     max_move_speed = mParam.mMoveSpeed;
-   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);\
 
 }
 
@@ -150,14 +148,13 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_)
     fTurnToPlayer(elapsedTime_);
     if(mLengthFromPlayer < 4.0f)
     {
-        fChangeState(ATTACK);
+        fChangeState(State::Attack);
     }
     DirectX::XMFLOAT3 p = mCapsuleCollider.mPointA;
 }
 
 void NormalEnemy::fAttackInit()
 {
-    mNowState = ATTACK;
    // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
     mAttackingTime = 0.0f;
 }
@@ -168,17 +165,16 @@ void NormalEnemy::fAttackUpdate(float elapsedTime_)
    
     if (mAttackingTime > 2.0f)
     {
-        fChangeState(IDLE);
+        fChangeState(State::Idle);
     }
 }
 
-void NormalEnemy::fDauntedInit()
+void NormalEnemy::fDamagedInit()
 {
-    mNowState = DAUNTED;
 }
 
 
-void NormalEnemy::fDauntedUpdate(float elapsedTime_)
+void NormalEnemy::fDamagedUpdate(float elapsedTime_)
 {
     using namespace DirectX;
     XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
@@ -191,7 +187,7 @@ void NormalEnemy::fDauntedUpdate(float elapsedTime_)
     velocity.y = 20.0f * v.y;
     velocity.z = 20.0f * v.z;
 
-    fChangeState(IDLE);
+    fChangeState(State::Idle);
 }
 
 void NormalEnemy::fGuiMenu()
@@ -201,9 +197,9 @@ void NormalEnemy::fGuiMenu()
     ImGui::DragFloat3("position", &mPosition.x);
     ImGui::DragFloat3("angle", &mOrientation.x);
     const char* state_list[] = { "IDLE","MOVE","ATTACK","DAUNTED"};
-    std::string state =  state_list[static_cast<int>(mNowState)];
+   /* std::string state =  state_list[static_cast<int>(mNowState)];
     ImGui::Text("State"); ImGui::SameLine();
-    ImGui::Text(state.c_str());
+    ImGui::Text(state.c_str());*/
     ImGui::Checkbox("Attack", &mAttack_flg);
     if(ImGui::Button("dameged", { 70.0f,30.0f }))
     {

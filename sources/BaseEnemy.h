@@ -59,6 +59,7 @@ struct EnemyData
 
 class BaseEnemy :public EnemyMove
 {
+protected:
     //****************************************************************
     // 
     // 構造体
@@ -71,6 +72,15 @@ class BaseEnemy :public EnemyMove
         float mMoveSpeed{};   // 移動速度
         float mAttackSpeed{}; // 攻撃間隔
     };
+
+    // ステートの名前を定義する
+    struct StateTag
+    {
+        inline static const std::string Idle = "Idle";
+        inline static const std::string Move = "Move";
+        inline static const std::string Damaged = "Damaged";
+    };
+
 public:
     struct CapsuleCollider
     {
@@ -165,7 +175,8 @@ protected:
     int mUniqueId{};
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
-private:
+
+    private:
 
     //--------------------<ステートマシンに関連する変数>--------------------//
     int mState{}; // 状態
@@ -182,10 +193,10 @@ protected:
     // 簡易的なステートマシンを仮実装（実装速度が必要じゃないなら変えるかも）
     // 
     //****************************************************************
-    std::map<int, FunctionTuple> mFunctionMap{};
+    std::map<std::string, FunctionTuple> mFunctionMap{};
     FunctionTuple mCurrentTuple{};
 
     virtual void fRegisterFunctions() {}; 
-    void fChangeState(int i);
+    void fChangeState(std::string Tag_);
 
 };

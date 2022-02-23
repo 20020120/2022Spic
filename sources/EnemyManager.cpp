@@ -60,7 +60,7 @@ void EnemyManager::fFinalize()
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
-    //--------------------<ÉvÉåÉCÉÑÅ[Ç∆ìGÇÃçUåÇÇÃìñÇΩÇËîªíË>--------------------//
+    //--------------------<ÉvÉåÉCÉÑÅ[ÇÃçUåÇÇ∆ìGÇÃìñÇΩÇËîªíË>--------------------//
     // çUåÇÇ™âΩëÃÇÃìGÇ…ìñÇΩÇ¡ÇΩÇ©
     int  hitCounts = 0;
 
@@ -85,6 +85,32 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
     }
 
     return hitCounts;
+}
+
+bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_)
+{
+    //--------------------<ÉvÉåÉCÉÑÅ[Ç∆ìGÇÃçUåÇÇÃìñÇΩÇËîªíË>--------------------//
+
+    for (const auto enemy : mEnemyVec)
+    {
+        // ìñÇΩÇËîªíËÇÇ∑ÇÈÇ©ämîF
+        if (enemy->fGetIsFrustum())
+        {
+            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
+
+            const bool result = Collision::capsule_vs_capsule(
+                PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                capsule.mPointA, capsule.mPointB, capsule.mRadius);
+
+            // ìñÇΩÇ¡ÇƒÇ¢ÇΩÇÁ
+            if (result)
+            {
+
+            }
+        }
+    }
+    return false;
 }
 
 const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
@@ -347,9 +373,10 @@ void EnemyManager::fCollisionEnemyVsEnemy()
 void EnemyManager::fProtoSpawn()
 {
     if (!mIsProtoSpawn) return;
+    if (mEnemyVec.size() > 10) return;
 
     static bool  IsSpawn{};
-    const int separateTime = static_cast<int>(mWaveTimer) % 3;
+    const int separateTime = static_cast<int>(mWaveTimer) % 6;
     if(separateTime==1&&!IsSpawn)
     {
         auto enemy = new ChaseEnemy(mpDevice, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());

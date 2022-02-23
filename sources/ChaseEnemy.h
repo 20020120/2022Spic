@@ -8,15 +8,24 @@
 // 
 //****************************************************************
 
-
 class ChaseEnemy final :public  BaseEnemy
 {
-    enum State
+    //enum State
+    //{
+    //    Start,        // “oê
+    //    Chase,        // ’ÇÕ
+    //    Intimidation, // ˆĞŠd
+    //    Damaged,      // ”í’e
+    //};
+
+    struct  State : public BaseEnemy::StateTag
     {
-        Start,       // “oê
-        Chase,       // ’ÇÕ
-        Intimidation // ˆĞŠd
+        inline static const std::string Start = "Start";   
+        inline static const std::string Intimidation = "Intimidation";
+        inline static const std::string Chase = "Chase";
+        
     };
+    
 
     //****************************************************************
     // 

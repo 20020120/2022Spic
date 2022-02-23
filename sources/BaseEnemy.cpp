@@ -193,12 +193,11 @@ void BaseEnemy::fUpdateInvicibleTimer(float elapsedTime_)
     }
 }
 
-void BaseEnemy::fChangeState(int i)
+void BaseEnemy::fChangeState(std::string Tag_)
 {
-    mCurrentTuple = mFunctionMap.at(i);
+    mCurrentTuple = mFunctionMap.at(Tag_);
     mIsInitialize = false;
 }
-
 
 
 bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
