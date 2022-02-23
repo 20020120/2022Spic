@@ -13,17 +13,17 @@ NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;
-    mPosition = { 10,0, 10 };
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mScale = { 0.05f,0.05f,0.05f };
     //ƒpƒ‰ƒ[ƒ^[‚Ì‰Šú‰»
 	fParamInitialize();
-    fRegisterFunctions();
     fGetParam(this, Function_);
+    fRegisterFunctions();
 }
 
 void NormalEnemy::fInitialize()
 {
+
 }
 
 void NormalEnemy::fUpdate(float elapsedTime_)
@@ -85,10 +85,10 @@ void NormalEnemy::fRegisterFunctions()
 
 void NormalEnemy::fParamInitialize()
 {
-    mParam.mHitPoint = 10;      // ‘Ì—Í
-    mParam.mAttackPower = 10;   // UŒ‚—Í
-    mParam.mMoveSpeed = 10;   // ˆÚ“®‘¬“x
-    mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
+    //mParam.mHitPoint = 10;      // ‘Ì—Í
+    //mParam.mAttackPower = 10;   // UŒ‚—Í
+    //mParam.mMoveSpeed = 10;   // ˆÚ“®‘¬“x
+    //mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
     mStayTimer = 1.0f;
     mAttack_flg = false;    
 }
@@ -152,6 +152,7 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_)
     {
         fChangeState(ATTACK);
     }
+    DirectX::XMFLOAT3 p = mCapsuleCollider.mPointA;
 }
 
 void NormalEnemy::fAttackInit()

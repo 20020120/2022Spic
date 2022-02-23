@@ -48,7 +48,6 @@ private:
     void fDauntedInit(); //ˆÚ“®‚Ì‰Šú‰»
     void fDauntedUpdate(float elapsedTime_); //‚Ğ‚é‚İ‚ÌXVˆ—
 
-    void fSetCapsulePoint() override{};
     enum State
     {
 	    IDLE,
