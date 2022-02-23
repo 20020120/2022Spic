@@ -19,7 +19,7 @@ class TestEnemy final:public BaseEnemy
     //****************************************************************
 public:
     
-    TestEnemy(ID3D11Device* pDevice_, 
+    TestEnemy(GraphicsPipeline& graphics_,
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
         int UniqueId_,
         ParamGetFunction Function_);

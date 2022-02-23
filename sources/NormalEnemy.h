@@ -19,7 +19,7 @@ class NormalEnemy final :public BaseEnemy
     //****************************************************************
 public:
 
-    NormalEnemy(ID3D11Device* pDevice_,
+    NormalEnemy(GraphicsPipeline& graphics_,
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
     ,int UniqueId_, ParamGetFunction Function_
         );

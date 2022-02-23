@@ -8,9 +8,9 @@
 // テストとサンプルを兼ねた敵の派生クラス 
 // 
 //****************************************************************
-TestEnemy::TestEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
+TestEnemy::TestEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_3.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_3.fbx")
 {
     // 位置を初期化
     mPosition = EmitterPoint_;

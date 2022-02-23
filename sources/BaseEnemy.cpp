@@ -2,17 +2,19 @@
 #include"user.h"
 #include"collision.h"
 #include"Operators.h"
+#include"Effekseer.h"
 #include<typeinfo>
 //****************************************************************
 // 
 // “G‚ÌŠî’êƒNƒ‰ƒX 
 // 
 //****************************************************************
-BaseEnemy::BaseEnemy(ID3D11Device* pDevice_,int UniqueId_, const char* ModelName_)
+BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* ModelName_)
 {
     // ƒ‚ƒfƒ‹‚ğ‰Šú‰»
-    mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, ModelName_);
+    mpSkinnedMesh = std::make_unique<SkinnedMesh>(graphics_.get_device().Get(), ModelName_);
     mUniqueId = UniqueId_;
+    mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), "");
 
 }
 
@@ -34,6 +36,11 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
     mParam.mAttackSpeed = mData.mAttackSpeed;
     mParam.mHitPoint = mData.mMaxHitPoint;
     mParam.mMoveSpeed = mData.mMoveSpeed;
+}
+
+void BaseEnemy::fDieEffect()
+{
+    
 }
 
 void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)

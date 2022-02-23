@@ -29,9 +29,9 @@ public:
     ~WaveManager() = default;
 
     // ‰Šú‰»
-    void fInitialize(ID3D11Device* pDevice_);
+    void fInitialize(GraphicsPipeline& graphics_);
     // XV
-    void fUpdate(float elapsedTime_);
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_);
     // I—¹ˆ—
     void fFinalize();
 

@@ -33,7 +33,7 @@ class ChaseEnemy final :public  BaseEnemy
     // 
     //****************************************************************
 public:
-    ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_,int UniqueId_, ParamGetFunction Function_);
+    ChaseEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 Point_,int UniqueId_, ParamGetFunction Function_);
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;

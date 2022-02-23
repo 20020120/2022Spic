@@ -1,7 +1,7 @@
 #pragma once
 #include"skinned_mesh.h"
 #include "EnemyMove.h"
-
+#include "Effects.h"
 #include<d3d11.h>
 #include<memory>
 
@@ -96,7 +96,7 @@ public:
                 cereal::make_nvp("PointB", mPointB),
                 cereal::make_nvp("Radius", mRadius));
         }
-
+        
     };
 
     //****************************************************************
@@ -105,7 +105,7 @@ public:
     // 
     //****************************************************************
 public:
-    BaseEnemy(ID3D11Device *pDevice_,int UniqueId_,const char* ModelName_);
+    BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_,const char* ModelName_);
     virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
@@ -115,9 +115,10 @@ public:
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//
     virtual void fGuiMenu(){}
-    
+    void fDieEffect();
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_, float InvinsibleTime_);
+    
 
     // プレイヤー敵との距離を計算する
     void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
@@ -175,7 +176,7 @@ protected:
     int mUniqueId{};
     // モデル
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
-
+    std::unique_ptr<Effect> mDieEffect{ nullptr };
     private:
 
     //--------------------<ステートマシンに関連する変数>--------------------//

@@ -7,9 +7,9 @@
 // ‚‚È‚µ’ÊíUŒ‚‚ÌG‹›“G‚Ì”h¶ƒNƒ‰ƒX
 // 
 //****************************************************************
-NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_, 
+NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;

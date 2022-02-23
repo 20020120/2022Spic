@@ -37,9 +37,9 @@ void EnemyEditor::fGuiMenu()
 {
 #ifdef USE_IMGUI
 
-    imgui_menu_bar("Game","EnemyEditor", mIsOpenEditor);
+    //imgui_menu_bar("Game","EnemyEditor", mIsOpenEditor);
 
-    if (mIsOpenEditor)
+    if (mIsOpenEditor)\
     {
         ImGui::Begin("WaveEditor");
         

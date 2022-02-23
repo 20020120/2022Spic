@@ -29,7 +29,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
 	//--------------------<敵の管理クラスを初期化>--------------------//
-	mWaveManager.fInitialize(graphics.get_device().Get());
+	mWaveManager.fInitialize(graphics);
     player = std::make_unique<Player>(graphics);
 	// カメラ
 	camera = std::make_unique<Camera>(graphics,player.get());
@@ -67,7 +67,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
-	mWaveManager.fUpdate(elapsed_time);
+	mWaveManager.fUpdate(graphics,elapsed_time);
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 

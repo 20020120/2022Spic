@@ -1,18 +1,18 @@
 #include"WaveManager.h"
 #define ProtoType
-void WaveManager::fInitialize(ID3D11Device* pDevice_)
+void WaveManager::fInitialize(GraphicsPipeline& graphics_)
 {
     // èâä˙âª
-    mEnemyManager.fInitialize(pDevice_);
+    mEnemyManager.fInitialize();
 }
 
-void WaveManager::fUpdate(float elapsedTime_)
+void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_)
 {
     switch (mWaveState)
     {
     case WaveState::Game:
 
-        mEnemyManager.fUpdate(elapsedTime_);
+        //mEnemyManager.fUpdate(Graphics_,elapsedTime_);
 
         break;
     case WaveState::Clear:
@@ -21,7 +21,7 @@ void WaveManager::fUpdate(float elapsedTime_)
     default: ;
     }
 
-    mEnemyManager.fUpdate(elapsedTime_);
+    mEnemyManager.fUpdate(Graphics_,elapsedTime_);
 }
 
 void WaveManager::fFinalize()

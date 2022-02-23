@@ -17,16 +17,15 @@
 // 
 //****************************************************************
 
-void EnemyManager::fInitialize(ID3D11Device* pDevice_)
+void EnemyManager::fInitialize()
 {
     //--------------------<初期化>--------------------//
-    mpDevice = pDevice_;
     fAllClear();
     fRegisterEmitter();
     mUniqueCount = 0;
 }
 
-void EnemyManager::fUpdate(float elapsedTime_)
+void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
 
@@ -41,7 +40,7 @@ void EnemyManager::fUpdate(float elapsedTime_)
 
     //--------------------<敵のスポナー>--------------------//
     // fSpawn();
-    fProtoSpawn();
+    fProtoSpawn(graphics_);
     // ImGuiのメニュー
     fGuiMenu();
 }
@@ -182,7 +181,7 @@ void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
     mPlayerPosition = Position_;
 }
 
-void EnemyManager::fSpawn()
+void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 {
     int spawnCounts = 0;
 
@@ -192,7 +191,7 @@ void EnemyManager::fSpawn()
         // 出現条件を満たしていたら出す
         if (data.mSpawnTimer <= mWaveTimer)
         {
-            fSpawn(data);
+            fSpawn(data, graphics);
             spawnCounts++;
         }
     }
@@ -203,7 +202,7 @@ void EnemyManager::fSpawn()
     }
 }
 
-void EnemyManager::fSpawn(EnemySource Source_)
+void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
 {
     // 送られてきたデータをもとに敵を出現させる
 
@@ -214,19 +213,19 @@ void EnemyManager::fSpawn(EnemySource Source_)
     {
     case EnemyType::Test:
     {
-        auto enemy = new TestEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new TestEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;
     case EnemyType::Normal:
     {
-        auto enemy = new NormalEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new NormalEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;
     case EnemyType::Chase :
     {
-        auto enemy = new ChaseEnemy(mpDevice, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new ChaseEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;
@@ -370,7 +369,7 @@ void EnemyManager::fCollisionEnemyVsEnemy()
     }
 }
 
-void EnemyManager::fProtoSpawn()
+void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
 {
     if (!mIsProtoSpawn) return;
     if (mEnemyVec.size() > 10) return;
@@ -379,9 +378,9 @@ void EnemyManager::fProtoSpawn()
     const int separateTime = static_cast<int>(mWaveTimer) % 6;
     if(separateTime==1&&!IsSpawn)
     {
-        auto enemy = new ChaseEnemy(mpDevice, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new ChaseEnemy(graphics_, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
-        auto enemy1 = new NormalEnemy(mpDevice, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
+        auto enemy1 = new NormalEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy1);
         IsSpawn = true;
     }
@@ -436,7 +435,6 @@ void EnemyManager::fGuiMenu()
             EnemySource source{};
             source.mEmitterNumber = 0;
             source.mType = elem;
-            fSpawn(source);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);

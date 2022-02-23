@@ -60,8 +60,8 @@ public:
     EnemyManager() = default;
     ~EnemyManager() = default;
 
-    void fInitialize(ID3D11Device* pDevice_);
-    void fUpdate(float elapsedTime_);
+    void fInitialize();
+    void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
     //--------------------<当たり判定>--------------------//
@@ -93,8 +93,8 @@ public:
     void fStartWave(int WaveIndex_);
 private:
     //--------------------<敵と関連する処理>--------------------//
-    void fSpawn(); // 敵の生成を管理
-    void fSpawn(EnemySource Source_);
+    void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
+    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
     void fEnemiesUpdate(float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(ID3D11DeviceContext* pDeviceContext_); // 敵の描画処理
 
@@ -115,7 +115,7 @@ private:
     void fCollisionEnemyVsEnemy();
 
     //--------------------<プロト>--------------------//
-    void fProtoSpawn();
+    void fProtoSpawn(GraphicsPipeline& graphics_);
     
 
     //****************************************************************
@@ -127,9 +127,6 @@ private:
     std::vector<BaseEnemy*> mEnemyVec;  // 敵を格納するコンテナ
     std::vector<BaseEnemy*> mRemoveVec; // 敵を格納するコンテナ
     std::map<int, Emitter> mEmitterMap{}; // 敵の出現口
-
-    // 初期化用にポインタを保持
-    ID3D11Device* mpDevice{ nullptr };
 
     //--------------------<ウェーブに関する変数>--------------------//
     float mWaveTimer{}; // 各ウェーブ開始からの経過時間

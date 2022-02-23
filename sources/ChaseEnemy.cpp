@@ -6,9 +6,9 @@
 // 
 //****************************************************************
 
-ChaseEnemy::ChaseEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 Point_, int UniqueId_,
+ChaseEnemy::ChaseEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 Point_, int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(pDevice_, UniqueId_, "./resources/Models/Enemy/character_5.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_5.fbx")
 {
     //èâä˙âª
     mPosition = Point_;
