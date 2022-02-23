@@ -18,6 +18,10 @@ class ChaseEnemy final :public  BaseEnemy
         Damaged,      // ”í’e
     };
 
+    struct State: public State
+    {
+        
+    };
     
 
     //****************************************************************

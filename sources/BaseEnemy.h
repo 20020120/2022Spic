@@ -59,6 +59,7 @@ struct EnemyData
 
 class BaseEnemy :public EnemyMove
 {
+protected:
     //****************************************************************
     // 
     // \‘¢‘Ì
