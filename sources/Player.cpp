@@ -36,9 +36,15 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     CameraReset();
     //攻撃力の変動
     InflectionPower(elapsed_time);
+    //コンボの変動
+    InflectionCombo(elapsed_time);
     //無敵時間の減少
     invincible_timer -= 1.0f * elapsed_time;
 
+    //体の大きさのカプセルパラメータ設定
+    BodyCapsule();
+    //剣の大きさのカプセルのパラメータ
+    SwordCapsule();
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -76,9 +82,13 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             }
             if (ImGui::TreeNode("CapsuleParam"))
             {
-                ImGui::DragFloat3("capsule_parm.start", &capsule_body_start.x, 0.1f);
-                ImGui::DragFloat3("capsule_parm.end", &capsule_body_end.x, 0.1f);
-                ImGui::DragFloat("capsule_parm.rasius", &capsule_parm.rasius,0.1f);
+                if (ImGui::TreeNode("BodyCapsuleParam"))
+                {
+                    ImGui::DragFloat3("capsule_parm.start", &capsule_body_start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &capsule_body_end.x, 0.1f);
+                    ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
+                    ImGui::TreePop();
+                }
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("easing"))
@@ -237,21 +247,21 @@ void Player::InflectionCombo(float elapsed_time)
 
 void Player::BodyCapsule()
 {
-    capsule_parm.start =
+    body_capsule_param.start =
     {
         position.x + capsule_body_start.x,
         position.y + capsule_body_start.y,
         position.z + capsule_body_start.z
     };
-    capsule_parm.end =
+    body_capsule_param.end =
     {
         position.x + capsule_body_end.x,
         position.y + capsule_body_end.y,
         position.z + capsule_body_end.z
     };
-    capsule_parm.rasius = 1.2f;
+    body_capsule_param.rasius = 0.5f;
 }
-void Player::SoardCapsule()
+void Player::SwordCapsule()
 {
     DirectX::XMFLOAT3 pos, up = {};
     model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "sword_r_rig", pos, up);
@@ -260,9 +270,9 @@ void Player::SoardCapsule()
     DirectX::XMFLOAT3 end = Math::calc_designated_point(pos, up, r);
     //debug_figure->create_capsule(pos, end, r2, { 1,1,0,1 });
 
-    capsule_parm.start = pos;
-    capsule_parm.end = end;
-    capsule_parm.rasius = 0.7f;
+    sword_capsule_param.start = pos;
+    sword_capsule_param.end = end;
+    sword_capsule_param.rasius = 0.7f;
 }
 
 void Player::SetTarget(const BaseEnemy* target_enemys)

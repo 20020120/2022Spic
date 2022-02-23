@@ -125,13 +125,17 @@ private:
         DirectX::XMFLOAT3 start{};
         DirectX::XMFLOAT3 end{};
         float rasius{ 1.2f };
-    }capsule_parm;
+    };
+
+    CapsuleParam sword_capsule_param{};
+    CapsuleParam body_capsule_param{};
+
     DirectX::XMFLOAT3 capsule_body_start{0,2.6f,0};
     DirectX::XMFLOAT3 capsule_body_end{0,0.2f,0};
 
     void BodyCapsule();
     //Œ•‚ÌƒJƒvƒZƒ‹”»’è
-    void SoardCapsule();
+    void SwordCapsule();
 public:
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
@@ -143,7 +147,9 @@ public:
     bool GetCameraLockOn() { return is_camera_lock_on; }
     bool GetEnemyLockOn() { return is_lock_on; }
     bool GetAvoidance() { return is_avoidance; }
-    CapsuleParam GetCapsuleParam() { return capsule_parm; }
+    bool GetIsPlayerAttack() { return is_attack; }
+    CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
+    CapsuleParam GetSwordCapsuleParam() { return sword_capsule_param; }
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
     const  BaseEnemy* GetPlayerTargetEnemy() const
