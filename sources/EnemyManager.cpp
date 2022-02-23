@@ -373,9 +373,10 @@ void EnemyManager::fCollisionEnemyVsEnemy()
 void EnemyManager::fProtoSpawn()
 {
     if (!mIsProtoSpawn) return;
+    if (mEnemyVec.size() > 10) return;
 
     static bool  IsSpawn{};
-    const int separateTime = static_cast<int>(mWaveTimer) % 3;
+    const int separateTime = static_cast<int>(mWaveTimer) % 6;
     if(separateTime==1&&!IsSpawn)
     {
         auto enemy = new ChaseEnemy(mpDevice, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());

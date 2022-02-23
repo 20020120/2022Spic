@@ -14,7 +14,7 @@ NormalEnemy::NormalEnemy(ID3D11Device* pDevice_, DirectX::XMFLOAT3 EmitterPoint_
     // 位置を初期化
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.05f,0.05f,0.05f };
+    mScale = { 0.03f,0.03f,0.03f };
     //パラメーターの初期化
 	fParamInitialize();
     fGetParam(this, Function_);
@@ -138,7 +138,7 @@ void NormalEnemy::fIdleUpdate(float elapsedTime_)
 void NormalEnemy::fMoveInit()
 {
     max_move_speed = mParam.mMoveSpeed;
-   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);\
 
 }
 
