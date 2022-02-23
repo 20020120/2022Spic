@@ -45,8 +45,6 @@ private:
     DirectX::XMFLOAT3 mStartPosition{};   // 移動の始点
     DirectX::XMFLOAT3 mEndPosition{};     // 移動の終焉 
 
-    float mTrailTimer{};
-    SwordTrail mSwordTrail{};
     //****************************************************************
     // 
     // ステートマシンの関数
