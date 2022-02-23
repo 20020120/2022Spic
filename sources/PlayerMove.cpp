@@ -360,9 +360,6 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
     DirectX::XMVECTOR point2_vec = DirectX::XMLoadFloat3(&point2);
     DirectX::XMVECTOR d2 = point2_vec - DirectX::XMLoadFloat3(&position);
 
-    debug_figure->create_sphere(point1, 1, { 1,0,0,1 });
-    debug_figure->create_sphere(point2, 1, { 0,0,1,1 });
-
     float an;
     XMVECTOR dot{ XMVector3Dot(d,d2) };
     //XMVECTOR dot{ XMVector3Dot(player_forward_vec,camera_forward_vec) };
