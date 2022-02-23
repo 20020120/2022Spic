@@ -181,7 +181,7 @@ void ChaseEnemy::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(State::Intimidation, tuple));
     }
 
-    mCurrentTuple = mFunctionMap.at(Start);
+    mCurrentTuple = mFunctionMap.at(State::Start);
 }
 
 void ChaseEnemy::fStartInit()

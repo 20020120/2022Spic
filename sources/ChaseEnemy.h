@@ -20,9 +20,10 @@ class ChaseEnemy final :public  BaseEnemy
 
     struct  State : public BaseEnemy::StateTag
     {
-        const std::string Start = "Start";   
-        const std::string Intimidation = "Intimidation";
-
+        inline static const std::string Start = "Start";   
+        inline static const std::string Intimidation = "Intimidation";
+        inline static const std::string Chase = "Chase";
+        
     };
     
 

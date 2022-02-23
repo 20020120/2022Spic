@@ -106,13 +106,11 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                enemy->fDamaged(PlayerAttackPower_, 0.3f);
-                hitCounts++;
+
             }
         }
     }
-
-    return hitCounts;
+    return false;
 }
 
 const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
