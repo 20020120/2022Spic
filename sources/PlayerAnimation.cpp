@@ -18,7 +18,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //γ‚λ‚Ι‰ρ‚θ‚ί‚ι‹——£‚Θ‚η‰ρ‚θ‚έ‚ζ‚¤‚ΜUpdate
-        if (length < BEHIND_LANGE)
+        if (is_lock_on && length < BEHIND_LANGE)
         {
             TransitionBehindAvoidance();
         }
@@ -47,7 +47,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //γ‚λ‚Ι‰ρ‚θ‚ί‚ι‹——£‚Θ‚η‰ρ‚θ‚έ‚ζ‚¤‚ΜUpdate
-        if (length < BEHIND_LANGE)
+        if (is_lock_on && length < BEHIND_LANGE)
         {
             TransitionBehindAvoidance();
         }
