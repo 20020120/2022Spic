@@ -111,8 +111,10 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
         }
     }
 #endif // USE_IMGUI
-    model->update_animation(elapsed_time);
 
+    //攻撃中のアニメーションを早くする(仮)
+    if (is_attack) model->update_animation(elapsed_time * 2.0f);
+    else  model->update_animation(elapsed_time);
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -343,7 +345,7 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 void Player::ChargeAcceleration(float elapse_time)
 {
     //位置を補間
-    position = Math::lerp(position, target, 3.0f * elapse_time);
+    position = Math::lerp(position, target, 5.0f * elapse_time);
 }
 
 void Player::LockOn()
