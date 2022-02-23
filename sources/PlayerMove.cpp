@@ -19,6 +19,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position,orientation);
+        RollTurn(position, orientation, elapsed_time);
     }
     //ロックオンしていなかったら入力方向を向く
     else
@@ -26,6 +27,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
         //旋回処理
         Turn(elapsed_time, movevec, turn_speed, position, orientation);
         PitchTurn(position, camera_pos, camera_forward, orientation, elapsed_time);
+        RollTurn(position, orientation, elapsed_time);
     }
 
     //経過フレーム
@@ -41,6 +43,7 @@ void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& 
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
+        RollTurn(position, orientation, elapsed_time);
     }
 
     SetDirections(orientation);
@@ -59,6 +62,7 @@ void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFL
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
+        RollTurn(position, orientation, elapsed_time);
     }
 
     SetDirections(orientation);
@@ -382,6 +386,69 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
         orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
+}
+
+void PlayerMove::RollTurn(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, float elapsed_time)
+{
+#if 0
+    using namespace DirectX;
+    //ターゲットに向かって回転
+    XMVECTOR player_orientation_vec = DirectX::XMLoadFloat4(&orientation);
+    DirectX::XMVECTOR player_forward;
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(player_orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    player_forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+    XMFLOAT3 player_front{};
+    XMStoreFloat3(&player_front, player_forward);
+
+    DirectX::XMFLOAT4 initial_orientation{ 0,0,0,1.0f };
+    XMVECTOR initial_orientation_vec = DirectX::XMLoadFloat4(&initial_orientation);
+    DirectX::XMVECTOR initial_forward;
+    DirectX::XMMATRIX i_m = DirectX::XMMatrixRotationQuaternion(initial_orientation_vec);
+    DirectX::XMFLOAT4X4 i_m4x4 = {};
+    DirectX::XMStoreFloat4x4(&i_m4x4, i_m);
+    initial_forward = { i_m4x4._31, i_m4x4._32, i_m4x4._33 };
+
+    XMFLOAT3 initial_front{};
+    XMStoreFloat3(&initial_front, initial_forward);
+
+    player_front.z = 0;
+    initial_front.z = 0;
+
+    XMFLOAT3 point1 = Math::calc_designated_point(position, Math::Normalize(player_front), Math::Length(Math::Normalize(player_front)));
+    XMVECTOR point1_vec = XMLoadFloat3(&point1);
+    XMVECTOR d = point1_vec - XMLoadFloat3(&position);
+
+    XMFLOAT3 point2 = Math::calc_designated_point(position, Math::Normalize(initial_front), Math::Length(Math::Normalize(initial_front)));
+    XMVECTOR point2_vec = XMLoadFloat3(&point2);
+    XMVECTOR d2 = point2_vec - XMLoadFloat3(&position);
+
+    float angle;
+    XMVECTOR dot{ XMVector3Dot(d,d2) };
+    XMStoreFloat(&angle, dot);
+    angle = acosf(angle);
+
+    if (fabs(angle) > XMConvertToRadians(10.0f))
+    {
+        XMVECTOR q;
+        float cross{ (initial_front.x * player_front.z) - (initial_front.z * player_front.x) };
+        if (cross > 0)
+        {
+            q = XMQuaternionRotationAxis(player_forward, angle);
+        }
+        else
+        {
+            q = XMQuaternionRotationAxis(player_forward, -angle);
+        }
+        XMVECTOR Q = XMQuaternionMultiply(player_orientation_vec, q);
+        player_orientation_vec = XMQuaternionSlerp(player_orientation_vec, Q, 10.0f * elapsed_time);
+    }
+    DirectX::XMStoreFloat4(&orientation, player_orientation_vec);
+
+#endif // 0
+
 }
 
 

@@ -195,10 +195,25 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
-        TransitionIdle();
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            attack_time = 0;
+            TransitionAttackType3(0);
+        }
+        //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            charge_time = 0;
+            TransitionMove();
+        }
+        //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
+        else
+        {
+            charge_time = 0;
+            TransitionIdle();
+        }
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
 }
 
 void Player::TransitionIdle()

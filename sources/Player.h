@@ -93,8 +93,8 @@ private:
     DirectX::XMFLOAT3 behind_point_1{};//中継地点
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
+    //背後に回り込む点
     std::vector<DirectX::XMFLOAT3> behind_point{};
-    std::vector<DirectX::XMFLOAT3> behind_point_create{};
     void InterpolateCatmullRomSpline(float elapsed_time);
     //背後に回り込むときに進むタイマー
     float behind_timer{};
@@ -118,6 +118,7 @@ private:
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
+    //ダメージ受けたときに後ろにはじかれる
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
@@ -150,6 +151,7 @@ public:
     bool GetIsPlayerAttack() { return is_attack; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetSwordCapsuleParam() { return sword_capsule_param; }
+    std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
     const  BaseEnemy* GetPlayerTargetEnemy() const

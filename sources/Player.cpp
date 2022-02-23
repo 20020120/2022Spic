@@ -102,26 +102,16 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
             {
                 ImGui::DragInt("player_health", &player_health);
                 ImGui::DragInt("combo", &combo_count);
+                ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
-
-
-
-            ImGui::DragFloat("behind_timer", &behind_timer);
-            ImGui::DragFloat("behind_late", &behind_late);
-            ImGui::InputFloat3("camera_f", &camera_forward.x);
-            ImGui::InputFloat3("camera_r", &camera_right.x);
-
-            ImGui::DragFloat3("target", &target.x);
             ImGui::End();
         }
     }
 #endif // USE_IMGUI
     model->update_animation(elapsed_time);
-
-
 
 }
 
@@ -240,7 +230,7 @@ void Player::InflectionPower(float elapsed_time)
 void Player::InflectionCombo(float elapsed_time)
 {
     duration_combo_timer -= 1.0f * elapsed_time;
-    if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
+    //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //コンボ中タイマーが0になったらコンボは0にする
     if (duration_combo_timer <= 0) combo_count = 0;
 }
@@ -295,13 +285,14 @@ void Player::AddCombo(int count)
             //無敵時間がなかったらダメージ受けて無敵時間設定，コンボ0に
             if (invincible_timer < 0)
             {
-                invincible_timer = 3.0f;
+                invincible_timer = 1.0f;
                 player_health -= 1;
                 combo_count = 0;
             }
         }
         else
         {
+            duration_combo_timer = 5.0f;
             combo_count += count;
         }
         is_enemy_hit = true;
