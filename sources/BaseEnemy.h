@@ -71,6 +71,11 @@ class BaseEnemy :public EnemyMove
         float mMoveSpeed{};   // ˆÚ“®‘¬“x
         float mAttackSpeed{}; // UŒ‚ŠÔŠu
     };
+
+    struct State
+    {
+        static const int  
+    };
 public:
     struct CapsuleCollider
     {

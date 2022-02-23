@@ -65,11 +65,19 @@ public:
     void fRender(ID3D11DeviceContext* pDeviceContext_);
     void fFinalize();
     //--------------------<当たり判定>--------------------//
+
+    // プレイヤーの攻撃と敵の当たり判定
     int fCalcPlayerCapsuleVsEnemies(           // 戻り値 ： 当たった敵の数
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
         DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
         float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
         int PlayerAttackPower_                 // プレイヤーの攻撃力
+    );
+    // 敵の攻撃とプレイヤーの当たり判定
+    bool fCalcEnemiesAttackVsPlayer(
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
+        float PlayerCapsuleRadius_             // プレイヤーのカプセルの情報
     );
 
     //--------------------<ゲッター関数>--------------------//

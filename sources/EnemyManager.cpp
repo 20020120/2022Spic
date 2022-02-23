@@ -60,7 +60,7 @@ void EnemyManager::fFinalize()
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
-    //--------------------<ƒvƒŒƒCƒ„[‚Æ“G‚ÌUŒ‚‚Ì“–‚½‚è”»’è>--------------------//
+    //--------------------<ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Æ“G‚Ì“–‚½‚è”»’è>--------------------//
     // UŒ‚‚ª‰½‘Ì‚Ì“G‚É“–‚½‚Á‚½‚©
     int  hitCounts = 0;
 
@@ -79,6 +79,34 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
             if(result)
             {
                 enemy->fDamaged(PlayerAttackPower_,0.3f);
+                hitCounts++;
+            }
+        }
+    }
+
+    return hitCounts;
+}
+
+bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_)
+{
+    //--------------------<ƒvƒŒƒCƒ„[‚Æ“G‚ÌUŒ‚‚Ì“–‚½‚è”»’è>--------------------//
+
+    for (const auto enemy : mEnemyVec)
+    {
+        // “–‚½‚è”»’è‚ð‚·‚é‚©Šm”F
+        if (enemy->fGetIsFrustum())
+        {
+            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
+
+            const bool result = Collision::capsule_vs_capsule(
+                PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                capsule.mPointA, capsule.mPointB, capsule.mRadius);
+
+            // “–‚½‚Á‚Ä‚¢‚½‚ç
+            if (result)
+            {
+                enemy->fDamaged(PlayerAttackPower_, 0.3f);
                 hitCounts++;
             }
         }

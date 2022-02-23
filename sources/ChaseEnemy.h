@@ -8,14 +8,14 @@
 // 
 //****************************************************************
 
-
 class ChaseEnemy final :public  BaseEnemy
 {
     enum State
     {
-        Start,       // ìoèÍ
-        Chase,       // í«ê’
-        Intimidation // à–äd
+        Start,        // ìoèÍ
+        Chase,        // í«ê’
+        Intimidation, // à–äd
+        Damaged,      // îÌíe
     };
 
     //****************************************************************
@@ -57,6 +57,7 @@ private:
     void fChaseUpdate(float elapsedTime_);        // í«ê’
     void fIntimidationInit();                     // à–äd
     void fIntimidationUpdate(float elapsedTime_); // à–äd
+
 public:
     void fGuiMenu() override;
 };
