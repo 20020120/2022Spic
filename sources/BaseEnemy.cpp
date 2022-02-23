@@ -199,6 +199,11 @@ void BaseEnemy::fChangeState(int i)
     mIsInitialize = false;
 }
 
+void BaseEnemy::fChangeState(std::string Tag_)
+{
+    mCurrentTuple = mFunctionMap.at(Tag_);
+    mIsInitialize = false;
+}
 
 
 bool BaseEnemy::fTurnToPlayer(float elapsedTime_)

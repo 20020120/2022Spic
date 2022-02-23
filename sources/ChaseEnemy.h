@@ -18,6 +18,8 @@ class ChaseEnemy final :public  BaseEnemy
         Damaged,      // îÌíe
     };
 
+    
+
     //****************************************************************
     // 
     // ä÷êî
@@ -57,7 +59,6 @@ private:
     void fChaseUpdate(float elapsedTime_);        // í«ê’
     void fIntimidationInit();                     // à–äd
     void fIntimidationUpdate(float elapsedTime_); // à–äd
-
 public:
     void fGuiMenu() override;
 };
