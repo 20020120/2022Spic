@@ -27,14 +27,15 @@ public:
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
     void fGuiMenu() override;
-   
+
+    void fDamaged(int damage_, float InvinsibleTime_) override;
+
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
     //パラメータ初期化関数
     void fParamInitialize();
 
-    void fDamaged(int damage_, float InvinsibleTime_) override;
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_); // 待機の更新処理
@@ -48,7 +49,6 @@ private:
     void fDauntedInit(); //移動の初期化
     void fDauntedUpdate(float elapsedTime_); //ひるみの更新処理
 
-    void fSetCapsulePoint() override{};
     enum State
     {
 	    IDLE,

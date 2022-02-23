@@ -31,8 +31,6 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionChargeInit();
     }
 
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -61,8 +59,6 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -84,8 +80,6 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
     UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -100,8 +94,6 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionIdle();
     }
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -113,7 +105,6 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionCharge();
     }
 
-    SoardCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -153,7 +144,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType1(0);
         }
     }
-    SoardCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -175,7 +165,6 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType2(0);
         }
     }
-    SoardCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -198,7 +187,6 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType3(0);
         }
     }
-    SoardCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -209,7 +197,6 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionIdle();
     }
-    SoardCapsule();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }

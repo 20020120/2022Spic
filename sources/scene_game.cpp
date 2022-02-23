@@ -106,9 +106,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
-		player->GetCapsuleParam().start,
-		player->GetCapsuleParam().end,
-		player->GetCapsuleParam().rasius,
+		player->GetBodyCapsuleParam().start,
+		player->GetBodyCapsuleParam().end,
+		player->GetBodyCapsuleParam().rasius,
 		player->GetPlayerPower()));
 
 	// camera
