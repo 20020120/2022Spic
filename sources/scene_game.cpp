@@ -111,6 +111,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetSwordCapsuleParam().rasius,
 		player->GetPlayerPower()));
 
+
 	// camera
 	camera->Update(elapsed_time,player.get());
 	//camera->update_with_quaternion(elapsed_time);

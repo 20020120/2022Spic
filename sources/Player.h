@@ -115,6 +115,10 @@ private:
     float duration_combo_timer{};
     //ロックオンしていないときの突進のターゲット
     DirectX::XMFLOAT3 charge_point{};
+    //ダッシュエフェクト開始
+    bool start_dash_effect{ false };
+    //ダッシュエフェクト終了
+    bool end_dash_effect{ false };
 private:
     //攻撃力の変化
     void InflectionPower(float elapsed_time);
