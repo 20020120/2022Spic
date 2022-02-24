@@ -6,16 +6,21 @@ CameraManager::CameraManager(GraphicsPipeline& graphics, Player* player, std::ve
     {
         cameras[it] = std::make_unique<camera>(it, graphics, player);
     }
+    activeCamera = cameraType;
 }
 
-void CameraManager::Initialize()
+void CameraManager::Initialize(GraphicsPipeline& graphics, Player* player)
 {
-}
-
-void CameraManager::Update(float elapsedTime)
-{
-    for (auto& it : cameras)
+    for (auto& it : activeCamera)
     {
-        it->Update(elapsedTime);
+        cameras[it]->Initialize(graphics, player);
+    }
+}
+
+void CameraManager::Update(float elapsedTime, Player* player)
+{
+    for (auto& it : activeCamera)
+    {
+        cameras[it]->Update(elapsedTime, player);
     }
 }

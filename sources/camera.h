@@ -126,23 +126,24 @@ public:
     camera(int cameraType, GraphicsPipeline& graphics, Player* player);
     ~camera();
 
-    void Initialize(float elapsedTime, GraphicsPipeline& graphics, Player* player);
+    void Initialize(GraphicsPipeline& graphics, Player* player);
     void Update(float elapsedTime, Player* player);
 
-    void titleInitialize(float elapsedTime, GraphicsPipeline& graphics ,Player* player);
-    void gameInitialize(float elapsedTime, GraphicsPipeline& graphics, Player* player);
+    void titleInitialize(GraphicsPipeline& graphics ,Player* player);
+    void gameInitialize(GraphicsPipeline& graphics, Player* player);
 
     void titleUpdate(float elapsedTime,  Player* player);
     void gameUpdate(float elapsedTime, Player* player);
 
-    typedef void (camera::* cameraInitialize)(float elapsed_time, GraphicsPipeline& graphics, Player* player);
+    typedef void (camera::* cameraInitialize)(GraphicsPipeline& graphics, Player* player);
     cameraInitialize initialize = &camera::gameInitialize;
 
     typedef void (camera::* cameraUpdate)(float elapsed_time, Player* player);
     cameraUpdate update = &camera::gameUpdate;
-private:
 
     bool active{ false };
+private:
+
 
     void SetAngle(float elapsedTime);
     void UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp);

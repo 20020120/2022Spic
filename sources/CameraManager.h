@@ -5,16 +5,17 @@ class CameraManager
 {
 public:
     CameraManager(GraphicsPipeline& graphics, Player* player, std::vector<int> cameraType);
-    ~CameraManager();
+    ~CameraManager(){};
 
-    void Initialize();
-    void Update(float elapsedTime);
+    void Initialize(GraphicsPipeline& graphics, Player* player);
+    void Update(float elapsedTime, Player* player);
 
     camera* GetCamera(int i) { return cameras[i].get(); }
 private:
 
     std::unique_ptr<camera> cameras[2]{};
 
+    std::vector<int>activeCamera{};
 public:
     enum CameraTypes
     {

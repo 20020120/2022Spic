@@ -837,9 +837,8 @@ camera::camera(int cameraType, GraphicsPipeline& graphics, Player* player)
 		initialize = &camera::gameInitialize;
 		update = &camera::gameUpdate;
 		break;
-
     }
-    
+	active = true;
 }
 
 camera::~camera()
@@ -847,9 +846,9 @@ camera::~camera()
     
 }
 
-void camera::Initialize(float elapsedTime, GraphicsPipeline& graphics, Player* player)
+void camera::Initialize(GraphicsPipeline& graphics, Player* player)
 {
-	(this->*initialize)(elapsedTime, graphics, player);
+	(this->*initialize)(graphics, player);
 }
 
 void camera::Update(float elapsedTime, Player* player)
@@ -860,7 +859,7 @@ void camera::Update(float elapsedTime, Player* player)
 	UpdateViewProjection();
 }
 
-void camera::titleInitialize(float elapsedTime, GraphicsPipeline& graphics, Player* player)
+void camera::titleInitialize(GraphicsPipeline& graphics, Player* player)
 {
 }
 
@@ -868,7 +867,7 @@ void camera::titleUpdate(float elapsedTime, Player* player)
 {
 }
 
-void camera::gameInitialize(float elapsedTime, GraphicsPipeline& graphics, Player* player)
+void camera::gameInitialize(GraphicsPipeline& graphics, Player* player)
 {
 	HRESULT hr{ S_OK };
 	//----定数バッファ----//

@@ -33,6 +33,10 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
     player = std::make_unique<Player>(graphics);
 	// ƒJƒƒ‰
 	camera = std::make_unique<Camera>(graphics,player.get());
+	std::vector<int> cameraType{};
+	cameraType.push_back(CameraManager::CameraTypes::Game);
+	cameraManager = std::make_unique<CameraManager>(graphics, player.get(), cameraType);
+	cameraManager->Initialize(graphics, player.get());
 	// enemy_hp_gauge
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
 	// reticle
@@ -114,6 +118,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	// camera
 	camera->Update(elapsed_time,player.get());
+	//cameraManager->Update(elapsed_time, player.get());
 	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
