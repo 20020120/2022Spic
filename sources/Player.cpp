@@ -274,7 +274,10 @@ void Player::SetTarget(const BaseEnemy* target_enemys)
     {
         target_enemy = target_enemys;
     }
-
+    else if(is_lock_on && target_enemy->fGetIsAlive() == false)
+    {
+       target_enemy = target_enemys;
+    }
 }
 
 void Player::AddCombo(int count)
@@ -348,11 +351,11 @@ void Player::ChargeAcceleration(float elapse_time)
     //ロックオンしていたらターゲットに向かって行く
     if (is_lock_on)
     {
-        position = Math::lerp(position, target, 5.0f * elapse_time);
+        position = Math::lerp(position, target, 7.0f * elapse_time);
     }
     else
     {
-        position = Math::lerp(position, charge_point, 5.0f * elapse_time);
+        position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
 }
 
