@@ -48,7 +48,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     SwordCapsule();
     mSwordTrail.fUpdate(elapsed_time,10);
     mSwordTrail.fEraseTrailPoint();
-    
+
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -277,12 +277,17 @@ void Player::SwordCapsule()
 
 void Player::SetTarget(const BaseEnemy* target_enemies)
 {
+    //ターゲットしている敵が死んでいたらnullptrを入れる
+    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
+    {
+        target_enemy = nullptr;
+    }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
     }
-    else if (is_lock_on && target_enemy->fGetIsAlive() == false)
+    else if (is_lock_on && target_enemy == nullptr)
     {
         target_enemy = target_enemies;
     }
