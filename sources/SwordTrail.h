@@ -1,4 +1,6 @@
 #pragma once
+#include"constants.h"
+#include<memory>
 #include<d3d11.h>
 #include<DirectXMath.h>
 #include<vector>
@@ -45,6 +47,12 @@ class SwordTrail final
         DirectX::XMFLOAT2 mTexCoord{};  // UV
     };
 
+    struct TrailConstantBuffer
+    {
+        float mThreshold{};
+        DirectX::XMFLOAT3 mPad0;
+    };
+
     //****************************************************************
     //
     //  ä÷êî
@@ -75,7 +83,8 @@ private:
     std::vector<DirectX::XMFLOAT3> mIinterpolatedTopPoints;
     std::vector<DirectX::XMFLOAT3> mBottomPoints;
     std::vector<DirectX::XMFLOAT3> mIinterpolatedBottomPoints;
-
+    std::unique_ptr<Constants<TrailConstantBuffer>> mConstantBuffer{};
+    
     float mEraseTimer{};
 
     Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader{ nullptr };

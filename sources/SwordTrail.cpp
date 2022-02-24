@@ -134,7 +134,8 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, c
     hr = create_ps_from_cso(pDevice_, cso_ps_name, mPixelShader.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-
+    // 定数バッファを作成
+    mConstantBuffer = std::make_unique<Constants<TrailConstantBuffer>>(pDevice_);
 }
 
 void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
@@ -176,6 +177,12 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
         mTrailVertexVec.emplace_back(vertex);
     }
 
+
+#ifdef USE_IMGUI
+    ImGui::Begin("Trail");
+    ImGui::SliderFloat("threshold", &mConstantBuffer->data.mThreshold, 0.0f, 1.0f);
+    ImGui::End();
+#endif
 }
 
 void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
@@ -188,6 +195,8 @@ void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
     pDeviceContext_->PSSetShader(mPixelShader.Get(), nullptr, 0);
     pDeviceContext_->PSSetShaderResources(0, 1, mShaderResourceView.GetAddressOf());
     pDeviceContext_->PSSetShaderResources(1, 1, mTrailColorSrv.GetAddressOf());
+
+    mConstantBuffer->bind(pDeviceContext_, 0);
 
     HRESULT hr{ S_OK };
     D3D11_MAPPED_SUBRESOURCE mappedSubresource{};
