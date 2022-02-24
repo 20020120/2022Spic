@@ -8,6 +8,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    end_dash_effect = false;
     //移動に遷移
     if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
     {
@@ -20,7 +21,8 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         //後ろに回り込める距離なら回り込みようのUpdate
         if (is_lock_on && length < BEHIND_LANGE)
         {
-            TransitionBehindAvoidance();
+            //TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
+            TransitionAvoidance();
         }
         //そうじゃなかったら普通の回避
         else TransitionAvoidance();
@@ -37,6 +39,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    end_dash_effect = false;
     //移動入力がなくなったら待機に遷移
     if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
@@ -49,7 +52,8 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         //後ろに回り込める距離なら回り込みようのUpdate
         if (is_lock_on && length < BEHIND_LANGE)
         {
-            TransitionBehindAvoidance();
+            //TransitionBehindAvoidance();
+            TransitionAvoidance();
         }
         //そうじゃなかったら普通の回避
         else TransitionAvoidance();
@@ -110,6 +114,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
     ChargeAcceleration(elapsed_time);
     //突進時間を超えたらそれぞれの遷移にとぶ
@@ -138,13 +143,13 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
 
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
+    end_dash_effect = false;
     ChargeAcceleration(elapsed_time);
-
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -162,7 +167,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         }
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
 
@@ -187,7 +192,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         }
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
 
@@ -216,11 +221,12 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         }
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::TransitionIdle()
 {
+    end_dash_effect = true;
     model->play_animation(AnimationClips::Idle, true);
     is_attack = false;
     player_activity = &Player::IdleUpdate;
@@ -228,6 +234,7 @@ void Player::TransitionIdle()
 
 void Player::TransitionMove()
 {
+    end_dash_effect = true;
     model->play_animation(AnimationClips::Move, true);
     is_attack = false;
     player_activity = &Player::MoveUpdate;
@@ -240,6 +247,7 @@ void Player::TransitionAvoidance()
     avoidance_start = velocity;
     if (is_lock_on)
     {
+        leverage = 15.0f;
         DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
         if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
         {
@@ -250,7 +258,11 @@ void Player::TransitionAvoidance()
             avoidance_end = { movevec.x * leverage ,movevec.y * leverage,movevec.z * leverage };
         }
     }
-    else avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
+    else
+    {
+        leverage = 25.0f;
+        avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
+    }
     //-----------------------------------------------------------------------------------------//
     model->play_animation(AnimationClips::Avoidance, false);
     is_avoidance = true;
@@ -278,14 +290,16 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge()
 {
+    start_dash_effect = true;//ポストエフェクトをかける
     model->play_animation(AnimationClips::Charge, false,0);
     is_attack = true;
-    charge_point = Math::calc_designated_point(position, forward, 10.0f);
+    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     player_activity = &Player::ChargeUpdate;
 }
 
 void Player::TransitionAttackType1(float blend_seconds)
 {
+    end_dash_effect = true;
     model->play_animation(AnimationClips::AttackType1, false, 0);
     is_attack = true;
     player_activity = &Player::AttackType1Update;

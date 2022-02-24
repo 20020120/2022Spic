@@ -81,6 +81,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
+	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
+	if (player->GetEndDashEffect())post_effect->clear_post_effect();
+
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
@@ -111,11 +114,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		wave->update(graphics, elapsed_time);
 	}
 	// 敵とのあたり判定(当たったらコンボ加算)
-	player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
-		player->GetSwordCapsuleParam().start,
-		player->GetSwordCapsuleParam().end,
-		player->GetSwordCapsuleParam().rasius,
-		player->GetPlayerPower()));
+	if (player->GetIsPlayerAttack())
+	{
+		player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+			player->GetSwordCapsuleParam().start,
+			player->GetSwordCapsuleParam().end,
+			player->GetSwordCapsuleParam().rasius,
+			player->GetPlayerPower()));
+	}
 
 
 	// camera
@@ -209,9 +215,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	//****************************************************************
-	// 
+	//
 	// オブジェクトの削除処理はこの下でやるルール
-	// 
+	//
 	//****************************************************************
 	enemyManager->fDeleteEnemies();
 }
