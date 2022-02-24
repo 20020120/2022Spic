@@ -275,16 +275,16 @@ void Player::SwordCapsule()
     sword_capsule_param.rasius = 1.7f;
 }
 
-void Player::SetTarget(const BaseEnemy* target_enemys)
+void Player::SetTarget(const BaseEnemy* target_enemies)
 {
     //ターゲットを設定するのはロックオンした瞬間だけ
-    if (is_lock_on == false && target_enemys != nullptr)
+    if (is_lock_on == false && target_enemies != nullptr)
     {
-        target_enemy = target_enemys;
+        target_enemy = target_enemies;
     }
     else if (is_lock_on && target_enemy->fGetIsAlive() == false)
     {
-        target_enemy = target_enemys;
+        target_enemy = target_enemies;
     }
 }
 
