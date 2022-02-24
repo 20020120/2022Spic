@@ -1,6 +1,8 @@
 #pragma once
 
 #include <DirectXMath.h>
+
+#include "BaseCamera.h"
 #include "practical_entities.h"
 #include "constants.h"
 #include "Player.h"
@@ -116,4 +118,44 @@ private:
 
     bool rockOnStart{ true };
     float rockOnTimer{};
+};
+
+class camera : public BaseCamera
+{
+public:
+    camera(int cameraType, GraphicsPipeline& graphics, Player* player);
+    ~camera();
+
+    void Initialize(float elapsedTime, GraphicsPipeline& graphics, Player* player);
+    void Update(float elapsedTime, Player* player);
+
+    void titleInitialize(float elapsedTime, GraphicsPipeline& graphics ,Player* player);
+    void gameInitialize(float elapsedTime, GraphicsPipeline& graphics, Player* player);
+
+    void titleUpdate(float elapsedTime,  Player* player);
+    void gameUpdate(float elapsedTime, Player* player);
+
+    typedef void (camera::* cameraInitialize)(float elapsed_time, GraphicsPipeline& graphics, Player* player);
+    cameraInitialize initialize = &camera::gameInitialize;
+
+    typedef void (camera::* cameraUpdate)(float elapsed_time, Player* player);
+    cameraUpdate update = &camera::gameUpdate;
+private:
+
+    bool active{ false };
+
+    void SetAngle(float elapsedTime);
+    void UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp);
+    void AttitudeControl(float elapsedTime);
+
+    void UpdateEye();
+    void UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
+
+    bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+
+    bool RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp, bool rockOnStart);
+    void RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition);
+
+    bool RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+
 };
