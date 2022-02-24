@@ -109,6 +109,12 @@ void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     //ダメージ処理
     mParam.mHitPoint -= Damage_;
     fChangeState(State::Damaged);
+
+    // 死亡したら爆発エフェクトを出す
+    if (mParam.mHitPoint <= 0)
+    {
+        fDieEffect();
+    }
 }
 
 

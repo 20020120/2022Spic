@@ -323,7 +323,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
             {
                 q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
             }
-            else
+            else\
             {
                 q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
             }

@@ -198,6 +198,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	audio_manager->set_volume_bgm(BGM_INDEX::ENDING, bgm_volume);
 	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume);
 	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
+
+
+	//****************************************************************
+	// 
+	// オブジェクトの削除処理はこの下でやるルール
+	// 
+	//****************************************************************
+	enemyManager->fDeleteEnemies();
 }
 
 #define OFF_SCREEN_RENDERING

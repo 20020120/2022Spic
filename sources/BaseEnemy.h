@@ -56,7 +56,6 @@ struct EnemyData
     }
 };
 
-
 class BaseEnemy :public EnemyMove
 {
 protected:
@@ -115,7 +114,7 @@ public:
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//
     virtual void fGuiMenu(){}
-    void fDieEffect();
+    void fDieEffect() const;
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_, float InvinsibleTime_);
     

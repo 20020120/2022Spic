@@ -251,17 +251,7 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
             mRemoveVec.emplace_back(enemy);
         }
     }
-    // çÌèú
-    for(const auto enemy: mRemoveVec)
-    {
-        auto e=std::find(mEnemyVec.begin(), mEnemyVec.end(), enemy);
-        if(e!=mEnemyVec.end())
-        {
-            safe_delete(*e);
-            mEnemyVec.erase(e);
-        }
-    }
-    mRemoveVec.clear();
+    
 
 }
 
@@ -485,4 +475,19 @@ void EnemyManager::fStartWave(int WaveIndex_)
     fAllClear();
     mWaveTimer = 0.0f;
     fLoad(mWaveFileNameArray[WaveIndex_]);
+}
+
+void EnemyManager::fDeleteEnemies()
+{
+    // çÌèú
+    for (const auto enemy : mRemoveVec)
+    {
+        auto e = std::find(mEnemyVec.begin(), mEnemyVec.end(), enemy);
+        if (e != mEnemyVec.end())
+        {
+            safe_delete(*e);
+            mEnemyVec.erase(e);
+        }
+    }
+    mRemoveVec.clear();
 }

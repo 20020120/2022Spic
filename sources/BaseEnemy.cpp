@@ -14,7 +14,8 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* Mode
     // モデルを初期化
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(graphics_.get_device().Get(), ModelName_);
     mUniqueId = UniqueId_;
-    mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), "");
+    mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), 
+        "./resources/Effect/bomb_2.efk");
 
 }
 
@@ -38,9 +39,10 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
     mParam.mMoveSpeed = mData.mMoveSpeed;
 }
 
-void BaseEnemy::fDieEffect()
+void BaseEnemy::fDieEffect() const
 {
-    
+    mDieEffect->play(effect_manager->get_effekseer_manager(), mPosition,2.0f);
+    hit_stop->damage_hit_stop();
 }
 
 void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)
@@ -59,7 +61,11 @@ void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     //ダメージ処理
     mParam.mHitPoint -= Damage_;
 
-    
+    // 死亡したら爆発エフェクトを出す
+    if (mParam.mHitPoint <= 0)
+    {
+        fDieEffect(); 
+    }
 }
 
 void BaseEnemy::fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_)
