@@ -3,6 +3,7 @@
 #include"PlayerMove.h"
 #include"collision.h"
 #include"BaseEnemy.h"
+#include"SwordTrail.h"
 #include"graphics_pipeline.h"
 
 class Player :public BasePlayer, private PlayerMove
@@ -119,6 +120,10 @@ private:
     bool start_dash_effect{ false };
     //ダッシュエフェクト終了
     bool end_dash_effect{ false };
+
+    //--------------------<SwordTrail～剣の軌跡～>--------------------//
+    SwordTrail mSwordTrail{};
+    float mTrailEraseTimer{};
 private:
     //攻撃力の変化
     void InflectionPower(float elapsed_time);

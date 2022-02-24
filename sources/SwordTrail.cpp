@@ -132,6 +132,8 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_)
 
 void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
 {
+    mEraseTimer += elapsedTime_;
+
     fInterpolate(steps);
 
     mTrailVertexVec.clear();
@@ -221,8 +223,34 @@ void SwordTrail::fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom
 
 void SwordTrail::fEraseTrailPoint()
 {
-    mTopPoints.erase(mTopPoints.begin());
-    mBottomPoints.erase(mBottomPoints.begin());
+    bool isErase = false;
+
+    // Å‘å”‚É‚È‚Á‚½‚ç‘O‚ðÁ‚·
+    if(mEraseTimer>=mEraseSeparateTime)
+    {
+        if (mTopPoints.size() > 0)
+        {
+            mTopPoints.erase(mTopPoints.begin());
+        }
+        if (mBottomPoints.size() > 0)
+        {
+            mBottomPoints.erase(mBottomPoints.begin());
+        }
+        mEraseTimer = 0.0f;
+        isErase = true;
+    }
+
+    if (!isErase)
+    {
+        if (mTopPoints.size() >= 40)
+        {
+            mTopPoints.erase(mTopPoints.begin());
+        }
+        if (mBottomPoints.size() >= 40)
+        {
+            mBottomPoints.erase(mBottomPoints.begin());
+        }
+    }
 }
 
 void SwordTrail::fInterpolate(size_t steps)
@@ -246,5 +274,9 @@ void SwordTrail::fInterpolate(size_t steps)
             data.mBottomPoint = mIinterpolatedBottomPoints.at(count);
             mDataVec.emplace_back(data);
         }
+    }
+    else
+    {
+        mDataVec.clear();
     }
 }

@@ -11,6 +11,7 @@ Player::Player(GraphicsPipeline& graphics)
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.01f,0.01f,0.01f };
     GetPlayerDirections();
+    mSwordTrail.fInitialize(graphics.get_device().Get(), L"./resources/Sprites/mask/dissolve_mask2.png");
 }
 
 Player::~Player()
@@ -45,6 +46,10 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     BodyCapsule();
     //剣の大きさのカプセルのパラメータ
     SwordCapsule();
+    mSwordTrail.fUpdate(elapsed_time,10);
+    mSwordTrail.fEraseTrailPoint();
+    
+
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -122,6 +127,9 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
+
+    graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+    mSwordTrail.fRender(graphics.get_dc().Get());
 }
 
 void Player::BehindAvoidancePosition()
@@ -264,7 +272,7 @@ void Player::SwordCapsule()
 
     sword_capsule_param.start = pos;
     sword_capsule_param.end = end;
-    sword_capsule_param.rasius = 0.7f;
+    sword_capsule_param.rasius = 1.7f;
 }
 
 void Player::SetTarget(const BaseEnemy* target_enemys)
@@ -274,9 +282,9 @@ void Player::SetTarget(const BaseEnemy* target_enemys)
     {
         target_enemy = target_enemys;
     }
-    else if(is_lock_on && target_enemy->fGetIsAlive() == false)
+    else if (is_lock_on && target_enemy->fGetIsAlive() == false)
     {
-       target_enemy = target_enemys;
+        target_enemy = target_enemys;
     }
 }
 
@@ -361,7 +369,7 @@ void Player::ChargeAcceleration(float elapse_time)
 
 void Player::LockOn()
 {
-    if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
+    if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
     {
         target = target_enemy->fGetPosition();
         is_enemy = true;

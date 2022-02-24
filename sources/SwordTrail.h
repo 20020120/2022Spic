@@ -76,6 +76,8 @@ private:
     std::vector<DirectX::XMFLOAT3> mBottomPoints;
     std::vector<DirectX::XMFLOAT3> mIinterpolatedBottomPoints;
 
+    float mEraseTimer{};
+
     Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader{ nullptr };
     Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader{ nullptr };
     Microsoft::WRL::ComPtr<ID3D11InputLayout> mInputLayout{ nullptr };
@@ -89,5 +91,6 @@ private:
     // íËêî
     //
     //****************************************************************
-    const int mMaxTrailCount = 1000;
+    const int mMaxTrailCount = 6030;
+    const float mEraseSeparateTime = 0.01f;
 };

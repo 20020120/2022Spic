@@ -136,6 +136,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType1(0);
         }
     }
+    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
+
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -159,6 +161,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType2(0);
         }
     }
+    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -183,6 +186,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionAttackType3(0);
         }
     }
+    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
 }
@@ -211,6 +215,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
+    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
