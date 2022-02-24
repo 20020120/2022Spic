@@ -95,7 +95,6 @@ public:
                 cereal::make_nvp("PointB", mPointB),
                 cereal::make_nvp("Radius", mRadius));
         }
-        
     };
 
     //****************************************************************
@@ -126,7 +125,7 @@ public:
     [[nodiscard]] bool fGetIsFrustum()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
-    [[nodiscard]] bool fGetIsAlive()const;
+    [[nodiscard]] bool fGetIsAlive()const; 
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     [[nodiscard]] int fGetUniqueId()const;
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
