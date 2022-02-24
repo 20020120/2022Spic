@@ -272,7 +272,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 
 
-	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
+	effect_manager->render(camera::get_keep_view(), camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
 	debug_figure->render_all_figures(graphics.get_dc().Get());
 

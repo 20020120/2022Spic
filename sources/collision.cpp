@@ -269,9 +269,9 @@ bool Collision::frustum_vs_cuboid(const DirectX::XMFLOAT3& cuboid_min_pos, const
     //----- 視錐台のパラメーター -----//
     // ビュープロジェクション行列を取得する
     XMMATRIX matrix = {};
-    XMFLOAT4X4 view = Camera::get_keep_view();
+    XMFLOAT4X4 view = camera::get_keep_view();
     XMMATRIX view_mat = XMLoadFloat4x4(&view);
-    XMFLOAT4X4 proj = Camera::get_keep_projection();
+    XMFLOAT4X4 proj = camera::get_keep_projection();
     XMMATRIX proj_mat = XMLoadFloat4x4(&proj);
     matrix = view_mat * proj_mat;
     //ビュープロジェクション行列の逆行列
