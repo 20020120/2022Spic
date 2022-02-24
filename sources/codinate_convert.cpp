@@ -9,9 +9,9 @@ const DirectX::XMFLOAT2& conversion_2D(ID3D11DeviceContext* dc, const DirectX::X
 	UINT num_viewports = 1;
 	dc->RSGetViewports(&num_viewports, &viewport);
 	// ïœä∑çsóÒ
-	const DirectX::XMFLOAT4X4& view = Camera::get_keep_view();
+	const DirectX::XMFLOAT4X4& view = camera::get_keep_view();
 	XMMATRIX view_mat = XMLoadFloat4x4(&view);
-	const DirectX::XMFLOAT4X4& projection = Camera::get_keep_projection();
+	const DirectX::XMFLOAT4X4& projection = camera::get_keep_projection();
 	XMMATRIX projection_mat = XMLoadFloat4x4(&projection);
 	XMMATRIX world_mat = DirectX::XMMatrixIdentity();
 	XMVECTOR coordinate_vec = XMLoadFloat3(&coordinate);

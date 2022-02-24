@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "camera.h"
+#include "CameraManager.h"
 #include "shadow_map.h"
 #include "post_effect.h"
 #include "bloom.h"
@@ -43,7 +44,8 @@ public:
 private:
     //--------< •Ï” >--------//
     // camera
-    std::unique_ptr<Camera> camera;
+    //std::unique_ptr<Camera> camera;
+    std::unique_ptr<CameraManager> cameraManager;
     // shadowmap
     std::unique_ptr<ShadowMap> shadow_map;
     // post effect
