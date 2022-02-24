@@ -54,7 +54,7 @@ public:
     SwordTrail() = default;
     ~SwordTrail() = default;
 
-    void fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_);
+    void fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, const wchar_t* ColorMapName_);
     void fUpdate(float elapsedTime_, size_t steps);
     void fRender(ID3D11DeviceContext* pDeviceContext_);
 
@@ -83,7 +83,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout> mInputLayout{ nullptr };
     Microsoft::WRL::ComPtr<ID3D11Buffer> mVertexBuffer{ nullptr };
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mShaderResourceView{ nullptr };
-    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mTrailNormalSrv{ nullptr };
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mTrailColorSrv{ nullptr };
     D3D11_TEXTURE2D_DESC mTexture2DDesc{};
 
     //****************************************************************

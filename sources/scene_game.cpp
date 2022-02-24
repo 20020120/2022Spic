@@ -167,7 +167,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 #ifdef USE_IMGUI
 	{
 		ImGui::Begin("hit_stop");
-		if (ImGui::Button("stop")) { hit_stop->damage_hit_stop(); }
+		if (ImGui::Button("stop")) { hit_stop->damage_h\it_stop(); }
 		ImGui::End();
 	}
 #endif // USE_IMGUI

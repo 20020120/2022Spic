@@ -81,7 +81,7 @@ void CatmullRomSpline::interpolate(size_t segment, std::vector<DirectX::XMFLOAT3
 #endif
 }
 
-void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_)
+void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, const wchar_t* ColorMapName_)
 {
     HRESULT hr{ S_OK };
 
@@ -103,9 +103,16 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_)
     hr = pDevice_->CreateBuffer(&bufferDesc, &subResourceData, &mVertexBuffer);
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
-    hr = load_texture_from_file(pDevice_, FileName_, &mShaderResourceView, &mTexture2DDesc);
-    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
-
+    if (FileName_)
+    {
+        hr = load_texture_from_file(pDevice_, FileName_, &mShaderResourceView, &mTexture2DDesc);
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
+    if (ColorMapName_)
+    {
+        hr = load_texture_from_file(pDevice_, ColorMapName_, &mTrailColorSrv, &mTexture2DDesc);
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 
     //入力レイアウトオブジェクトの生成
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
@@ -137,35 +144,38 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
     fInterpolate(steps);
 
     mTrailVertexVec.clear();
+
+    const float texXSeparate = 1.0f / (mDataVec.size()-1);
     // 剣の位置データから頂点を生成する
     for (int i = mDataVec.size() - 1; i > 0; i--)
     {
         TrailVertex vertex{};
         // 左上
         vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { 0.0f,0.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate*i) ,0.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 右下
         vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { 1.0f,1.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 左下
         vertex.mPosition = mDataVec[i].mBottomPoint;
-        vertex.mTexCoord = { 0.0f,1.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 左上
         vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { 0.0f,0.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),0.0f };
         mTrailVertexVec.emplace_back(vertex);
         //右上
         vertex.mPosition = mDataVec[i - 1].mTopPoint;
-        vertex.mTexCoord = { 1.0f,0.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),0.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 右下
         vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { 1.0f,1.0f };
+        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
     }
+
 }
 
 void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
@@ -177,6 +187,7 @@ void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
     pDeviceContext_->VSSetShader(mVertexShader.Get(), nullptr, 0);
     pDeviceContext_->PSSetShader(mPixelShader.Get(), nullptr, 0);
     pDeviceContext_->PSSetShaderResources(0, 1, mShaderResourceView.GetAddressOf());
+    pDeviceContext_->PSSetShaderResources(1, 1, mTrailColorSrv.GetAddressOf());
 
     HRESULT hr{ S_OK };
     D3D11_MAPPED_SUBRESOURCE mappedSubresource{};

@@ -11,7 +11,9 @@ Player::Player(GraphicsPipeline& graphics)
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.01f,0.01f,0.01f };
     GetPlayerDirections();
-    mSwordTrail.fInitialize(graphics.get_device().Get(), L"./resources/Sprites/mask/dissolve_mask2.png");
+    mSwordTrail.fInitialize(graphics.get_device().Get(), 
+        L"./resources/TexMaps/SwordTrail/CircleBlur.png",
+        L"./resources/TexMaps/SwordTrail/TestBorder.png");
 }
 
 Player::~Player()
