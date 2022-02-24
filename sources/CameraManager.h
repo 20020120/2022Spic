@@ -10,6 +10,8 @@ public:
     void Initialize(GraphicsPipeline& graphics, Player* player);
     void Update(float elapsedTime, Player* player);
 
+    void CalcViewProjection(GraphicsPipeline& graphics);
+
     camera* GetCamera(int i) { return cameras[i].get(); }
 private:
 

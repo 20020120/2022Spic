@@ -21,6 +21,27 @@ public:
     void AttitudeControl(float elapsedTime);
 
     void DebugGUI();
+
+    void calc_view_projection(GraphicsPipeline& graphics);
+
+    void debug_gui();
+    //--------<getter/setter>--------//
+// range
+    void set_range(float r) { range = r; }
+    // target
+    void set_target(const DirectX::XMFLOAT3& t) { target = t; }
+    const DirectX::XMFLOAT3& get_target() { return target; }
+    // eye
+    const DirectX::XMFLOAT3& get_eye() { return eye; }
+    // angle
+    void set_angle(const DirectX::XMFLOAT3& a) { angle = a; }
+    // light_direction
+    const DirectX::XMFLOAT4& get_light_direction() { return scene_constants->data.light_direction; }
+    // view
+    static const DirectX::XMFLOAT4X4& get_keep_view() { return keep_view; }
+    // projection
+    static const DirectX::XMFLOAT4X4& get_keep_projection() { return keep_projection; }
+
 protected:
     //--------< ’è”/\‘¢‘Ì >--------//
     struct SceneConstants
@@ -55,5 +76,10 @@ protected:
 
     bool rockOnStart{ true };
     float rockOnTimer{};
+    bool display_camera_imgui{ false };
+
+    static DirectX::XMFLOAT4X4 keep_view;
+    static DirectX::XMFLOAT4X4 keep_projection;
+    bool is_mouse_operation{ false };
 
 };

@@ -44,7 +44,7 @@ public:
 private:
     //--------< •Ï” >--------//
     // camera
-    std::unique_ptr<Camera> camera;
+    //std::unique_ptr<Camera> camera;
     std::unique_ptr<CameraManager> cameraManager;
     // shadowmap
     std::unique_ptr<ShadowMap> shadow_map;

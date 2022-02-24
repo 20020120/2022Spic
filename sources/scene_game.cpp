@@ -32,7 +32,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics);
     player = std::make_unique<Player>(graphics);
 	// カメラ
-	camera = std::make_unique<Camera>(graphics,player.get());
+	//camera = std::make_unique<Camera>(graphics,player.get());
 	std::vector<int> cameraType{};
 	cameraType.push_back(CameraManager::CameraTypes::Game);
 	cameraManager = std::make_unique<CameraManager>(graphics, player.get(), cameraType);
@@ -75,16 +75,18 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
+	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
+
 	player->Update(elapsed_time, sky_dome.get());
-	player->SetCameraDirection(camera->GetForward(), camera->GetRight());
-	player->SetCameraPosition(camera->get_eye());
+	player->SetCameraDirection(c->GetForward(), c->GetRight());
+	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
-	enemy_hp_gauge->focus(enemy, player->GetEnemyLockOn());
+	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 
 	reticle->update(graphics, elapsed_time);
-	reticle->focus(enemy, player->GetEnemyLockOn());
+	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 	{
 		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };
 		static DirectX::XMFLOAT2 offset{ 50.0f, 0 };
@@ -117,8 +119,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	// camera
-	camera->Update(elapsed_time,player.get());
-	//cameraManager->Update(elapsed_time, player.get());
+	//camera->Update(elapsed_time,player.get());
+	cameraManager->Update(elapsed_time, player.get());
 	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
@@ -228,7 +230,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	shadow_map->set_shadowmap(graphics);
 #endif // SHADOW_MAP
 	// カメラのビュー行列計算
-	camera->calc_view_projection(graphics);
+	//camera->calc_view_projection(graphics);
+	cameraManager->CalcViewProjection(graphics);
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
 	{
@@ -317,8 +320,9 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
 #ifdef SHADOW_MAP
+	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
 	//--シャドウマップの生成--//
-	shadow_map->activate_shadowmap(graphics, camera->get_light_direction());
+	shadow_map->activate_shadowmap(graphics, c->get_light_direction());
 
 
 

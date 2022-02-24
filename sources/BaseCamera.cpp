@@ -1,6 +1,9 @@
 #include "BaseCamera.h"
 #include "framework.h"
 
+DirectX::XMFLOAT4X4 BaseCamera::keep_view = {};
+DirectX::XMFLOAT4X4 BaseCamera::keep_projection = {};
+
 void BaseCamera::UpdateViewProjection()
 {
 	DirectX::XMFLOAT3 up = { 0, 1, 0 };
@@ -75,3 +78,45 @@ void BaseCamera::DebugGUI()
 #endif
 }
 
+void BaseCamera::calc_view_projection(GraphicsPipeline& graphics)
+{
+	// ビュー・プロジェクション変換行列を計算し、それを定数バッファにセットする
+	using namespace DirectX;
+#ifdef USE_IMGUI
+	if (display_camera_imgui)
+	{
+		ImGui::Begin("Camera", false);
+		ImGui::DragFloat4("LightDirection", &scene_constants->data.light_direction.x, 0.01f, -1, 1);
+		ImGui::ColorEdit4("light_color", &scene_constants->data.light_color.x);
+		ImGui::End();
+		debug_gui();
+	}
+#endif
+	// ビュー行列/プロジェクション行列を作成
+	XMMATRIX V = XMLoadFloat4x4(&view);
+	XMMATRIX P = XMLoadFloat4x4(&projection);
+	keep_view = view;
+	keep_projection = projection;
+	// 定数バッファにフェッチする
+	XMStoreFloat4x4(&scene_constants->data.view_projection, V * P);
+	scene_constants->data.camera_position = { eye.x,eye.y,eye.z,0 };
+	scene_constants->data.shake_matrix = camera_shake->get_shake_matrix();
+	XMStoreFloat4x4(&scene_constants->data.inverse_view_projection, XMMatrixInverse(nullptr, V * P));
+
+	scene_constants->bind(graphics.get_dc().Get(), 1, CB_FLAG::PS_VS_GS);
+}
+
+void BaseCamera::debug_gui()
+{
+#ifdef USE_IMGUI
+	if (display_camera_imgui)
+	{
+		ImGui::Begin("Camera");
+		ImGui::Checkbox("mouse_operation", &is_mouse_operation);
+		ImGui::DragFloat("range", &range, 0.2f);
+		ImGui::DragFloat2("angle", &angle.x, 0.1f);
+		ImGui::DragFloat3("target", &target.x, 0.1f, -100, 100);
+		ImGui::End();
+	}
+#endif
+}

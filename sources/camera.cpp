@@ -1318,3 +1318,4 @@ void camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX:
 	DirectX::XMStoreFloat3(&playerToRockOn, PlayerToRockOn);
 	DirectX::XMStoreFloat3(&rockOnEyeVector, RockOnEyeVector);
 }
+

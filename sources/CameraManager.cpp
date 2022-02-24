@@ -24,3 +24,11 @@ void CameraManager::Update(float elapsedTime, Player* player)
         cameras[it]->Update(elapsedTime, player);
     }
 }
+
+void CameraManager::CalcViewProjection(GraphicsPipeline& graphics)
+{
+    for (auto& it : activeCamera)
+    {
+        cameras[it]->calc_view_projection(graphics);
+    }
+}
