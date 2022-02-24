@@ -141,6 +141,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -163,6 +165,8 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -185,6 +189,8 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)

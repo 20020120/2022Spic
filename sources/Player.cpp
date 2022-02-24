@@ -257,7 +257,7 @@ void Player::SwordCapsule()
 {
     DirectX::XMFLOAT3 pos, up = {};
     model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "sword_r_rig", pos, up);
-    static float r = 2.3f;
+    static float r = 3.3f;
     static float r2 = 0.3f;
     DirectX::XMFLOAT3 end = Math::calc_designated_point(pos, up, r);
     //debug_figure->create_capsule(pos, end, r2, { 1,1,0,1 });
