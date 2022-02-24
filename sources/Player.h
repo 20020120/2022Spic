@@ -4,6 +4,7 @@
 #include"collision.h"
 #include"BaseEnemy.h"
 #include"SwordTrail.h"
+#include"post_effect.h"
 #include"graphics_pipeline.h"
 
 class Player :public BasePlayer, private PlayerMove
@@ -120,7 +121,6 @@ private:
     bool start_dash_effect{ false };
     //ダッシュエフェクト終了
     bool end_dash_effect{ false };
-
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail{};
     float mTrailEraseTimer{};
@@ -160,6 +160,8 @@ public:
     bool GetEnemyLockOn() { return is_lock_on; }
     bool GetAvoidance() { return is_avoidance; }
     bool GetIsPlayerAttack() { return is_attack; }
+    bool GetStartDashEffect() { return start_dash_effect; }
+    bool GetEndDashEffect() { return end_dash_effect; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetSwordCapsuleParam() { return sword_capsule_param; }
     std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}

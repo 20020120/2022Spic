@@ -75,6 +75,26 @@ void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFL
     //UpdateHorizontalMove(elapsed_time, position, sky_dome);
 }
 
+void PlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    //åoâﬂÉtÉåÅ[ÉÄ
+    float elapsed_frame = 60.0f * elapsed_time;
+
+    if (is_enemy && is_lock_on)
+    {
+        RotateToTarget(elapsed_time, position, orientation);
+        RollTurn(position, orientation, elapsed_time);
+    }
+    UpdateVerticalVelocity(elapsed_frame);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
+    UpdateHrizontalVelocity(elapsed_frame);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
+    SetDirections(orientation);
+
+
+
+}
+
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
 {
     float length{ sqrtf(velocity.y * velocity.y)};

@@ -85,7 +85,7 @@ private:
 		float pad7;
 		// dash_blur
 		DirectX::XMFLOAT4 reference_position{ 0.5f, 0.5f, 0, 0 };
-		float zoom_power{ 4 };
+		float zoom_power{ 0.74f };
 		int focus_detail{ 50 };
 		DirectX::XMFLOAT2 pad8;
 	};

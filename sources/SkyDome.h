@@ -14,7 +14,7 @@ public:
     bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 private:
     DirectX::XMFLOAT3 position{};
-    DirectX::XMFLOAT3 scale{ 0.1f , 0.1f , 0.1f };
+    DirectX::XMFLOAT3 scale{ 0.058f , 0.058f , 0.058f };
     DirectX::XMFLOAT3 angle{};
 public:
     void SetPosition(DirectX::XMFLOAT3 p) { position = p; }

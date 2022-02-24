@@ -85,6 +85,8 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::Checkbox("is_lock_on", &is_lock_on);
                 ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::Checkbox("start_dash_effect", &start_dash_effect);
+                ImGui::Checkbox("end_dash_effect", &end_dash_effect);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
@@ -295,6 +297,7 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     }
 }
 
+
 void Player::AddCombo(int count)
 {
     if (count != 0)
@@ -366,7 +369,7 @@ void Player::ChargeAcceleration(float elapse_time)
     //ロックオンしていたらターゲットに向かって行く
     if (is_lock_on)
     {
-        position = Math::lerp(position, target, 7.0f * elapse_time);
+        position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
     {
@@ -408,5 +411,6 @@ void Player::CameraReset()
     if (game_pad->get_button_down() & GamePad::BTN_X)
     {
         camera_reset = true;
+        orientation = { 0,0,0,1.0f };//期待の向きもリセットしてる(プロトでは)
     }
 }
