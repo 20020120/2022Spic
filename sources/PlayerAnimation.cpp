@@ -111,15 +111,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     charge_time += charge_add_time * elapsed_time;
-    //ロックオン中はターゲットに向かって突進する
-    if (is_lock_on)
-    {
-        ChargeAcceleration(elapsed_time);
-    }
-    else
-    {
-
-    }
+    ChargeAcceleration(elapsed_time);
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
@@ -149,6 +141,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -171,6 +165,8 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -193,6 +189,8 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
+    ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -277,6 +275,7 @@ void Player::TransitionCharge()
 {
     model->play_animation(AnimationClips::Charge, false,0);
     is_attack = true;
+    charge_point = Math::calc_designated_point(position, forward, 10.0f);
     player_activity = &Player::ChargeUpdate;
 }
 

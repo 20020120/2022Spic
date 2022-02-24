@@ -28,7 +28,7 @@ public:
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //突進時間
-    static constexpr float CHARGE_MAX_TIME = 3.0f;
+    static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.2f;
     //攻撃2撃目の猶予時間
@@ -113,6 +113,8 @@ private:
     float invincible_timer{};
     //コンボの持続時間
     float duration_combo_timer{};
+    //ロックオンしていないときの突進のターゲット
+    DirectX::XMFLOAT3 charge_point{};
 private:
     //攻撃力の変化
     void InflectionPower(float elapsed_time);

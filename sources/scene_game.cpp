@@ -253,6 +253,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	player->Render(graphics, elapsed_time);
 
 	//--------<ui>--------//
+	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	// enemy_hp_gauge
 	enemy_hp_gauge->render(graphics, elapsed_time);
 	// reticle
