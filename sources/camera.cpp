@@ -894,8 +894,9 @@ void camera::gameInitialize(GraphicsPipeline& graphics, Player* player)
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 
 	DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
-	const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
-	DirectX::XMStoreFloat(&radius, Radius);
+	//const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
+	//DirectX::XMStoreFloat(&radius, Radius);
+	radius = 15;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
@@ -932,13 +933,13 @@ void camera::gameUpdate(float elapsedTime, Player* player)
 			}
 		}
 		SetAngle(elapsedTime);
-		//const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
-		//const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
-		//RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
-		//if(RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn()))
-		//{
-		//    player->FalseCameraLockOn();
-		//}
+		const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
+		const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
+		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
+		if(RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn()))
+		{
+		    player->FalseCameraLockOn();
+		}
 		UpdateEyeVector(elapsedTime, PlayerUp);
 
 	}
