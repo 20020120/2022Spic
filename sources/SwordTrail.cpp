@@ -136,6 +136,7 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, c
 
     // 定数バッファを作成
     mConstantBuffer = std::make_unique<Constants<TrailConstantBuffer>>(pDevice_);
+    mConstantBuffer->data.mThreshold = 1.0f;
 }
 
 void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
@@ -147,33 +148,35 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
     mTrailVertexVec.clear();
 
     const float texXSeparate = 1.0f / (mDataVec.size()-1);
+    static float startPoint = 0.5f;
+    startPoint += elapsedTime_ * 10.0f;
     // 剣の位置データから頂点を生成する
     for (int i = mDataVec.size() - 1; i > 0; i--)
     {
         TrailVertex vertex{};
         // 左上
         vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate*i) ,0.0f };
+        vertex.mTexCoord = { startPoint+static_cast<float>(texXSeparate*i) ,0.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 右下
         vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
+        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 左下
         vertex.mPosition = mDataVec[i].mBottomPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
+        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 左上
         vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),0.0f };
+        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),0.0f };
         mTrailVertexVec.emplace_back(vertex);
         //右上
         vertex.mPosition = mDataVec[i - 1].mTopPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),0.0f };
+        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),0.0f };
         mTrailVertexVec.emplace_back(vertex);
         // 右下
         vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { static_cast<float>(texXSeparate * i),1.0f };
+        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
         mTrailVertexVec.emplace_back(vertex);
     }
 

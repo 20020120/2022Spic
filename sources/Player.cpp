@@ -12,8 +12,8 @@ Player::Player(GraphicsPipeline& graphics)
     scale = { 0.01f,0.01f,0.01f };
     GetPlayerDirections();
     mSwordTrail.fInitialize(graphics.get_device().Get(), 
-        L"./resources/TexMaps/SwordTrail/CircleBlur.png",
-        L"./resources/TexMaps/SwordTrail/TestBorder.png");
+        L"./resources/TexMaps/SwordTrail/Yugami.png",
+        L"./resources/TexMaps/SwordTrail/trajectory.png");
 }
 
 Player::~Player()
