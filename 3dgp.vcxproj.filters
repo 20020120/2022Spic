@@ -357,6 +357,9 @@
     <ClCompile Include="sources\MiddleBossStateMachines.cpp">
       <Filter>Sources\character\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="sources\RaserBeam.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -595,6 +598,9 @@
     </ClInclude>
     <ClInclude Include="sources\MiddleBoss.h">
       <Filter>Sources\character\Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\RaserBeam.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
