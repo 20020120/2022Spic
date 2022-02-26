@@ -235,6 +235,7 @@
     <ClCompile Include="sources\husk_particles.cpp" />
     <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\main.cpp" />
+    <ClCompile Include="sources\MiddleBoss.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\MoveBehavior.cpp" />
     <ClCompile Include="sources\ChaseEnemy.cpp" />
@@ -313,6 +314,7 @@
     <ClInclude Include="sources\imgui_include.h" />
     <ClInclude Include="sources\json.hpp" />
     <ClInclude Include="sources\JsonFileManager.h" />
+    <ClInclude Include="sources\MiddleBoss.h" />
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />

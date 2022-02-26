@@ -127,6 +127,9 @@
     <Filter Include="Shaders\sword-trail">
       <UniqueIdentifier>{20f8f511-98a1-4d90-a058-2d3ca6d4e62e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\Boss">
+      <UniqueIdentifier>{fc5562ef-1437-4c1b-bd8e-e60010101650}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -347,6 +350,9 @@
     </ClCompile>
     <ClCompile Include="sources\CameraManager.cpp">
       <Filter>Sources\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\MiddleBoss.cpp">
+      <Filter>Sources\character\Boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -583,6 +589,9 @@
     </ClInclude>
     <ClInclude Include="sources\CameraManager.h">
       <Filter>Sources\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\MiddleBoss.h">
+      <Filter>Sources\character\Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
