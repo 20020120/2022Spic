@@ -354,6 +354,9 @@
     <ClCompile Include="sources\MiddleBoss.cpp">
       <Filter>Sources\character\Boss</Filter>
     </ClCompile>
+    <ClCompile Include="sources\MiddleBossStateMachines.cpp">
+      <Filter>Sources\character\Boss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">

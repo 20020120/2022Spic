@@ -4,6 +4,8 @@
 #include"TestEnemy.h"
 #include"NormalEnemy.h"
 #include"ChaseEnemy.h"
+#include"MiddleBoss.h"
+
 #include"imgui_include.h" 
 #include "user.h"
 #include"collision.h"
@@ -42,7 +44,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
     // fSpawn();
     fProtoSpawn(graphics_);
     // ImGui‚Ìƒƒjƒ…[
-    fGuiMenu();
+    fGuiMenu(graphics_);
 }
 
 void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
@@ -216,19 +218,25 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         auto enemy = new TestEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
-        break;
+    break;
     case EnemyType::Normal:
     {
         auto enemy = new NormalEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
-        break;
-    case EnemyType::Chase :
+    break;
+    case EnemyType::Chase:
     {
         auto enemy = new ChaseEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
-        break;
+    break;
+    case EnemyType::MiddleBoss_:
+    {
+        auto enemy = new MiddleBoss(graphics_, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
         break;
@@ -381,7 +389,7 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
 }
 
 
-void EnemyManager::fGuiMenu()
+void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_)
 {
     imgui_menu_bar("Game", "EnemyManager", mOpenGuiMenu);
 
@@ -416,7 +424,7 @@ void EnemyManager::fGuiMenu()
 
         ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase"};
+        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","MiddleBoss"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 
@@ -425,6 +433,7 @@ void EnemyManager::fGuiMenu()
             EnemySource source{};
             source.mEmitterNumber = 0;
             source.mType = elem;
+            fSpawn(source,Graphics_);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);

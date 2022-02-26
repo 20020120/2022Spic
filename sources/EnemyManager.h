@@ -47,6 +47,7 @@ class EnemyManager final
         // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
         Normal,
         Chase,  // 攻撃なし＆追跡してくる
+        MiddleBoss_, // 中ボス
         // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
         Count, // 種類の総量
     };
@@ -88,7 +89,7 @@ public:
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
     //--------------------<ImGui>--------------------//
-    void fGuiMenu();
+    void fGuiMenu(GraphicsPipeline& Graphics_);
     //--------------------<ウェーブ切り替え関数>--------------------//
     void fStartWave(int WaveIndex_);
 

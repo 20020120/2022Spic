@@ -236,6 +236,7 @@
     <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\MiddleBoss.cpp" />
+    <ClCompile Include="sources\MiddleBossStateMachines.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\MoveBehavior.cpp" />
     <ClCompile Include="sources\ChaseEnemy.cpp" />
