@@ -249,7 +249,7 @@
     <ClCompile Include="sources\point_light.cpp" />
     <ClCompile Include="sources\post_effect.cpp" />
     <ClCompile Include="sources\practical_entities.cpp" />
-    <ClCompile Include="sources\RaserBeam.cpp" />
+    <ClCompile Include="sources\LaserBeam.cpp" />
     <ClCompile Include="sources\resource_manager.cpp" />
     <ClCompile Include="sources\reticle.cpp" />
     <ClCompile Include="sources\scene.cpp" />
@@ -330,7 +330,7 @@
     <ClInclude Include="sources\point_light.h" />
     <ClInclude Include="sources\post_effect.h" />
     <ClInclude Include="sources\practical_entities.h" />
-    <ClInclude Include="sources\RaserBeam.h" />
+    <ClInclude Include="sources\LaserBeam.h" />
     <ClInclude Include="sources\resource_manager.h" />
     <ClInclude Include="sources\reticle.h" />
     <ClInclude Include="sources\scene.h" />

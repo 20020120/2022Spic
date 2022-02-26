@@ -130,6 +130,9 @@
     <Filter Include="Sources\character\Boss">
       <UniqueIdentifier>{fc5562ef-1437-4c1b-bd8e-e60010101650}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\RaserBeam">
+      <UniqueIdentifier>{c6606b95-fc21-47e7-a1b7-a62e5d205aa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -357,8 +360,8 @@
     <ClCompile Include="sources\MiddleBossStateMachines.cpp">
       <Filter>Sources\character\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="sources\RaserBeam.cpp">
-      <Filter>Sources</Filter>
+    <ClCompile Include="sources\LaserBeam.cpp">
+      <Filter>Shaders\RaserBeam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -599,8 +602,8 @@
     <ClInclude Include="sources\MiddleBoss.h">
       <Filter>Sources\character\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="sources\RaserBeam.h">
-      <Filter>Sources</Filter>
+    <ClInclude Include="sources\LaserBeam.h">
+      <Filter>Shaders\RaserBeam</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
