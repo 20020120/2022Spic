@@ -11,7 +11,7 @@ Player::Player(GraphicsPipeline& graphics)
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.01f,0.01f,0.01f };
     GetPlayerDirections();
-    mSwordTrail.fInitialize(graphics.get_device().Get(), 
+    mSwordTrail.fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/Yugami.png",
         L"./resources/TexMaps/SwordTrail/trajectory.png");
 }
@@ -231,7 +231,7 @@ void Player::InflectionPower(float elapsed_time)
 {
     static float timer = 0;
     timer += 1.0f * elapsed_time;
-    player_attack_power = combo_count * 1.1f;
+    player_attack_power = combo_count;
 
     if (timer > 0.5f)
     {
@@ -243,10 +243,16 @@ void Player::InflectionPower(float elapsed_time)
 
 void Player::InflectionCombo(float elapsed_time)
 {
-    duration_combo_timer -= 1.0f * elapsed_time;
+    duration_combo_timer += 1.0f * elapsed_time;
+    if (duration_combo_timer >= 1.0f)
+    {
+        duration_combo_timer = 0;
+        combo_count -= 1;
+    }
+    combo_count = Math::clamp(combo_count, 0, 20);
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //コンボ中タイマーが0になったらコンボは0にする
-    if (duration_combo_timer <= 0) combo_count = 0;
+    //if (duration_combo_timer <= 0) combo_count = 0;
 }
 
 void Player::BodyCapsule()
@@ -310,12 +316,10 @@ void Player::AddCombo(int count)
             {
                 invincible_timer = 1.0f;
                 player_health -= 1;
-                combo_count = 0;
             }
         }
         else
         {
-            duration_combo_timer = 5.0f;
             combo_count += count;
         }
         is_enemy_hit = true;

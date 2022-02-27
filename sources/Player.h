@@ -42,7 +42,7 @@ private:
     //攻撃力の最低値
     static const int MIN_PLAYER_ATTACK_POWER = 1;
     //攻撃力の最大値
-    static const int MAX_PLAYER_ATTACK_POWER = 100;
+    static const int MAX_PLAYER_ATTACK_POWER = 10;
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
