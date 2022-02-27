@@ -48,6 +48,7 @@ enum class SHADER_TYPES
 	POINT_LIGHT,
 	SKYMAP,
 	DEFAULT,
+	LaserBeam,
 };
 
 class GraphicsPipeline

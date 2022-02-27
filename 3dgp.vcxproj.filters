@@ -130,8 +130,11 @@
     <Filter Include="Sources\character\Boss">
       <UniqueIdentifier>{fc5562ef-1437-4c1b-bd8e-e60010101650}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\RaserBeam">
+    <Filter Include="Shaders\LaserBeam">
       <UniqueIdentifier>{c6606b95-fc21-47e7-a1b7-a62e5d205aa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\LaseBeam">
+      <UniqueIdentifier>{f5f19e26-f736-44c8-ab0d-11e355a2a896}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -361,7 +364,7 @@
       <Filter>Sources\character\Boss</Filter>
     </ClCompile>
     <ClCompile Include="sources\LaserBeam.cpp">
-      <Filter>Shaders\RaserBeam</Filter>
+      <Filter>Shaders\LaserBeam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -603,7 +606,7 @@
       <Filter>Sources\character\Boss</Filter>
     </ClInclude>
     <ClInclude Include="sources\LaserBeam.h">
-      <Filter>Shaders\RaserBeam</Filter>
+      <Filter>Shaders\LaserBeam</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -758,6 +761,9 @@
     </FxCompile>
     <FxCompile Include="HLSL\SwordTrailVs.hlsl">
       <Filter>Shaders\sword-trail</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\LaserBeamPs.hlsl">
+      <Filter>Shaders\LaseBeam</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

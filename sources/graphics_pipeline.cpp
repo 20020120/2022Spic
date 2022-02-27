@@ -352,6 +352,7 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::PBR, vertex_shader));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::POINT_LIGHT, vertex_shader));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::DEFAULT, vertex_shader));
+			vertex_shaders.insert(std::make_pair(SHADER_TYPES::LaserBeam, vertex_shader));
 			// SKYMAP
 			create_vs_from_cso(device.Get(), "./shaders/skymap_vs.cso", vertex_shader.ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::SKYMAP, vertex_shader));
@@ -380,6 +381,10 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			// DEFAULT
 			create_ps_from_cso(device.Get(), "./shaders/default_mesh_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
 			pixel_shaders.insert(std::make_pair(SHADER_TYPES::DEFAULT, pixel_shader));
+			// LaserBeam
+			create_ps_from_cso(device.Get(), "./shaders/LaserBeamPs.cso",
+				pixel_shader.ReleaseAndGetAddressOf());
+			pixel_shaders.insert(std::make_pair(SHADER_TYPES::LaserBeam, pixel_shader));
 		}
 	}
 	//----texture maps----//
