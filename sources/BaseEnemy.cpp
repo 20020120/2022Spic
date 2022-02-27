@@ -21,11 +21,12 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* Mode
 
 BaseEnemy::~BaseEnemy() = default;
 
-void BaseEnemy::fRender(ID3D11DeviceContext* pDeviceContext_) 
+void BaseEnemy::fRender(GraphicsPipeline& graphics_)
 {
+    graphics_.set_pipeline_preset(SHADER_TYPES::DEFAULT);
     // ƒ[ƒ‹ƒhs—ñ‚ðì¬
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
-    mpSkinnedMesh->render(pDeviceContext_, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
+    mpSkinnedMesh->render(graphics_.get_dc().Get(), worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)> Function_)

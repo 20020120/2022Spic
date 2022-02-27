@@ -13,7 +13,7 @@ Player::Player(GraphicsPipeline& graphics)
     GetPlayerDirections();
     mSwordTrail.fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/Yugami.png",
-        L"./resources/TexMaps/SwordTrail/trajectory.png");
+        L"./resources/TexMaps/SwordTrail/SwordTrail.png");
 }
 
 Player::~Player()

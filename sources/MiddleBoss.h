@@ -1,6 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
-
+#include"LaserBeam.h"
 //****************************************************************
 // 
 // ’†ƒ{ƒX
@@ -46,7 +46,7 @@ private:
     // 
     //****************************************************************
     float mTourRadian{}; // Žü‰ñ’†‚Ì‰ñ“]Šp
-
+    LaserBeam mLaserBeam{};
 
     //****************************************************************
     // 
@@ -67,6 +67,6 @@ private:
 
     void fTourInit();
     void fTourUpdate(float elapsedTime_);
-
-
+public:
+    void fRender(GraphicsPipeline& graphics_) override;
 };

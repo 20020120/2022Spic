@@ -148,8 +148,8 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
     mTrailVertexVec.clear();
 
     const float texXSeparate = 1.0f / (mDataVec.size()-1);
-    static float startPoint = 0.5f;
-    startPoint += elapsedTime_ * 10.0f;
+    static float startPoint = 0.0f;
+    //startPoint += elapsedTime_ * 10.0f;
     // 剣の位置データから頂点を生成する
     for (int i = mDataVec.size() - 1; i > 0; i--)
     {

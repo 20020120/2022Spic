@@ -63,7 +63,7 @@ public:
 
     void fInitialize();
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_);
-    void fRender(ID3D11DeviceContext* pDeviceContext_);
+    void fRender(GraphicsPipeline& graphics_);
     void fFinalize();
     //--------------------<“–‚½‚è”»’è>--------------------//
 
@@ -103,7 +103,7 @@ private:
     void fSpawn(GraphicsPipeline& graphics); // “G‚Ì¶¬‚ğŠÇ—
     void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
     void fEnemiesUpdate(float elapsedTime_); // “G‚ÌXVˆ—
-    void fEnemiesRender(ID3D11DeviceContext* pDeviceContext_); // “G‚Ì•`‰æˆ—
+    void fEnemiesRender(GraphicsPipeline& graphics_); // “G‚Ì•`‰æˆ—
 
     //--------------------<“G‚ğƒ\[ƒg‚·‚é>--------------------//
     void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);

@@ -41,5 +41,6 @@ private:
     DirectX::XMFLOAT4 mOrientation{}; // ‰ñ“]
     DirectX::XMFLOAT3 mScale{}; // ‘å‚«‚³
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+
 };
 

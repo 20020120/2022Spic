@@ -47,10 +47,10 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
     fGuiMenu(graphics_);
 }
 
-void EnemyManager::fRender(ID3D11DeviceContext* pDeviceContext_)
+void EnemyManager::fRender(GraphicsPipeline& graphics_)
 {
     //--------------------<“G‚Ì•`‰æˆ—>--------------------//
-    fEnemiesRender(pDeviceContext_);
+    fEnemiesRender(graphics_);
 }
 
 void EnemyManager::fFinalize()
@@ -263,11 +263,11 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
 
 }
 
-void EnemyManager::fEnemiesRender(ID3D11DeviceContext* pDeviceContext_)
+void EnemyManager::fEnemiesRender(GraphicsPipeline& graphics_)
 {
     for (const auto enemy : mEnemyVec)
     {
-        enemy->fRender(pDeviceContext_);
+        enemy->fRender(graphics_);
     }
 }
 

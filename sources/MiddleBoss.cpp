@@ -8,6 +8,9 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     fGetParam(this, Function_);
     fRegisterFunctions();
+    // ビームを初期化
+    mLaserBeam.fInitialize(Graphics_.get_device().Get(),
+        L"./resources/TexMaps/SwordTrail/trajectory_.png");
 }
 
 void MiddleBoss::fInitialize()
@@ -17,6 +20,7 @@ void MiddleBoss::fInitialize()
 void MiddleBoss::fUpdate(float elapsedTime_)
 {
     fUpdateBase(elapsedTime_);
+    mLaserBeam.fUpdate();
 }
 
 void MiddleBoss::fGuiMenu()
@@ -69,33 +73,9 @@ void MiddleBoss::fRegisterFunctions()
     fChangeState(State::Tour);
 }
 
-void MiddleBoss::fStartInit()
+
+void MiddleBoss::fRender(GraphicsPipeline& graphics)
 {
-  // ボス登場時のイベントシーン（未実装）
-}
-
-void MiddleBoss::fStartUpdate(float elapsedTime_)
-{
-    // ボス登場時のイベントシーン（未実装）
-}
-
-void MiddleBoss::fTourInit()
-{
-    // ステージの周囲を周回する動き
-    mPosition = { 0.0f,150.0f,150.0f };
-}
-
-void MiddleBoss::fTourUpdate(float elapsedTime_)
-{
-    // ステージの原点を中心にぐるぐる回る
-
-    // 位置計算
-    mPosition = {
-        sinf(mTourRadian) * TourLength,
-        mPosition.y ,
-        cosf(mTourRadian) * TourLength
-    };
-
-    // 角度を更新
-    mTourRadian += elapsedTime_;
+    mLaserBeam.fRender(graphics);
+    BaseEnemy::fRender(graphics);
 }

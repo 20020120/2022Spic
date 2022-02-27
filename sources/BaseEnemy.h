@@ -108,7 +108,7 @@ public:
 
     virtual void fInitialize() = 0;
     virtual void fUpdate(float elapsedTime_) = 0;
-    virtual void fRender(ID3D11DeviceContext* pDeviceContext_);
+    virtual void fRender(GraphicsPipeline& graphics_);
 
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
     //--------------------<ImGui>--------------------//

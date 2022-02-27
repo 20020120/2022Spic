@@ -36,14 +36,7 @@ void ChaseEnemy::fInitialize()
 
     
 }
-
- void ChaseEnemy::fRender(ID3D11DeviceContext* device_context)
- {
-     // ƒ[ƒ‹ƒhs—ñ‚ðì¬
-     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
-     mpSkinnedMesh->render(device_context, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
- }
-
+ 
 void ChaseEnemy::fMove(float elapsedTime_)
 {
    

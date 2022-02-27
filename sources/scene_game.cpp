@@ -264,7 +264,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 #endif // 0
 
 	//--------------------<“G‚ÌŠÇ—ƒNƒ‰ƒX‚Ì•`‰æˆ—>--------------------//
-	mWaveManager.fGetEnemyManager()->fRender(graphics.get_dc().Get());
+	mWaveManager.fGetEnemyManager()->fRender(graphics);
 	player->Render(graphics, elapsed_time);
 
 	//--------<ui>--------//

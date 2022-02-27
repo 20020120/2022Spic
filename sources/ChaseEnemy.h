@@ -37,7 +37,6 @@ public:
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(float elapsedTime_) override;
-    void fRender(ID3D11DeviceContext* pDeviceContext_) override;
 private:
     void fMove(float elapsedTime_);
     void fRotate(float elapsedTime_);
