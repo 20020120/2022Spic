@@ -120,7 +120,6 @@ void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 
 void NormalEnemy::fIdleInit()
 {
-    mStayTimer = 1.0f;
     //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
     
 }
@@ -129,23 +128,22 @@ void NormalEnemy::fIdleUpdate(float elapsedTime_)
 {
     mStayTimer -= elapsedTime_;
     if (mStayTimer > 0.0f) return;
-#if 0
-    if (fTurnToPlayer(elapsedTime_, 10))
+    if (mAttack_flg)
     {
-        //プレイヤーへの回転が完了したら移動ステートへ遷移
-        fChangeState(MOVE);
+        fChangeState(State::Attack);
+        mAttack_flg = false;
+        return;
     }
-#else
+
     fChangeState(State::Move);
-#endif
 
 }
 
 void NormalEnemy::fMoveInit()
 {
     max_move_speed = mParam.mMoveSpeed;
-   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);\
-
+   // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+	mAttackingTime = 0.0f;
 }
 
 void NormalEnemy::fmoveUpdate(float elapsedTime_)
@@ -154,9 +152,10 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_)
     fTurnToPlayer(elapsedTime_);
     if(mLengthFromPlayer < 4.0f)
     {
-        fChangeState(State::Attack);
+        mAttack_flg = true;
+        mStayTimer = 1.0f;
+        fChangeState(State::Idle);
     }
-    DirectX::XMFLOAT3 p = mCapsuleCollider.mPointA;
 }
 
 void NormalEnemy::fAttackInit()

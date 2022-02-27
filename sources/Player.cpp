@@ -327,6 +327,29 @@ void Player::AddCombo(int count)
     else is_enemy_hit = false;
 }
 
+void Player::Damaged(int damage, float InvincibleTime)
+{
+    //ダメージが0の場合は健康状態を変更する必要がない
+    if (damage == 0)return;
+
+    //死亡している場合は健康状態を変更しない
+    if (player_health <= 0)return;
+
+
+    if (invincible_timer > 0.0f)return;
+
+    //無敵時間設定
+    invincible_timer = InvincibleTime;
+    //ダメージ処理
+    player_health -= damage;
+
+    // 死亡した時の処理
+    /*if (player_health <= 0)
+    {
+       
+    }*/
+}
+
 void Player::GetPlayerDirections()
 {
     using namespace DirectX;

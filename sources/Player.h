@@ -179,6 +179,9 @@ public:
     void SetTarget(const BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count);
+    //--------------------<“G‚©‚çƒ_ƒ[ƒW‚ðŽó‚¯‚é>--------------------//
+    void Damaged(int damage, float InvincibleTime);
+
 public:
     void FalseCameraReset() { camera_reset = false; }
     void FalseCameraLockOn() { is_camera_lock_on = false; }
