@@ -127,11 +127,14 @@ private:
     SwordTrail mSwordTrail{};
     float mTrailEraseTimer{};
 private:
+    //プレイヤーのパラメータの変化
+    void InflectionParameters(float elpased_time);
     //攻撃力の変化
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
     //ダメージ受けたときに後ろにはじかれる
+
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
