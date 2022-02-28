@@ -298,6 +298,7 @@
     <ClInclude Include="sources\camera_shake.h" />
     <ClInclude Include="sources\codinate_convert.h" />
     <ClInclude Include="sources\collision.h" />
+    <ClInclude Include="sources\Common.h" />
     <ClInclude Include="sources\constants.h" />
     <ClInclude Include="sources\debug_figures.h" />
     <ClInclude Include="sources\debug_flags.h" />

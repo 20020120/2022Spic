@@ -635,6 +635,9 @@
     <ClInclude Include="sources\player_config.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
+    <ClInclude Include="sources\Common.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">

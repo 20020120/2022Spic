@@ -30,6 +30,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics);
+	//--------------------<弾の管理クラスを初期化>--------------------//
+	mBulletManager.fInitialize();
+
     player = std::make_unique<Player>(graphics);
 	// カメラ
 	//camera = std::make_unique<Camera>(graphics,player.get());
@@ -69,9 +72,11 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
-	auto enemyManager = mWaveManager.fGetEnemyManager();
+    const auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
 	mWaveManager.fUpdate(graphics,elapsed_time);
+	mBulletManager.fUpdate(elapsed_time);
+
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
@@ -266,6 +271,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
 	player->Render(graphics, elapsed_time);
+	mBulletManager.fRender(graphics);
 
 	//--------<ui>--------//
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
