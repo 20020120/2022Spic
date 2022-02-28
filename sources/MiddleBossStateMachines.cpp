@@ -1,5 +1,5 @@
 #include"MiddleBoss.h"
-
+#include"Operators.h"
 //****************************************************************
 // 
 // 中型のボスのステートマシンを定義する 
@@ -44,6 +44,7 @@ void MiddleBoss::fTourLaserReadyInit()
 {
     // 照準を初期化
     mLaserPointerLength = 0.0f;
+    mLaserBeamLength = 0.0f;
     mLaserShotTimer = 0.0f;
 
 }
@@ -64,7 +65,6 @@ void MiddleBoss::fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Gra
     if (mLaserShotTimer >= TourLaserTimer)
     {
         fChangeState(State::TourBeam);
-        return;
     }
     else
     {
@@ -86,7 +86,6 @@ void MiddleBoss::fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Gra
         else
         {
             // 早い
-            // 
             switch (static_cast<int>(mLaserShotTimer * 20) % 2)
             {
             case 0:
@@ -103,11 +102,53 @@ void MiddleBoss::fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Gra
 //--------------------<ビーム発射>--------------------//
 void MiddleBoss::fTourLaserInit()
 {
-  
+    mLaserPointerLength = 0.0f;
+    mLaserBeamLength = 0.0f;
+    mLaserShotTimer = 0.0f;
+    mBeamRadius = 3.0f;
+    // 終点を計算
+    auto endPoint = mPlayerPosition;
+    endPoint.y += 1.5f;
+
+    // ベクトルを算出
+    DirectX::XMFLOAT3 v = endPoint - mPosition;
+    v = Math::Normalize(v);
+    endPoint = mPosition + (v * 500.0f);
+
+    mLaserBeam.fSetPosition(mPosition, endPoint);
 }
 void MiddleBoss::fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_)
 {
+    // ビームを伸ばす
+    if (mLaserBeamLength < 1.0f)
+    {
+        mLaserBeamLength += (elapsedTime_ * 5.0f);
+    }
+    else // 最大なら固定
+    {
+        mLaserBeamLength = 1.0f;
+    }
     
+
+    mLaserShotTimer += elapsedTime_;
+    if(mLaserShotTimer>=5.0f)
+    {
+        fChangeState(State::Tour);
+    }
+    else if(mLaserShotTimer>=3.0f)
+    {
+        if (mBeamRadius > 0.0f)
+        {
+            mBeamRadius -= (elapsedTime_ * 10.0f);
+        }
+        else
+        {
+            mBeamRadius = 0.0f;
+        }
+    }
+
+
+
 }
 
 //--------------------<単発射撃>--------------------//

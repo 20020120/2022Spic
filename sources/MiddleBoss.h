@@ -50,7 +50,11 @@ private:
     //****************************************************************
     float mTourRadian{};         // 周回中の回転角
     LaserBeam mLaserPointer{};   // 照準のレーザー
+    LaserBeam mLaserBeam{};      // レーザービーム
+
     float mLaserPointerLength{}; // 照準の長さ
+    float mLaserBeamLength{};    // ビームの長さ
+    float mBeamRadius{};         // ビームの太さ
     float mLaserShotTimer{};     // ビーム発射準備から発射での時間
     AddBulletFunc mfAddFunc;
 

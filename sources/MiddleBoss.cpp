@@ -12,6 +12,9 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     // ビームを初期化
     mLaserPointer.fInitialize(Graphics_.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/trajectory_.png");
+    mLaserBeam.fInitialize(Graphics_.get_device().Get(),
+        L"./resources/TexMaps/SwordTrail/trajectory_.png");
+
     mfAddFunc = Func_;
 }
 
@@ -23,6 +26,7 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     fUpdateBase(elapsedTime_,Graphics_);
     mLaserPointer.fUpdate();
+    mLaserBeam.fUpdate();
     // 照準は常にプレイヤーの方向に合わせておく
     auto endPoint = mPlayerPosition;
     endPoint.y += 1.5f;
@@ -30,6 +34,9 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     mLaserPointer.fSetLengthThreshold(mLaserPointerLength);
     mLaserPointer.fSetRadius(0.02f);
 
+    mLaserBeam.fSetLengthThreshold(mLaserBeamLength);
+    mLaserBeam.fSetRadius(mBeamRadius);
+    mLaserBeam.fSetColor({ 1.0f,1.0f,0.0f,1.0f });
     fGuiMenu(Graphics_);
 
     
@@ -151,5 +158,6 @@ void MiddleBoss::fShotStraightBullet(GraphicsPipeline& Graphics_)
 void MiddleBoss::fRender(GraphicsPipeline& graphics)
 {
     mLaserPointer.fRender(graphics);
+    mLaserBeam.fRender(graphics);
     BaseEnemy::fRender(graphics);
 }
