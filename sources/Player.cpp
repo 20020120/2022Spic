@@ -14,6 +14,7 @@ Player::Player(GraphicsPipeline& graphics)
     mSwordTrail.fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
+    player_config = std::make_unique<PlayerConfig>(graphics);
 }
 
 Player::~Player()
@@ -28,7 +29,7 @@ void Player::Initialize()
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
-void Player::Update(float elapsed_time, SkyDome* sky_dome)
+void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome)
 {
 
     ExecFuncUpdate(elapsed_time, sky_dome);
@@ -45,7 +46,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     SwordCapsule();
     mSwordTrail.fUpdate(elapsed_time,10);
     mSwordTrail.fEraseTrailPoint();
-
+    player_config->update(graphics,elapsed_time);
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -130,6 +131,8 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     mSwordTrail.fRender(graphics.get_dc().Get());
+
+    player_config->render(graphics, elapsed_time);
 }
 
 void Player::BehindAvoidancePosition()
@@ -225,13 +228,14 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 
 void Player::InflectionParameters(float elapsed_time)
 {
+    player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / 100.0f));
+    player_config->set_mp_percent(static_cast<float>(static_cast<float>(combo_count) / 50.0f));
     //攻撃力の変動
     InflectionPower(elapsed_time);
     //コンボの変動
     InflectionCombo(elapsed_time);
     //無敵時間の減少
     invincible_timer -= 1.0f * elapsed_time;
-
 }
 
 void Player::InflectionPower(float elapsed_time)

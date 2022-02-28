@@ -1,8 +1,10 @@
 #pragma once
+#include<memory>
 #include"BasePlayer.h"
 #include"PlayerMove.h"
 #include"collision.h"
 #include"BaseEnemy.h"
+#include"player_config.h"
 #include"SwordTrail.h"
 #include"post_effect.h"
 #include"graphics_pipeline.h"
@@ -26,7 +28,7 @@ private:
     };
 public:
     void Initialize()override;
-    void Update(float elapsed_time, SkyDome* sky_dome)override;
+    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //突進時間
@@ -123,6 +125,8 @@ private:
     bool end_dash_effect{ false };
     //覚醒状態かどうか
     bool is_awakening{ false };
+    //プレイヤーのパラメータ
+    std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail{};
     float mTrailEraseTimer{};
