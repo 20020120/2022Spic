@@ -175,7 +175,7 @@ public:
     //--------< コンストラクタ/関数等 >--------//
     SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
     virtual ~SkinnedMesh() = default;
-    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color,
+    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color, float threshold = 0,
         const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4( 1.0f, 1.0f, 1.0f, 1.0f ));
     // アニメーション
     void play_animation(int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
@@ -199,6 +199,7 @@ private:
             {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1}
         };
         DirectX::XMFLOAT4 emissive_color{ 1,1,1,1 }; // xyz:emissive_color w:emissive_strength
+        DirectX::XMFLOAT4 dissolve_threshold{ 0,0,0,0 };
     };
     std::unique_ptr<Constants<GeometryConstants>> geometry_constants;
     // FBXファイルからメッシュが使用するマテリアル情報（色・テクスチャ）を抽出する
@@ -211,8 +212,8 @@ private:
         DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
         DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-        std::string texture_filenames[6];
-        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[6];
+        std::string texture_filenames[7];
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[7];
 
         template<class T>
         void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }

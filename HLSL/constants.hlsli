@@ -5,6 +5,7 @@ cbuffer OBJECT_CONSTANTS : register(b0)
     float4 material_color;
     row_major float4x4 bone_transforms[MAX_BONES];
     float4 emissive_color; // xyz:emissive_color w:emissive_strength
+    float4 dissolve_threshold;
 };
 
 cbuffer SCENE_CONSTANTS : register(b1)

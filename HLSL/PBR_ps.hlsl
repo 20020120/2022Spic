@@ -19,6 +19,8 @@ texture2D texture_maps[6] : register(t0);
 Texture2D shadow_map : register(t6);
 SamplerState shadow_sampler_state : register(s6);
 
+Texture2D dissolve_map : register(t8);
+
 static const float PI = 3.1415926f; // ÉŒ
 
 float3 cast_shadow(in float3 color, float depth, float3 shadow_texcoord)
@@ -217,5 +219,17 @@ float4 main(VS_OUT pin) : SV_TARGET
     // ÉuÉãÅ[ÉÄÇ≈ñ\ëñÇµÇ»Ç¢ÇÊÇ§Ç…ã≠êß
     finalColor.xyz = min(finalColor.xyz, 6.0);
 
-    return float4(finalColor.rgb * ao_map.r * light_direction.w, finalColor.a) * pin.color;
+    // dissolve
+    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w, finalColor.a) * pin.color;
+    float4 dst_color = float4(0, 0, 0, 0);
+    float4 mask = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord) * float4(1, 1, 1, 1);
+
+    float4 outcolor = lerp(last_color, dst_color, step(mask.r, dissolve_threshold.x));
+    if (dissolve_threshold.x < 0.95)
+    {
+        float4 destiny = float4(emissive_color.rgb, 1) * emissive_color.w;
+        outcolor += lerp(destiny, dst_color, step(step(mask.r, dissolve_threshold.x), step(0.1, abs(dissolve_threshold.x - mask.r))));
+    }
+
+    return outcolor;
 }

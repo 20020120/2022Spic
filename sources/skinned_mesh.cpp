@@ -230,8 +230,10 @@ void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::strin
     assert("指定された名前のボーンがありません");
 }
 
-void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color, const DirectX::XMFLOAT4& emissive_color)
+void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
+    const DirectX::XMFLOAT4& material_color, float threshold, const DirectX::XMFLOAT4& emissive_color)
 {
+    geometry_constants->data.dissolve_threshold.x = threshold;
     geometry_constants->data.emissive_color = emissive_color;
     for (const mesh& mesh : meshes)
     {
@@ -295,6 +297,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 dc->PSSetShaderResources(3, 1, material.shader_resource_views[3].GetAddressOf());
                 dc->PSSetShaderResources(4, 1, material.shader_resource_views[4].GetAddressOf());
                 dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
+                dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
                 // 描画
                 dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
             }
@@ -665,6 +668,26 @@ void SkinnedMesh::fetch_materials(const char* fbx_filename, FbxScene* fbx_scene,
                         material.texture_filenames[5] = "";
                     }
                 }
+                // Dissolve map
+                {
+                    std::string color_map_filename = material.texture_filenames[0];
+                    std::string dissolve_map_filename = "";
+                    if (color_map_filename.find("Color.png") != std::string::npos)
+                    {
+                        dissolve_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Dissolve.png";
+                    }
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + dissolve_map_filename;
+                    if (std::filesystem::exists(s.c_str()))
+                    {
+                        material.texture_filenames[6] = dissolve_map_filename;
+                    }
+                    else
+                    {
+                        material.texture_filenames[6] = "";
+                    }
+                }
 
                 materials.emplace(material.unique_id, std::move(material));
             }
@@ -846,7 +869,7 @@ void SkinnedMesh::create_com_objects(ID3D11Device* device, const char* fbx_filen
         for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
             iterator != materials.end(); ++iterator)
         {
-            for (size_t texture_index = 0; texture_index < 6; ++texture_index)
+            for (size_t texture_index = 0; texture_index < 7; ++texture_index)
             {
                 if (iterator->second.texture_filenames[texture_index].size() > 0)
                 {
