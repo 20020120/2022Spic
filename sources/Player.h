@@ -89,6 +89,8 @@ private:
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
+    int target_count{ 0 };
+    int old_target_count{ 0 };
 private:
     //後ろに回り込むための計算する関数
     void BehindAvoidancePosition();

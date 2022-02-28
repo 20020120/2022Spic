@@ -113,6 +113,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
+
             ImGui::End();
         }
     }
@@ -322,15 +323,21 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         target_enemy = nullptr;
+        target_count = 0;
+        old_target_count = 0;
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
+        old_target_count = target_count;
+        target_count++;
     }
     else if (is_lock_on && target_enemy == nullptr)
     {
         target_enemy = target_enemies;
+        old_target_count = target_count;
+        target_count++;
     }
 }
 
@@ -454,12 +461,18 @@ void Player::LockOn()
             if (is_lock_on == false)is_camera_lock_on = true;
             is_lock_on = true;
         }
-        else is_lock_on = false;
+        else
+        {
+            is_lock_on = false;
+            target_count = 0;
+        }
     }
     else
     {
         is_camera_lock_on = false;
         is_lock_on = false;
+        target_count = 0;
+
     }
 
 }

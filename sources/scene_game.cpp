@@ -82,6 +82,17 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
 
+	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
+	if (player->GetIsPlayerAttack())
+	{
+		player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+			player->GetSwordCapsuleParam().start,
+			player->GetSwordCapsuleParam().end,
+			player->GetSwordCapsuleParam().rasius,
+			player->GetPlayerPower()));
+	}
+
+
 	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 	player->SetCameraPosition(c->get_eye());
@@ -117,15 +128,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 #endif
 		wave->set_positoin(pos); wave->set_offset(offset); wave->set_scale(scale); wave->set_value(value); wave->set_color(color);
 		wave->update(graphics, elapsed_time);
-	}
-	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
-	if (player->GetIsPlayerAttack())
-	{
-		player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
-			player->GetSwordCapsuleParam().start,
-			player->GetSwordCapsuleParam().end,
-			player->GetSwordCapsuleParam().rasius,
-			player->GetPlayerPower()));
 	}
 
 

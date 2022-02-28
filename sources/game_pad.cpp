@@ -150,7 +150,10 @@ void GamePad::update(float elapsed_time)
 		if (GetAsyncKeyState('L') & 0x8000) rx = 1.0f;
 		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_A;
 		if (GetAsyncKeyState('Z') & 0x8000) newButtonState |= BTN_B;
+#ifdef _DEBUG
+#else
 		if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) newButtonState |= BTN_ATTACK_B;
+#endif
 		if (GetAsyncKeyState('R') & 0x8000) newButtonState |= BTN_X;
 		if (GetAsyncKeyState('V') & 0x8000) newButtonState |= BTN_Y;
 		if (GetAsyncKeyState(VK_UP) & 0x8000)	   newButtonState |= BTN_UP;

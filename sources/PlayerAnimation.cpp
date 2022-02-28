@@ -162,7 +162,14 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            TransitionAttackType2(0);
+            if (target_count != old_target_count)
+            {
+                TransitionCharge();
+            }
+            else
+            {
+                TransitionAttackType2(0);
+            }
         }
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
@@ -186,7 +193,14 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            TransitionAttackType3(0);
+            if (target_count != old_target_count)
+            {
+                TransitionCharge();
+            }
+            else
+            {
+                TransitionAttackType3(0);
+            }
         }
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
@@ -196,6 +210,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
+
     if (model->end_of_animation())
     {
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
