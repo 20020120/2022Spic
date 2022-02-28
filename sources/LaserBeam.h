@@ -26,8 +26,7 @@ public:
 
 private:
     void fCalcTransform(); // p¨‚Ìî•ñ‚ğZo
-
-
+    void fGuiMenu();
 private:
     //****************************************************************
     // 

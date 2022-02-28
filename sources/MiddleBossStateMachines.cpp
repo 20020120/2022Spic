@@ -38,6 +38,8 @@ void MiddleBoss::fTourUpdate(float elapsedTime_)
     mTourRadian += elapsedTime_;
 
     // ビームテスト
-    mLaserBeam.fSetPosition(mPosition, mPlayerPosition);
-    mLaserBeam.fSetRadius(10.0f);
+    auto endPoint = mPlayerPosition;
+    endPoint.y += 2.0f;
+    mLaserBeam.fSetPosition(mPosition, endPoint);
+    mLaserBeam.fSetRadius(0.02f);
 }
