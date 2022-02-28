@@ -121,6 +121,8 @@ private:
     bool start_dash_effect{ false };
     //ダッシュエフェクト終了
     bool end_dash_effect{ false };
+    //覚醒状態かどうか
+    bool is_awakening{ false };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail{};
     float mTrailEraseTimer{};

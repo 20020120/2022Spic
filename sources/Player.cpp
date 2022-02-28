@@ -85,6 +85,7 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
                 ImGui::Checkbox("is_lock_on", &is_lock_on);
                 ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
                 ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::Checkbox("is_awakening", &is_awakening);
                 ImGui::Checkbox("start_dash_effect", &start_dash_effect);
                 ImGui::Checkbox("end_dash_effect", &end_dash_effect);
                 ImGui::TreePop();
@@ -244,12 +245,23 @@ void Player::InflectionPower(float elapsed_time)
 void Player::InflectionCombo(float elapsed_time)
 {
     duration_combo_timer += 1.0f * elapsed_time;
-    if (duration_combo_timer >= 1.0f)
+    if (is_awakening == false)
     {
-        duration_combo_timer = 0;
-        combo_count -= 1;
+        if (duration_combo_timer >= 1.0f)
+        {
+            duration_combo_timer = 0;
+            combo_count -= 1;
+        }
     }
-    combo_count = Math::clamp(combo_count, 0, 20);
+    else
+    {
+        if (duration_combo_timer >= 1.0f)
+        {
+            duration_combo_timer = 0;
+            combo_count -= 2;
+        }
+    }
+    combo_count = Math::clamp(combo_count, 0, 50);
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //コンボ中タイマーが0になったらコンボは0にする
     //if (duration_combo_timer <= 0) combo_count = 0;
