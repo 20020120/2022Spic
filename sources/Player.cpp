@@ -232,14 +232,23 @@ void Player::InflectionPower(float elapsed_time)
 {
     static float timer = 0;
     timer += 1.0f * elapsed_time;
-    player_attack_power = combo_count;
 
     if (timer > 0.5f)
     {
         player_attack_power -= 1;
         timer = 0;
     }
-    player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
+    //äoê¡èÛë‘Ç©Ç«Ç§Ç©
+    if (is_awakening)
+    {
+        player_attack_power = combo_count * 2;
+        player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
+    }
+    else
+    {
+        player_attack_power = combo_count;
+        player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
+    }
 }
 
 void Player::InflectionCombo(float elapsed_time)
@@ -358,7 +367,7 @@ void Player::Damaged(int damage, float InvincibleTime)
     // éÄñSÇµÇΩéûÇÃèàóù
     /*if (player_health <= 0)
     {
-       
+
     }*/
 }
 
