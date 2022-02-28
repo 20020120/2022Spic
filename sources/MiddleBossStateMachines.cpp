@@ -12,7 +12,7 @@ void MiddleBoss::fStartInit()
     // ボス登場時のイベントシーン（未実装）
 }
 
-void MiddleBoss::fStartUpdate(float elapsedTime_)
+void MiddleBoss::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ボス登場時のイベントシーン（未実装）
 }
@@ -23,7 +23,7 @@ void MiddleBoss::fTourInit()
     mPosition = { 0.0f,150.0f,150.0f };
 }
 
-void MiddleBoss::fTourUpdate(float elapsedTime_)
+void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ステージの原点を中心にぐるぐる回る
 

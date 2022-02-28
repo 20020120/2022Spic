@@ -25,7 +25,7 @@ public:
         );
 
     void fInitialize() override;
-    void fUpdate(float elapsedTime_) override;
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
     void fGuiMenu() override;
 
     void fDamaged(int damage_, float InvinsibleTime_) override;
@@ -38,16 +38,16 @@ private:
 
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
-    void fIdleUpdate(float elapsedTime_); // 待機の更新処理
+    void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // 待機の更新処理
 
     void fMoveInit(); //移動の初期化
-    void fmoveUpdate(float elapsedTime_); //移動の更新処理
+    void fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //移動の更新処理
 
     void fAttackInit(); //移動の初期化
-    void fAttackUpdate(float elapsedTime_); //攻撃の更新処理
+    void fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //攻撃の更新処理
 
     void fDamagedInit(); //移動の初期化
-    void fDamagedUpdate(float elapsedTime_); //ひるみの更新処理
+    void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
 
   
     // ステートの名前を定義する

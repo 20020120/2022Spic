@@ -11,7 +11,7 @@
 // 
 //****************************************************************
 typedef std::function<void()> InitFunc;
-typedef std::function<void(float)> UpdateFunc;
+typedef std::function<void(float,GraphicsPipeline&)> UpdateFunc;
 typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
 
 struct CubeData
@@ -107,7 +107,7 @@ public:
     virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
-    virtual void fUpdate(float elapsedTime_) = 0;
+    virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
     virtual void fRender(GraphicsPipeline& graphics_);
 
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);
@@ -135,9 +135,9 @@ public:
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
 protected:
-    void fUpdateBase(float elapsedTime_);
+    void fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    void fUpdateStateMachine(float elapsedTime_);
+    void fUpdateStateMachine(float elapsedTime_,GraphicsPipeline& Graphics_);
     void fCalcFrustum();
     void fCalcLength();
     virtual  void fSetCapsulePoint();

@@ -53,6 +53,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 void SceneGame::uninitialize()
 {
 	mWaveManager.fFinalize();
+	mBulletManager.fFinalize();
 }
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -74,7 +75,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
     const auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
-	mWaveManager.fUpdate(graphics,elapsed_time);
+	mWaveManager.fUpdate(graphics,elapsed_time,mBulletManager.fGetAddFunction());
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓

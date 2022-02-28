@@ -25,7 +25,7 @@ public:
         ParamGetFunction Function_);
 
     void fInitialize() override;
-    void fUpdate(float elapsedTime_) override;
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
 
     void fGuiMenu()override;
     //****************************************************************
@@ -39,8 +39,7 @@ private:
 
     //--------------------<各ステートの関数>--------------------//
     void fIdleInit();   // 待機の初期化
-    void fIdleUpdate(float elapsedTime_); // 待機の更新処理
-
+    void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // 待機の更新処理
     
 protected:
     void fSetCapsulePoint() override;

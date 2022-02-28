@@ -6,6 +6,7 @@ BaseBullet::BaseBullet(GraphicsPipeline& Graphics_, const char* FileName_)
         Graphics_,
         effect_manager->get_effekseer_manager(),
         FileName_);
+    mpEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 void BaseBullet::fUpdate(float elapsedTime_)

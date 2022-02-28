@@ -132,7 +132,7 @@ void BaseEnemy::fSetPosition(DirectX::XMFLOAT3 Position_)
     mPosition = Position_;
 }
 
-void BaseEnemy::fUpdateBase(float elapsedTime_)
+void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<移動量を更新>--------------------//
     fUpdateVelocity(elapsedTime_, mPosition, mOrientation);
@@ -145,7 +145,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
     //--------------------<ステートマシン>--------------------//
-    fUpdateStateMachine(elapsedTime_);
+    fUpdateStateMachine(elapsedTime_,Graphics_);
     //--------------------<プレイヤーとの距離を計算>--------------------//
     fCalcLength();
 
@@ -153,7 +153,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_)
 }
 
 
-void BaseEnemy::fUpdateStateMachine(float elapsedTime_)
+void BaseEnemy::fUpdateStateMachine(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // 中身が何も設定されていなかった場合の挙動は未知数なので気を付けて
    
@@ -164,7 +164,7 @@ void BaseEnemy::fUpdateStateMachine(float elapsedTime_)
         mIsInitialize = true;
     }
     // ステートを更新
-    std::get<1>(mCurrentTuple)(elapsedTime_);
+    std::get<1>(mCurrentTuple)(elapsedTime_,Graphics_);
 }
 
 void BaseEnemy::fCalcFrustum()

@@ -29,9 +29,9 @@ void ChaseEnemy::fInitialize()
    
 }
 
- void ChaseEnemy::fUpdate(float elapsedTime_)
+ void ChaseEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
-     fUpdateBase(elapsedTime_);
+     fUpdateBase(elapsedTime_,Graphics_);
      mTimerComponent.fUpdate(elapsedTime_);
 
     
@@ -139,9 +139,9 @@ void ChaseEnemy::fRegisterFunctions()
         {
             fStartInit();
         };
-        UpdateFunc up = [=](float elapsedTIme_)->void
+        UpdateFunc up = [=](float elapsedTIme_, GraphicsPipeline& Graphics_)->void
         {
-            fStartUpdate(elapsedTIme_);
+            fStartUpdate(elapsedTIme_, Graphics_);
         };
 
         FunctionTuple tuple = std::make_tuple(ini, up);
@@ -152,7 +152,7 @@ void ChaseEnemy::fRegisterFunctions()
         {
             fChaseInit();
         };
-        UpdateFunc up = [=](float elapsedTIme_)->void
+        UpdateFunc up = [=](float elapsedTIme_, GraphicsPipeline& Graphics_)->void
         {
             fChaseUpdate(elapsedTIme_);
         };
@@ -165,9 +165,9 @@ void ChaseEnemy::fRegisterFunctions()
         {
             fIntimidationInit();
         };
-        UpdateFunc up = [=](float elapsedTIme_)->void
+        UpdateFunc up = [=](float elapsedTIme_, GraphicsPipeline& Graphics_)->void
         {
-            fIntimidationUpdate(elapsedTIme_);
+            fIntimidationUpdate(elapsedTIme_, Graphics_);
         };
 
         FunctionTuple tuple = std::make_tuple(ini, up);
@@ -183,7 +183,7 @@ void ChaseEnemy::fStartInit()
     mTimerComponent.StartTimer(5.0f);
 }
 
-void ChaseEnemy::fStartUpdate(float elapsedTime_)
+void ChaseEnemy::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     if (mTimerComponent.fGetOver())
     {
@@ -216,7 +216,7 @@ void ChaseEnemy::fIntimidationInit()
     mTimerComponent.StartTimer(5.0f);
 }
 
-void ChaseEnemy::fIntimidationUpdate(float elapsedTime_)
+void ChaseEnemy::fIntimidationUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     if(mTimerComponent.fGetOver())
     {

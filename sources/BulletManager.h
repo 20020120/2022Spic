@@ -19,7 +19,7 @@ public:
     void fInitialize();
     void fUpdate(float elapsedTime_);
     void fRender(GraphicsPipeline& Graphics_);
-
+    void fFinalize();
     //--------------------<ƒQƒbƒ^[ŠÖ”>--------------------//
     [[nodiscard]]AddBulletFunc fGetAddFunction() const;
 

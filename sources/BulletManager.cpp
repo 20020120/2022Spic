@@ -25,6 +25,11 @@ void BulletManager::fRender(GraphicsPipeline& Graphics_)
    
 }
 
+void BulletManager::fFinalize()
+{
+    fAllClear();
+}
+
 AddBulletFunc BulletManager::fGetAddFunction() const
 {
     return mfAddBullet;
