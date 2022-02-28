@@ -37,6 +37,8 @@ private:
     DirectX::XMFLOAT3 mStartPoint{}; // ビームの開始地点
     DirectX::XMFLOAT3 mEndPoint{}; // ビームの開始地点
     float mRadius{};  // 半径
+    float mLerpSpeed{}; // 補完の速さ
+
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{}; // 大きさ
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
