@@ -23,7 +23,7 @@
 #include "reticle.h"
 #include "counter.h"
 #include "scene_option.h"
-
+#include "BulletManager.h"
 class SceneGame : public Scene, public PracticalEntities
 {
 public:
@@ -70,7 +70,7 @@ private:
     //****************************************************************
     //EnemyManager mEnemyManager{};
     WaveManager mWaveManager{};
-
+    BulletManager mBulletManager{};
     std::unique_ptr<Player> player{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

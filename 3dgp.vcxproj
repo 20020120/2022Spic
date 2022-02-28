@@ -248,6 +248,7 @@
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\PlayerAnimation.cpp" />
     <ClCompile Include="sources\PlayerMove.cpp" />
+    <ClCompile Include="sources\player_config.cpp" />
     <ClCompile Include="sources\point_light.cpp" />
     <ClCompile Include="sources\post_effect.cpp" />
     <ClCompile Include="sources\practical_entities.cpp" />
@@ -297,6 +298,7 @@
     <ClInclude Include="sources\camera_shake.h" />
     <ClInclude Include="sources\codinate_convert.h" />
     <ClInclude Include="sources\collision.h" />
+    <ClInclude Include="sources\Common.h" />
     <ClInclude Include="sources\constants.h" />
     <ClInclude Include="sources\debug_figures.h" />
     <ClInclude Include="sources\debug_flags.h" />
@@ -332,6 +334,7 @@
     <ClInclude Include="sources\perlin_noise.h" />
     <ClInclude Include="sources\Player.h" />
     <ClInclude Include="sources\PlayerMove.h" />
+    <ClInclude Include="sources\player_config.h" />
     <ClInclude Include="sources\point_light.h" />
     <ClInclude Include="sources\post_effect.h" />
     <ClInclude Include="sources\practical_entities.h" />

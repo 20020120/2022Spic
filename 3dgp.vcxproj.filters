@@ -378,6 +378,9 @@
     <ClCompile Include="sources\StraightBullet.cpp">
       <Filter>Sources\bullet</Filter>
     </ClCompile>
+    <ClCompile Include="sources\player_config.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -628,6 +631,12 @@
     </ClInclude>
     <ClInclude Include="sources\StraightBullet.h">
       <Filter>Sources\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\player_config.h">
+      <Filter>Sources\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\Common.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
