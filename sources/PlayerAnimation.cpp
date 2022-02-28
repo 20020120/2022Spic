@@ -151,7 +151,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
     end_dash_effect = false;
     ChargeAcceleration(elapsed_time);
     //¡UŒ‚‚µ‚Ä‚¢‚é“G‚ªŽ€‚ñ‚Å‚¢‚½‚çŽŸ‚ÌUŒ‚‚É‘JˆÚ
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B && target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         attack_time = 0;
         TransitionAttackType2(0);
@@ -182,7 +182,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
     ChargeAcceleration(elapsed_time);
 
     //¡UŒ‚‚µ‚Ä‚¢‚é“G‚ªŽ€‚ñ‚Å‚¢‚½‚çŽŸ‚ÌUŒ‚‚É‘JˆÚ
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B && target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         attack_time = 0;
         TransitionAttackType3(0);
@@ -213,7 +213,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
     ChargeAcceleration(elapsed_time);
     //¡UŒ‚‚µ‚Ä‚¢‚é“G‚ªŽ€‚ñ‚Å‚¢‚½‚çŽŸ‚ÌUŒ‚‚É‘JˆÚ
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
+    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B && target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         attack_time = 0;
         TransitionCharge();
