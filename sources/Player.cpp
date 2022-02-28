@@ -37,13 +37,8 @@ void Player::Update(float elapsed_time, SkyDome* sky_dome)
     LockOn();
     //カメラリセット
     CameraReset();
-    //攻撃力の変動
-    InflectionPower(elapsed_time);
-    //コンボの変動
-    InflectionCombo(elapsed_time);
-    //無敵時間の減少
-    invincible_timer -= 1.0f * elapsed_time;
-
+    //プレイヤーのパラメータの変更
+    InflectionParameters(elapsed_time);
     //体の大きさのカプセルパラメータ設定
     BodyCapsule();
     //剣の大きさのカプセルのパラメータ
@@ -225,6 +220,17 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
     }
     behind_point.clear();
 #endif
+
+}
+
+void Player::InflectionParameters(float elapsed_time)
+{
+    //攻撃力の変動
+    InflectionPower(elapsed_time);
+    //コンボの変動
+    InflectionCombo(elapsed_time);
+    //無敵時間の減少
+    invincible_timer -= 1.0f * elapsed_time;
 
 }
 
