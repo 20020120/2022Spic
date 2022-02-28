@@ -29,7 +29,7 @@ void NormalEnemy::fInitialize()
 void NormalEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
-    fUpdateBase(elapsedTime_);
+    fUpdateBase(elapsedTime_, Graphics_);
 }
 
 
@@ -39,9 +39,9 @@ void NormalEnemy::fRegisterFunctions()
     {
         fIdleInit();
     };
-    UpdateFunc Up = [=](float elapsedTime_)->void
+    UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fIdleUpdate(elapsedTime_);
+        fIdleUpdate(elapsedTime_, Graphics_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Idle, tuple));
@@ -50,9 +50,9 @@ void NormalEnemy::fRegisterFunctions()
     {
         fMoveInit();
     };
-    Up = [=](float elapsedTime_)->void
+    Up = [=](float elapsedTime_,GraphicsPipeline& Graphics_)->void
     {
-        fmoveUpdate(elapsedTime_);
+        fmoveUpdate(elapsedTime_, Graphics_);
     };
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Move, tuple));
@@ -61,9 +61,9 @@ void NormalEnemy::fRegisterFunctions()
     {
         fAttackInit();
     };
-    Up = [=](float elapsedTime_)->void
+    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fAttackUpdate(elapsedTime_);
+        fAttackUpdate(elapsedTime_, Graphics_);
     };
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Attack, tuple));
@@ -72,9 +72,9 @@ void NormalEnemy::fRegisterFunctions()
     {
         fDamagedInit();
     };
-    Up = [=](float elapsedTime_)->void
+    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fDamagedUpdate(elapsedTime_);
+        fDamagedUpdate(elapsedTime_, Graphics_);
     };
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Damaged, tuple));
@@ -124,7 +124,7 @@ void NormalEnemy::fIdleInit()
     
 }
 
-void NormalEnemy::fIdleUpdate(float elapsedTime_)
+void NormalEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mStayTimer -= elapsedTime_;
     if (mStayTimer > 0.0f) return;
@@ -146,7 +146,7 @@ void NormalEnemy::fMoveInit()
 	mAttackingTime = 0.0f;
 }
 
-void NormalEnemy::fmoveUpdate(float elapsedTime_)
+void NormalEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     MovingProcess(forward, max_move_speed);
     fTurnToPlayer(elapsedTime_);
@@ -164,7 +164,7 @@ void NormalEnemy::fAttackInit()
     mAttackingTime = 0.0f;
 }
 
-void NormalEnemy::fAttackUpdate(float elapsedTime_)
+void NormalEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mAttackingTime += elapsedTime_;
    
@@ -179,7 +179,7 @@ void NormalEnemy::fDamagedInit()
 }
 
 
-void NormalEnemy::fDamagedUpdate(float elapsedTime_)
+void NormalEnemy::fDamagedUpdate(float elapsedTime_,GraphicsPipeline& Graphics_)
 {
     using namespace DirectX;
     XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);

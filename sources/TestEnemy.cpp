@@ -27,7 +27,7 @@ void TestEnemy::fInitialize()
 void TestEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
-    fUpdateBase(elapsedTime_);
+    fUpdateBase(elapsedTime_,Graphics_);
 }
 
 void TestEnemy::fGuiMenu()
@@ -47,9 +47,9 @@ void TestEnemy::fRegisterFunctions()
     {
         fIdleInit();
     };
-    UpdateFunc Up = [=](float elapsedTime_)->void
+    UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fIdleUpdate(elapsedTime_);
+        fIdleUpdate(elapsedTime_, Graphics_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair("Sample",tuple));
@@ -63,7 +63,7 @@ void TestEnemy::fIdleInit()
 }
 
 
-void TestEnemy::fIdleUpdate(float elapsedTime_)
+void TestEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     
 }

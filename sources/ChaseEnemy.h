@@ -60,11 +60,11 @@ private:
     //****************************************************************
 
     void fStartInit();                            // ìoèÍéû
-    void fStartUpdate(float elapsedTime_);        // ìoèÍéû
-    void fChaseInit();                            // í«ê’
+    void fStartUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);        // ìoèÍéû
+    void fChaseInit();                           // í«ê’
     void fChaseUpdate(float elapsedTime_);        // í«ê’
     void fIntimidationInit();                     // à–äd
-    void fIntimidationUpdate(float elapsedTime_); // à–äd
+    void fIntimidationUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // à–äd
 public:
     void fGuiMenu() override;
 };

@@ -32,7 +32,7 @@ public:
 public:
     MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std::string)> Function_,AddBulletFunc Func_);
     ~MiddleBoss() override = default;
-
+    
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
     void fGuiMenu(GraphicsPipeline& Graphics_);
@@ -66,10 +66,10 @@ private:
     // 
     //****************************************************************
     void fStartInit();
-    void fStartUpdate(float elapsedTime_);
+    void fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     void fTourInit();
-    void fTourUpdate(float elapsedTime_);
+    void fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fRender(GraphicsPipeline& graphics_) override;
 };

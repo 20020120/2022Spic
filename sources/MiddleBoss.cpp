@@ -21,7 +21,7 @@ void MiddleBoss::fInitialize()
 }
 void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
-    fUpdateBase(elapsedTime_);
+    fUpdateBase(elapsedTime_,Graphics_);
     mLaserBeam.fUpdate();
     fGuiMenu(Graphics_);
     fShotStraightBullet(Graphics_);
@@ -59,9 +59,9 @@ void MiddleBoss::fRegisterFunctions()
         {
             fStartInit();
         };
-        auto up = [=](float elapsedTime_)->void
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
         {
-            fStartUpdate(elapsedTime_);
+            fStartUpdate(elapsedTime_, Graphics_);
         };
 
         FunctionTuple tuple = std::make_tuple(Ini, up);
@@ -72,9 +72,9 @@ void MiddleBoss::fRegisterFunctions()
         {
             fTourInit();
         };
-        auto up = [=](float elapsedTime_)->void
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
         {
-            fTourUpdate(elapsedTime_);
+            fTourUpdate(elapsedTime_, Graphics_);
         };
 
         FunctionTuple tuple = std::make_tuple(Ini, up);
