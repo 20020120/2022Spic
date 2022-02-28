@@ -136,6 +136,9 @@
     <Filter Include="Shaders\LaseBeam">
       <UniqueIdentifier>{f5f19e26-f736-44c8-ab0d-11e355a2a896}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\bullet">
+      <UniqueIdentifier>{a5ce1793-8340-4355-abd5-bcca24d7f16a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -365,6 +368,15 @@
     </ClCompile>
     <ClCompile Include="sources\LaserBeam.cpp">
       <Filter>Shaders\LaserBeam</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\BulletManager.cpp">
+      <Filter>Sources\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\BaseBullet.cpp">
+      <Filter>Sources\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\StraightBullet.cpp">
+      <Filter>Sources\bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -607,6 +619,15 @@
     </ClInclude>
     <ClInclude Include="sources\LaserBeam.h">
       <Filter>Shaders\LaserBeam</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BulletManager.h">
+      <Filter>Sources\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BaseBullet.h">
+      <Filter>Sources\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\StraightBullet.h">
+      <Filter>Sources\bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

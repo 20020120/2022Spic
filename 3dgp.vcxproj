@@ -205,10 +205,12 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
+    <ClCompile Include="sources\BaseBullet.cpp" />
     <ClCompile Include="sources\BaseCamera.cpp" />
     <ClCompile Include="sources\BaseEnemy.cpp" />
     <ClCompile Include="sources\BasePlayer.cpp" />
     <ClCompile Include="sources\bloom.cpp" />
+    <ClCompile Include="sources\BulletManager.cpp" />
     <ClCompile Include="sources\camera.cpp" />
     <ClCompile Include="sources\CameraManager.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
@@ -265,6 +267,7 @@
     <ClCompile Include="sources\sprite.cpp" />
     <ClCompile Include="sources\sprite_batch.cpp" />
     <ClCompile Include="sources\sprite_dissolve.cpp" />
+    <ClCompile Include="sources\StraightBullet.cpp" />
     <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
@@ -283,10 +286,12 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="sources\audio.h" />
     <ClInclude Include="sources\audio_manager.h" />
+    <ClInclude Include="sources\BaseBullet.h" />
     <ClInclude Include="sources\BaseCamera.h" />
     <ClInclude Include="sources\BaseEnemy.h" />
     <ClInclude Include="sources\BasePlayer.h" />
     <ClInclude Include="sources\bloom.h" />
+    <ClInclude Include="sources\BulletManager.h" />
     <ClInclude Include="sources\camera.h" />
     <ClInclude Include="sources\CameraManager.h" />
     <ClInclude Include="sources\camera_shake.h" />
@@ -346,6 +351,7 @@
     <ClInclude Include="sources\sprite.h" />
     <ClInclude Include="sources\sprite_batch.h" />
     <ClInclude Include="sources\sprite_dissolve.h" />
+    <ClInclude Include="sources\StraightBullet.h" />
     <ClInclude Include="sources\SwordTrail.h" />
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />

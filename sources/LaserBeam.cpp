@@ -6,6 +6,8 @@ void LaserBeam::fInitialize(ID3D11Device* pDevice_, const wchar_t* TextureName_)
     // èâä˙âª
     mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, "./resources/Models/Laser/LaserBeam.fbx");
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
+    mConstantBuffer = std::make_unique<Constants<Data>>(pDevice_);
+    mConstantBuffer->data.mColor = { 1.0f,0.0f,0.0f,1.0f };
 }
 
 void LaserBeam::fUpdate()
@@ -16,6 +18,7 @@ void LaserBeam::fUpdate()
 
 void LaserBeam::fRender(GraphicsPipeline& Graphics_)
 {
+    mConstantBuffer->bind(Graphics_.get_dc().Get(), 10);
 	Graphics_.set_pipeline_preset(SHADER_TYPES::LaserBeam);
 	DirectX::XMFLOAT4X4 worldMat= Math::calc_world_matrix(mScale, mOrientation, mStartPoint);
 	mpSkinnedMesh->render(Graphics_.get_dc().Get(), worldMat, { 1.0f,1.0f,1.0f,1.0 });
@@ -30,6 +33,16 @@ void LaserBeam::fSetPosition(DirectX::XMFLOAT3 Start_, DirectX::XMFLOAT3 End_)
 void LaserBeam::fSetRadius(float Radius_)
 {
     mRadius = Radius_;
+}
+
+void LaserBeam::fSetColor(DirectX::XMFLOAT4 Color_)
+{
+    mConstantBuffer->data.mColor = Color_;
+}
+
+void LaserBeam::fSetAlpha(float Alpha_)
+{
+    mConstantBuffer->data.mColor.w = Alpha_;
 }
 
 
