@@ -39,9 +39,11 @@ void LaserBeam::fCalcTransform()
     mScale.x = mScale.z = mRadius;
 	mScale.y = Math::Length( mEndPoint-mStartPoint);
 
+    mLerpSpeed = Math::Saturate(mLerpSpeed);
+
     // 回転を算出
-	// 仮の上ベクトル
-    DirectX::XMFLOAT3 up{ 0.0001f,1.0f,0.0f };
+	// 現在の上ベクトル
+    DirectX::XMFLOAT3 up{ 0.001f,1.0f,0.0f };
     up = Math::Normalize(up);
     // 終点とのベクトル
     DirectX::XMFLOAT3 cylinderUp = { mEndPoint-mStartPoint };
@@ -54,40 +56,15 @@ void LaserBeam::fCalcTransform()
     auto dot = Math::Dot(up, cylinderUp);
 	dot = acosf(dot);
 	DirectX::XMFLOAT4 dummy{ 0.0f,0.0f,0.0f,1.0f };
-    mOrientation=Math::RotQuaternion(dummy, cross, dot);
+    auto rotQua=Math::RotQuaternion(dummy, cross, dot);
 
-	//using namespace DirectX;
-	//XMFLOAT3 n(0.00001f, 1, 0); // 軸（正規化）
-	//XMFLOAT4 orientation = {
-	//	sinf(XMConvertToRadians(0) / 2) * n.x,
-	//	sinf(XMConvertToRadians(0) / 2) * n.y,
-	//	sinf(XMConvertToRadians(0) / 2) * n.z,
-	//	cosf(XMConvertToRadians(0) / 2)
-	//};
-	//// XMVECTORクラスへ変換
-	//XMVECTOR orientation_vec = XMLoadFloat4(&orientation);
-	//XMFLOAT3 d = { mEndPoint - mStartPoint };
-	//XMVECTOR d_norm = XMVector3Normalize(XMLoadFloat3(&d));
-	//XMVECTOR d_length_vec = XMVector3Length(XMLoadFloat3(&d));
-	//float d_length;
-	//XMStoreFloat(&d_length, d_length_vec);
+    // 補完
+      auto res= DirectX::XMQuaternionSlerp(
+        DirectX::XMLoadFloat4(&mOrientation),
+        DirectX::XMLoadFloat4(&rotQua),
+        1.0f);
 
-	//if (d_length > 0.0f)
-	//{
-	//	XMFLOAT3 d2 = { 0, mEndPoint.y - mStartPoint.y + FLT_EPSILON, 0 };
-	//	XMVECTOR d2_norm = XMVector3Normalize(XMLoadFloat3(&d2));
-	//	XMVECTOR dot = XMVector3Dot(d2_norm, d_norm);
-	//	float angle;
-	//	XMStoreFloat(&angle, dot);
-	//	angle = acosf(angle);
-	//	XMVECTOR axis = XMVector3Cross(d2_norm, d_norm);
-	//	if (fabsf(angle) > 1e-8f)
-	//	{
-	//		XMVECTOR q = XMQuaternionRotationAxis(axis, angle);
-	//		orientation_vec = XMQuaternionMultiply(orientation_vec, q);
-	//	}
-	//}
-	//DirectX::XMStoreFloat4(&mOrientation, orientation_vec);
+      DirectX::XMStoreFloat4(&mOrientation, res);
 }
 
 void LaserBeam::fGuiMenu()
@@ -96,6 +73,7 @@ void LaserBeam::fGuiMenu()
 	ImGui::Begin("LaserBeam");
 	ImGui::DragFloat3("StartPoint", &mStartPoint.x);
 	ImGui::DragFloat3("EndPoint", &mEndPoint.x);
+    ImGui::SliderFloat("LerpSpeed", &mLerpSpeed,0.0f,1.0f);
 	ImGui::End();
 #endif
 
