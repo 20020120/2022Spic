@@ -27,7 +27,7 @@ void EnemyManager::fInitialize()
     mUniqueCount = 0;
 }
 
-void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
+void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
 
@@ -35,7 +35,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
     mWaveTimer += elapsedTime_;
 
     //--------------------<敵の更新処理>--------------------//
-    fEnemiesUpdate(elapsedTime_);
+    fEnemiesUpdate(graphics_,elapsedTime_);
 
     //--------------------<敵同士の当たり判定>--------------------//
     fCollisionEnemyVsEnemy();
@@ -44,7 +44,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_)
     // fSpawn();
     fProtoSpawn(graphics_);
     // ImGuiのメニュー
-    fGuiMenu(graphics_);
+    fGuiMenu(graphics_,Func_);
 }
 
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
@@ -183,7 +183,7 @@ void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
     mPlayerPosition = Position_;
 }
 
-void EnemyManager::fSpawn(GraphicsPipeline& graphics)
+void EnemyManager::fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_)
 {
     int spawnCounts = 0;
 
@@ -193,7 +193,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
         // 出現条件を満たしていたら出す
         if (data.mSpawnTimer <= mWaveTimer)
         {
-            fSpawn(data, graphics);
+            fSpawn(data, graphics,Func_);
             spawnCounts++;
         }
     }
@@ -204,7 +204,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
     }
 }
 
-void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
+void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBulletFunc Func_)
 {
     // 送られてきたデータをもとに敵を出現させる
 
@@ -233,7 +233,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     break;
     case EnemyType::MiddleBoss_:
     {
-        auto enemy = new MiddleBoss(graphics_, mEditor.fGetFunction());
+        auto enemy = new MiddleBoss(graphics_, mEditor.fGetFunction(),Func_);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -244,7 +244,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     mUniqueCount++;
 }
 
-void EnemyManager::fEnemiesUpdate(float elapsedTime_)
+void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     // 更新
     for (const auto enemy : mEnemyVec)
@@ -252,7 +252,7 @@ void EnemyManager::fEnemiesUpdate(float elapsedTime_)
         if (enemy->fGetIsAlive())
         {
             enemy->fSetPlayerPosition(mPlayerPosition);
-            enemy->fUpdate(elapsedTime_);
+            enemy->fUpdate(Graphics_,elapsedTime_);
         }
         else
         {
@@ -389,7 +389,7 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
 }
 
 
-void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_)
+void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 {
     imgui_menu_bar("Game", "EnemyManager", mOpenGuiMenu);
 
@@ -433,7 +433,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_)
             EnemySource source{};
             source.mEmitterNumber = 0;
             source.mType = elem;
-            fSpawn(source,Graphics_);
+            fSpawn(source,Graphics_,Func_);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);

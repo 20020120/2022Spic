@@ -31,7 +31,7 @@ public:
     // ‰Šú‰»
     void fInitialize(GraphicsPipeline& graphics_);
     // XV
-    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_);
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_, AddBulletFunc Func_);
     // I—¹ˆ—
     void fFinalize();
 

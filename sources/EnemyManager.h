@@ -6,6 +6,8 @@
 #include<vector>
 #include <d3d11.h>
 
+#include "Common.h"
+
 //****************************************************************
 // 
 // 構造体
@@ -62,7 +64,7 @@ public:
     ~EnemyManager() = default;
 
     void fInitialize();
-    void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_);
+    void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
     void fRender(GraphicsPipeline& graphics_);
     void fFinalize();
     //--------------------<当たり判定>--------------------//
@@ -89,7 +91,7 @@ public:
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
     //--------------------<ImGui>--------------------//
-    void fGuiMenu(GraphicsPipeline& Graphics_);
+    void fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_);
     //--------------------<ウェーブ切り替え関数>--------------------//
     void fStartWave(int WaveIndex_);
 
@@ -100,9 +102,9 @@ public:
 
 private:
     //--------------------<敵と関連する処理>--------------------//
-    void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
-    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
-    void fEnemiesUpdate(float elapsedTime_); // 敵の更新処理
+    void fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_); // 敵の生成を管理
+    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
 
     //--------------------<敵をソートする>--------------------//

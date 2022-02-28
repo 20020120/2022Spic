@@ -107,7 +107,7 @@ public:
     virtual ~BaseEnemy();
 
     virtual void fInitialize() = 0;
-    virtual void fUpdate(float elapsedTime_) = 0;
+    virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
     virtual void fRender(GraphicsPipeline& graphics_);
 
     void fGetParam(BaseEnemy* This_,std::function<EnemyData(std::string)> Function_);

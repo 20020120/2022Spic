@@ -1,6 +1,7 @@
 #pragma once
 #include"BaseEnemy.h"
 #include"LaserBeam.h"
+#include"Common.h"
 //****************************************************************
 // 
 // íÜÉ{ÉX
@@ -29,16 +30,17 @@ public:
     // 
     //****************************************************************
 public:
-    MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std::string)> Function_);
+    MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std::string)> Function_,AddBulletFunc Func_);
     ~MiddleBoss() override = default;
 
     void fInitialize() override;
-    void fUpdate(float elapsedTime_) override;
-    void fGuiMenu() override;
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
+    void fGuiMenu(GraphicsPipeline& Graphics_);
     void fDamaged(int Damage_, float InvinsibleTime_) override;
 protected:
     void fSetCapsulePoint() override;
     void fRegisterFunctions() override;
+    void fShotStraightBullet(GraphicsPipeline& Graphics_); // íºêiÇ∑ÇÈíeÇÇÕÇ¡ÇµÇ·
 private:
     //****************************************************************
     // 
@@ -47,6 +49,7 @@ private:
     //****************************************************************
     float mTourRadian{}; // é¸âÒíÜÇÃâÒì]äp
     LaserBeam mLaserBeam{};
+    AddBulletFunc mfAddFunc;
 
     //****************************************************************
     // 

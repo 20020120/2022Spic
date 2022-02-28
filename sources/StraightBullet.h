@@ -9,7 +9,7 @@
 class StraightBullet final :public BaseBullet
 {
 public:
-    StraightBullet(GraphicsPipeline& Graphics_,DirectX::XMFLOAT3 InitPoint_);
+    StraightBullet(GraphicsPipeline& Graphics_,DirectX::XMFLOAT3 InitPoint_,DirectX::XMFLOAT3 mVelocity_);
     ~StraightBullet()override = default;
     void fUpdate(float elapsedTime_) override;
 private:

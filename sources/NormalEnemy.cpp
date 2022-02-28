@@ -26,7 +26,7 @@ void NormalEnemy::fInitialize()
 
 }
 
-void NormalEnemy::fUpdate(float elapsedTime_)
+void NormalEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     fUpdateBase(elapsedTime_);

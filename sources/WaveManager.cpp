@@ -6,7 +6,7 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_)
     mEnemyManager.fInitialize();
 }
 
-void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_)
+void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
 {
     switch (mWaveState)
     {
@@ -21,7 +21,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_)
     default: ;
     }
 
-    mEnemyManager.fUpdate(Graphics_,elapsedTime_);
+    mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 }
 
 void WaveManager::fFinalize()

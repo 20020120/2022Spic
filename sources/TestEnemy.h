@@ -25,7 +25,7 @@ public:
         ParamGetFunction Function_);
 
     void fInitialize() override;
-    void fUpdate(float elapsedTime_) override;
+    void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
 
     void fGuiMenu()override;
     //****************************************************************

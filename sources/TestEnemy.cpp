@@ -24,7 +24,7 @@ void TestEnemy::fInitialize()
 {
 }
 
-void TestEnemy::fUpdate(float elapsedTime_)
+void TestEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     fUpdateBase(elapsedTime_);

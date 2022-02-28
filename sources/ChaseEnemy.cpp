@@ -29,7 +29,7 @@ void ChaseEnemy::fInitialize()
    
 }
 
- void ChaseEnemy::fUpdate(float elapsedTime_)
+ void ChaseEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
      fUpdateBase(elapsedTime_);
      mTimerComponent.fUpdate(elapsedTime_);

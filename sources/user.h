@@ -587,6 +587,18 @@ namespace Math
         XMStoreFloat3(&up, up_vec);
         return up;
     }
+    inline DirectX::XMFLOAT3 GetFront (const DirectX::XMFLOAT4& Orientation_)
+    {
+        using namespace DirectX;
+        XMFLOAT3 up{};
+        const XMVECTOR orientation_vec{ XMLoadFloat4(&Orientation_) };
+        const DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+        DirectX::XMFLOAT4X4 m4x4 = {};
+        DirectX::XMStoreFloat4x4(&m4x4, m);
+        const DirectX::XMVECTOR up_vec = { m4x4._31, m4x4._32, m4x4._33 };
+        XMStoreFloat3(&up, up_vec);
+        return up;
+    }
 
     inline float Saturate(float Resource_,float Min_=0.0f,float Max_=1.0f)
     {
