@@ -82,7 +82,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
 
-	player->Update(elapsed_time, sky_dome.get());
+	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
