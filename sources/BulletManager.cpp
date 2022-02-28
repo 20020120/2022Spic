@@ -4,6 +4,12 @@ void BulletManager::fInitialize()
 {
     // 初期化
     fAllClear();
+
+    // 弾をマネージャに追加する関数
+    mfAddBullet = [=](BaseBullet* pBaseBullet_)->void
+    {
+        mBulletVec.emplace_back(pBaseBullet_);
+    };
 }
 
 void BulletManager::fUpdate(float elapsedTime_)
@@ -16,10 +22,12 @@ void BulletManager::fUpdate(float elapsedTime_)
 
 void BulletManager::fRender(GraphicsPipeline& Graphics_)
 {
-    for (const auto bullet : mBulletVec)
-    {
-        bullet->fRender(Graphics_);
-    }
+   
+}
+
+AddBulletFunc BulletManager::fGetAddFunction() const
+{
+    return mfAddBullet;
 }
 
 void BulletManager::fAllClear()

@@ -4,7 +4,7 @@
 void LaserBeam::fInitialize(ID3D11Device* pDevice_, const wchar_t* TextureName_)
 {
     // èâä˙âª
-    mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, "./resources/Models/Laser/LaserBeam.fbx");
+    mpSkinnedMesh = std::make_unique<SkinnedMesh>(pDevice_, "./resources/Models/Bullet/LaserBeam.fbx");
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mConstantBuffer = std::make_unique<Constants<Data>>(pDevice_);
     mConstantBuffer->data.mColor = { 1.0f,0.0f,0.0f,1.0f };

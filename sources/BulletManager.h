@@ -1,6 +1,7 @@
 #pragma once
 #include"graphics_pipeline.h"
 #include"BaseBullet.h"
+#include "Common.h"
 #include<functional>
 #include<vector>
 //****************************************************************
@@ -20,7 +21,7 @@ public:
     void fRender(GraphicsPipeline& Graphics_);
 
     //--------------------<ƒQƒbƒ^[ŠÖ”>--------------------//
-    std::function<void(BaseBullet*)> fGetAddFunction{};
+    [[nodiscard]]AddBulletFunc fGetAddFunction() const;
 
 private:
     void fAllClear();
@@ -32,7 +33,7 @@ private:
     // 
     //****************************************************************
 private:
-    std::function<void(BaseBullet*)> mfAddBullet; // ’e‚ğ¶¬‚·‚éŠÖ”
+    AddBulletFunc mfAddBullet; // ’e‚ğ¶¬‚·‚éŠÖ”
     std::vector<BaseBullet*> mBulletVec{}; // ’e‚ğŠi”[‚·‚éƒRƒ“ƒeƒi
     std::vector<BaseBullet*> mRemoveVec{}; // ’e‚ğŠi”[‚·‚éƒRƒ“ƒeƒi
 
