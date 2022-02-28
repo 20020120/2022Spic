@@ -10,7 +10,7 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     fGetParam(this, Function_);
     fRegisterFunctions();
     // ビームを初期化
-    mLaserBeam.fInitialize(Graphics_.get_device().Get(),
+    mLaserPointer.fInitialize(Graphics_.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/trajectory_.png");
     mfAddFunc = Func_;
 }
@@ -22,9 +22,17 @@ void MiddleBoss::fInitialize()
 void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     fUpdateBase(elapsedTime_,Graphics_);
-    mLaserBeam.fUpdate();
+    mLaserPointer.fUpdate();
+    // 照準は常にプレイヤーの方向に合わせておく
+    auto endPoint = mPlayerPosition;
+    endPoint.y += 1.5f;
+    mLaserPointer.fSetPosition(mPosition, endPoint);
+    mLaserPointer.fSetLengthThreshold(mLaserPointerLength);
+    mLaserPointer.fSetRadius(0.02f);
+
     fGuiMenu(Graphics_);
-    fShotStraightBullet(Graphics_);
+
+    
 }
 
 void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
@@ -38,6 +46,16 @@ void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
             mPosition, Math::GetFront(mOrientation)*10.0f);
         mfAddFunc(straightBullet);
     }
+
+    if(ImGui::CollapsingHeader("StateMachine"))
+    {
+       if (ImGui::Button("TourLaserReady"))
+       {
+           fChangeState(State::TourBeamReady);
+       }
+
+    }
+    
     ImGui::End();
 #endif
 }
@@ -80,6 +98,45 @@ void MiddleBoss::fRegisterFunctions()
         FunctionTuple tuple = std::make_tuple(Ini, up);
         mFunctionMap.insert(std::make_pair(State::Tour, tuple));
     }
+    {
+        auto Ini = [=]()->void
+        {
+            fTourLaserReadyInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fTourLaserReadyUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::TourBeamReady, tuple));
+    }
+    {
+        auto Ini = [=]()->void
+        {
+            fTourLaserInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fTourLaserUpdate(elapsedTime_, Graphics_);
+        };
+
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::TourBeam, tuple));
+    }
+    {
+        auto Ini = [=]()->void
+        {
+            fTourShotInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fTourShotUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::TourShot, tuple));
+    }
+
+
     fChangeState(State::Tour);
 }
 
@@ -93,6 +150,6 @@ void MiddleBoss::fShotStraightBullet(GraphicsPipeline& Graphics_)
 
 void MiddleBoss::fRender(GraphicsPipeline& graphics)
 {
-    mLaserBeam.fRender(graphics);
+    mLaserPointer.fRender(graphics);
     BaseEnemy::fRender(graphics);
 }

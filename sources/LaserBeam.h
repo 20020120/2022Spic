@@ -32,10 +32,13 @@ public:
     void fInitialize(ID3D11Device* pDevice_, const wchar_t* TextureName_);
     void fUpdate();
     void fRender(GraphicsPipeline& Graphics_);
+    //--------------------<セッター関数>--------------------//
     void fSetPosition(DirectX::XMFLOAT3 Start_, DirectX::XMFLOAT3 End_);
     void fSetRadius(float Radius_);
     void fSetColor(DirectX::XMFLOAT4 Color_);
     void fSetAlpha(float Alpha_);
+    void fSetLengthThreshold(float Threshold_);
+  
 private:
     void fCalcTransform(); // 姿勢の情報を算出
     void fGuiMenu();
@@ -50,7 +53,7 @@ private:
     DirectX::XMFLOAT3 mEndPoint{}; // ビームの開始地点
     float mRadius{};  // 半径
     float mLerpSpeed{}; // 補完の速さ
-
+    float mLengthThreshold{}; // 長さの補完率
     DirectX::XMFLOAT4 mOrientation{}; // 回転
     DirectX::XMFLOAT3 mScale{}; // 大きさ
     std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };

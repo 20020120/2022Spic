@@ -45,12 +45,20 @@ void LaserBeam::fSetAlpha(float Alpha_)
     mConstantBuffer->data.mColor.w = Alpha_;
 }
 
+void LaserBeam::fSetLengthThreshold(float Threshold_)
+{
+    mLengthThreshold = Threshold_;
+}
+
 
 void LaserBeam::fCalcTransform()
 {
     // スケールを算出
     mScale.x = mScale.z = mRadius;
-	mScale.y = Math::Length( mEndPoint-mStartPoint);
+
+    // 終点を計算する
+    const DirectX::XMFLOAT3 endPoint = Math::lerp(mStartPoint, mEndPoint, mLengthThreshold);
+	mScale.y = Math::Length( endPoint-mStartPoint);
 
     mLerpSpeed = Math::Saturate(mLerpSpeed);
 
@@ -65,6 +73,11 @@ void LaserBeam::fCalcTransform()
     // 外積で回転軸を算出
     auto cross = Math::Cross(up, cylinderUp);
 	cross = Math::Normalize(cross);
+    // 長さが０の時クラッシュ回避のため仮の値を代入
+    if(Math::Length(cross)<=0.0f)
+    {
+        cross = { 0.0f,1.0f,0.0f };
+    }
     // 内積で回転角を算出
     auto dot = Math::Dot(up, cylinderUp);
 	dot = acosf(dot);

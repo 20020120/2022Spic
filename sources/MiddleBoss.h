@@ -20,6 +20,7 @@ public:
         inline static const std::string Start = "Start";
         inline static const std::string Tour = "Tour";
         inline static const std::string TourShot = "TourShot";
+        inline static const std::string TourBeamReady = "TourBeamReady";
         inline static const std::string TourBeam = "TourBeam";
     };
 
@@ -47,8 +48,10 @@ private:
     // 変数
     // 
     //****************************************************************
-    float mTourRadian{}; // 周回中の回転角
-    LaserBeam mLaserBeam{};
+    float mTourRadian{};         // 周回中の回転角
+    LaserBeam mLaserPointer{};   // 照準のレーザー
+    float mLaserPointerLength{}; // 照準の長さ
+    float mLaserShotTimer{};     // ビーム発射準備から発射での時間
     AddBulletFunc mfAddFunc;
 
     //****************************************************************
@@ -56,8 +59,8 @@ private:
     // 定数
     // 
     //****************************************************************
-    const float TourLength{ 150.0f };  // 周回中の原点からの距離
-
+    const float TourLength{ 150.0f };    // 周回中の原点からの距離
+    const float TourLaserTimer{ 6.0f }; // 発射までの時間
 
 private:
     //****************************************************************
@@ -65,11 +68,23 @@ private:
     // ステートマシンの関数
     // 
     //****************************************************************
-    void fStartInit();
+    //最初の登場シーン
+    void fStartInit();  
     void fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
+    // 第一形態ステージの上をぐるぐる回る
     void fTourInit();
     void fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // 第一形態ビーム準備
+    void fTourLaserReadyInit();
+    void fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // 第一形態ビーム
+    void fTourLaserInit();
+    void fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_);
+    // 第一形態単発射撃
+    void fTourShotInit();
+    void fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+
 public:
     void fRender(GraphicsPipeline& graphics_) override;
 };
