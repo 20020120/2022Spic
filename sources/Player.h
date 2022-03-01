@@ -8,7 +8,7 @@
 #include"SwordTrail.h"
 #include"post_effect.h"
 #include"graphics_pipeline.h"
-
+#include "Common.h"
 class Player :public BasePlayer, private PlayerMove
 {
 public:
@@ -178,6 +178,8 @@ public:
     std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
+    [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() { return damage_func; }
+
     const  BaseEnemy* GetPlayerTargetEnemy() const
     {
         if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
@@ -224,6 +226,8 @@ private:
     typedef void(Player::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
     //関数ポインタの変数
     PlayerActivity player_activity = &Player::IdleUpdate;
+    AddDamageFunc damage_func;
+
     //自分のメンバ関数の関数ポインタを呼ぶ
     void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
 

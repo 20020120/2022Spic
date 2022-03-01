@@ -122,6 +122,12 @@ std::string BaseEnemy::fGetType() const
     return mData.mDivideClass;
 }
 
+BaseEnemy::AttackPower BaseEnemy::fGetAttackPower() const
+{
+    return mAttackPower;
+
+}
+
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 {
     mPlayerPosition = PlayerPosition_;
@@ -130,6 +136,13 @@ void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
 void BaseEnemy::fSetPosition(DirectX::XMFLOAT3 Position_)
 {
     mPosition = Position_;
+}
+
+void BaseEnemy::fSetAttackPower(int Damage_, float InvincibleTime_)
+{
+    mAttackPower.mDamage = Damage_;
+    mAttackPower.mInvincible_time = InvincibleTime_;
+
 }
 
 void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
