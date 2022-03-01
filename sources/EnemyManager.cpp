@@ -89,7 +89,7 @@ int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoi
 }
 
 bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePointA_,
-    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_)
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, AddDamageFunc Func_)
 {
     //--------------------<ƒvƒŒƒCƒ„[‚Æ“G‚ÌUŒ‚‚Ì“–‚½‚è”»’è>--------------------//
 
@@ -107,7 +107,7 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-
+                Func_(enemy->fGetAttackPower().mDamage, enemy->fGetAttackPower().mInvincible_time);
             }
         }
     }

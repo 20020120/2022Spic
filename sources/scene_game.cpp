@@ -93,6 +93,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			player->GetPlayerPower()));
 	}
 
+	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
+		player->GetBodyCapsuleParam().end,
+		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
 	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraDirection(c->GetForward(), c->GetRight());

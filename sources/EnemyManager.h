@@ -80,7 +80,8 @@ public:
     bool fCalcEnemiesAttackVsPlayer(
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
         DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
-        float PlayerCapsuleRadius_             // プレイヤーのカプセルの情報
+        float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
+        AddDamageFunc Func_
     );
 
     //--------------------<ゲッター関数>--------------------//

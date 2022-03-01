@@ -15,6 +15,9 @@ Player::Player(GraphicsPipeline& graphics)
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
     player_config = std::make_unique<PlayerConfig>(graphics);
+    //ダメージを受ける関数を関数ポインタに格納
+    damage_func = [=](int damage, float invincible)->void {Damaged(damage, invincible); };
+
 }
 
 Player::~Player()

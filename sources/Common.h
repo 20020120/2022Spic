@@ -9,3 +9,5 @@ class BaseBullet;
 //****************************************************************
 
 typedef  std::function<void(BaseBullet*)> AddBulletFunc;
+typedef  std::function<void(int, float)> AddDamageFunc;
+

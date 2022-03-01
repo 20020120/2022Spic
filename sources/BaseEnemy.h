@@ -80,6 +80,11 @@ protected:
         inline static const std::string Damaged = "Damaged";
     };
 
+    struct AttackPower
+    {
+        int mDamage{};
+        float mInvincible_time{};
+    };
 public:
     struct CapsuleCollider
     {
@@ -131,9 +136,14 @@ public:
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
     [[nodiscard]] const float fGetPercentHitPoint()const;
     [[nodiscard]] std::string fGetType()const;
+    [[nodiscard]] AttackPower fGetAttackPower()const;
+
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
+    void fSetAttackPower(int Damage_, float InvincibleTime_);
+
+
 protected:
     void fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_);
 
@@ -164,6 +174,8 @@ protected:
     EnemyData mData{}; 
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
+    AttackPower mAttackPower{};
+
     bool IsAttacked{};
     float mInvinsibleTimer = 0.0f;//無敵時間
     //エネミーの各方向
