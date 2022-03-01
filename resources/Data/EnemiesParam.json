@@ -31,6 +31,21 @@
             }
         },
         {
+            "key": "class MiddleBoss",
+            "value": {
+                "Name": "class MiddleBoss",
+                "MaxHp": 10,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 0.0,
+                    "LengthB": 0.0,
+                    "Radius": 0.0
+                }
+            }
+        },
+        {
             "key": "class NormalEnemy",
             "value": {
                 "Name": "class NormalEnemy",

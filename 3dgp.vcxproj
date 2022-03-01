@@ -272,6 +272,7 @@
     <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
+    <ClCompile Include="sources\UserLua.cpp" />
     <ClCompile Include="sources\WaveManager.cpp" />
     <ClCompile Include="sources\UI.cpp" />
     <ClCompile Include="sources\counter.cpp" />

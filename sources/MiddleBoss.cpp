@@ -18,10 +18,7 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     mfAddFunc = Func_;
 
     //--------------------<LuaLibの呼び出し>--------------------//
-    mLuaState = ULua::fCreateLuaState();
-    // Luaファイルをロード
-    ULua::fLuaOpenFile(mLuaState, "./resources/Data/MiddleBoss.lua");
-
+    mLuaWorld.fLoadFile("./resources/Data/MiddleBoss.lua");
 }
 
 void MiddleBoss::fInitialize()
@@ -37,7 +34,6 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     auto endPoint = mPlayerPosition;
     endPoint.y += 1.5f;
     mLaserPointer.fSetPosition(mPosition, endPoint);
-    mLaserPointer.fSetLengthThreshold(mLaserPointerLength);
     mLaserPointer.fSetRadius(0.02f);
 
     mLaserBeam.fSetLengthThreshold(mLaserBeamLength);
@@ -70,7 +66,7 @@ void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
     }
     if(ImGui::Button("LuaReload"))
     {
-        ULua::fLuaOpenFile(mLuaState, "./resources/Data/MiddleBoss.lua");
+        mLuaWorld.fLoadFile("./resources/Data/MiddleBoss.lua");
     }
     ImGui::End();
 #endif

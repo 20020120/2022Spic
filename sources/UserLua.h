@@ -14,18 +14,12 @@ namespace ULua
     //--------------------<Stateを初期化する関数>--------------------//
     inline lua_State* fCreateLuaState()
     {
-        lua_State* State = nullptr;
-        State = luaL_newstate();
-        luaL_openlibs(State);
-        luaopen_base(State);
-        return State;
+        
     }
     //--------------------<Luaファイルを開く>--------------------//
     inline void fLuaOpenFile(lua_State* Lua, const char* FileName)
     {
-        const auto Result = luaL_dofile(Lua, FileName);  // Luaファイルを開く
-        // Luaファイルを開けなかったらエラーメッセージを出力
-        assert(Result != LUA_ERRFILE);
+        
     }
 
     //--------------------<Luaの関数を呼び出す>--------------------//
@@ -33,54 +27,47 @@ namespace ULua
         int ArgCounts_, // 引数の数
         int RetCounts_) // 戻り値の数
     {
-        const auto errorMassage = lua_pcall(State_, ArgCounts_, RetCounts_, 0);
-        if (errorMassage != 0)
-        {
-            // ０以外ならエラーをキャッチ
-            assert(lua_tostring(State_, -1));
-        }
+        
     }
 
 
 
 }
 
-//****************************************************************
-// 
-// Luaのサポート関数群
-// 
-//****************************************************************
-namespace SupLua
+
+class LuaWorld final 
 {
-
-    //--------------------<Luaのスタックの中身をすべて削除>--------------------//
-    inline void fDestroyLuaStack(lua_State* State)
-    {
-        // スタック削除処理
-        const int LuaStackSize = lua_gettop(State);
-        for (int i = 0; i < LuaStackSize; i++)
-        {
-            lua_pop(State, -1);
-        }
-    }
-
     //****************************************************************
     // 
-    //  以下Luaに値を挿入する関数
+    // 関数
     // 
     //****************************************************************
+public:
+    LuaWorld();
+    ~LuaWorld();
 
+     void fLoadFile(const char* FileName_) const;// ファイルをロード
+     void fDestroyStack(); // スタックを全削除
+     void fCallFunc(int ArgCounts_, // 引数の数
+         int RetCounts_) const; // 戻り値の数
 
-    inline void fLuaPushNumeric(lua_State* Lua, double Numeric_)
-    {
-        lua_pushnumber(Lua, Numeric_);
-    }
+   //--------------------<セッター関数>--------------------//
+    void fSetNumeric(double Numeric_) const;
+    void fSetBoolean(bool Is) const;
+    void fSetFunction(const char* FunctionName_) const;
 
-    inline void fLuaPushBoolean(lua_State* Lua, bool Is)
-    {
-        lua_pushboolean(Lua, 0);
-    }
+    //--------------------<ゲッター関数>--------------------//
+    [[nodiscard]] double fGetGlobalFloat(const char* NumericName_) const;
+    [[nodiscard]] double fGetDouble(int StackPoint_) const;
+    [[nodiscard]] bool fGetBool(int StackPoint_)const;
 
+    //--------------------<デバッグ関数>--------------------//
+    void fDebugShowStack();
 
+private:
+    void fCreate();  // 作成（初期化）
+    void fClose() const;   // 終了
 
-}
+private:
+    lua_State* mLuaState{ nullptr };
+};
