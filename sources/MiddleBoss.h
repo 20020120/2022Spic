@@ -2,9 +2,7 @@
 #include"BaseEnemy.h"
 #include"LaserBeam.h"
 #include"Common.h"
-#include"lua.hpp"
-#include"lualib.h"
-#include"lauxlib.h"
+#include"UserLua.h"
 //****************************************************************
 // 
 // 中ボス
@@ -51,7 +49,6 @@ private:
     // 変数
     // 
     //****************************************************************
-    float mTourRadian{};         // 周回中の回転角
     LaserBeam mLaserPointer{};   // 照準のレーザー
     LaserBeam mLaserBeam{};      // レーザービーム
 
@@ -69,7 +66,6 @@ private:
     // 定数
     // 
     //****************************************************************
-    const float TourLength{ 150.0f };    // 周回中の原点からの距離
     const float TourLaserTimer{ 6.0f }; // 発射までの時間
 
 private:

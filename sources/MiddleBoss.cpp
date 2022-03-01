@@ -18,7 +18,9 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     mfAddFunc = Func_;
 
     //--------------------<LuaLibの呼び出し>--------------------//
-    mLuaState = luaL_newstate();
+    mLuaState = ULua::fCreateLuaState();
+    // Luaファイルをロード
+    ULua::fLuaOpenFile(mLuaState, "./resources/Data/MiddleBoss.lua");
 
 }
 
@@ -66,7 +68,10 @@ void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
        }
 
     }
-    
+    if(ImGui::Button("LuaReload"))
+    {
+        ULua::fLuaOpenFile(mLuaState, "./resources/Data/MiddleBoss.lua");
+    }
     ImGui::End();
 #endif
 }

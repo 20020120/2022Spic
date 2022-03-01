@@ -21,22 +21,21 @@ void MiddleBoss::fTourInit()
 {
     // ステージの周囲を周回する動き
     mPosition = { 0.0f,150.0f,150.0f };
+
 }
 
 void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ステージの原点を中心にぐるぐる回る
+    lua_getglobal(mLuaState, "fTourMove");
+    lua_pushnumber(mLuaState, static_cast<double>(elapsedTime_));
 
-    // 位置計算
-    mPosition = {
-        sinf(mTourRadian) * TourLength,
-        mPosition.y ,
-        cosf(mTourRadian) * TourLength
-    };
+    ULua::fLuaCallFunc(mLuaState, 1, 2);
 
-    // 角度を更新
-    mTourRadian += elapsedTime_;
- 
+    // 値をLuaから受け取り
+    mPosition.x = lua_tonumber(mLuaState, -1);
+    mPosition.z = lua_tonumber(mLuaState, -2);
+
 }
 
 //--------------------<ビームの準備>--------------------//
