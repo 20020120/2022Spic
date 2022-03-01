@@ -71,16 +71,46 @@ namespace SupLua
     //****************************************************************
 
 
-    inline void fLuaPushNumeric(lua_State* Lua, double Numeric_)
+   
+}
+
+class LuaWorld final 
+{
+    //****************************************************************
+    // 
+    // 関数
+    // 
+    //****************************************************************
+public:
+    LuaWorld() = default;
+    ~LuaWorld() = default;
+
+    void fCreate();  // 作成（初期化）
+    void fLoadFile(const char* FileName_);// ファイルをロード
+
+    
+    //****************************************************************
+    // 
+    // 値を挿入
+    // 
+    //****************************************************************
+    void fPushNumeric(double Numeric_)
     {
-        lua_pushnumber(Lua, Numeric_);
+        lua_pushnumber(mLuaState, Numeric_);
     }
 
-    inline void fLuaPushBoolean(lua_State* Lua, bool Is)
+    inline void fPushBoolean( bool Is)
     {
         lua_pushboolean(Lua, 0);
     }
 
+    //--------------------<Luaのグローバル関数の値を取得する>--------------------//
+    inline float fGetGlobalFloat(lua_State* State_, const char* NumericName_)
+    {
+
+    }
 
 
-}
+private:
+    lua_State* mLuaState{ nullptr };
+};

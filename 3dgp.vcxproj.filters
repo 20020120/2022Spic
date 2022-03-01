@@ -384,6 +384,9 @@
     <ClCompile Include="sources\player_config.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
+    <ClCompile Include="sources\UserLua.cpp">
+      <Filter>Sources\99_Lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
