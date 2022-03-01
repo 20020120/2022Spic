@@ -2,6 +2,9 @@
 #include"BaseEnemy.h"
 #include"LaserBeam.h"
 #include"Common.h"
+#include"lua.hpp"
+#include"lualib.h"
+#include"lauxlib.h"
 //****************************************************************
 // 
 // 中ボス
@@ -57,6 +60,9 @@ private:
     float mBeamRadius{};         // ビームの太さ
     float mLaserShotTimer{};     // ビーム発射準備から発射での時間
     AddBulletFunc mfAddFunc;
+
+    //--------------------<Luaスクリプト>--------------------//
+    lua_State* mLuaState{};
 
     //****************************************************************
     // 

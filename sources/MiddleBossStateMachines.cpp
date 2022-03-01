@@ -114,7 +114,7 @@ void MiddleBoss::fTourLaserInit()
     DirectX::XMFLOAT3 v = endPoint - mPosition;
     v = Math::Normalize(v);
     endPoint = mPosition + (v * 500.0f);
-
+    
     mLaserBeam.fSetPosition(mPosition, endPoint);
 }
 void MiddleBoss::fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_)

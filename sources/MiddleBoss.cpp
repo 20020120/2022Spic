@@ -16,6 +16,10 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
         L"./resources/TexMaps/SwordTrail/trajectory_.png");
 
     mfAddFunc = Func_;
+
+    //--------------------<LuaLib‚ÌŒÄ‚Ño‚µ>--------------------//
+    mLuaState = luaL_newstate();
+
 }
 
 void MiddleBoss::fInitialize()

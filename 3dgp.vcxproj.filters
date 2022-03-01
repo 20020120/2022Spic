@@ -139,6 +139,9 @@
     <Filter Include="Sources\bullet">
       <UniqueIdentifier>{a5ce1793-8340-4355-abd5-bcca24d7f16a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\99_Lua">
+      <UniqueIdentifier>{78606c70-cde8-4834-b9a9-41b81be6a672}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -637,6 +640,9 @@
     </ClInclude>
     <ClInclude Include="sources\Common.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\UserLua.h">
+      <Filter>Sources\99_Lua</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
