@@ -1,5 +1,6 @@
 #include"MiddleBoss.h"
 #include"Operators.h"
+#include"StraightBullet.h"
 //****************************************************************
 // 
 // 中型のボスのステートマシンを定義する 
@@ -35,6 +36,23 @@ void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mPosition.x = static_cast<float>(mLuaWorld.fGetDouble(-1));
     mPosition.z = static_cast<float>(mLuaWorld.fGetDouble(-2));
 
+    // 各攻撃に遷移するときの条件
+    // ５秒ごとに抽選
+    if(static_cast<int>(mTimer)%5==0)
+    {
+        const int selectedNum = rand() % 4;
+        if(selectedNum==0)
+        {
+            fChangeState(State::TourBeamReady);
+        }
+        else if(selectedNum<=2)
+        {
+            fChangeState(State::TourShot);
+        }
+
+    }
+
+
 }
 
 //--------------------<ビームの準備>--------------------//
@@ -63,58 +81,8 @@ void MiddleBoss::fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Gra
     if (mLuaWorld.fGetBool(-3))
     {
         fChangeState(State::TourBeam);
+        mLaserPointer.fSetLengthThreshold(0.0f);
     }
-
-
-
-    //// ビームの照準を伸ばす
-    //if(mLaserPointerLength<1.0f)
-    //{
-    //    mLaserPointerLength += elapsedTime_;
-    //}
-    //else // 最大なら固定
-    //{
-    //    mLaserPointerLength = 1.0f;
-    //}
-    //// タイマーを更新する
-    //mLaserShotTimer += elapsedTime_;
-    //// 時間を過ぎたら発射する
-    //if (mLaserShotTimer >= TourLaserTimer)
-    //{
-    //    
-    //}
-    //else
-    //{
-    //    // 残り時間に応じて点滅速度を変える
-    //    if (TourLaserTimer - mLaserShotTimer > 3.0f)
-    //    {
-    //        // 遅い
-    //        switch (static_cast<int>(mLaserShotTimer*7) % 2)
-    //        {
-    //        case 0:
-    //           
-    //            break;
-    //        case 1:
-    //            mLaserPointer.fSetAlpha(0.0f);
-    //            break;
-    //        default:;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // 早い
-    //        switch (static_cast<int>(mLaserShotTimer * 20) % 2)
-    //        {
-    //        case 0:
-    //            mLaserPointer.fSetAlpha(1.0f);
-    //            break;
-    //        case 1:
-    //            mLaserPointer.fSetAlpha(0.0f);
-    //            break;
-    //        default:;
-    //        }
-    //    }
-    //}
 }
 //--------------------<ビーム発射>--------------------//
 void MiddleBoss::fTourLaserInit()
@@ -163,17 +131,20 @@ void MiddleBoss::fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_
             mBeamRadius = 0.0f;
         }
     }
-
-
-
 }
 
 //--------------------<単発射撃>--------------------//
 void MiddleBoss::fTourShotInit()
 {
-    
+    // 初期化
 }
 void MiddleBoss::fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    
+    // 射撃方向を算出
+    auto v = mPlayerPosition - mPosition;
+    v = Math::Normalize(v);
+    v* TourBulletSpeed;
+    mfAddFunc(new StraightBullet(Graphics_, mPosition, v));
+    fChangeState(State::Tour);
+
 }

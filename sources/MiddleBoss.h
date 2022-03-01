@@ -51,12 +51,18 @@ private:
     //****************************************************************
     LaserBeam mLaserPointer{};   // 照準のレーザー
     LaserBeam mLaserBeam{};      // レーザービーム
+    AddBulletFunc mfAddFunc;
 
+private:  // ビームに関する変数
     float mLaserPointerLength{}; // 照準の長さ
     float mLaserBeamLength{};    // ビームの長さ
     float mBeamRadius{};         // ビームの太さ
     float mLaserShotTimer{};     // ビーム発射準備から発射での時間
-    AddBulletFunc mfAddFunc;
+
+private:  // 全体に関係する変数
+    float mTimer{}; 
+
+
 
     //--------------------<Luaスクリプト>--------------------//
     LuaWorld mLuaWorld{};
@@ -67,6 +73,7 @@ private:
     // 
     //****************************************************************
     const float TourLaserTimer{ 6.0f }; // 発射までの時間
+    const float TourBulletSpeed{ 500.0f };// 弾の速度 
 
 private:
     //****************************************************************

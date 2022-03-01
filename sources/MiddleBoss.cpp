@@ -4,11 +4,13 @@
 MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std::string)> Function_, AddBulletFunc Func_)
     :BaseEnemy(Graphics_,0, "./resources/Models/Enemy/enemy_proto.fbx")
 {
+    mTimer = 0.0f;
     mScale = { 0.03f,0.03f,0.03f };
     mPosition = { 0.0f,0.0f,0.0f };
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     fGetParam(this, Function_);
     fRegisterFunctions();
+
     // ビームを初期化
     mLaserPointer.fInitialize(Graphics_.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/trajectory_.png");
@@ -27,7 +29,12 @@ void MiddleBoss::fInitialize()
 }
 void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
+    // 汎用タイマーを更新
+    mTimer += elapsedTime_;
+
+    // 基底クラスの更新処理
     fUpdateBase(elapsedTime_,Graphics_);
+    // このクラスの更新処理
     mLaserPointer.fUpdate();
     mLaserBeam.fUpdate();
     // 照準は常にプレイヤーの方向に合わせておく
@@ -35,13 +42,12 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     endPoint.y += 1.5f;
     mLaserPointer.fSetPosition(mPosition, endPoint);
     mLaserPointer.fSetRadius(0.02f);
-
     mLaserBeam.fSetLengthThreshold(mLaserBeamLength);
     mLaserBeam.fSetRadius(mBeamRadius);
     mLaserBeam.fSetColor({ 1.0f,1.0f,0.0f,1.0f });
-    fGuiMenu(Graphics_);
 
-    
+
+    fGuiMenu(Graphics_);
 }
 
 void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
