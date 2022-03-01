@@ -43,10 +43,9 @@ class LuaWorld final
     // 
     //****************************************************************
 public:
-    LuaWorld() = default;
-    ~LuaWorld() = default;
+    LuaWorld();
+    ~LuaWorld();
 
-     void fCreate();  // 作成（初期化）
      void fLoadFile(const char* FileName_) const;// ファイルをロード
      void fDestroyStack(); // スタックを全削除
      void fCallFunc(int ArgCounts_, // 引数の数
@@ -59,11 +58,15 @@ public:
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] double fGetGlobalFloat(const char* NumericName_) const;
-    [[nodiscard]] double fGetFloat(int StackPoint_) const;
-    
+    [[nodiscard]] double fGetDouble(int StackPoint_) const;
+    [[nodiscard]] bool fGetBool(int StackPoint_)const;
+
     //--------------------<デバッグ関数>--------------------//
     void fDebugShowStack();
 
+private:
+    void fCreate();  // 作成（初期化）
+    void fClose() const;   // 終了
 
 private:
     lua_State* mLuaState{ nullptr };

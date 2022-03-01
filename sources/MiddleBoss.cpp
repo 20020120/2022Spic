@@ -18,7 +18,6 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     mfAddFunc = Func_;
 
     //--------------------<LuaLib‚ÌŒÄ‚Ño‚µ>--------------------//
-    mLuaWorld.fCreate();
     mLuaWorld.fLoadFile("./resources/Data/MiddleBoss.lua");
 }
 
@@ -35,7 +34,6 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     auto endPoint = mPlayerPosition;
     endPoint.y += 1.5f;
     mLaserPointer.fSetPosition(mPosition, endPoint);
-    mLaserPointer.fSetLengthThreshold(mLaserPointerLength);
     mLaserPointer.fSetRadius(0.02f);
 
     mLaserBeam.fSetLengthThreshold(mLaserBeamLength);

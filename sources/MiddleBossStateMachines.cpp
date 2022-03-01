@@ -28,12 +28,12 @@ void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ステージの原点を中心にぐるぐる回る
     mLuaWorld.fSetFunction("fTourMove");
-    mLuaWorld.fSetNumeric(static_cast<double>(elapsedTime_));
+    mLuaWorld.fSetNumeric(elapsedTime_);
     mLuaWorld.fCallFunc(1, 2);
 
     // 値をLuaから受け取り
-    mPosition.x = mLuaWorld.fGetFloat(-1);
-    mPosition.z = mLuaWorld.fGetFloat(-2);
+    mPosition.x = static_cast<float>(mLuaWorld.fGetDouble(-1));
+    mPosition.z = static_cast<float>(mLuaWorld.fGetDouble(-2));
 
 }
 
@@ -41,61 +41,80 @@ void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void MiddleBoss::fTourLaserReadyInit()
 {
     // 照準を初期化
-    mLaserPointerLength = 0.0f;
     mLaserBeamLength = 0.0f;
     mLaserShotTimer = 0.0f;
-
+    mLuaWorld.fSetFunction("fTourLaserReadyInit");
+    mLuaWorld.fCallFunc(0, 1);
 }
 void MiddleBoss::fTourLaserReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    // ビームの照準を伸ばす
-    if(mLaserPointerLength<1.0f)
-    {
-        mLaserPointerLength += elapsedTime_;
-    }
-    else // 最大なら固定
-    {
-        mLaserPointerLength = 1.0f;
-    }
-    // タイマーを更新する
-    mLaserShotTimer += elapsedTime_;
-    // 時間を過ぎたら発射する
-    if (mLaserShotTimer >= TourLaserTimer)
+    mLuaWorld.fDestroyStack();
+    mLuaWorld.fSetFunction("fTourLaserReady");
+    mLuaWorld.fSetNumeric(elapsedTime_);
+    mLuaWorld.fCallFunc(1, 3);
+
+    //mLuaWorld.fDebugShowStack();
+    // ポインターの透明度を更新
+    mLaserPointer.fSetAlpha(mLuaWorld.fGetDouble(-2));
+    // ポインターの長さを更新
+    mLaserPointer.fSetLengthThreshold(mLuaWorld.fGetDouble(-1));
+
+    // 条件を満たしていたらステートを変更
+    if (mLuaWorld.fGetBool(-3))
     {
         fChangeState(State::TourBeam);
     }
-    else
-    {
-        // 残り時間に応じて点滅速度を変える
-        if (TourLaserTimer - mLaserShotTimer > 3.0f)
-        {
-            // 遅い
-            switch (static_cast<int>(mLaserShotTimer*7) % 2)
-            {
-            case 0:
-                mLaserPointer.fSetAlpha(1.0f);
-                break;
-            case 1:
-                mLaserPointer.fSetAlpha(0.0f);
-                break;
-            default:;
-            }
-        }
-        else
-        {
-            // 早い
-            switch (static_cast<int>(mLaserShotTimer * 20) % 2)
-            {
-            case 0:
-                mLaserPointer.fSetAlpha(1.0f);
-                break;
-            case 1:
-                mLaserPointer.fSetAlpha(0.0f);
-                break;
-            default:;
-            }
-        }
-    }
+
+
+
+    //// ビームの照準を伸ばす
+    //if(mLaserPointerLength<1.0f)
+    //{
+    //    mLaserPointerLength += elapsedTime_;
+    //}
+    //else // 最大なら固定
+    //{
+    //    mLaserPointerLength = 1.0f;
+    //}
+    //// タイマーを更新する
+    //mLaserShotTimer += elapsedTime_;
+    //// 時間を過ぎたら発射する
+    //if (mLaserShotTimer >= TourLaserTimer)
+    //{
+    //    
+    //}
+    //else
+    //{
+    //    // 残り時間に応じて点滅速度を変える
+    //    if (TourLaserTimer - mLaserShotTimer > 3.0f)
+    //    {
+    //        // 遅い
+    //        switch (static_cast<int>(mLaserShotTimer*7) % 2)
+    //        {
+    //        case 0:
+    //           
+    //            break;
+    //        case 1:
+    //            mLaserPointer.fSetAlpha(0.0f);
+    //            break;
+    //        default:;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        // 早い
+    //        switch (static_cast<int>(mLaserShotTimer * 20) % 2)
+    //        {
+    //        case 0:
+    //            mLaserPointer.fSetAlpha(1.0f);
+    //            break;
+    //        case 1:
+    //            mLaserPointer.fSetAlpha(0.0f);
+    //            break;
+    //        default:;
+    //        }
+    //    }
+    //}
 }
 //--------------------<ビーム発射>--------------------//
 void MiddleBoss::fTourLaserInit()
