@@ -59,7 +59,7 @@ private:
     AddBulletFunc mfAddFunc;
 
     //--------------------<Luaスクリプト>--------------------//
-    lua_State* mLuaState{};
+    LuaWorld mLuaWorld{};
 
     //****************************************************************
     // 

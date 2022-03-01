@@ -27,14 +27,13 @@ void MiddleBoss::fTourInit()
 void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ステージの原点を中心にぐるぐる回る
-    lua_getglobal(mLuaState, "fTourMove");
-    lua_pushnumber(mLuaState, static_cast<double>(elapsedTime_));
-
-    ULua::fLuaCallFunc(mLuaState, 1, 2);
+    mLuaWorld.fSetFunction("fTourMove");
+    mLuaWorld.fSetNumeric(static_cast<double>(elapsedTime_));
+    mLuaWorld.fCallFunc(1, 2);
 
     // 値をLuaから受け取り
-    mPosition.x = lua_tonumber(mLuaState, -1);
-    mPosition.z = lua_tonumber(mLuaState, -2);
+    mPosition.x = mLuaWorld.fGetFloat(-1);
+    mPosition.z = mLuaWorld.fGetFloat(-2);
 
 }
 
