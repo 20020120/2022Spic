@@ -98,16 +98,19 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
         // “–‚½‚è”»’è‚ð‚·‚é‚©Šm”F
         if (enemy->fGetIsFrustum())
         {
-            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
-
-            const bool result = Collision::capsule_vs_capsule(
-                PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
-                capsule.mPointA, capsule.mPointB, capsule.mRadius);
-
-            // “–‚½‚Á‚Ä‚¢‚½‚ç
-            if (result)
+            if (enemy->fGetAttacking())
             {
-                Func_(enemy->fGetAttackPower().mDamage, enemy->fGetAttackPower().mInvincible_time);
+                BaseEnemy::CapsuleCollider capsule = enemy->fGetAttackCapsuleData();
+
+                const bool result = Collision::capsule_vs_capsule(
+                    PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                    capsule.mPointA, capsule.mPointB, capsule.mRadius);
+
+                // “–‚½‚Á‚Ä‚¢‚½‚ç
+                if (result)
+                {
+                    Func_(enemy->fGetAttackInfo().mDamage, enemy->fGetAttackInfo().mInvincible_time);
+                }
             }
         }
     }

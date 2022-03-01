@@ -80,10 +80,19 @@ protected:
         inline static const std::string Damaged = "Damaged";
     };
 
-    struct AttackPower
+    //攻撃に関する情報
+    struct AttackInformation
     {
-        int mDamage{};
-        float mInvincible_time{};
+        bool mIsAttack = false; //攻撃判定がある状態かのフラグ
+        int mDamage{};//攻撃力
+        float mInvincible_time{};//攻撃を与えた対象に付与する無敵時間
+
+        DirectX::XMFLOAT3 mPosition{};//攻撃の基準点
+        DirectX::XMFLOAT3 mUp{};//攻撃の上軸
+
+        float mLengthFromPositionA{};//ポジションから上への高さ
+        float mLengthFromPositionB{};//ポジションから下への高さ
+        float mRadius{};//カプセルの半径
     };
 public:
     struct CapsuleCollider
@@ -136,13 +145,17 @@ public:
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
     [[nodiscard]] const float fGetPercentHitPoint()const;
     [[nodiscard]] std::string fGetType()const;
-    [[nodiscard]] AttackPower fGetAttackPower()const;
+    [[nodiscard]] CapsuleCollider fGetAttackCapsuleData() const;
+    [[nodiscard]] AttackInformation fGetAttackInfo()const;
+    [[nodiscard]] bool fGetAttacking()const;//攻撃中か
 
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_);
     void fSetPosition(DirectX::XMFLOAT3 Position);
     void fSetAttackPower(int Damage_, float InvincibleTime_);
-
+    void fSetAttackRange(DirectX::XMFLOAT3 Position_, DirectX::XMFLOAT3 Up_, float LengthFromPositionA_, float LengthFromPositionB_);
+    void fAttackStart();//攻撃開始
+    void fAttackEnd();//攻撃終了
 
 protected:
     void fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_);
@@ -151,6 +164,7 @@ protected:
     void fCalcFrustum();
     void fCalcLength();
     virtual  void fSetCapsulePoint();
+    virtual  void fSetAttackCapsulePoint();
     void fUpdateInvicibleTimer(float elapsedTime_);
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
@@ -174,7 +188,8 @@ protected:
     EnemyData mData{}; 
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
-    AttackPower mAttackPower{};
+    CapsuleCollider mAttackCapsuleCollider{};
+    AttackInformation mAttackInformation{};
 
     bool IsAttacked{};
     float mInvinsibleTimer = 0.0f;//無敵時間

@@ -167,10 +167,17 @@ void NormalEnemy::fAttackInit()
 
 void NormalEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fAttackStart();
+    DirectX::XMVECTOR Forward = DirectX::XMLoadFloat3(&forward);
+    DirectX::XMFLOAT3 attack_pos;
+	DirectX::XMStoreFloat3(&attack_pos,DirectX::XMVectorScale(Forward, 2.0f));
+    fSetAttackRange(attack_pos, up, 1.5f, 1.5f);
+
     mAttackingTime += elapsedTime_;
-   
     if (mAttackingTime > 2.0f)
     {
+        fAttackEnd();
+
         fChangeState(State::Idle);
     }
 }
