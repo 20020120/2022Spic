@@ -99,6 +99,11 @@ BaseEnemy::CapsuleCollider BaseEnemy::fGetCapsuleData() const
     return mCapsuleCollider;
 }
 
+BaseEnemy::CapsuleCollider BaseEnemy::fGetAttackCapsuleData() const
+{
+    return mAttackCapsuleCollider;
+}
+
 int BaseEnemy::fGetUniqueId() const
 {
     return mUniqueId;
@@ -122,10 +127,15 @@ std::string BaseEnemy::fGetType() const
     return mData.mDivideClass;
 }
 
-BaseEnemy::AttackPower BaseEnemy::fGetAttackPower() const
+BaseEnemy::AttackInformation BaseEnemy::fGetAttackInfo() const
 {
-    return mAttackPower;
+    return mAttackInformation;
 
+}
+
+bool BaseEnemy::fGetAttacking() const
+{
+    return mAttackInformation.mIsAttack;
 }
 
 void BaseEnemy::fSetPlayerPosition(DirectX::XMFLOAT3 PlayerPosition_)
@@ -140,9 +150,27 @@ void BaseEnemy::fSetPosition(DirectX::XMFLOAT3 Position_)
 
 void BaseEnemy::fSetAttackPower(int Damage_, float InvincibleTime_)
 {
-    mAttackPower.mDamage = Damage_;
-    mAttackPower.mInvincible_time = InvincibleTime_;
+    mAttackInformation.mDamage = Damage_;
+    mAttackInformation.mInvincible_time = InvincibleTime_;
 
+}
+
+void BaseEnemy::fSetAttackRange(DirectX::XMFLOAT3 Position_, DirectX::XMFLOAT3 Up_, float LengthFromPositionA_, float LengthFromPositionB_)
+{
+    mAttackInformation.mPosition = Position_;
+    mAttackInformation.mUp = Up_;
+    mAttackInformation.mLengthFromPositionA = LengthFromPositionA_;
+    mAttackInformation.mLengthFromPositionB = LengthFromPositionB_;
+}
+
+void BaseEnemy::fAttackStart()
+{
+    mAttackInformation.mIsAttack = true;
+}
+
+void BaseEnemy::fAttackEnd()
+{
+    mAttackInformation.mIsAttack = false;
 }
 
 void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -206,6 +234,13 @@ void BaseEnemy::fSetCapsulePoint()
     mCapsuleCollider.mRadius = mData.mCapsule.mRadius;
     mCapsuleCollider.mPointA = mPosition + (up * mData.mCapsule.mLengthFromPositionA);
     mCapsuleCollider.mPointB = mPosition - (up * mData.mCapsule.mLengthFromPositionB);
+}
+
+void BaseEnemy::fSetAttackCapsulePoint()
+{
+    mAttackCapsuleCollider.mRadius = mAttackInformation.mRadius;
+    mAttackCapsuleCollider.mPointA = mAttackInformation.mPosition + (mAttackInformation.mUp * mAttackInformation.mLengthFromPositionA);
+    mAttackCapsuleCollider.mPointB = mAttackInformation.mPosition - (mAttackInformation.mUp * mAttackInformation.mLengthFromPositionB);
 }
 
 void BaseEnemy::fUpdateInvicibleTimer(float elapsedTime_)
