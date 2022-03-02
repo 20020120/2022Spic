@@ -226,6 +226,7 @@
     <ClCompile Include="sources\EnemyManager.cpp" />
     <ClCompile Include="sources\EnemyMove.cpp" />
     <ClCompile Include="sources\enemy_hp_gauge.cpp" />
+    <ClCompile Include="sources\game_icon.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
     <ClCompile Include="sources\framebuffer.cpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="sources\geometric_primitive.cpp" />
     <ClCompile Include="sources\hit_stop.cpp" />
     <ClCompile Include="sources\husk_particles.cpp" />
+    <ClCompile Include="sources\icon_base.cpp" />
     <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\MiddleBoss.cpp" />
@@ -272,7 +274,9 @@
     <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
+    <ClCompile Include="sources\transition_icon.cpp" />
     <ClCompile Include="sources\UserLua.cpp" />
+    <ClCompile Include="sources\volume_icon.cpp" />
     <ClCompile Include="sources\WaveManager.cpp" />
     <ClCompile Include="sources\UI.cpp" />
     <ClCompile Include="sources\counter.cpp" />
@@ -311,6 +315,7 @@
     <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\EnemyMove.h" />
     <ClInclude Include="sources\enemy_hp_gauge.h" />
+    <ClInclude Include="sources\game_icon.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />
     <ClInclude Include="sources\font.h" />
     <ClInclude Include="sources\framebuffer.h" />
@@ -321,6 +326,7 @@
     <ClInclude Include="sources\high_resolution_timer.h" />
     <ClInclude Include="sources\hit_stop.h" />
     <ClInclude Include="sources\husk_particles.h" />
+    <ClInclude Include="sources\icon_base.h" />
     <ClInclude Include="sources\imgui_include.h" />
     <ClInclude Include="sources\json.hpp" />
     <ClInclude Include="sources\JsonFileManager.h" />
@@ -359,7 +365,9 @@
     <ClInclude Include="sources\SwordTrail.h" />
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
+    <ClInclude Include="sources\transition_icon.h" />
     <ClInclude Include="sources\UserLua.h" />
+    <ClInclude Include="sources\volume_icon.h" />
     <ClInclude Include="sources\WaveManager.h" />
     <ClInclude Include="sources\UI.h" />
     <ClInclude Include="sources\user.h" />

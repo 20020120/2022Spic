@@ -25,6 +25,8 @@ void Effect::play(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3
 {
     effekseer_handle = effekseer_manager->Play(effekseer_effect, position.x, position.y, position.z);
     effekseer_manager->SetScale(effekseer_handle, scale, scale, scale);
+    //Effekseer::Color c = { static_cast<uint8_t>(255),static_cast<uint8_t>(255),static_cast<uint8_t>(255),static_cast<uint8_t>(120) };
+    //effekseer_manager->SetAllColor(effekseer_handle, c);
 }
 
 void Effect::stop(Effekseer::Manager* effekseer_manager)

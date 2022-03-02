@@ -103,8 +103,7 @@ public:
 	~FontInstances() {}
 public:
 	//--font instance--//
-	std::unique_ptr<Font> biz_upd_mintyou;
+	std::unique_ptr<Font> biz_upd_gothic;
 	std::unique_ptr<Font> gothic;
 	std::unique_ptr<Sprite> algerian_gold;
-	std::unique_ptr<Sprite> courier_new_neon;
 };

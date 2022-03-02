@@ -142,6 +142,9 @@
     <Filter Include="Sources\99_Lua">
       <UniqueIdentifier>{78606c70-cde8-4834-b9a9-41b81be6a672}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\scene\option">
+      <UniqueIdentifier>{16b96f21-2db9-4793-a69a-3f08dd4d758c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -348,9 +351,6 @@
     <ClCompile Include="sources\number.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
-    <ClCompile Include="sources\scene_option.cpp">
-      <Filter>Sources\scene</Filter>
-    </ClCompile>
     <ClCompile Include="sources\EnemyMove.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
@@ -386,6 +386,21 @@
     </ClCompile>
     <ClCompile Include="sources\UserLua.cpp">
       <Filter>Sources\99_Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\scene_option.cpp">
+      <Filter>Sources\scene\option</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\icon_base.cpp">
+      <Filter>Sources\scene\option</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\game_icon.cpp">
+      <Filter>Sources\scene\option</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\volume_icon.cpp">
+      <Filter>Sources\scene\option</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\transition_icon.cpp">
+      <Filter>Sources\scene\option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -608,9 +623,6 @@
     <ClInclude Include="sources\number.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
-    <ClInclude Include="sources\scene_option.h">
-      <Filter>Sources\scene</Filter>
-    </ClInclude>
     <ClInclude Include="sources\EnemyMove.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
@@ -646,6 +658,21 @@
     </ClInclude>
     <ClInclude Include="sources\UserLua.h">
       <Filter>Sources\99_Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\scene_option.h">
+      <Filter>Sources\scene\option</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\icon_base.h">
+      <Filter>Sources\scene\option</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\game_icon.h">
+      <Filter>Sources\scene\option</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\volume_icon.h">
+      <Filter>Sources\scene\option</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\transition_icon.h">
+      <Filter>Sources\scene\option</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
