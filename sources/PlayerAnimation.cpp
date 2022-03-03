@@ -302,6 +302,7 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge()
 {
+    end_dash_effect = false;
     start_dash_effect = true;//ポストエフェクトをかける
     model->play_animation(AnimationClips::Charge, false,0);
     is_attack = true;
