@@ -21,8 +21,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         //後ろに回り込める距離なら回り込みようのUpdate
         if (is_lock_on && length < BEHIND_LANGE)
         {
-            //TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
-            TransitionAvoidance();
+            TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
         }
         //そうじゃなかったら普通の回避
         else TransitionAvoidance();
@@ -52,8 +51,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         //後ろに回り込める距離なら回り込みようのUpdate
         if (is_lock_on && length < BEHIND_LANGE)
         {
-            //TransitionBehindAvoidance();
-            TransitionAvoidance();
+            TransitionBehindAvoidance();
         }
         //そうじゃなかったら普通の回避
         else TransitionAvoidance();

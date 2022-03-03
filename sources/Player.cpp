@@ -145,20 +145,48 @@ void Player::BehindAvoidancePosition()
     XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     float length_radius = Math::calc_vector_AtoB_length(p, target);//‹——£(”¼Œa)
     float diameter = length_radius * 2.0f;//(’¼Œa)
+    DirectX::XMFLOAT3 r{ right };
+    //‚Ç‚Á‚¿‚Ìvelocity‚Å¶‰E”»’è‚·‚é‚©
+    if (velocity.x * velocity.x > velocity.z * velocity.z)
+    {
+        if (velocity.x > 0)
+        {
+            r = right;
+        }
+        else
+        {
+            r.x = -right.x;
+            r.y = -right.y;
+            r.z = -right.z;
+        }
+    }
+    else
+    {
+        if (velocity.z > 0)
+        {
+            r = right;
+        }
+        else
+        {
+            r.x = -right.x;
+            r.y = -right.y;
+            r.z = -right.z;
+        }
+    }
     //-----------------ƒS[ƒ‹’n“_---------------//
-    behind_point_3.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_3.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_3.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f))))* length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_3.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp‚P---------------------//
-    behind_point_1.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_1.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_1.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp2---------------------//
-    behind_point_2.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_2.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
 
     behind_point_0 = position;
 
