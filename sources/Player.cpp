@@ -110,7 +110,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
-                ImGui::DragInt("combo", &combo_count);
+                int c = static_cast<int>(combo_count);
+                ImGui::DragInt("combo", &c);
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
@@ -122,9 +123,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
 #endif // USE_IMGUI
 
-    //UŒ‚’†‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‘‚­‚·‚é(‰¼)
-    if (is_attack) model->update_animation(elapsed_time * 3.0f);
-    else  model->update_animation(elapsed_time);
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -145,20 +143,48 @@ void Player::BehindAvoidancePosition()
     XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     float length_radius = Math::calc_vector_AtoB_length(p, target);//‹——£(”¼Œa)
     float diameter = length_radius * 2.0f;//(’¼Œa)
+    DirectX::XMFLOAT3 r{ right };
+    //‚Ç‚Á‚¿‚Ìvelocity‚Å¶‰E”»’è‚·‚é‚©
+    if (velocity.x * velocity.x > velocity.z * velocity.z)
+    {
+        if (velocity.x > 0)
+        {
+            r = right;
+        }
+        else
+        {
+            r.x = -right.x;
+            r.y = -right.y;
+            r.z = -right.z;
+        }
+    }
+    else
+    {
+        if (velocity.z > 0)
+        {
+            r = right;
+        }
+        else
+        {
+            r.x = -right.x;
+            r.y = -right.y;
+            r.z = -right.z;
+        }
+    }
     //-----------------ƒS[ƒ‹’n“_---------------//
-    behind_point_3.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_3.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_3.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f))))* length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_3.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp‚P---------------------//
-    behind_point_1.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_1.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_1.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
     //----------------’†Œp2---------------------//
-    behind_point_2.x = target.x + (((right.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
-    behind_point_2.y = target.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_2.z = target.z + (((right.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
+    behind_point_2.y = position.y;//“G‚ÌŒã‚ë‘¤
+    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//“G‚ÌŒã‚ë‘¤
 
     behind_point_0 = position;
 
@@ -233,7 +259,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 void Player::InflectionParameters(float elapsed_time)
 {
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / 100.0f));
-    player_config->set_mp_percent(static_cast<float>(static_cast<float>(combo_count) / 50.0f));
+    player_config->set_mp_percent(combo_count / 50.0f);
     //UŒ‚—Í‚Ì•Ï“®
     InflectionPower(elapsed_time);
     //ƒRƒ“ƒ{‚Ì•Ï“®
@@ -270,21 +296,24 @@ void Player::InflectionCombo(float elapsed_time)
     duration_combo_timer += 1.0f * elapsed_time;
     if (is_awakening == false)
     {
-        if (duration_combo_timer >= 1.0f)
-        {
-            duration_combo_timer = 0;
-            combo_count -= 1;
-        }
+        //if (duration_combo_timer >= 1.0f)
+        //{
+        //    duration_combo_timer = 0;
+        //    combo_count -= 1;
+        //}
+        combo_count -= elapsed_time;
     }
     else
     {
-        if (duration_combo_timer >= 1.0f)
-        {
-            duration_combo_timer = 0;
-            combo_count -= 2;
-        }
+        //if (duration_combo_timer >= 1.0f)
+        //{
+        //    duration_combo_timer = 0;
+        //    combo_count -= 2;
+        //}
+        combo_count -= elapsed_time * 2.0f;
     }
-    combo_count = Math::clamp(combo_count, 0, 50);
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //ƒRƒ“ƒ{’†ƒ^ƒCƒ}[‚ª0‚É‚È‚Á‚½‚çƒRƒ“ƒ{‚Í0‚É‚·‚é
     //if (duration_combo_timer <= 0) combo_count = 0;
@@ -361,7 +390,7 @@ void Player::AddCombo(int count)
         }
         else
         {
-            combo_count += count;
+            combo_count += static_cast<float>(count);
         }
         is_enemy_hit = true;
     }
@@ -419,16 +448,19 @@ void Player::AvoidanceAcceleration(float elapsed_time)
             //ˆêØ“ü—Í‚ª‚È‚¢
             if (sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) <= 0.0f)
             {
-                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+                velocity.x = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.z = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
             }
             else
             {
-                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-                velocity.y = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
-                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+                velocity.x = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.y = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
+                velocity.z = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
             }
         }
+        velocity.x = Math::clamp(velocity.x, -35.0f, 35.0f);
+        velocity.y = Math::clamp(velocity.y, -35.0f, 35.0f);
+        velocity.z = Math::clamp(velocity.z, -35.0f, 35.0f);
 }
 
 void Player::ChargeAcceleration(float elapse_time)
