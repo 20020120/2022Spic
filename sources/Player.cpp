@@ -110,7 +110,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
-                ImGui::DragInt("combo", &combo_count);
+                int c = static_cast<int>(combo_count);
+                ImGui::DragInt("combo", &c);
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
@@ -261,7 +262,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 void Player::InflectionParameters(float elapsed_time)
 {
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / 100.0f));
-    player_config->set_mp_percent(static_cast<float>(static_cast<float>(combo_count) / 50.0f));
+    player_config->set_mp_percent(combo_count / 50.0f);
     //攻撃力の変動
     InflectionPower(elapsed_time);
     //コンボの変動
@@ -298,21 +299,24 @@ void Player::InflectionCombo(float elapsed_time)
     duration_combo_timer += 1.0f * elapsed_time;
     if (is_awakening == false)
     {
-        if (duration_combo_timer >= 1.0f)
-        {
-            duration_combo_timer = 0;
-            combo_count -= 1;
-        }
+        //if (duration_combo_timer >= 1.0f)
+        //{
+        //    duration_combo_timer = 0;
+        //    combo_count -= 1;
+        //}
+        combo_count -= elapsed_time;
     }
     else
     {
-        if (duration_combo_timer >= 1.0f)
-        {
-            duration_combo_timer = 0;
-            combo_count -= 2;
-        }
+        //if (duration_combo_timer >= 1.0f)
+        //{
+        //    duration_combo_timer = 0;
+        //    combo_count -= 2;
+        //}
+        combo_count -= elapsed_time * 2.0f;
     }
-    combo_count = Math::clamp(combo_count, 0, 50);
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //コンボ中タイマーが0になったらコンボは0にする
     //if (duration_combo_timer <= 0) combo_count = 0;
@@ -389,7 +393,7 @@ void Player::AddCombo(int count)
         }
         else
         {
-            combo_count += count;
+            combo_count += static_cast<float>(count);
         }
         is_enemy_hit = true;
     }

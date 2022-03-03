@@ -45,6 +45,8 @@ private:
     static const int MIN_PLAYER_ATTACK_POWER = 1;
     //攻撃力の最大値
     static const int MAX_PLAYER_ATTACK_POWER = 10;
+    //コンボの最大数
+    static constexpr float MAX_COMBO_COUNT = 50.0f;
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -110,7 +112,7 @@ private:
     //プレイヤーの攻撃力(コンボによって変化していく)
     int player_attack_power{ MIN_PLAYER_ATTACK_POWER };
     //コンボ数
-    int combo_count{ 0 };
+    float combo_count{ 0 };
     //プレイヤーが今攻撃中かそうでないか
     bool is_attack{ false };
     //プレイヤーの体力
