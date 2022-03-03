@@ -47,6 +47,10 @@ private:
     static const int MAX_PLAYER_ATTACK_POWER = 10;
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 50.0f;
+    //回避の時のアニメーションスピード
+    static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.8f;
+    //攻撃の時のアニメーションスピード
+    static constexpr float ATTACK_ANIMATION_SPEED = 3.0f;
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向

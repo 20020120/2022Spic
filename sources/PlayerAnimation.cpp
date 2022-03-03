@@ -33,7 +33,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     }
 
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time);
 }
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -62,7 +62,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionChargeInit();
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time);
 }
 
 void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -83,7 +83,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         }
     }
     UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time * AVOIDANCE_ANIMATION_SPEED);
 }
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -97,7 +97,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionIdle();
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time);
 }
 
 void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -108,6 +108,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
     }
 
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -142,6 +143,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
 
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
@@ -172,7 +174,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
@@ -203,7 +205,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
+    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
@@ -231,6 +233,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     }
     mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
 void Player::TransitionIdle()
@@ -256,7 +259,7 @@ void Player::TransitionAvoidance()
     avoidance_start = velocity;
     if (is_lock_on)
     {
-        leverage = 15.0f;
+        leverage = 10.0f;
         DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
         if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
         {
@@ -269,7 +272,7 @@ void Player::TransitionAvoidance()
     }
     else
     {
-        leverage = 25.0f;
+        leverage = 20.0f;
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
     //-----------------------------------------------------------------------------------------//

@@ -123,9 +123,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
 #endif // USE_IMGUI
 
-    //攻撃中のアニメーションを早くする(仮)
-    if (is_attack) model->update_animation(elapsed_time * 3.0f);
-    else  model->update_animation(elapsed_time);
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
@@ -451,16 +448,19 @@ void Player::AvoidanceAcceleration(float elapsed_time)
             //一切入力がない
             if (sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) <= 0.0f)
             {
-                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+                velocity.x = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.z = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
             }
             else
             {
-                velocity.x = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
-                velocity.y = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
-                velocity.z = easing::Elastic::easeInOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
+                velocity.x = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.x, avoidance_end.x, avoidance_easing_time);
+                velocity.y = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.y, avoidance_end.y, avoidance_easing_time);
+                velocity.z = easing::Quint::easeOut(avoidance_boost_time, avoidance_start.z, avoidance_end.z, avoidance_easing_time);
             }
         }
+        velocity.x = Math::clamp(velocity.x, -35.0f, 35.0f);
+        velocity.y = Math::clamp(velocity.y, -35.0f, 35.0f);
+        velocity.z = Math::clamp(velocity.z, -35.0f, 35.0f);
 }
 
 void Player::ChargeAcceleration(float elapse_time)
