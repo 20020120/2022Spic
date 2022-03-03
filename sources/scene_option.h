@@ -4,6 +4,7 @@
 #include "graphics_pipeline.h"
 #include "sprite_batch.h"
 #include "practical_entities.h"
+#include "transition_icon.h"
 
 class Option : public PracticalEntities
 {
@@ -17,9 +18,16 @@ public:
     //ï`âÊèàóù
     void render(GraphicsPipeline& graphics, float elapsed_time);
     //--------<getter/setter>--------//
-    bool get_validity() const { return validity; }
-    void set_validity(bool v) { validity = v; }
+    static bool get_validity() { return validity; }
+    static void set_validity(bool v) { validity = v; }
 private:
+    //--------< íËêî >--------//
+    enum class IconType
+    {
+        VOLUME,
+        GAME,
+        TRANSITION,
+    };
     //--------< ïœêî >--------//
     struct Element
     {
@@ -33,15 +41,13 @@ private:
     };
     Element back;
     std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
-    Element game;
-    Element title;
-    std::unique_ptr<SpriteBatch> sprite_string{ nullptr };
-    Element selecter1;
-    DirectX::XMFLOAT2 arrival_pos1{};
-    Element selecter2;
-    DirectX::XMFLOAT2 arrival_pos2{};
-    std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
+    Element tab;
+    std::unique_ptr<SpriteBatch> sprite_tab{ nullptr };
+    Element frame;
+    std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
 
-    int state = 0;
-    bool validity = false;
+    std::map<IconType, std::unique_ptr<IconBase>> icon_map;
+
+    IconType state = IconType::TRANSITION;
+    static bool validity;
 };
