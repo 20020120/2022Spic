@@ -2,13 +2,8 @@
 #include "imgui_include.h"
 #include "Operators.h"
 
-IconBase::IconBase(ID3D11Device* device, const wchar_t* filename, size_t max_sprites)
+IconBase::IconBase(ID3D11Device* device)
 {
-	sprite_icon = std::make_unique<SpriteBatch>(device, filename, max_sprites);
-	icon.texsize = { static_cast<float>(sprite_icon->get_texture2d_desc().Width), static_cast<float>(sprite_icon->get_texture2d_desc().Height) };
-	icon.pivot = icon.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
-	icon.scale = { 0.25f, 0.25f };
-	icon.color = { 1,1,1,1 };
 	//--selecter--//
 	sprite_selecter = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\selecter.png", 2);
 	selecterL.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
@@ -24,22 +19,6 @@ IconBase::IconBase(ID3D11Device* device, const wchar_t* filename, size_t max_spr
 
 void IconBase::render(std::string gui, ID3D11DeviceContext* dc)
 {
-	//--icon--//
-#ifdef USE_IMGUI
-	ImGui::Begin("option");
-	std::string s = gui + " icon";
-	if (ImGui::TreeNode(s.c_str()))
-	{
-		ImGui::DragFloat2("pos", &icon.position.x);
-		ImGui::DragFloat2("scale", &icon.scale.x, 0.01f);
-		ImGui::ColorEdit4("color", &icon.color.x);
-		ImGui::TreePop();
-	}
-	ImGui::End();
-#endif // USE_IMGUI
-	sprite_icon->begin(dc);
-	sprite_icon->render(dc, icon.position, icon.scale, icon.pivot, icon.color, icon.angle, icon.texpos, icon.texsize);
-	sprite_icon->end(dc);
 	//--sprite_selecter--//
 #ifdef USE_IMGUI
 	ImGui::Begin("option");

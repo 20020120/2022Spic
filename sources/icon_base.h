@@ -3,19 +3,19 @@
 #include <memory>
 #include <string>
 #include "sprite_batch.h"
+#include "graphics_pipeline.h"
 
 class IconBase
 {
 public:
     //--------<constructor/destructor>--------//
-    IconBase(ID3D11Device* device, const wchar_t* filename, size_t max_sprites);
+    IconBase(ID3D11Device* device);
     virtual ~IconBase() {}
     //--------< ŠÖ” >--------//
-    virtual void update(float elapsed_time) = 0;
+    virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
     virtual void render(std::string gui, ID3D11DeviceContext* dc);
     //--------<getter/setter>--------//
     void reset_state() { state = 0; }
-    const DirectX::XMFLOAT2& get_icon_position() const { return icon.position; }
 protected:
     //--------< \‘¢‘Ì >--------//
     struct Element
@@ -39,8 +39,6 @@ protected:
     };
 
     //--------< •Ï” >--------//
-    Element icon;
-    std::unique_ptr<SpriteBatch> sprite_icon = nullptr;
     Element selecterL;
     Element selecterR;
     DirectX::XMFLOAT2 selecterL_arrival_pos{};

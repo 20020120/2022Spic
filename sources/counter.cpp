@@ -3,7 +3,7 @@
 
 Counter::Counter(GraphicsPipeline& graphics, const wchar_t* filename, size_t max_sprites)
 {
-    number = std::make_unique<Number>(graphics);
+    number = std::make_unique<Number>(graphics.get_device().Get());
     sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), filename, max_sprites);
     //--element--//
     element.texsize = { static_cast<float>(sprite->get_texture2d_desc().Width), static_cast<float>(sprite->get_texture2d_desc().Height) };
@@ -17,12 +17,12 @@ void Counter::update(GraphicsPipeline& graphics, float elapsed_time)
 	number->update(graphics, elapsed_time);
 }
 
-void Counter::render(GraphicsPipeline& graphics, float elapsed_time)
+void Counter::render(ID3D11DeviceContext* dc)
 {
     //--number--//
-    sprite->begin(graphics.get_dc().Get());
-    sprite->render(graphics.get_dc().Get(), element.position, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
-    sprite->end(graphics.get_dc().Get());
+    sprite->begin(dc);
+    sprite->render(dc, element.position, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
+    sprite->end(dc);
 
-    number->render(graphics, elapsed_time);
+    number->render(dc);
 }

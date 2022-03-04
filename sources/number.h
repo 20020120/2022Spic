@@ -6,11 +6,11 @@ class Number : public UI
 {
 public:
     //--------<constructor/destructor>--------//
-    Number(GraphicsPipeline& graphics);
+    Number(ID3D11Device* device);
     ~Number() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void set_offset_pos(const DirectX::XMFLOAT2& off_pos) { offset_pos = off_pos; }
     void set_offset_scale(const DirectX::XMFLOAT2& off_scale) { offset_scale = off_scale; }

@@ -1,9 +1,9 @@
 #include "number.h"
 #include "Operators.h"
 
-Number::Number(GraphicsPipeline& graphics)
+Number::Number(ID3D11Device* device)
 {
-    number = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\number.png", 11);
+    number = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\ui\\number.png", 11);
 
     element.scale   = { 1.0f, 1.0f };
     element.texsize = { static_cast<float>(number->get_texture2d_desc().Width) / 10.0f, static_cast<float>(number->get_texture2d_desc().Height) };
@@ -30,17 +30,17 @@ void Number::update(GraphicsPipeline& graphics, float elapsed_time)
     old_value = display.value;
 }
 
-void Number::render(GraphicsPipeline& graphics, float elapsed_time)
+void Number::render(ID3D11DeviceContext* dc)
 {
     //--number--//
-    number->begin(graphics.get_dc().Get());
+    number->begin(dc);
     int step = 0;
     for (auto& item : display.places)
     {
         ++step;
-        number->render(graphics.get_dc().Get(), { offset_pos.x + (display.places.size() - step) * element.texsize.x * offset_scale.x, offset_pos.y },
+        number->render(dc, { offset_pos.x + (display.places.size() - step) * element.texsize.x * offset_scale.x, offset_pos.y },
             offset_scale * element.scale, element.pivot, element.color, element.angle,
             { element.texpos.x + element.texsize.x * item, element.texpos.y }, element.texsize);
     }
-    number->end(graphics.get_dc().Get());
+    number->end(dc);
 }

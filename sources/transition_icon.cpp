@@ -4,37 +4,35 @@
 #include "scene_title.h"
 #include "scene_loading.h"
 
-TransitionIcon::TransitionIcon(ID3D11Device* device, const wchar_t* filename, size_t max_sprites)
-    : IconBase(device, filename, max_sprites)
+TransitionIcon::TransitionIcon(ID3D11Device* device)
+    : IconBase(device)
 {
-	//--icon--//
-	icon.position = { 480.0f, 160.0f };
-	//--selecterL--//
-	selecterL.position = { 480.0f, 315.0f };
-	//--selecterR--//
-	selecterR.position = { 1035.0f, 315.0f };
-
-	selecterL_arrival_pos = { 480.0f, 315.0f };
-	selecterR_arrival_pos = { 1035.0f, 315.0f };
-
     //--game--//
 	game.position = { 760.0f, 310.0f };
     game.s = L"ゲームに戻る";
     //--title--//
     title.position = { 780.0f, 455.0f };
     title.s = L"タイトルに戻る";
+
+	//--selecterL--//
+	selecterL.position = { 480.0f, game.position.y };
+	//--selecterR--//
+	selecterR.position = { 1035.0f, game.position.y };
+
+	selecterL_arrival_pos = { 480.0f, selecterL.position.y };
+	selecterR_arrival_pos = { 1035.0f, selecterR.position.y };
 }
 
-void TransitionIcon::update(float elapsed_time)
+void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	switch (state)
 	{
 	case 0: // game
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
+		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
 			state = 1;
-			selecterL_arrival_pos = { 480.0f, 455.0f };
-			selecterR_arrival_pos = { 1035.0f, 455.0f };
+			selecterL_arrival_pos = { 480.0f, title.position.y };
+			selecterR_arrival_pos = { 1035.0f, title.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
@@ -43,11 +41,11 @@ void TransitionIcon::update(float elapsed_time)
 		}
 		break;
 	case 1: // title
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
+		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
 			state = 0;
-			selecterL_arrival_pos = { 480.0f, 315.0f };
-			selecterR_arrival_pos = { 1035.0f, 315.0f };
+			selecterL_arrival_pos = { 480.0f, game.position.y };
+			selecterR_arrival_pos = { 1035.0f, game.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{

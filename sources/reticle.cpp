@@ -43,12 +43,12 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time)
     }
 }
 
-void Reticle::render(GraphicsPipeline& graphics, float elapsed_time)
+void Reticle::render(ID3D11DeviceContext* dc)
 {
     //--reticle--//
-    reticle->begin(graphics.get_dc().Get());
-    reticle->render(graphics.get_dc().Get(), element.position + offset, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
-    reticle->end(graphics.get_dc().Get());
+    reticle->begin(dc);
+    reticle->render(dc, element.position + offset, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
+    reticle->end(dc);
 }
 
 void Reticle::focus(const BaseEnemy* target_enemy, bool lockon)

@@ -134,7 +134,7 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     mSwordTrail.fRender(graphics.get_dc().Get());
 
-    player_config->render(graphics, elapsed_time);
+    player_config->render(graphics.get_dc().Get());
 }
 
 void Player::BehindAvoidancePosition()

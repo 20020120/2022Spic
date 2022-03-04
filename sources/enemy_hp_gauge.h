@@ -11,7 +11,7 @@ public:
     ~EnemyHpGauge() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void focus(const BaseEnemy* target_enemy, bool lockon);
 private:

@@ -10,7 +10,7 @@ public:
     ~PlayerConfig() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void set_hp_percent(float per) { hp_percent = per; }
     void set_mp_percent(float per) { mp_percent = per; }

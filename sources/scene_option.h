@@ -5,6 +5,7 @@
 #include "sprite_batch.h"
 #include "practical_entities.h"
 #include "transition_icon.h"
+#include "volume_icon.h"
 
 class Option : public PracticalEntities
 {
@@ -46,8 +47,10 @@ private:
     Element frame;
     std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
 
+    std::map<IconType, Element> icon_elements;
+    std::map<IconType, std::unique_ptr<SpriteBatch>> icon_sprites;
     std::map<IconType, std::unique_ptr<IconBase>> icon_map;
 
-    IconType state = IconType::TRANSITION;
+    IconType state = IconType::VOLUME;
     static bool validity;
 };

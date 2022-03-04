@@ -11,7 +11,7 @@ public:
     ~Counter() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void set_positoin(const DirectX::XMFLOAT2& pos) { element.position = pos; }
     void set_scale(const DirectX::XMFLOAT2& scale) { element.scale = scale; }

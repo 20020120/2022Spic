@@ -63,38 +63,38 @@ void PlayerConfig::update(GraphicsPipeline& graphics, float elapsed_time)
 #endif // USE_IMGUI
 }
 
-void PlayerConfig::render(GraphicsPipeline& graphics, float elapsed_time)
+void PlayerConfig::render(ID3D11DeviceContext* dc)
 {
     //--------<base>--------//
-    base_sprite->begin(graphics.get_dc().Get());
-    base_sprite->render(graphics.get_dc().Get(), base.position, base.scale, base.pivot, base.color, base.angle, base.texpos, base.texsize);
-    base_sprite->end(graphics.get_dc().Get());
+    base_sprite->begin(dc);
+    base_sprite->render(dc, base.position, base.scale, base.pivot, base.color, base.angle, base.texpos, base.texsize);
+    base_sprite->end(dc);
     //--------<hp>--------//
     //--back--//
-    hp_back->begin(graphics.get_dc().Get());
-    hp_back->render(graphics.get_dc().Get(), hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos, hp_gauge.texsize);
-    hp_back->end(graphics.get_dc().Get());
+    hp_back->begin(dc);
+    hp_back->render(dc, hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos, hp_gauge.texsize);
+    hp_back->end(dc);
     //--body--//
-    hp_body->begin(graphics.get_dc().Get());
-    hp_body->render(graphics.get_dc().Get(), hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos,
+    hp_body->begin(dc);
+    hp_body->render(dc, hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos,
         { hp_gauge.texsize.x * hp_percent, hp_gauge.texsize.y });
-    hp_body->end(graphics.get_dc().Get());
+    hp_body->end(dc);
     //--frame--//
-    hp_frame->begin(graphics.get_dc().Get());
-    hp_frame->render(graphics.get_dc().Get(), hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos, hp_gauge.texsize);
-    hp_frame->end(graphics.get_dc().Get());
+    hp_frame->begin(dc);
+    hp_frame->render(dc, hp_gauge.position, hp_gauge.scale, hp_gauge.pivot, hp_gauge.color, hp_gauge.angle, hp_gauge.texpos, hp_gauge.texsize);
+    hp_frame->end(dc);
     //--------<hp>--------//
     //--back--//
-    mp_back->begin(graphics.get_dc().Get());
-    mp_back->render(graphics.get_dc().Get(), mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos, mp_gauge.texsize);
-    mp_back->end(graphics.get_dc().Get());
+    mp_back->begin(dc);
+    mp_back->render(dc, mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos, mp_gauge.texsize);
+    mp_back->end(dc);
     //--body--//
-    mp_body->begin(graphics.get_dc().Get());
-    mp_body->render(graphics.get_dc().Get(), mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos,
+    mp_body->begin(dc);
+    mp_body->render(dc, mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos,
         { mp_gauge.texsize.x * mp_percent, mp_gauge.texsize.y });
-    mp_body->end(graphics.get_dc().Get());
+    mp_body->end(dc);
     //--frame--//
-    mp_frame->begin(graphics.get_dc().Get());
-    mp_frame->render(graphics.get_dc().Get(), mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos, mp_gauge.texsize);
-    mp_frame->end(graphics.get_dc().Get());
+    mp_frame->begin(dc);
+    mp_frame->render(dc, mp_gauge.position, mp_gauge.scale, mp_gauge.pivot, mp_gauge.color, mp_gauge.angle, mp_gauge.texpos, mp_gauge.texsize);
+    mp_frame->end(dc);
 }

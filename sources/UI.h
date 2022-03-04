@@ -12,7 +12,7 @@ public:
     virtual ~UI() {}
     //--------< ŠÖ” >--------//
     virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
-    virtual void render(GraphicsPipeline& graphics, float elapsed_time) = 0;
+    virtual void render(ID3D11DeviceContext* dc) = 0;
 protected:
     //--------< \‘¢‘Ì >--------//
     struct Element

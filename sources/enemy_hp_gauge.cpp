@@ -42,21 +42,21 @@ void EnemyHpGauge::update(GraphicsPipeline& graphics, float elapsed_time)
     }
 }
 
-void EnemyHpGauge::render(GraphicsPipeline& graphics, float elapsed_time)
+void EnemyHpGauge::render(ID3D11DeviceContext* dc)
 {
     //--back--//
-    back->begin(graphics.get_dc().Get());
-    back->render(graphics.get_dc().Get(), gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos, gauge.texsize);
-    back->end(graphics.get_dc().Get());
+    back->begin(dc);
+    back->render(dc, gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos, gauge.texsize);
+    back->end(dc);
     //--body--//
-    body->begin(graphics.get_dc().Get());
-    body->render(graphics.get_dc().Get(), gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos,
+    body->begin(dc);
+    body->render(dc, gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos,
         { gauge.texsize.x * hp_percent, gauge.texsize.y });
-    body->end(graphics.get_dc().Get());
+    body->end(dc);
     //--frame--//
-    frame->begin(graphics.get_dc().Get());
-    frame->render(graphics.get_dc().Get(), gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos, gauge.texsize);
-    frame->end(graphics.get_dc().Get());
+    frame->begin(dc);
+    frame->render(dc, gauge.position + offset, gauge.scale, gauge.pivot, gauge.color, gauge.angle, gauge.texpos, gauge.texsize);
+    frame->end(dc);
 }
 
 void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
