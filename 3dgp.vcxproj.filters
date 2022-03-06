@@ -402,6 +402,12 @@
     <ClCompile Include="sources\transition_icon.cpp">
       <Filter>Sources\scene\option</Filter>
     </ClCompile>
+    <ClCompile Include="sources\FrontShieldEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ArcherEnemy.cpp">
+      <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -673,6 +679,12 @@
     </ClInclude>
     <ClInclude Include="sources\transition_icon.h">
       <Filter>Sources\scene\option</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\FrontShieldEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ArcherEnemy.h">
+      <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
