@@ -200,7 +200,7 @@ public:
     void AddCombo(int count);
     //--------------------<“G‚©‚çƒ_ƒ[ƒW‚ðŽó‚¯‚é>--------------------//
     void Damaged(int damage, float InvincibleTime);
-
+    void PlayerKnocKback(float elapsed_time);
 public:
     void FalseCameraReset() { camera_reset = false; }
     void FalseCameraLockOn() { is_camera_lock_on = false; }
