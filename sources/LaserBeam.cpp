@@ -59,7 +59,7 @@ void LaserBeam::fCalcTransform()
     // I“_‚ğŒvZ‚·‚é
     const DirectX::XMFLOAT3 endPoint = Math::lerp(mStartPoint, mEndPoint, mLengthThreshold);
 	mScale.y = Math::Length( endPoint-mStartPoint);
-
+    
     mLerpSpeed = Math::Saturate(mLerpSpeed);
 
     // ‰ñ“]‚ğZo
