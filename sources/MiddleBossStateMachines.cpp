@@ -143,7 +143,7 @@ void MiddleBoss::fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     // ËŒ‚•ûŒü‚ğZo
     auto v = mPlayerPosition - mPosition;
     v = Math::Normalize(v);
-    v* TourBulletSpeed;
+    //v* TourBulletSpeed;
     mfAddFunc(new StraightBullet(Graphics_, mPosition, v));
     fChangeState(State::Tour);
 
