@@ -49,6 +49,7 @@ class EnemyManager final
         // «««««««««‚±‚±‚©‚ç‰º‚É‘‚â‚·«««««««««««««
         Normal,
         Chase,  // UŒ‚‚È‚µ•’ÇÕ‚µ‚Ä‚­‚é
+        Archer, //‰“‹——£UŒ‚
         MiddleBoss_, // ’†ƒ{ƒX
         // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
         Count, // Ží—Þ‚Ì‘—Ê

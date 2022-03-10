@@ -43,10 +43,10 @@ private:
     void fMoveInit(); //移動の初期化
     void fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //移動の更新処理
 
-    void fAttackInit(); //移動の初期化
+    void fAttackInit(); //攻撃の初期化
     void fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //攻撃の更新処理
 
-    void fDamagedInit(); //移動の初期化
+    void fDamagedInit(); //ひるみの初期化
     void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
 
   

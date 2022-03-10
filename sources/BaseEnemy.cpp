@@ -262,7 +262,7 @@ void BaseEnemy::fChangeState(std::string Tag_)
 }
 
 
-bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
+bool BaseEnemy::fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos)
 {
     using namespace DirectX;
     //ターゲットに向かって回転
@@ -279,7 +279,7 @@ bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
     XMVECTOR pos_vec = XMLoadFloat3(&mPosition);//自分の位置
     DirectX::XMFLOAT3 front{};
     DirectX::XMStoreFloat3(&front, forward);
-    DirectX::XMFLOAT3 t{ mPlayerPosition };
+    DirectX::XMFLOAT3 t{ target_pos };
     XMVECTOR target_vec = XMLoadFloat3(&t);
     XMVECTOR d = XMVector3Normalize(target_vec - pos_vec);
     float d_length = Math::calc_vector_AtoB_length(mPosition, t);
@@ -338,7 +338,7 @@ bool BaseEnemy::fTurnToPlayer(float elapsedTime_)
         {
             //回転軸と回転角から回転クオータニオンを求める
             XMVECTOR q;
-            if (point.y > mPlayerPosition.y)
+            if (point.y > target_pos.y)
             {
                 q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
             }

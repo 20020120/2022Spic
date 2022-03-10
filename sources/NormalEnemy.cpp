@@ -149,7 +149,7 @@ void NormalEnemy::fMoveInit()
 void NormalEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     MovingProcess(forward, max_move_speed);
-    fTurnToPlayer(elapsedTime_);
+    fTurnToTarget(elapsedTime_, mPlayerPosition);
     if(mLengthFromPlayer < 4.0f)
     {
         mAttack_flg = true;

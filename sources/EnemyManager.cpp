@@ -4,6 +4,7 @@
 #include"TestEnemy.h"
 #include"NormalEnemy.h"
 #include"ChaseEnemy.h"
+#include"ArcherEnemy.h"
 #include"MiddleBoss.h"
 
 #include"imgui_include.h" 
@@ -231,6 +232,12 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBu
     case EnemyType::Chase:
     {
         auto enemy = new ChaseEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
+    case EnemyType::Archer:
+    {
+        auto enemy = new ArcherEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction(), Func_);
         mEnemyVec.emplace_back(enemy);
     }
     break;
