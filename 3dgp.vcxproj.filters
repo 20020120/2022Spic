@@ -145,6 +145,15 @@
     <Filter Include="Sources\scene\option">
       <UniqueIdentifier>{16b96f21-2db9-4793-a69a-3f08dd4d758c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\debug\debug2D">
+      <UniqueIdentifier>{4ed25b81-decf-4f93-bf52-0ed7900f4cd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\debug\debug_figure">
+      <UniqueIdentifier>{4a3cb5c5-530a-49de-b838-efe97602ea04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\debug\debug_2D">
+      <UniqueIdentifier>{a75be414-fb67-4c0c-b9b1-229877fba54b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -407,6 +416,9 @@
     </ClCompile>
     <ClCompile Include="sources\ArcherEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\debug_2D.cpp">
+      <Filter>Sources\debug\debug2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -686,6 +698,9 @@
     <ClInclude Include="sources\ArcherEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
+    <ClInclude Include="sources\debug_2D.h">
+      <Filter>Sources\debug\debug2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
@@ -765,12 +780,6 @@
     <FxCompile Include="HLSL\font_vs.hlsl">
       <Filter>Shaders\font</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\debug_figure_ps.hlsl">
-      <Filter>Shaders\debug</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\debug_figure_vs.hlsl">
-      <Filter>Shaders\debug</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\fog_ps.hlsl">
       <Filter>Shaders\post_effect</Filter>
     </FxCompile>
@@ -843,6 +852,18 @@
     <FxCompile Include="HLSL\LaserBeamPs.hlsl">
       <Filter>Shaders\LaseBeam</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\debug_figure_ps.hlsl">
+      <Filter>Shaders\debug\debug_figure</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\debug_figure_vs.hlsl">
+      <Filter>Shaders\debug\debug_figure</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\debug_2D_ps.hlsl">
+      <Filter>Shaders\debug\debug_2D</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\debug_2D_vs.hlsl">
+      <Filter>Shaders\debug\debug_2D</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
@@ -860,9 +881,6 @@
     <None Include="HLSL\font.hlsli">
       <Filter>Shaders\font</Filter>
     </None>
-    <None Include="HLSL\debug_figure.hlsli">
-      <Filter>Shaders\debug</Filter>
-    </None>
     <None Include="HLSL\constants.hlsli">
       <Filter>Shaders</Filter>
     </None>
@@ -877,6 +895,12 @@
     </None>
     <None Include="HLSL\SwordTrail.hlsli">
       <Filter>Shaders\sword-trail</Filter>
+    </None>
+    <None Include="HLSL\debug_figure.hlsli">
+      <Filter>Shaders\debug\debug_figure</Filter>
+    </None>
+    <None Include="HLSL\debug_2D.hlsli">
+      <Filter>Shaders\debug\debug_2D</Filter>
     </None>
   </ItemGroup>
 </Project>

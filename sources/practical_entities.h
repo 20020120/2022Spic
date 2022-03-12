@@ -2,6 +2,7 @@
 
 #include "audio_manager.h"
 #include "debug_figures.h"
+#include "debug_2D.h"
 #include "effect_manager.h"
 #include "font.h"
 #include "game_pad.h"
@@ -28,6 +29,7 @@ protected:
     static std::unique_ptr<AudioManager> audio_manager;
     static std::unique_ptr<FontInstances> fonts;
     static std::unique_ptr<DebugFigures> debug_figure;
+    static std::unique_ptr<Debug2D> debug_2D;
     static std::unique_ptr<Mouse> mouse;
     static std::unique_ptr<GamePad> game_pad;
     static std::unique_ptr<EffectManager> effect_manager;

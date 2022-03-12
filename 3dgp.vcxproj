@@ -218,6 +218,7 @@
     <ClCompile Include="sources\codinate_convert.cpp" />
     <ClCompile Include="sources\collision.cpp" />
     <ClCompile Include="sources\constants.cpp" />
+    <ClCompile Include="sources\debug_2D.cpp" />
     <ClCompile Include="sources\debug_figures.cpp" />
     <ClCompile Include="sources\debug_flags.cpp" />
     <ClCompile Include="sources\effect.cpp" />
@@ -308,6 +309,7 @@
     <ClInclude Include="sources\collision.h" />
     <ClInclude Include="sources\Common.h" />
     <ClInclude Include="sources\constants.h" />
+    <ClInclude Include="sources\debug_2D.h" />
     <ClInclude Include="sources\debug_figures.h" />
     <ClInclude Include="sources\debug_flags.h" />
     <ClInclude Include="sources\easing.h" />
@@ -411,6 +413,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\debug_2D_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\debug_2D_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="HLSL\debug_figure_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -669,6 +683,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\constants.hlsli" />
+    <None Include="HLSL\debug_2D.hlsli" />
     <None Include="HLSL\debug_figure.hlsli" />
     <None Include="HLSL\font.hlsli" />
     <None Include="HLSL\fullscreen_quad.hlsli" />

@@ -4,6 +4,7 @@ std::unique_ptr<ResourceManager> PracticalEntities::resource_manager = nullptr;
 std::unique_ptr<AudioManager>    PracticalEntities::audio_manager    = nullptr;
 std::unique_ptr<FontInstances>   PracticalEntities::fonts            = nullptr;
 std::unique_ptr<DebugFigures>    PracticalEntities::debug_figure     = nullptr;
+std::unique_ptr<Debug2D>         PracticalEntities::debug_2D         = nullptr;
 std::unique_ptr<Mouse>           PracticalEntities::mouse            = nullptr;
 std::unique_ptr<GamePad>         PracticalEntities::game_pad         = nullptr;
 std::unique_ptr<EffectManager>   PracticalEntities::effect_manager   = nullptr;
@@ -20,6 +21,8 @@ void PracticalEntities::entities_initialize(GraphicsPipeline& graphics)
     fonts = std::make_unique<FontInstances>(graphics.get_device().Get());
     // debug_figure
     debug_figure = std::make_unique<DebugFigures>(graphics.get_device().Get());
+    // debug_2D
+    debug_2D = std::make_unique<Debug2D>(graphics.get_device().Get());
     // mouse
     mouse = std::make_unique<Mouse>();
     // gamepad
@@ -41,6 +44,7 @@ void PracticalEntities::entities_uninitialize(GraphicsPipeline& graphics)
     if (audio_manager != nullptr) { audio_manager.reset(nullptr); }
     if (fonts != nullptr) { fonts.reset(nullptr); }
     if (debug_figure != nullptr) { debug_figure.reset(nullptr); }
+    if (debug_2D != nullptr) { debug_2D.reset(nullptr); }
     if (mouse != nullptr) { mouse.reset(nullptr); }
     if (game_pad != nullptr) { game_pad.reset(nullptr); }
     if (effect_manager != nullptr)

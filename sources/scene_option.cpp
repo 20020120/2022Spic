@@ -175,4 +175,9 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	r_render("tab", tab, sprite_tab.get());
 	//--cursor--//
 	r_render("cursor", cursor, sprite_cursor.get());
+
+
+
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	debug_2D->all_render(graphics.get_dc().Get());
 }
