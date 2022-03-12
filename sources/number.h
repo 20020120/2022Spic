@@ -11,6 +11,7 @@ public:
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
     void render(ID3D11DeviceContext* dc) override;
+    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos) override;
     //--------<getter/setter>--------//
     void set_offset_pos(const DirectX::XMFLOAT2& off_pos) { offset_pos = off_pos; }
     void set_offset_scale(const DirectX::XMFLOAT2& off_scale) { offset_scale = off_scale; }

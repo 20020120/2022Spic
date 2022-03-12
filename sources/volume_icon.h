@@ -12,7 +12,7 @@ public:
     ~VolumeIcon() override;
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(std::string gui, ID3D11DeviceContext* dc) override;
+    void render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos) override;
 private:
     //--------< ’è” >--------//
     enum BarType
@@ -34,5 +34,6 @@ private:
     float interval_LX = 0;
 
     std::vector<Element> scales[BAR_COUNT];
+    std::vector<Element> shell_scales[BAR_COUNT];
     std::unique_ptr<SpriteBatch> sprite_scale = nullptr;
 };

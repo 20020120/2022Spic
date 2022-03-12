@@ -37,6 +37,8 @@ Option::Option(GraphicsPipeline& graphics)
 	{
 		IconBase* icon = new VolumeIcon(graphics.get_device().Get());
 		icon_map.insert(std::make_pair(IconType::VOLUME, icon));
+		icon = new GameIcon(graphics.get_device().Get());
+		icon_map.insert(std::make_pair(IconType::GAME, icon));
 		icon = new TransitionIcon(graphics.get_device().Get());
 		icon_map.insert(std::make_pair(IconType::TRANSITION, icon));
 	}
@@ -53,10 +55,22 @@ Option::Option(GraphicsPipeline& graphics)
 	//--frame--//
 	sprite_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\icon_frame.png", 1);
 	if (icon_elements.count(state)) { frame.position = icon_elements.at(state).position; }
+	frame_arrival_pos = frame.position;
 	frame.texsize = { static_cast<float>(sprite_frame->get_texture2d_desc().Width), static_cast<float>(sprite_frame->get_texture2d_desc().Height) };
 	frame.pivot = frame.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 	frame.color = { 1.0f,1.0f,1.0f,1.0f };
 	frame.scale = { 0.25f, 0.25f };
+	frame_arrival_scale = frame.scale;
+
+	add_position = {};
+	//--cursor--//
+	sprite_cursor = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\cursor.png", 1);
+	cursor.texsize = { static_cast<float>(sprite_cursor->get_texture2d_desc().Width), static_cast<float>(sprite_cursor->get_texture2d_desc().Height) };
+	cursor.position = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	cursor.scale = { 0.5f, 0.5f };
+	cursor.color = { 0.0f,0.0f,0.0f,1.0f };
+
+	cursor_velocity = {};
 }
 
 void Option::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -66,8 +80,37 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 		validity = false;
 		return;
 	}
+
+	switch (state)
+	{
+	case IconType::VOLUME:
+		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { state = IconType::GAME; }
+		break;
+	case IconType::GAME:
+		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { state = IconType::TRANSITION; }
+		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { state = IconType::VOLUME; }
+		break;
+	case IconType::TRANSITION:
+		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { state = IconType::GAME; }
+		break;
+	}
+	// frameˆÚ“®
+	if (icon_elements.count(state)) { frame_arrival_pos = icon_elements.at(state).position; }
+	frame.position = Math::lerp(frame.position, frame_arrival_pos, 10 * elapsed_time);
+	if (Math::equal_check(frame.scale.x, 0.25f, 0.01f)) { frame_arrival_scale = { 0.3f, 0.3f }; }
+	if (Math::equal_check(frame.scale.x, 0.3f, 0.01f)) { frame_arrival_scale = { 0.25f, 0.25f }; }
+	frame.scale = Math::lerp(frame.scale, frame_arrival_scale, 3 * elapsed_time);
 	//--icon--//
-	if (icon_map.count(state)) { icon_map.at(state)->update(graphics, elapsed_time); }
+	if (icon_map.count(state))
+	{
+		icon_map.at(state)->update(graphics, elapsed_time);
+		icon_map.at(state)->vs_cursor(cursor.position);
+	}
+	//--cursor--//
+	float cursor_speed = 700.0f * elapsed_time;
+	cursor_velocity = { fabsf(game_pad->get_axis_LX() + FLT_EPSILON) > 0.1f ? game_pad->get_axis_LX() : 0,
+		                fabsf(game_pad->get_axis_LY() + FLT_EPSILON) > 0.1f ? -game_pad->get_axis_LY() : 0 };
+	cursor.position += DirectX::XMFLOAT2(cursor_speed, cursor_speed) * cursor_velocity;
 }
 
 void Option::render(GraphicsPipeline& graphics, float elapsed_time)
@@ -87,20 +130,49 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::End();
 #endif // USE_IMGUI
 		s->begin(graphics.get_dc().Get());
-		s->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		s->render(graphics.get_dc().Get(), e.position + add_position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
 		s->end(graphics.get_dc().Get());
 	};
 	//--back--//
 	r_render("back", back, sprite_back.get());
-	//--tab--//
-	r_render("tab", tab, sprite_tab.get());
 	//--frame--//
 	r_render("frame", frame, sprite_frame.get());
 	//--icon--//
 	r_render("volume",     icon_elements.at(IconType::VOLUME),     icon_sprites.at(IconType::VOLUME).get());
 	r_render("game",       icon_elements.at(IconType::GAME),       icon_sprites.at(IconType::GAME).get());
 	r_render("transition", icon_elements.at(IconType::TRANSITION), icon_sprites.at(IconType::TRANSITION).get());
+	//--fonts--//
+	auto r_font_render = [&](std::string name, std::wstring string, DirectX::XMFLOAT2& pos, DirectX::XMFLOAT2& scale)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin("option");
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &pos.x);
+			ImGui::DragFloat2("scale", &scale.x, 0.1f);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->biz_upd_gothic->Draw(string, pos + add_position, scale, { 1,1,1,1 }, 0, TEXT_ALIGN::MIDDLE);
+	};
+	fonts->biz_upd_gothic->Begin(graphics.get_dc().Get());
+	{
+		static DirectX::XMFLOAT2 pos{ 385.0f, 115.0f };
+		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
+		r_font_render("LB", L"LB", pos, scale);
+	}
+	{
+		static DirectX::XMFLOAT2 pos{ 845.0f, 115.0f };
+		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
+		r_font_render("RB", L"RB", pos, scale);
+	}
+	fonts->biz_upd_gothic->End(graphics.get_dc().Get());
 	//--icons--//
 	std::string gui_names[3] = { "volume", "game", "transition" };
-	if (icon_map.count(state)) { icon_map.at(state)->render(gui_names[static_cast<int>(state)], graphics.get_dc().Get()); };
+	if (icon_map.count(state)) { icon_map.at(state)->render(gui_names[static_cast<int>(state)], graphics.get_dc().Get(), add_position); }
+	//--tab--//
+	r_render("tab", tab, sprite_tab.get());
+	//--cursor--//
+	r_render("cursor", cursor, sprite_cursor.get());
 }

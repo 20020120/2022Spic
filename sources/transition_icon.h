@@ -11,7 +11,7 @@ public:
     ~TransitionIcon() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
-    void render(std::string gui, ID3D11DeviceContext* dc) override;
+    void render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos) override;
 private:
     //--------< •Ï” >--------//
     FontElement game;

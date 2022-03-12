@@ -13,6 +13,7 @@ public:
     //--------< ŠÖ” >--------//
     virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
     virtual void render(ID3D11DeviceContext* dc) = 0;
+    virtual void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos) {}
 protected:
     //--------< \‘¢‘Ì >--------//
     struct Element

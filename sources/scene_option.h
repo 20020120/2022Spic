@@ -6,6 +6,7 @@
 #include "practical_entities.h"
 #include "transition_icon.h"
 #include "volume_icon.h"
+#include "game_icon.h"
 
 class Option : public PracticalEntities
 {
@@ -45,6 +46,8 @@ private:
     Element tab;
     std::unique_ptr<SpriteBatch> sprite_tab{ nullptr };
     Element frame;
+    DirectX::XMFLOAT2 frame_arrival_pos{};
+    DirectX::XMFLOAT2 frame_arrival_scale{};
     std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
 
     std::map<IconType, Element> icon_elements;
@@ -53,4 +56,10 @@ private:
 
     IconType state = IconType::VOLUME;
     static bool validity;
+
+    DirectX::XMFLOAT2 add_position{};
+
+    Element cursor{};
+    DirectX::XMFLOAT2 cursor_velocity{};
+    std::unique_ptr<SpriteBatch> sprite_cursor{ nullptr };
 };

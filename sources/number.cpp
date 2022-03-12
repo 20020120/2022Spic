@@ -44,3 +44,18 @@ void Number::render(ID3D11DeviceContext* dc)
     }
     number->end(dc);
 }
+
+void Number::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos)
+{
+    //--number--//
+    number->begin(dc);
+    int step = 0;
+    for (auto& item : display.places)
+    {
+        ++step;
+        number->render(dc, { (offset_pos.x + (display.places.size() - step) * element.texsize.x * offset_scale.x) + add_pos.x, offset_pos.y + add_pos.y },
+            offset_scale * element.scale, element.pivot, element.color, element.angle,
+            { element.texpos.x + element.texsize.x * item, element.texpos.y }, element.texsize);
+    }
+    number->end(dc);
+}

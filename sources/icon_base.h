@@ -13,7 +13,8 @@ public:
     virtual ~IconBase() {}
     //--------< ŠÖ” >--------//
     virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
-    virtual void render(std::string gui, ID3D11DeviceContext* dc);
+    virtual void render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos);
+    virtual void vs_cursor(const DirectX::XMFLOAT2& cursor_pos) {}
     //--------<getter/setter>--------//
     void reset_state() { state = 0; }
 protected:

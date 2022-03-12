@@ -1,0 +1,380 @@
+#include "game_icon.h"
+#include "Operators.h"
+#include "collision.h"
+
+GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
+{
+	//--shake--//
+	shake.position = { 565.0f, 295.0f };
+	shake.scale = { 0.6f, 0.6f };
+	shake.s = L"カメラシェイク";
+	//--vibration--//
+	vibration.position = { 565.0f, 380.0f };
+	vibration.scale = { 0.6f, 0.6f };
+	vibration.s = L"コントローラー振動";
+	//--flush--//
+	flush.position = { 545.0f, 465.0f };
+	flush.scale = { 0.6f, 0.6f };
+	flush.s = L"フラッシュ演出";
+	//--sensitivity--//
+	sensitivity.position = { 550.0f, 550.0f };
+	sensitivity.scale = { 0.6f, 0.6f };
+	sensitivity.s = L"カメラ感度";
+
+	//--button--//
+	float on_pos_x = 900.0f; float off_pos_x = 1095.0f;
+	float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
+	DirectX::XMFLOAT2 selecter_texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+	DirectX::XMFLOAT2 selecter_pivot = { selecter_texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
+	// SHAKE
+	choices[ChoicesType::SHAKE][0].position = { on_pos_x, shake.position.y };
+	choices[ChoicesType::SHAKE][0].scale = { shake.scale };
+	choices[ChoicesType::SHAKE][0].s = L"ON";
+	choices[ChoicesType::SHAKE][1].position = { off_pos_x, shake.position.y };
+	choices[ChoicesType::SHAKE][1].scale = { shake.scale };
+	choices[ChoicesType::SHAKE][1].s = L"OFF";
+	setup[ChoicesType::SHAKE] = true;
+	// VIBRATION
+	choices[ChoicesType::VIBRATION][0].position = { on_pos_x, vibration.position.y };
+	choices[ChoicesType::VIBRATION][0].scale = { vibration.scale };
+	choices[ChoicesType::VIBRATION][0].s = L"ON";
+	choices[ChoicesType::VIBRATION][1].position = { off_pos_x, vibration.position.y };
+	choices[ChoicesType::VIBRATION][1].scale = { vibration.scale };
+	choices[ChoicesType::VIBRATION][1].s = L"OFF";
+	setup[ChoicesType::VIBRATION] = true;
+	// FLUSH
+	choices[ChoicesType::FLUSH][0].position = { on_pos_x, flush.position.y };
+	choices[ChoicesType::FLUSH][0].scale = { flush.scale };
+	choices[ChoicesType::FLUSH][0].s = L"ON";
+	choices[ChoicesType::FLUSH][1].position = { off_pos_x, flush.position.y };
+	choices[ChoicesType::FLUSH][1].scale = { flush.scale };
+	choices[ChoicesType::FLUSH][1].s = L"OFF";
+	setup[ChoicesType::FLUSH] = true;
+	// selecter
+	for (int i = 0; i < BUTTON_COUNT; ++i)
+	{
+		for (int o = 0; o < 2; ++o)
+		{
+			selecter[i][o].texsize = selecter_texsize;
+			selecter[i][o].pivot = selecter_pivot;
+			selecter[i][o].scale = { 0.3f, 0.3f };
+			selecter[i][o].color = { 1,1,1,1 };
+		}
+	}
+	selecter[ChoicesType::SHAKE][0].position     = { selecter_posL[0], shake.position.y };
+	selecter[ChoicesType::SHAKE][1].position     = { selecter_posR[0], shake.position.y };
+	selecter_arrival_pos[ChoicesType::SHAKE][0]  = { selecter[ChoicesType::SHAKE][0].position };
+	selecter_arrival_pos[ChoicesType::SHAKE][1]  = { selecter[ChoicesType::SHAKE][1].position };
+	selecter[ChoicesType::VIBRATION][0].position = { selecter_posL[0], vibration.position.y };
+	selecter[ChoicesType::VIBRATION][1].position = { selecter_posR[0], vibration.position.y };
+	selecter_arrival_pos[ChoicesType::VIBRATION][0] = { selecter[ChoicesType::VIBRATION][0].position };
+	selecter_arrival_pos[ChoicesType::VIBRATION][1] = { selecter[ChoicesType::VIBRATION][1].position };
+	selecter[ChoicesType::FLUSH][0].position     = { selecter_posL[0], flush.position.y };
+	selecter[ChoicesType::FLUSH][1].position     = { selecter_posR[0], flush.position.y };
+	selecter_arrival_pos[ChoicesType::FLUSH][0] = { selecter[ChoicesType::FLUSH][0].position };
+	selecter_arrival_pos[ChoicesType::FLUSH][1] = { selecter[ChoicesType::FLUSH][1].position };
+
+	//--selecterL--//
+	selecterL.position = { 395.0f, shake.position.y };
+	selecterL.scale = { 0.3f, 0.3f };
+	//--selecterR--//
+	selecterR.position = { 705.0f, shake.position.y };
+	selecterR.scale = { 0.3f, 0.3f };
+
+	selecterL_arrival_pos = selecterL.position;
+	selecterR_arrival_pos = selecterR.position;
+
+	//--scales--//
+	sprite_scale = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\scale.png", MAX_SCALE_COUNT * 2);
+
+	for (int o = 0; o < MAX_SCALE_COUNT; ++o)
+	{
+		scales.emplace_back();
+		scales.at(o).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+		scales.at(o).pivot = scales.at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+		scales.at(o).scale = { 0.5f, 0.6f };
+		scales.at(o).color = { 1,1,1,1 };
+		scales.at(o).position = { 745.0f + 20.0f * o, sensitivity.position.y };
+	}
+	for (int o = 0; o < MAX_SCALE_COUNT; ++o)
+	{
+		shell_scales.emplace_back();
+		shell_scales.at(o).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+		shell_scales.at(o).pivot = shell_scales.at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+		shell_scales.at(o).scale = { 0.5f, 0.6f };
+		shell_scales.at(o).color = { 1,1,1,0.25f };
+		shell_scales.at(o).position = { 745.0f + 20.0f * o, sensitivity.position.y };
+	}
+	//--volume_numbers--//
+	sensitivity_number = std::make_unique<Number>(device);
+	sensitivity_number->set_offset_pos({ 1160.0f, sensitivity.position.y });
+	sensitivity_number->set_offset_scale({ 0.25f, 0.25f });
+}
+
+GameIcon::~GameIcon()
+{
+	scales.clear();
+	shell_scales.clear();
+}
+
+void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
+{
+	interval_LX += elapsed_time;
+
+	auto r_bar = [&]()
+	{
+		if ((game_pad->get_button() & GamePad::BTN_LEFT) && interval_LX > INTERVAL)
+		{
+			interval_LX = 0;
+			size_t index = scales.size();
+			if (index > 1) { scales.pop_back(); }
+		}
+		if ((game_pad->get_button() & GamePad::BTN_RIGHT) && interval_LX > INTERVAL)
+		{
+			interval_LX = 0;
+			size_t index = scales.size();
+			if (index < MAX_SCALE_COUNT)
+			{
+				scales.emplace_back();
+				scales.at(index).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+				scales.at(index).pivot = scales.at(index).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+				scales.at(index).scale = { 0.5f, 0.6f };
+				scales.at(index).color = { 1,1,1,1 };
+				scales.at(index).position = { 745.0f + 20.0f * index, sensitivity.position.y };
+			}
+		}
+	};
+	auto r_button = [&](ChoicesType type)
+	{
+		float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
+		if (game_pad->get_button_down() & GamePad::BTN_LEFT)
+		{
+			if (!setup[type])
+			{
+				setup[type] = true;
+				selecter_arrival_pos[type][0].x = selecter_posL[0];
+				selecter_arrival_pos[type][1].x = selecter_posR[0];
+			}
+		}
+		if (game_pad->get_button_down() & GamePad::BTN_RIGHT)
+		{
+			if (setup[type])
+			{
+				setup[type] = false;
+				selecter_arrival_pos[type][0].x = selecter_posL[1];
+				selecter_arrival_pos[type][1].x = selecter_posR[1];
+			}
+		}
+	};
+
+	switch (state)
+	{
+	case ChoicesType::SHAKE:
+		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		{
+			state = ChoicesType::VIBRATION;
+			selecterL_arrival_pos = { 360.0f, vibration.position.y };
+			selecterR_arrival_pos = { 745.0f, vibration.position.y };
+		}
+		r_button(ChoicesType::SHAKE);
+		break;
+
+	case ChoicesType::VIBRATION:
+		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		{
+			state = ChoicesType::SHAKE;
+			selecterL_arrival_pos = { 395.0f, shake.position.y };
+			selecterR_arrival_pos = { 705.0f, shake.position.y };
+		}
+		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		{
+			state = ChoicesType::FLUSH;
+			selecterL_arrival_pos = { 385.0f, flush.position.y };
+			selecterR_arrival_pos = { 705.0f, flush.position.y };
+		}
+		r_button(ChoicesType::VIBRATION);
+		break;
+
+	case ChoicesType::FLUSH:
+		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		{
+			state = ChoicesType::VIBRATION;
+			selecterL_arrival_pos = { 360.0f, vibration.position.y };
+			selecterR_arrival_pos = { 745.0f, vibration.position.y };
+		}
+		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		{
+			state = ChoicesType::SENSITIVITY;
+			selecterL_arrival_pos = { 410.0f, sensitivity.position.y };
+			selecterR_arrival_pos = { 680.0f, sensitivity.position.y };
+		}
+		r_button(ChoicesType::FLUSH);
+		break;
+
+	case ChoicesType::SENSITIVITY:
+		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		{
+			state = ChoicesType::FLUSH;
+			selecterL_arrival_pos = { 385.0f, flush.position.y };
+			selecterR_arrival_pos = { 705.0f, flush.position.y };
+		}
+		r_bar();
+		break;
+	}
+
+	//--左の選択肢のセレクター--//
+	selecterL.position = Math::lerp(selecterL.position, selecterL_arrival_pos, 10.0f * elapsed_time);
+	selecterR.position = Math::lerp(selecterR.position, selecterR_arrival_pos, 10.0f * elapsed_time);
+	//--右の選択肢のセレクター--//
+	for (int i = 0; i < BUTTON_COUNT; ++i)
+	{
+		for (int o = 0; o < 2; ++o)
+		{
+			selecter[i][o].position = Math::lerp(selecter[i][o].position, selecter_arrival_pos[i][o], 10.0f * elapsed_time);
+		}
+	}
+	//--bar--//
+	sensitivity_number->set_value(((float)scales.size() / (float)MAX_SCALE_COUNT) * 100);
+	sensitivity_number->update(graphics, elapsed_time);
+}
+
+void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos)
+{
+	IconBase::render(gui, dc, add_pos);
+
+	auto r_sprite_render = [&](std::string name, Element& e, SpriteBatch* s)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin("option");
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		s->render(dc, e.position + add_pos, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+	};
+	auto r_font_render = [&](std::string name, FontElement& e)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin("option");
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->biz_upd_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
+	};
+
+	fonts->biz_upd_gothic->Begin(dc);
+	r_font_render("shake", shake);
+	r_font_render("vibration", vibration);
+	r_font_render("flush", flush);
+	r_font_render("sensitivity", sensitivity);
+	//--button--//
+	for (int i = 0; i < BUTTON_COUNT; ++i)
+	{
+		for (int o = 0; o < 2; ++o)
+		{
+			std::string s = "choices" + std::to_string(i) + " " + std::to_string(o);
+			r_font_render(s, choices[i][o]);
+		}
+	}
+	fonts->biz_upd_gothic->End(dc);
+
+	sprite_selecter->begin(dc);
+	for (int i = 0; i < BUTTON_COUNT; ++i)
+	{
+		for (int o = 0; o < 2; ++o)
+		{
+			std::string s = "selecter" + std::to_string(i) + " " + std::to_string(o);
+			r_sprite_render(s, selecter[i][o], sprite_selecter.get());
+		}
+	}
+	sprite_selecter->end(dc);
+
+	//--bar--//
+	sprite_scale->begin(dc);
+	for (int o = 0; o < shell_scales.size(); ++o)
+	{
+		std::string s = "shell_scale " + std::to_string(o);
+		r_sprite_render(s, shell_scales.at(o), sprite_scale.get());
+	}
+	for (int o = 0; o < scales.size(); ++o)
+	{
+		std::string s = "scale " + std::to_string(o);
+		r_sprite_render(s, scales.at(o), sprite_scale.get());
+	}
+	sprite_scale->end(dc);
+
+#ifdef USE_IMGUI
+	ImGui::Begin("option");
+	static DirectX::XMFLOAT2 pos{};
+	static DirectX::XMFLOAT2 scale{};
+	if (ImGui::TreeNode("number"))
+	{
+		ImGui::DragFloat2("pos", &pos.x);
+		ImGui::DragFloat2("scale", &scale.x, 0.1f);
+		ImGui::TreePop();
+	}
+	//sensitivity_number->set_offset_pos(pos);
+	//sensitivity_number->set_offset_scale(scale);
+	ImGui::End();
+#endif // USE_IMGUI
+
+	sensitivity_number->render(dc, add_pos);
+}
+
+void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
+{
+	for (int i = 0; i < BUTTON_COUNT; ++i)
+	{
+		float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
+		for (int o = 0; o < 2; ++o)
+		{
+			DirectX::XMFLOAT2 length = choices[i][o].length * DirectX::XMFLOAT2(0.7f, 0.7f);
+			if (Collision::hit_check_rect(cursor_pos, { 5,5 }, choices[i][o].position - DirectX::XMFLOAT2(length.x, length.y * 1.5f), length))
+			{
+				if (game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					if (o == 0 && !setup[i]) // on
+					{
+						setup[i] = true;
+						selecter_arrival_pos[i][0].x = selecter_posL[0];
+						selecter_arrival_pos[i][1].x = selecter_posR[0];
+					}
+					if (o == 1 && setup[i]) // off
+					{
+						setup[i] = false;
+						selecter_arrival_pos[i][0].x = selecter_posL[1];
+						selecter_arrival_pos[i][1].x = selecter_posR[1];
+					}
+				}
+			}
+		}
+	}
+	//--bar--//
+
+	ImGui::Begin("test");
+	static DirectX::XMFLOAT2 value = {};
+	ImGui::DragFloat2("value", &value.x, 0.1f);
+	ImGui::End();
+
+	DirectX::XMFLOAT2 bar_radius = { (shell_scales.at(shell_scales.size() - 1).position.x - shell_scales.begin()->position.x) / 2 + value.x,
+		shell_scales.begin()->texsize.y * shell_scales.begin()->scale.y };
+	DirectX::XMFLOAT2 bar_position = { shell_scales.begin()->position.x + bar_radius.x - 30.0f, shell_scales.begin()->position.y - 20.0f };
+	if (Collision::hit_check_rect(cursor_pos, { 5,5 }, bar_position, bar_radius))
+	{
+		ImGui::Begin("hit");
+		static bool value = true;
+		ImGui::Checkbox("value", &value);
+		ImGui::End();
+	}
+}

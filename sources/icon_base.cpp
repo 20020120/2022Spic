@@ -5,7 +5,7 @@
 IconBase::IconBase(ID3D11Device* device)
 {
 	//--selecter--//
-	sprite_selecter = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\selecter.png", 2);
+	sprite_selecter = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\selecter.png", 2 + 3 * 2);
 	selecterL.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 	selecterL.pivot = selecterL.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 	selecterL.scale = { 0.7f, 0.3f };
@@ -17,7 +17,7 @@ IconBase::IconBase(ID3D11Device* device)
 	selecterR.color = { 1,1,1,1 };
 }
 
-void IconBase::render(std::string gui, ID3D11DeviceContext* dc)
+void IconBase::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos)
 {
 	//--sprite_selecter--//
 #ifdef USE_IMGUI
@@ -41,9 +41,9 @@ void IconBase::render(std::string gui, ID3D11DeviceContext* dc)
 	ImGui::End();
 #endif // USE_IMGUI
 	sprite_selecter->begin(dc);
-	sprite_selecter->render(dc, selecterL.position, selecterL.scale,
+	sprite_selecter->render(dc, selecterL.position + add_pos, selecterL.scale,
 		selecterL.pivot, selecterL.color, selecterL.angle, selecterL.texpos, selecterL.texsize);
-	sprite_selecter->render(dc, selecterR.position, selecterR.scale,
+	sprite_selecter->render(dc, selecterR.position + add_pos, selecterR.scale,
 		selecterR.pivot, selecterR.color, selecterR.angle, selecterR.texpos, selecterR.texsize);
 	sprite_selecter->end(dc);
 }

@@ -5,15 +5,15 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
     : IconBase(device)
 {
 	//--master--//
-	master.position = { 475.0f, 265.0f };
+	master.position = { 475.0f, 300.0f };
 	master.scale    = { 0.6f, 0.6f };
 	master.s = L"‘S‘Ì‰¹—Ê";
 	//--bgm--//
-	bgm.position = { 480.0f, 370.0f };
+	bgm.position = { 480.0f, 420.0f };
 	bgm.scale    = { 0.6f, 0.6f };
 	bgm.s = L"BGM‰¹—Ê";
 	//--se--//
-	se.position = { 480.0f, 480.0f };
+	se.position = { 480.0f, 540.0f };
 	se.scale    = { 0.6f, 0.6f };
 	se.s = L"SE‰¹—Ê";
 
@@ -28,7 +28,7 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 	selecterR_arrival_pos = { selecterR.position.x, master.position.y };
 
 	//--scales--//
-	sprite_scale = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\scale.png", MAX_SCALE_COUNT * BAR_COUNT);
+	sprite_scale = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\scale.png", MAX_SCALE_COUNT * BAR_COUNT * 2);
 	float positions[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
@@ -41,21 +41,42 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 			scales[i].at(o).color = { 1,1,1,1 };
 			scales[i].at(o).position = { 670.0f + 20.0f * o, positions[i] };
 		}
+		for (int o = 0; o < MAX_SCALE_COUNT; ++o)
+		{
+			shell_scales[i].emplace_back();
+			shell_scales[i].at(o).texsize  = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+			shell_scales[i].at(o).pivot    = shell_scales[i].at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+			shell_scales[i].at(o).scale    = { 0.5f, 0.6f };
+			shell_scales[i].at(o).color    = { 1,1,1,0.25f };
+			shell_scales[i].at(o).position = { 670.0f + 20.0f * o, positions[i] };
+		}
 	}
 	//--volume_numbers--//
 	{
 		Number* number = new Number(device);
+		number->set_offset_pos({ 1125.0f, master.position.y });
+		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::MASTER, number));
+
 		number = new Number(device);
+		number->set_offset_pos({ 1125.0f, bgm.position.y });
+		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::BGM, number));
+
 		number = new Number(device);
+		number->set_offset_pos({ 1125.0f, se.position.y });
+		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::SE, number));
 	}
 }
 
 VolumeIcon::~VolumeIcon()
 {
-	for (int i = 0; i < BAR_COUNT; ++i) { scales[i].clear(); }
+	for (int i = 0; i < BAR_COUNT; ++i)
+	{
+		scales[i].clear();
+		shell_scales[i].clear();
+	}
 }
 
 void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -131,13 +152,17 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
-		if (volume_numbers.count(BarType(i))) { volume_numbers.at(BarType(i))->update(graphics, elapsed_time); }
+		if (volume_numbers.count(BarType(i)))
+		{
+			volume_numbers.at(BarType(i))->set_value(((float)scales[i].size() / (float)MAX_SCALE_COUNT) * 100);
+			volume_numbers.at(BarType(i))->update(graphics, elapsed_time);
+		}
 	}
 }
 
-void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc)
+void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos)
 {
-	IconBase::render(gui, dc);
+	IconBase::render(gui, dc, add_pos);
 
 	auto r_sprite_render = [&](std::string name, Element& e, SpriteBatch* s)
 	{
@@ -152,9 +177,9 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		s->render(dc, e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		s->render(dc, e.position + add_pos, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
 	};
-	auto r_font_render = [](std::string name, FontElement& e)
+	auto r_font_render = [&](std::string name, FontElement& e)
 	{
 #ifdef USE_IMGUI
 		ImGui::Begin("option");
@@ -167,7 +192,7 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		fonts->biz_upd_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
+		fonts->biz_upd_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
 	};
 
 	fonts->biz_upd_gothic->Begin(dc);
@@ -179,6 +204,11 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc)
 	sprite_scale->begin(dc);
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
+		for (int o = 0; o < shell_scales[i].size(); ++o)
+		{
+			std::string s = "shell_scale" + std::to_string(i) + " " + std::to_string(o);
+			r_sprite_render(s, shell_scales[i].at(o), sprite_scale.get());
+		}
 		for (int o = 0; o < scales[i].size(); ++o)
 		{
 			std::string s = "scale" + std::to_string(i) + " " + std::to_string(o);
@@ -187,8 +217,30 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc)
 	}
 	sprite_scale->end(dc);
 
+#ifdef USE_IMGUI
+	ImGui::Begin("option");
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
-		if (volume_numbers.count(BarType(i))) { volume_numbers.at(BarType(i))->render(dc); }
+		static DirectX::XMFLOAT2 pos[BAR_COUNT]{};
+		static DirectX::XMFLOAT2 scale[BAR_COUNT]{};
+		std::string s1 = "number" + std::to_string(i);
+		if (ImGui::TreeNode(s1.c_str()))
+		{
+			ImGui::DragFloat2("pos", &pos[i].x);
+			ImGui::DragFloat2("scale", &scale[i].x, 0.1f);
+			ImGui::TreePop();
+		}
+		if (volume_numbers.count(BarType(i)))
+		{
+			//volume_numbers.at(BarType(i))->set_offset_pos(pos[i]);
+			//volume_numbers.at(BarType(i))->set_offset_scale(scale[i]);
+		}
+	}
+	ImGui::End();
+#endif // USE_IMGUI
+
+	for (int i = 0; i < BAR_COUNT; ++i)
+	{
+		if (volume_numbers.count(BarType(i))) { volume_numbers.at(BarType(i))->render(dc, add_pos); }
 	}
 }

@@ -3,6 +3,7 @@
 #include "scene_manager.h"
 #include "scene_title.h"
 #include "scene_loading.h"
+#include "Operators.h"
 
 TransitionIcon::TransitionIcon(ID3D11Device* device)
     : IconBase(device)
@@ -59,9 +60,9 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	selecterR.position = Math::lerp(selecterR.position, selecterR_arrival_pos, 10.0f * elapsed_time);
 }
 
-void TransitionIcon::render(std::string gui, ID3D11DeviceContext* dc)
+void TransitionIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos)
 {
-    IconBase::render(gui, dc);
+    IconBase::render(gui, dc, add_pos);
 #ifdef USE_IMGUI
     ImGui::Begin("option");
     if (ImGui::TreeNode("game"))
@@ -81,7 +82,7 @@ void TransitionIcon::render(std::string gui, ID3D11DeviceContext* dc)
     ImGui::End();
 #endif // USE_IMGUI
     fonts->biz_upd_gothic->Begin(dc);
-    fonts->biz_upd_gothic->Draw(game.s, game.position, game.scale, game.color, game.angle, TEXT_ALIGN::MIDDLE, game.length);
-    fonts->biz_upd_gothic->Draw(title.s, title.position, title.scale, title.color, title.angle, TEXT_ALIGN::MIDDLE, title.length);
+    fonts->biz_upd_gothic->Draw(game.s, game.position + add_pos, game.scale, game.color, game.angle, TEXT_ALIGN::MIDDLE, game.length);
+    fonts->biz_upd_gothic->Draw(title.s, title.position + add_pos, title.scale, title.color, title.angle, TEXT_ALIGN::MIDDLE, title.length);
     fonts->biz_upd_gothic->End(dc);
 }
