@@ -1,6 +1,8 @@
 #include "framework.h"
 #include "scene_title.h"
 #include "scene_Game.h"
+#include "volume_icon.h"
+#include "game_icon.h"
 
 framework::framework(HWND hwnd)
 	: hwnd(hwnd) {}
@@ -17,6 +19,11 @@ bool framework::initialize()
 	scene_manager->set_next_scene(new SceneTitle());
 	// debug_flags
 	debug_flags = std::make_unique<DebugFlags>();
+
+	// file‚Ìload
+	VolumeFile::get_instance().load();
+	GameFile::get_instance().load();
+
 
 	return true;
 }

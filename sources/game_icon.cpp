@@ -1,9 +1,52 @@
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
+#include <string>
+#include <filesystem>
+#include <fstream>
+
 #include "game_icon.h"
 #include "Operators.h"
 #include "collision.h"
 
+void GameFile::load()
+{
+	// Jsonファイルから値を取得
+	std::filesystem::path path = file_name;
+	path.replace_extension(".json");
+	if (std::filesystem::exists(path.c_str()))
+	{
+		std::ifstream ifs;
+		ifs.open(path);
+		if (ifs)
+		{
+			cereal::JSONInputArchive o_archive(ifs);
+			o_archive(source);
+		}
+	}
+	else
+	{
+		source.initialize();
+	}
+}
+
+void GameFile::save()
+{
+	// Jsonにかきだし
+	std::filesystem::path path = file_name;
+	path.replace_extension(".json");
+	std::ofstream ifs(path);
+	if (ifs)
+	{
+		cereal::JSONOutputArchive o_archive(ifs);
+		o_archive(source);
+	}
+}
+
+
 GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 {
+	GameFile::get_instance().load();
 	//--shake--//
 	shake.position = { 565.0f, 295.0f };
 	shake.scale = { 0.6f, 0.6f };
@@ -23,9 +66,6 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 
 	//--button--//
 	float on_pos_x = 900.0f; float off_pos_x = 1095.0f;
-	float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
-	DirectX::XMFLOAT2 selecter_texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	DirectX::XMFLOAT2 selecter_pivot = { selecter_texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
 	// SHAKE
 	choices[ChoicesType::SHAKE][0].position = { on_pos_x, shake.position.y };
 	choices[ChoicesType::SHAKE][0].scale = { shake.scale };
@@ -33,7 +73,7 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	choices[ChoicesType::SHAKE][1].position = { off_pos_x, shake.position.y };
 	choices[ChoicesType::SHAKE][1].scale = { shake.scale };
 	choices[ChoicesType::SHAKE][1].s = L"OFF";
-	setup[ChoicesType::SHAKE] = true;
+	setup[ChoicesType::SHAKE] = GameFile::get_instance().get_shake();
 	// VIBRATION
 	choices[ChoicesType::VIBRATION][0].position = { on_pos_x, vibration.position.y };
 	choices[ChoicesType::VIBRATION][0].scale = { vibration.scale };
@@ -41,7 +81,7 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	choices[ChoicesType::VIBRATION][1].position = { off_pos_x, vibration.position.y };
 	choices[ChoicesType::VIBRATION][1].scale = { vibration.scale };
 	choices[ChoicesType::VIBRATION][1].s = L"OFF";
-	setup[ChoicesType::VIBRATION] = true;
+	setup[ChoicesType::VIBRATION] = GameFile::get_instance().get_vibration();
 	// FLUSH
 	choices[ChoicesType::FLUSH][0].position = { on_pos_x, flush.position.y };
 	choices[ChoicesType::FLUSH][0].scale = { flush.scale };
@@ -49,8 +89,17 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	choices[ChoicesType::FLUSH][1].position = { off_pos_x, flush.position.y };
 	choices[ChoicesType::FLUSH][1].scale = { flush.scale };
 	choices[ChoicesType::FLUSH][1].s = L"OFF";
-	setup[ChoicesType::FLUSH] = true;
+	setup[ChoicesType::FLUSH] = GameFile::get_instance().get_flush();
 	// selecter
+	DirectX::XMFLOAT2 selecter_texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+	DirectX::XMFLOAT2 selecter_pivot = { selecter_texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
+	float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
+	selecter[ChoicesType::SHAKE][0].position     = { selecter_posL[setup[ChoicesType::SHAKE] ? 0 : 1], shake.position.y };
+	selecter[ChoicesType::SHAKE][1].position     = { selecter_posR[setup[ChoicesType::SHAKE] ? 0 : 1], shake.position.y };
+	selecter[ChoicesType::VIBRATION][0].position = { selecter_posL[setup[ChoicesType::VIBRATION] ? 0 : 1], vibration.position.y };
+	selecter[ChoicesType::VIBRATION][1].position = { selecter_posR[setup[ChoicesType::VIBRATION] ? 0 : 1], vibration.position.y };
+	selecter[ChoicesType::FLUSH][0].position     = { selecter_posL[setup[ChoicesType::FLUSH] ? 0 : 1], flush.position.y };
+	selecter[ChoicesType::FLUSH][1].position     = { selecter_posR[setup[ChoicesType::FLUSH] ? 0 : 1], flush.position.y };
 	for (int i = 0; i < BUTTON_COUNT; ++i)
 	{
 		for (int o = 0; o < 2; ++o)
@@ -59,20 +108,9 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 			selecter[i][o].pivot = selecter_pivot;
 			selecter[i][o].scale = { 0.3f, 0.3f };
 			selecter[i][o].color = { 1,1,1,1 };
+			selecter_arrival_pos[i][o] = { selecter[i][o].position };
 		}
 	}
-	selecter[ChoicesType::SHAKE][0].position     = { selecter_posL[0], shake.position.y };
-	selecter[ChoicesType::SHAKE][1].position     = { selecter_posR[0], shake.position.y };
-	selecter_arrival_pos[ChoicesType::SHAKE][0]  = { selecter[ChoicesType::SHAKE][0].position };
-	selecter_arrival_pos[ChoicesType::SHAKE][1]  = { selecter[ChoicesType::SHAKE][1].position };
-	selecter[ChoicesType::VIBRATION][0].position = { selecter_posL[0], vibration.position.y };
-	selecter[ChoicesType::VIBRATION][1].position = { selecter_posR[0], vibration.position.y };
-	selecter_arrival_pos[ChoicesType::VIBRATION][0] = { selecter[ChoicesType::VIBRATION][0].position };
-	selecter_arrival_pos[ChoicesType::VIBRATION][1] = { selecter[ChoicesType::VIBRATION][1].position };
-	selecter[ChoicesType::FLUSH][0].position     = { selecter_posL[0], flush.position.y };
-	selecter[ChoicesType::FLUSH][1].position     = { selecter_posR[0], flush.position.y };
-	selecter_arrival_pos[ChoicesType::FLUSH][0] = { selecter[ChoicesType::FLUSH][0].position };
-	selecter_arrival_pos[ChoicesType::FLUSH][1] = { selecter[ChoicesType::FLUSH][1].position };
 
 	//--selecterL--//
 	selecterL.position = { 395.0f, shake.position.y };
@@ -87,7 +125,7 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	//--scales--//
 	sprite_scale = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\scale.png", MAX_SCALE_COUNT * 2);
 
-	for (int o = 0; o < MAX_SCALE_COUNT; ++o)
+	for (int o = 0; o < MAX_SCALE_COUNT * GameFile::get_instance().get_sensitivity(); ++o)
 	{
 		scales.emplace_back();
 		scales.at(o).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
@@ -128,6 +166,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 			interval_LX = 0;
 			size_t index = scales.size();
 			if (index > 1) { scales.pop_back(); }
+			save_source();
 		}
 		if ((game_pad->get_button() & GamePad::BTN_RIGHT) && interval_LX > INTERVAL)
 		{
@@ -142,6 +181,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				scales.at(index).color = { 1,1,1,1 };
 				scales.at(index).position = { 745.0f + 20.0f * index, sensitivity.position.y };
 			}
+			save_source();
 		}
 	};
 	auto r_button = [&](ChoicesType type)
@@ -155,6 +195,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				selecter_arrival_pos[type][0].x = selecter_posL[0];
 				selecter_arrival_pos[type][1].x = selecter_posR[0];
 			}
+			save_source();
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_RIGHT)
 		{
@@ -164,6 +205,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				selecter_arrival_pos[type][0].x = selecter_posL[1];
 				selecter_arrival_pos[type][1].x = selecter_posR[1];
 			}
+			save_source();
 		}
 	};
 
@@ -356,6 +398,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 						selecter_arrival_pos[i][0].x = selecter_posL[1];
 						selecter_arrival_pos[i][1].x = selecter_posR[1];
 					}
+					save_source();
 				}
 			}
 		}
@@ -388,6 +431,17 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 				scales.at(i).color = { 1,1,1,1 };
 				scales.at(i).position = { 745.0f + 20.0f * i, sensitivity.position.y };
 			}
+			save_source();
 		}
 	}
+}
+
+void GameIcon::save_source()
+{
+	GameFile::get_instance().set_shake(setup[ChoicesType::SHAKE]);
+	GameFile::get_instance().set_vibration(setup[ChoicesType::VIBRATION]);
+	GameFile::get_instance().set_flush(setup[ChoicesType::FLUSH]);
+	GameFile::get_instance().set_sensitivity((float)scales.size() / (float)MAX_SCALE_COUNT);
+
+	GameFile::get_instance().save();
 }

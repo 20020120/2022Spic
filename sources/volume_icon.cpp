@@ -1,10 +1,52 @@
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
+#include <string>
+#include <filesystem>
+#include <fstream>
+
 #include "volume_icon.h"
 #include "Operators.h"
 #include "collision.h"
 
+void VolumeFile::load()
+{
+	// Jsonファイルから値を取得
+	std::filesystem::path path = file_name;
+	path.replace_extension(".json");
+	if (std::filesystem::exists(path.c_str()))
+	{
+		std::ifstream ifs;
+		ifs.open(path);
+		if (ifs)
+		{
+			cereal::JSONInputArchive o_archive(ifs);
+			o_archive(source);
+		}
+	}
+	else
+	{
+		source.initialize();
+	}
+}
+
+void VolumeFile::save()
+{
+	// Jsonにかきだし
+	std::filesystem::path path = file_name;
+	path.replace_extension(".json");
+	std::ofstream ifs(path);
+	if (ifs)
+	{
+		cereal::JSONOutputArchive o_archive(ifs);
+		o_archive(source);
+	}
+}
+
 VolumeIcon::VolumeIcon(ID3D11Device* device)
     : IconBase(device)
 {
+	VolumeFile::get_instance().load();
 	//--master--//
 	master.position = { 475.0f, 300.0f };
 	master.scale    = { 0.6f, 0.6f };
@@ -30,10 +72,12 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 
 	//--scales--//
 	sprite_scale = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\scale.png", MAX_SCALE_COUNT * BAR_COUNT * 2);
-	float positions[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
+	float positions[BAR_COUNT]     = { master.position.y, bgm.position.y, se.position.y };
+	float scale_factors[BAR_COUNT] = { VolumeFile::get_instance().get_master_volume(),
+		VolumeFile::get_instance().get_bgm_volume(), VolumeFile::get_instance().get_se_volume() };
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
-		for (int o = 0; o < MAX_SCALE_COUNT; ++o)
+		for (int o = 0; o < MAX_SCALE_COUNT * scale_factors[i]; ++o)
 		{
 			scales[i].emplace_back();
 			scales[i].at(o).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
@@ -90,6 +134,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		{
 			interval_LX = 0;
 			if (!scales[type].empty()) { scales[type].pop_back(); }
+			save_volumes();
 		}
 		if ((game_pad->get_button() & GamePad::BTN_RIGHT) && interval_LX > INTERVAL)
 		{
@@ -105,6 +150,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				scales[type].at(index).color    = { 1,1,1,1 };
 				scales[type].at(index).position = { 670.0f + 20.0f * index, positions[type] };
 			}
+			save_volumes();
 		}
 	};
 
@@ -279,7 +325,18 @@ void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 					scales[o].at(i).color    = { 1,1,1,1 };
 					scales[o].at(i).position = { 670.0f + 20.0f * i, positions[o] };
 				}
+
+				save_volumes();
 			}
 		}
 	}
+}
+
+void VolumeIcon::save_volumes()
+{
+	VolumeFile::get_instance().set_master_volume((float)scales[BarType::MASTER].size() / (float)MAX_SCALE_COUNT);
+	VolumeFile::get_instance().set_bgm_volume((float)scales[BarType::BGM].size() / (float)MAX_SCALE_COUNT);
+	VolumeFile::get_instance().set_se_volume((float)scales[BarType::SE].size() / (float)MAX_SCALE_COUNT);
+
+	VolumeFile::get_instance().save();
 }
