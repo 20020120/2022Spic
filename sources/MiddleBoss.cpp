@@ -2,7 +2,7 @@
 #include"StraightBullet.h"
 #include "Operators.h"
 MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std::string)> Function_, AddBulletFunc Func_)
-    :BaseEnemy(Graphics_,0, "./resources/Models/Enemy/enemy_proto.fbx")
+    :BaseEnemy(Graphics_,0, "./resources/Models/Enemy/MiddleBoss.fbx")
 {
     mTimer = 0.0f;
     mScale = { 0.03f,0.03f,0.03f };
@@ -21,6 +21,10 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
 
     //--------------------<LuaLibの呼び出し>--------------------//
     mLuaWorld.fLoadFile("./resources/Data/MiddleBoss.lua");
+
+    //--------------------<アニメーション再生>--------------------//
+    mpSkinnedMesh->play_animation(wing, true);
+
 }
 
 void MiddleBoss::fInitialize()
@@ -45,7 +49,6 @@ void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     mLaserBeam.fSetLengthThreshold(mLaserBeamLength);
     mLaserBeam.fSetRadius(mBeamRadius);
     mLaserBeam.fSetColor({ 1.0f,1.0f,0.0f,1.0f });
-
 
     fGuiMenu(Graphics_);
 }

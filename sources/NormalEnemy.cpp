@@ -9,7 +9,7 @@
 //****************************************************************
 NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_arrow.fbx")
 {
     // ˆÊ’u‚ð‰Šú‰»
     mPosition = EmitterPoint_;
@@ -19,6 +19,8 @@ NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterP
 	fParamInitialize();
     fGetParam(this, Function_);
     fRegisterFunctions();
+
+    mpSkinnedMesh->play_animation(0, true);
 }
 
 void NormalEnemy::fInitialize()

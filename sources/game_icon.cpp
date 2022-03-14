@@ -361,7 +361,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		}
 	}
 	//--bar--//
-
+#ifdef USE_IMGUI
 	ImGui::Begin("test");
 	static DirectX::XMFLOAT2 value = {};
 	ImGui::DragFloat2("value", &value.x, 0.1f);
@@ -377,4 +377,6 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		ImGui::Checkbox("value", &value);
 		ImGui::End();
 	}
+#endif
+
 }

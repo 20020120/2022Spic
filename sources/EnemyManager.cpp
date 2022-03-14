@@ -386,8 +386,8 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
     const int separateTime = static_cast<int>(mWaveTimer) % 4;
     if(separateTime==1&&!IsSpawn)
     {
-        auto enemy = new ChaseEnemy(graphics_, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
+        //auto enemy = new ChaseEnemy(graphics_, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
+        //mEnemyVec.emplace_back(enemy);
         auto enemy1 = new NormalEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy1);
         IsSpawn = true;
@@ -402,6 +402,7 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
 void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 {
     imgui_menu_bar("Game", "EnemyManager", mOpenGuiMenu);
+
 
 #ifdef USE_IMGUI
     if (mOpenGuiMenu)
@@ -434,7 +435,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 
         ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","MiddleBoss"};
+        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","MiddleBoss"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 
