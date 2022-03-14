@@ -15,6 +15,8 @@ public:
     Option(GraphicsPipeline& graphics);
     ~Option() override {}
     //--------< ŠÖ” >--------//
+    //‰Šú‰»ˆ—
+    void initialize();
     //XVˆ—
     void update(GraphicsPipeline& graphics, float elapsed_time);
     //•`‰æˆ—
@@ -22,6 +24,8 @@ public:
     //--------<getter/setter>--------//
     static bool get_validity() { return validity; }
     static void set_validity(bool v) { validity = v; }
+    static bool get_switching() { return switching; }
+    static void set_switching(bool s) { switching = s; }
 private:
     //--------< ’è” >--------//
     enum class IconType
@@ -29,6 +33,8 @@ private:
         VOLUME,
         GAME,
         TRANSITION,
+
+        ICON_COUNT,
     };
     //--------< •Ï” >--------//
     struct Element
@@ -55,9 +61,12 @@ private:
     std::map<IconType, std::unique_ptr<IconBase>> icon_map;
 
     IconType state = IconType::VOLUME;
+
     static bool validity;
+    static bool switching;
 
     DirectX::XMFLOAT2 add_position{};
+    DirectX::XMFLOAT2 tab_add_position{};
 
     Element cursor{};
     DirectX::XMFLOAT2 cursor_velocity{};

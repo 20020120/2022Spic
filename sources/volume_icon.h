@@ -13,6 +13,7 @@ public:
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
     void render(std::string gui, ID3D11DeviceContext* dc, const DirectX::XMFLOAT2& add_pos) override;
+    void vs_cursor(const DirectX::XMFLOAT2& cursor_pos) override;
 private:
     //--------< ’è” >--------//
     enum BarType

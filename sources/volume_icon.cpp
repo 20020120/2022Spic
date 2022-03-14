@@ -1,5 +1,6 @@
 #include "volume_icon.h"
 #include "Operators.h"
+#include "collision.h"
 
 VolumeIcon::VolumeIcon(ID3D11Device* device)
     : IconBase(device)
@@ -242,5 +243,43 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX:
 	for (int i = 0; i < BAR_COUNT; ++i)
 	{
 		if (volume_numbers.count(BarType(i))) { volume_numbers.at(BarType(i))->render(dc, add_pos); }
+	}
+}
+
+void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
+{
+	//--bar--//
+	for (int o = 0; o < BAR_COUNT; ++o)
+	{
+		DirectX::XMFLOAT2 bar_radius = { (shell_scales[o].at(shell_scales[o].size() - 1).position.x - shell_scales[o].begin()->position.x) / 2,
+			shell_scales[o].begin()->texsize.y * shell_scales[o].begin()->scale.y };
+		DirectX::XMFLOAT2 bar_position = { shell_scales[o].begin()->position.x + bar_radius.x, shell_scales[o].begin()->position.y };
+		if (Collision::hit_check_rect(cursor_pos, { 10,10 }, bar_position, bar_radius + DirectX::XMFLOAT2(25.0f, 0)))
+		{
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				int index = 0;
+				float distance = 100;
+				float positions[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
+				for (int i = 0; i < shell_scales[o].size(); ++i)
+				{
+					if (distance > fabsf(shell_scales[o].at(i).position.x - cursor_pos.x + FLT_EPSILON))
+					{
+						distance = fabsf(shell_scales[o].at(i).position.x - cursor_pos.x + FLT_EPSILON);
+						index = i;
+					}
+				}
+				scales[o].clear();
+				for (int i = 0; i <= index; ++i)
+				{
+					scales[o].emplace_back();
+					scales[o].at(i).texsize  = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+					scales[o].at(i).pivot    = scales[o].at(i).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+					scales[o].at(i).scale    = { 0.5f, 0.6f };
+					scales[o].at(i).color    = { 1,1,1,1 };
+					scales[o].at(i).position = { 670.0f + 20.0f * i, positions[o] };
+				}
+			}
+		}
 	}
 }

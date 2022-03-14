@@ -67,6 +67,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (game_pad->get_button_down() & GamePad::BTN_START)
 		{
+			option->initialize();
 			option->set_validity(true);
 			return;
 		}

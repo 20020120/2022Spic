@@ -62,7 +62,7 @@ void Debug2D::all_render(ID3D11DeviceContext* context)
         UINT stride{ sizeof(RectVertex) };
         UINT offset{ 0 };
         context->IASetVertexBuffers(0, 1, rect_vertex_buffer.GetAddressOf(), &stride, &offset);
-        context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+        context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         if (DebugFlags::get_debug_2D_switching()) context->Draw(static_cast<UINT>(vertex_count), 0);
         rect_vertices.clear();
     }
@@ -88,6 +88,8 @@ void Debug2D::create_rect(const DirectX::XMFLOAT2& position, const DirectX::XMFL
     rect_vertices.push_back({ { left_top.x,     left_top.y,     0 }, { color.x, color.y, color.z, 0.5f } }); // ç∂è„
     rect_vertices.push_back({ { right_top.x,    right_top.y,    0 }, { color.x, color.y, color.z, 0.5f } }); // âEè„
     rect_vertices.push_back({ { left_bottom.x,  left_bottom.y,  0 }, { color.x, color.y, color.z, 0.5f } }); // ç∂â∫
+    rect_vertices.push_back({ { left_bottom.x,  left_bottom.y,  0 }, { color.x, color.y, color.z, 0.5f } }); // ç∂â∫
+    rect_vertices.push_back({ { right_top.x,    right_top.y,    0 }, { color.x, color.y, color.z, 0.5f } }); // âEè„
     rect_vertices.push_back({ { right_bottom.x, right_bottom.y, 0 }, { color.x, color.y, color.z, 0.5f } }); // âEâ∫
 #endif // _DEBUG
 }

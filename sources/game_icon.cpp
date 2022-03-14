@@ -340,7 +340,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		for (int o = 0; o < 2; ++o)
 		{
 			DirectX::XMFLOAT2 length = choices[i][o].length * DirectX::XMFLOAT2(0.7f, 0.7f);
-			if (Collision::hit_check_rect(cursor_pos, { 5,5 }, choices[i][o].position - DirectX::XMFLOAT2(length.x, length.y * 1.5f), length))
+			if (Collision::hit_check_rect(cursor_pos, { 10,10 }, choices[i][o].position, length))
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -361,20 +361,33 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		}
 	}
 	//--bar--//
-
-	ImGui::Begin("test");
-	static DirectX::XMFLOAT2 value = {};
-	ImGui::DragFloat2("value", &value.x, 0.1f);
-	ImGui::End();
-
-	DirectX::XMFLOAT2 bar_radius = { (shell_scales.at(shell_scales.size() - 1).position.x - shell_scales.begin()->position.x) / 2 + value.x,
+	DirectX::XMFLOAT2 bar_radius = { (shell_scales.at(shell_scales.size() - 1).position.x - shell_scales.begin()->position.x) / 2,
 		shell_scales.begin()->texsize.y * shell_scales.begin()->scale.y };
-	DirectX::XMFLOAT2 bar_position = { shell_scales.begin()->position.x + bar_radius.x - 30.0f, shell_scales.begin()->position.y - 20.0f };
-	if (Collision::hit_check_rect(cursor_pos, { 5,5 }, bar_position, bar_radius))
+	DirectX::XMFLOAT2 bar_position = { shell_scales.begin()->position.x + bar_radius.x, shell_scales.begin()->position.y };
+	if (Collision::hit_check_rect(cursor_pos, { 10,10 }, bar_position, bar_radius + DirectX::XMFLOAT2(25.0f, 0)))
 	{
-		ImGui::Begin("hit");
-		static bool value = true;
-		ImGui::Checkbox("value", &value);
-		ImGui::End();
+		if (game_pad->get_button_down() & GamePad::BTN_B)
+		{
+			int index = 0;
+			float distance = 100;
+			for (int i = 0; i < shell_scales.size(); ++i)
+			{
+				if (distance > fabsf(shell_scales.at(i).position.x - cursor_pos.x + FLT_EPSILON))
+				{
+					distance = fabsf(shell_scales.at(i).position.x - cursor_pos.x + FLT_EPSILON);
+					index = i;
+				}
+			}
+			scales.clear();
+			for (int i = 0; i < index + 1; ++i)
+			{
+				scales.emplace_back();
+				scales.at(i).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
+				scales.at(i).pivot = scales.at(i).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
+				scales.at(i).scale = { 0.5f, 0.6f };
+				scales.at(i).color = { 1,1,1,1 };
+				scales.at(i).position = { 745.0f + 20.0f * i, sensitivity.position.y };
+			}
+		}
 	}
 }
