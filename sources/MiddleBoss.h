@@ -24,7 +24,26 @@ public:
         inline static const std::string TourBeamReady = "TourBeamReady";
         inline static const std::string TourBeam = "TourBeam";
     };
-
+    enum  AnimationName {
+        wait,
+        FinisherBeamBegin,
+        FinisherBeamLoop,
+        FinisherBeamEnd,
+        Shot_Recoil,
+        Slash_side,
+        Slash_top,
+        FinisherSwordBegin,
+        FinisherSwordSlash,
+        GameOver,
+        GameClearBegin,
+        GameClearLoop,
+        transform,
+        inv_transform,
+        wing,
+        finisher_begin,
+        finisher_end,
+        finisher_end_pose,
+    };
 
     //****************************************************************
     // 

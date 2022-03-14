@@ -1,6 +1,6 @@
 --中ボスのLua関数を定義
 
-gTourRotSpeed=2  -- 回転速度
+gTourRotSpeed=0.5  -- 回転速度
 gRotRadian=0.0     -- 回転角
 gTourLength=150.0  -- 回転の半径
 
@@ -16,10 +16,19 @@ NextStateTime=6.0
 
 
 function fTourMove(elapsedTime_)  -- 回転を制御
+local preRadian=gRotRadian;
 gRotRadian=gRotRadian+(elapsedTime_*gTourRotSpeed)
 local posX=math.sin(gRotRadian)*gTourLength 
 local posZ=math.cos(gRotRadian)*gTourLength
-return posZ,posX
+local prePosX=math.sin(preRadian)*gTourLength 
+local prePosZ=math.cos(preRadian)*gTourLength
+
+-- １フレーム前の位置とのベクトルを算出
+local Vx=posX-prePosX
+local Vz=posZ-prePosZ
+
+
+return posX,posZ,Vx,Vz
 end
 
 

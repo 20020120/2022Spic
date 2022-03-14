@@ -11,7 +11,7 @@
 
 void GameFile::load()
 {
-	// Jsonƒtƒ@ƒCƒ‹‚©‚ç’l‚ğæ“¾
+	// Jsonï¿½tï¿½@ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lï¿½ï¿½ï¿½æ“¾
 	std::filesystem::path path = file_name;
 	path.replace_extension(".json");
 	if (std::filesystem::exists(path.c_str()))
@@ -32,7 +32,7 @@ void GameFile::load()
 
 void GameFile::save()
 {
-	// Json‚É‚©‚«‚¾‚µ
+	// Jsonï¿½É‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	std::filesystem::path path = file_name;
 	path.replace_extension(".json");
 	std::ofstream ifs(path);
@@ -50,19 +50,19 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	//--shake--//
 	shake.position = { 565.0f, 295.0f };
 	shake.scale = { 0.6f, 0.6f };
-	shake.s = L"ƒJƒƒ‰ƒVƒFƒCƒN";
+	shake.s = L"ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Vï¿½Fï¿½Cï¿½N";
 	//--vibration--//
 	vibration.position = { 565.0f, 380.0f };
 	vibration.scale = { 0.6f, 0.6f };
-	vibration.s = L"ƒRƒ“ƒgƒ[ƒ‰[U“®";
+	vibration.s = L"ï¿½Rï¿½ï¿½ï¿½gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½[ï¿½Uï¿½ï¿½";
 	//--flush--//
 	flush.position = { 545.0f, 465.0f };
 	flush.scale = { 0.6f, 0.6f };
-	flush.s = L"ƒtƒ‰ƒbƒVƒ…‰‰o";
+	flush.s = L"ï¿½tï¿½ï¿½ï¿½bï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½o";
 	//--sensitivity--//
 	sensitivity.position = { 550.0f, 550.0f };
 	sensitivity.scale = { 0.6f, 0.6f };
-	sensitivity.s = L"ƒJƒƒ‰Š´“x";
+	sensitivity.s = L"ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½x";
 
 	//--button--//
 	float on_pos_x = 900.0f; float off_pos_x = 1095.0f;
@@ -264,10 +264,10 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		break;
 	}
 
-	//--¶‚Ì‘I‘ğˆ‚ÌƒZƒŒƒNƒ^[--//
+	//--ï¿½ï¿½ï¿½Ì‘Iï¿½ï¿½ï¿½ï¿½ï¿½ÌƒZï¿½ï¿½ï¿½Nï¿½^ï¿½[--//
 	selecterL.position = Math::lerp(selecterL.position, selecterL_arrival_pos, 10.0f * elapsed_time);
 	selecterR.position = Math::lerp(selecterR.position, selecterR_arrival_pos, 10.0f * elapsed_time);
-	//--‰E‚Ì‘I‘ğˆ‚ÌƒZƒŒƒNƒ^[--//
+	//--ï¿½Eï¿½Ì‘Iï¿½ï¿½ï¿½ï¿½ï¿½ÌƒZï¿½ï¿½ï¿½Nï¿½^ï¿½[--//
 	for (int i = 0; i < BUTTON_COUNT; ++i)
 	{
 		for (int o = 0; o < 2; ++o)
@@ -382,7 +382,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		for (int o = 0; o < 2; ++o)
 		{
 			DirectX::XMFLOAT2 length = choices[i][o].length * DirectX::XMFLOAT2(0.7f, 0.7f);
-			if (Collision::hit_check_rect(cursor_pos, { 10,10 }, choices[i][o].position, length))
+			if (Collision::hit_check_rect(cursor_pos, { 5,5 }, choices[i][o].position - DirectX::XMFLOAT2(length.x, length.y * 1.5f), length))
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
@@ -404,10 +404,17 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		}
 	}
 	//--bar--//
-	DirectX::XMFLOAT2 bar_radius = { (shell_scales.at(shell_scales.size() - 1).position.x - shell_scales.begin()->position.x) / 2,
+#ifdef USE_IMGUI
+	ImGui::Begin("test");
+	static DirectX::XMFLOAT2 value = {};
+	ImGui::DragFloat2("value", &value.x, 0.1f);
+	ImGui::End();
+#endif
+
+	DirectX::XMFLOAT2 bar_radius = { (shell_scales.at(shell_scales.size() - 1).position.x - shell_scales.begin()->position.x) / 2 + value.x,
 		shell_scales.begin()->texsize.y * shell_scales.begin()->scale.y };
-	DirectX::XMFLOAT2 bar_position = { shell_scales.begin()->position.x + bar_radius.x, shell_scales.begin()->position.y };
-	if (Collision::hit_check_rect(cursor_pos, { 10,10 }, bar_position, bar_radius + DirectX::XMFLOAT2(25.0f, 0)))
+	DirectX::XMFLOAT2 bar_position = { shell_scales.begin()->position.x + bar_radius.x - 30.0f, shell_scales.begin()->position.y - 20.0f };
+	if (Collision::hit_check_rect(cursor_pos, { 5,5 }, bar_position, bar_radius))
 	{
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{

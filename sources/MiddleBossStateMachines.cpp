@@ -27,30 +27,55 @@ void MiddleBoss::fTourInit()
 
 void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    // 回転前の基準ベクトル
+    DirectX::XMFLOAT3 baseForward{ 0.0f,0.0f,1.0f };
+    // 回転後のベクトル
+    DirectX::XMFLOAT3 forward{};
+    
+    DirectX::XMFLOAT3 up = DirectX::XMFLOAT3(0.0f, 150.0f, 0.0f) - mPosition;
+    up = Math::Normalize(up);
+
     // ステージの原点を中心にぐるぐる回る
+    mLuaWorld.fDestroyStack();
     mLuaWorld.fSetFunction("fTourMove");
     mLuaWorld.fSetNumeric(elapsedTime_);
-    mLuaWorld.fCallFunc(1, 2);
+    mLuaWorld.fCallFunc(1, 4);
 
     // 値をLuaから受け取り
-    mPosition.x = static_cast<float>(mLuaWorld.fGetDouble(-1));
-    mPosition.z = static_cast<float>(mLuaWorld.fGetDouble(-2));
+    mPosition.x = static_cast<float>(mLuaWorld.fGetDouble(1));
+    mPosition.z = static_cast<float>(mLuaWorld.fGetDouble(2));
+    forward.x = static_cast<float>(mLuaWorld.fGetDouble(3));
+    forward.z = static_cast<float>(mLuaWorld.fGetDouble(4));
 
-    // 各攻撃に遷移するときの条件
-    // ５秒ごとに抽選
-    if(static_cast<int>(mTimer)%5==0)
-    {
-        const int selectedNum = rand() % 4;
-        if(selectedNum==0)
-        {
-            fChangeState(State::TourBeamReady);
-        }
-        else if(selectedNum<=2)
-        {
-            fChangeState(State::TourShot);
-        }
+    // 正規化
+    baseForward = Math::Normalize(baseForward);
+    forward = Math::Normalize(forward);
 
-    }
+    // 回転量を算出
+    float dot = Math::Dot(baseForward, forward);
+    dot = acosf(dot);
+
+    // 前と上のベクトルから回転軸を算出
+    auto rotAxis = Math::Cross(baseForward, forward, true);
+    
+    mOrientation = Math::RotQuaternion(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), rotAxis, dot);
+
+
+    //// 各攻撃に遷移するときの条件
+    //// ５秒ごとに抽選
+    //if(static_cast<int>(mTimer)%5==0)
+    //{
+    //    const int selectedNum = rand() % 4;
+    //    if(selectedNum==0)
+    //    {
+    //        fChangeState(State::TourBeamReady);
+    //    }
+    //    else if(selectedNum<=2)
+    //    {
+    //        fChangeState(State::TourShot);
+    //    }
+
+    //}
 
 
 }

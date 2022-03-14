@@ -89,7 +89,7 @@ void LaserBeam::fCalcTransform()
         DirectX::XMLoadFloat4(&mOrientation),
         DirectX::XMLoadFloat4(&rotQua),
         1.0f);
-
+      
       DirectX::XMStoreFloat4(&mOrientation, res);
 }
 

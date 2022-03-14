@@ -23,7 +23,7 @@ BaseEnemy::~BaseEnemy() = default;
 
 void BaseEnemy::fRender(GraphicsPipeline& graphics_)
 {
-    graphics_.set_pipeline_preset(SHADER_TYPES::DEFAULT);
+    graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
     // ワールド行列を作成
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     mpSkinnedMesh->render(graphics_.get_dc().Get(), worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
@@ -182,7 +182,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
     //--------------------<無敵時間の更新>--------------------//
     fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
-  //  mpSkinnedMesh->update_animation(elapsedTime_);
+    mpSkinnedMesh->update_animation(elapsedTime_);
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
     //--------------------<ステートマシン>--------------------//
