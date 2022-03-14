@@ -402,9 +402,6 @@
     <ClCompile Include="sources\icon_base.cpp">
       <Filter>Sources\scene\option</Filter>
     </ClCompile>
-    <ClCompile Include="sources\game_icon.cpp">
-      <Filter>Sources\scene\option</Filter>
-    </ClCompile>
     <ClCompile Include="sources\volume_icon.cpp">
       <Filter>Sources\scene\option</Filter>
     </ClCompile>
@@ -419,6 +416,9 @@
     </ClCompile>
     <ClCompile Include="sources\debug_2D.cpp">
       <Filter>Sources\debug\debug2D</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\game_icon.cpp">
+      <Filter>Sources\scene\option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
