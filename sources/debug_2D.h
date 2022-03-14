@@ -34,7 +34,7 @@ private:
     float viewport_height = 0;
 
     //--rect--//
-    const size_t rect_max_vertices = 32 * 4;
+    const size_t rect_max_vertices = 64 * 6;
     std::vector<RectVertex> rect_vertices;
     Microsoft::WRL::ComPtr<ID3D11Buffer> rect_vertex_buffer;
 };

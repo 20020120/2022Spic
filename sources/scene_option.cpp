@@ -3,8 +3,10 @@
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "Operators.h"
+#include "collision.h"
 
 bool Option::validity = false;
+bool Option::switching = false;
 
 Option::Option(GraphicsPipeline& graphics)
 {
@@ -62,10 +64,12 @@ Option::Option(GraphicsPipeline& graphics)
 	frame.scale = { 0.25f, 0.25f };
 	frame_arrival_scale = frame.scale;
 
-	add_position = {};
+	add_position = { -back.texsize.x * back.scale.x, 0 };
+	tab_add_position = { -tab.texsize.x * tab.scale.x, 0 };
 	//--cursor--//
 	sprite_cursor = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\cursor.png", 1);
 	cursor.texsize = { static_cast<float>(sprite_cursor->get_texture2d_desc().Width), static_cast<float>(sprite_cursor->get_texture2d_desc().Height) };
+	cursor.pivot = { cursor.texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
 	cursor.position = { 1280.0f / 2.0f, 720.0f / 2.0f };
 	cursor.scale = { 0.5f, 0.5f };
 	cursor.color = { 0.0f,0.0f,0.0f,1.0f };
@@ -73,13 +77,47 @@ Option::Option(GraphicsPipeline& graphics)
 	cursor_velocity = {};
 }
 
+void Option::initialize()
+{
+	state = IconType::VOLUME;
+	cursor.position = { 1280.0f / 2.0f, 720.0f / 2.0f };
+	switching = false;
+}
+
 void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	if (game_pad->get_button_down() & GamePad::BTN_START)
 	{
-		validity = false;
+		switching = true;
 		return;
 	}
+
+	// tab back 演出
+	if (!switching)
+	{
+		float ep   = 50.0f;
+		float rate = 7.0f;
+		if (Math::equal_check(tab_add_position.x, 0, ep))
+		{
+			add_position = Math::lerp(add_position, { 0,0 }, rate * elapsed_time);
+		}
+		tab_add_position = Math::lerp(tab_add_position, { 0,0 }, rate * elapsed_time);
+	}
+	else
+	{
+		float arrival_add_pos_x     = -back.texsize.x * back.scale.x;
+		float arrival_tab_add_pos_x = -tab.texsize.x * tab.scale.x;
+		float ep   = 50.0f;
+		float rate = 7.0f;
+		if (Math::equal_check(tab_add_position.x, arrival_tab_add_pos_x, ep))
+		{
+			add_position = Math::lerp(add_position, { arrival_add_pos_x, 0 }, rate * elapsed_time);
+		}
+		tab_add_position = Math::lerp(tab_add_position, { arrival_tab_add_pos_x, 0 }, rate * elapsed_time);
+		if (Math::equal_check(add_position.x, arrival_add_pos_x, 30.0f)) { validity = false; }
+	}
+
+	if (switching) return;
 
 	switch (state)
 	{
@@ -111,12 +149,36 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 	cursor_velocity = { fabsf(game_pad->get_axis_LX() + FLT_EPSILON) > 0.1f ? game_pad->get_axis_LX() : 0,
 		                fabsf(game_pad->get_axis_LY() + FLT_EPSILON) > 0.1f ? -game_pad->get_axis_LY() : 0 };
 	cursor.position += DirectX::XMFLOAT2(cursor_speed, cursor_speed) * cursor_velocity;
+	cursor.position.x = Math::clamp(cursor.position.x, 20.0f, 1260.0f);
+	cursor.position.y = Math::clamp(cursor.position.y, 20.0f, 700.0f);
+	//--カーソルでのstate移動--//
+	for (int i = 0; i < (int)IconType::ICON_COUNT; ++i)
+	{
+		DirectX::XMFLOAT2 radius = icon_elements.at((IconType)i).texsize * icon_elements.at((IconType)i).scale * DirectX::XMFLOAT2(0.5f, 0.5f);
+		if (Collision::hit_check_rect(cursor.position, { 10,10 }, icon_elements.at((IconType)i).position, radius))
+		{
+			if (game_pad->get_button_down() & GamePad::BTN_B) { if (state != IconType::TRANSITION) state = IconType(i); }
+		}
+	}
+
+
+
+#ifdef USE_IMGUI
+	ImGui::Begin("option");
+	if (ImGui::TreeNode("add_position"))
+	{
+		ImGui::DragFloat2("add_position", &add_position.x);
+		ImGui::DragFloat2("tab_add_position", &tab_add_position.x);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif // USE_IMGUI
 }
 
 void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	auto r_render = [&](std::string gui, Element& e, SpriteBatch* s)
+	auto r_render = [&](std::string gui, Element& e, SpriteBatch* s, const DirectX::XMFLOAT2& add_pos)
 	{
 #ifdef USE_IMGUI
 		ImGui::Begin("option");
@@ -130,17 +192,17 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::End();
 #endif // USE_IMGUI
 		s->begin(graphics.get_dc().Get());
-		s->render(graphics.get_dc().Get(), e.position + add_position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		s->render(graphics.get_dc().Get(), e.position + add_pos, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
 		s->end(graphics.get_dc().Get());
 	};
 	//--back--//
-	r_render("back", back, sprite_back.get());
+	r_render("back", back, sprite_back.get(), add_position);
 	//--frame--//
-	r_render("frame", frame, sprite_frame.get());
+	r_render("frame", frame, sprite_frame.get(), add_position);
 	//--icon--//
-	r_render("volume",     icon_elements.at(IconType::VOLUME),     icon_sprites.at(IconType::VOLUME).get());
-	r_render("game",       icon_elements.at(IconType::GAME),       icon_sprites.at(IconType::GAME).get());
-	r_render("transition", icon_elements.at(IconType::TRANSITION), icon_sprites.at(IconType::TRANSITION).get());
+	r_render("volume",     icon_elements.at(IconType::VOLUME),     icon_sprites.at(IconType::VOLUME).get(), add_position);
+	r_render("game",       icon_elements.at(IconType::GAME),       icon_sprites.at(IconType::GAME).get(), add_position);
+	r_render("transition", icon_elements.at(IconType::TRANSITION), icon_sprites.at(IconType::TRANSITION).get(), add_position);
 	//--fonts--//
 	auto r_font_render = [&](std::string name, std::wstring string, DirectX::XMFLOAT2& pos, DirectX::XMFLOAT2& scale)
 	{
@@ -172,12 +234,12 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	std::string gui_names[3] = { "volume", "game", "transition" };
 	if (icon_map.count(state)) { icon_map.at(state)->render(gui_names[static_cast<int>(state)], graphics.get_dc().Get(), add_position); }
 	//--tab--//
-	r_render("tab", tab, sprite_tab.get());
+	r_render("tab", tab, sprite_tab.get(), tab_add_position);
 	//--cursor--//
-	r_render("cursor", cursor, sprite_cursor.get());
+	if (state != IconType::TRANSITION) r_render("cursor", cursor, sprite_cursor.get(), {});
 
 
-
+	//--一番下--//
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	debug_2D->all_render(graphics.get_dc().Get());
 }

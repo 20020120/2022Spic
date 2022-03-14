@@ -16,6 +16,7 @@ bool Collision::hit_check_rect(const DirectX::XMFLOAT2& center_a, const DirectX:
 {
     debug_2D->create_rect(center_a, radius_a, { 1,0,0 });
     debug_2D->create_rect(center_b, radius_b, { 0,0,1 });
+    debug_2D->create_rect(center_b, { 5,5 }, { 0,0,1 });
 
     const DirectX::XMFLOAT2 dis = { center_a.x - center_b.x, center_a.y - center_b.y };  //’†S‚Ì·‚ğ‹‚ß‚é
     const DirectX::XMFLOAT2 center_dif = { radius_a.x + radius_b.x, radius_a.y + radius_b.y };

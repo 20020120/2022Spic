@@ -37,7 +37,7 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
-			Option::set_validity(false);
+			Option::set_switching(true);
 			return;
 		}
 		break;
