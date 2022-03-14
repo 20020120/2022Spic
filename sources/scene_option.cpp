@@ -105,16 +105,17 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	else
 	{
-		float arrival_add_pos_x     = -back.texsize.x * back.scale.x;
+		float arrival_add_pos_x = -back.texsize.x * back.scale.x;
 		float arrival_tab_add_pos_x = -tab.texsize.x * tab.scale.x;
-		float ep   = 50.0f;
+		float ep = 100.0f;
 		float rate = 7.0f;
-		if (Math::equal_check(tab_add_position.x, arrival_tab_add_pos_x, ep))
+		float tab_rate = 5.0f;
+		add_position = Math::lerp(add_position, { arrival_add_pos_x, 0 }, rate * elapsed_time);
+		if (Math::equal_check(add_position.x, arrival_add_pos_x, ep))
 		{
-			add_position = Math::lerp(add_position, { arrival_add_pos_x, 0 }, rate * elapsed_time);
+			tab_add_position = Math::lerp(tab_add_position, { arrival_tab_add_pos_x, 0 }, tab_rate * elapsed_time);
 		}
-		tab_add_position = Math::lerp(tab_add_position, { arrival_tab_add_pos_x, 0 }, rate * elapsed_time);
-		if (Math::equal_check(add_position.x, arrival_add_pos_x, 30.0f)) { validity = false; }
+		if (Math::equal_check(tab_add_position.x, arrival_tab_add_pos_x, 30.0f)) { validity = false; }
 	}
 
 	if (switching) return;
