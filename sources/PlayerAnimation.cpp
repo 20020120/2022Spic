@@ -259,7 +259,7 @@ void Player::TransitionAvoidance()
     avoidance_start = velocity;
     if (is_lock_on)
     {
-        leverage = 10.0f;
+        leverage = 5.0f;
         DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
         if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
         {
@@ -272,7 +272,7 @@ void Player::TransitionAvoidance()
     }
     else
     {
-        leverage = 20.0f;
+        leverage = 15.0f;
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
     //-----------------------------------------------------------------------------------------//
