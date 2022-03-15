@@ -29,7 +29,7 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	switch (state)
 	{
 	case 0: // game
-		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (game_pad->get_axis_LY() < -0.5f))
 		{
 			state = 1;
 			selecterL_arrival_pos = { 480.0f, title.position.y };
@@ -42,7 +42,7 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		break;
 	case 1: // title
-		if (game_pad->get_button_down() & GamePad::BTN_UP)
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (game_pad->get_axis_LY() > 0.5f))
 		{
 			state = 0;
 			selecterL_arrival_pos = { 480.0f, game.position.y };

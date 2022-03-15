@@ -1,8 +1,8 @@
 {
     "value0": {
         "shake": true,
-        "vibration": false,
-        "flush": true,
-        "sensitivity": 0.800000011920929
+        "vibration": true,
+        "flush": false,
+        "sensitivity": 0.4000000059604645
     }
 }
