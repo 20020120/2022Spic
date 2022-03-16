@@ -168,7 +168,7 @@ protected:
     void fUpdateInvicibleTimer(float elapsedTime_);
     //--------------------<移動処理関連>--------------------//
     //プレイヤーのほうを向く処理
-    bool fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos);
+    bool fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos,float turn_speed = 10.0f);
     //方向取得
     void fGetDirections(DirectX::XMFLOAT4& o);
 

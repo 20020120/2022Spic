@@ -262,7 +262,7 @@ void BaseEnemy::fChangeState(std::string Tag_)
 }
 
 
-bool BaseEnemy::fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos)
+bool BaseEnemy::fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos, float turn_speed)
 {
     using namespace DirectX;
     //ターゲットに向かって回転
@@ -315,7 +315,7 @@ bool BaseEnemy::fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos)
                 q = XMQuaternionRotationAxis(up, -an);//正の方向に動くクオータニオン
             }
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
         }
     }
     //right
@@ -347,7 +347,7 @@ bool BaseEnemy::fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos)
                 q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
             }
             XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsedTime_);
+            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, turn_speed * elapsedTime_);
         }
     }
     DirectX::XMStoreFloat4(&mOrientation, orientation_vec);

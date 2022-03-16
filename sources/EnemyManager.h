@@ -50,6 +50,7 @@ class EnemyManager final
         Normal,
         Chase,  // UŒ‚‚È‚µ•’ÇÕ‚µ‚Ä‚­‚é
         Archer, //‰“‹——£UŒ‚
+        Shield,//‚‚¿
         MiddleBoss_, // ’†ƒ{ƒX
         // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
         Count, // í—Ş‚Ì‘—Ê
