@@ -236,6 +236,14 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
 
+void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    SpecialSurgeAcceleration(elapsed_time);
+
+    //‚±‚ÌƒJƒEƒ“ƒg‚ª‘½‚¯‚ê‚ÎŒ„‚ª‚È‚­‚È‚Á‚Ä‚¢‚­
+    //special_surge_combo_count
+}
+
 void Player::TransitionIdle()
 {
     end_dash_effect = true;
@@ -308,6 +316,7 @@ void Player::TransitionCharge()
     is_attack = true;
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
     player_activity = &Player::ChargeUpdate;
+
 }
 
 void Player::TransitionAttackType1(float blend_seconds)
@@ -330,4 +339,15 @@ void Player::TransitionAttackType3(float blend_seconds)
     model->play_animation(AnimationClips::AttackType3, false, 0);
     is_attack = true;
     player_activity = &Player::AttackType3Update;
+}
+
+void Player::TransitionSpecialSurge()
+{
+    model->play_animation(AnimationClips::Charge, false, 0);
+    special_surge_combo_count = 0;
+    is_special_surge = true;
+    player_activity = &Player::SpecialSurgeUpdate;
+    combo_count -= 10.0f;
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
 }

@@ -391,6 +391,7 @@ void Player::AddCombo(int count)
         else
         {
             combo_count += static_cast<float>(count);
+            if(is_special_surge) special_surge_combo_count += static_cast<float>(count);//ƒQ[ƒWÁ”ï‚Ì“Ëi’†‚É“–‚½‚Á‚½”‚ğ•Û‘¶
         }
         is_enemy_hit = true;
     }
@@ -482,6 +483,14 @@ void Player::ChargeAcceleration(float elapse_time)
     else
     {
         position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+    }
+}
+
+void Player::SpecialSurgeAcceleration(float elapse_time)
+{
+    if (is_special_surge)
+    {
+        position = Math::lerp(position, target, 15.0f * elapse_time);
     }
 }
 
