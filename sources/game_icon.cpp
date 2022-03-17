@@ -384,6 +384,13 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
+					float selecter_arrival_pos_y[BUTTON_COUNT] = { shake.position.y, vibration.position.y, flush.position.y };
+					float selecterL_arrival_pos_x[BUTTON_COUNT] = { 395.0f, 360.0f, 385.0f };
+					float selecterR_arrival_pos_x[BUTTON_COUNT] = { 705.0f, 745.0f, 705.0f };
+					state = ChoicesType(i);
+					selecterL_arrival_pos = { selecterL_arrival_pos_x[i], selecter_arrival_pos_y[i] };
+					selecterR_arrival_pos = { selecterR_arrival_pos_x[i], selecter_arrival_pos_y[i] };
+
 					if (o == 0 && !setup[i]) // on
 					{
 						setup[i] = true;
@@ -416,6 +423,10 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 	{
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
+			state = ChoicesType::SENSITIVITY;
+			selecterL_arrival_pos = { 410.0f, sensitivity.position.y };
+			selecterR_arrival_pos = { 680.0f, sensitivity.position.y };
+
 			int index = 0;
 			float distance = 100;
 			for (int i = 0; i < shell_scales.size(); ++i)

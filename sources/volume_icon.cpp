@@ -160,8 +160,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
 			state = BarType::BGM;
-			selecterL_arrival_pos.y = bgm.position.y;
-			selecterR_arrival_pos.y = bgm.position.y;
+			selecterL_arrival_pos.y = selecterR_arrival_pos.y = bgm.position.y;
 		}
 		r_bar(BarType::MASTER);
 
@@ -170,14 +169,12 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
 			state = BarType::MASTER;
-			selecterL_arrival_pos.y = master.position.y;
-			selecterR_arrival_pos.y = master.position.y;
+			selecterL_arrival_pos.y = selecterR_arrival_pos.y = master.position.y;
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
 			state = BarType::SE;
-			selecterL_arrival_pos.y = se.position.y;
-			selecterR_arrival_pos.y = se.position.y;
+			selecterL_arrival_pos.y = selecterR_arrival_pos.y = se.position.y;
 		}
 		r_bar(BarType::BGM);
 
@@ -302,8 +299,12 @@ void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 		DirectX::XMFLOAT2 bar_position = { shell_scales[o].begin()->position.x + bar_radius.x, shell_scales[o].begin()->position.y };
 		if (Collision::hit_check_rect(cursor_pos, { 10,10 }, bar_position, bar_radius + DirectX::XMFLOAT2(25.0f, 0)))
 		{
+			float selecter_arrival_pos_y[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				state = BarType(o);
+				selecterL_arrival_pos.y = selecterR_arrival_pos.y = selecter_arrival_pos_y[o];
+
 				int index = 0;
 				float distance = 100;
 				float positions[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
