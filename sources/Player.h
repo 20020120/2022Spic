@@ -127,6 +127,9 @@ private:
     bool is_attack{ false };
     //プレイヤーげゲージ消費の突進をしているか
     bool is_special_surge{ false };
+    //ゲージ消費の突進の隙
+    float special_surge_opportunity{ 1.5f };
+    float special_surge_timer{ 0 };
     //プレイヤーの体力
     int player_health = 100;
     //無敵時間
@@ -185,6 +188,7 @@ public:
     bool GetEnemyLockOn() { return is_lock_on; }
     bool GetAvoidance() { return is_avoidance; }
     bool GetIsPlayerAttack() { return is_attack; }
+    bool GetIsSpecialSurge() { return is_special_surge; }
     bool GetStartDashEffect() { return start_dash_effect; }
     bool GetEndDashEffect() { return end_dash_effect; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
@@ -257,6 +261,7 @@ private:
     void AttackType2Update(float elapsed_time, SkyDome* sky_dome);//攻撃2撃目の更新処理
     void AttackType3Update(float elapsed_time, SkyDome* sky_dome);//攻撃3撃目の更新処理
     void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
+    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
     //アニメーション遷移(1frameだけしか呼ばないもの)
     void TransitionIdle();
     void TransitionMove();
@@ -268,4 +273,5 @@ private:
     void TransitionAttackType2(float blend_seconds);
     void TransitionAttackType3(float blend_seconds);
     void TransitionSpecialSurge();
+    void TransitionOpportunity();
 };
