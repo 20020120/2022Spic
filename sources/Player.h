@@ -25,11 +25,12 @@ private:
         AttackType1,//攻撃1撃目
         AttackType2,//攻撃2撃目
         AttackType3,//攻撃3撃目
+        SpecialSurge//ゲージを消費する突進
     };
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
-    void Render(GraphicsPipeline& graphics, float elapsed_time)override;
+    void Render(GraphicsPipeline& graphics, float     elapsed_time)override;
 private:
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
@@ -51,6 +52,9 @@ private:
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.8f;
     //攻撃の時のアニメーションスピード
     static constexpr float ATTACK_ANIMATION_SPEED = 3.0f;
+    //ゲージ消費量(突進)
+    static constexpr float GAUGE_CONSUMPTION = 5.0f;
+
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -114,11 +118,15 @@ private:
     float behind_late{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
-    int player_attack_power{ MIN_PLAYER_ATTACK_POWER };
+    int player_attack_power{ MIN_PLAYER_ATTACK_POWER  };
     //コンボ数
     float combo_count{ 0 };
+    //ゲージ消費の突進中に当たった数
+    float special_surge_combo_count{ 0 };
     //プレイヤーが今攻撃中かそうでないか
     bool is_attack{ false };
+    //プレイヤーげゲージ消費の突進をしているか
+    bool is_special_surge{ false };
     //プレイヤーの体力
     int player_health = 100;
     //無敵時間
@@ -134,7 +142,7 @@ private:
     //覚醒状態かどうか
     bool is_awakening{ false };
     //プレイヤーのパラメータ
-    std::unique_ptr<PlayerConfig> player_config{ nullptr };
+    std::unique_ptr<PlayerConfig> player_config{      nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail{};
     float mTrailEraseTimer{};
@@ -219,6 +227,8 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
+    //ゲージ消費の突進
+    void SpecialSurgeAcceleration(float elapse_time);
 private:
     //ロックオン
     void LockOn();
@@ -246,7 +256,7 @@ private:
     void AttackType1Update(float elapsed_time, SkyDome* sky_dome);//攻撃1撃目の更新処理
     void AttackType2Update(float elapsed_time, SkyDome* sky_dome);//攻撃2撃目の更新処理
     void AttackType3Update(float elapsed_time, SkyDome* sky_dome);//攻撃3撃目の更新処理
-
+    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
     //アニメーション遷移(1frameだけしか呼ばないもの)
     void TransitionIdle();
     void TransitionMove();
@@ -257,4 +267,5 @@ private:
     void TransitionAttackType1(float blend_seconds);
     void TransitionAttackType2(float blend_seconds);
     void TransitionAttackType3(float blend_seconds);
+    void TransitionSpecialSurge();
 };
