@@ -307,13 +307,16 @@ void framework::calculate_frame_stats()
 #ifdef _DEBUG
 		LPCWSTR game_mode{ L"/Debug" };
 		LPCWSTR wire_flame{ L"/Wire Frame Off" };
+		LPCWSTR flat_debug{ L"/Debug 2D Off" };
 
 		if (debug_flags->get_perspective_switching()) game_mode = L"/Debug";
 		else game_mode = L"/Game";
 		if (debug_flags->get_wireframe_switching()) wire_flame = L"/Wire Frame On";
 		else wire_flame = L"/Wire Frame Off";
+		if (debug_flags->get_debug_2D_switching()) flat_debug = L"/Debug 2D On";
+		else flat_debug = L"/Debug 2D Off";
 
-		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << game_mode << wire_flame;
+		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << game_mode << wire_flame << flat_debug;
 #else
 		//outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
 		outs << APPLICATION_NAME;
