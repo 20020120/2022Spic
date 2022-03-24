@@ -28,7 +28,18 @@ private:
         AttackType1,//攻撃1撃目
         AttackType2,//攻撃2撃目
         AttackType3,//攻撃3撃目
-        SpecialSurge//ゲージを消費する突進
+        Damage,//ダメージ
+        Awaking,//覚醒状態になる
+        InvAwaking,//通常状態になる
+        AwakingIdle,//覚醒状態の待機
+        AwakingMove,//覚醒状態の移動
+        AwakingAvoidance,//覚醒状態の回避
+        AwakingChargeInit,//覚醒状態の突進開始
+        AwakingCharge,//覚醒状態の突進
+        AwakingAttackType1,//覚醒状態の攻撃1撃目
+        AwakingAttackType2,//覚醒状態の攻撃2撃目
+        AwakingAttackType3,//覚醒状態の攻撃3撃目
+        AwakingDamage,//覚醒状態のダメージ
     };
 public:
     void Initialize()override;
