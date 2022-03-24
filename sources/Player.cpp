@@ -7,9 +7,9 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_proto.fbx");
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_eleventh.fbx");
     model->play_animation(AnimationClips::Idle, true);
-    scale = { 0.01f,0.01f,0.01f };
+    scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
     mSwordTrail.fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
@@ -338,12 +338,11 @@ void Player::BodyCapsule()
 void Player::SwordCapsule()
 {
     DirectX::XMFLOAT3 pos, up = {};
-    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "sword_r_rig", pos, up);
-    static float r = 3.3f;
-    static float r2 = 0.3f;
-    DirectX::XMFLOAT3 end = Math::calc_designated_point(pos, up, r);
-    //debug_figure->create_capsule(pos, end, r2, { 1,1,0,1 });
+    DirectX::XMFLOAT3 end, e_up = {};
+    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "shortsword_joint", pos, up);
+    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "shortsword_top_joint", end, e_up);
 
+    //debug_figure->create_capsule(sword_capsule_param.start, sword_capsule_param.end, sword_capsule_param.rasius, { 1.0f,1.0f,0.0f,1.0f });
     sword_capsule_param.start = pos;
     sword_capsule_param.end = end;
     sword_capsule_param.rasius = 1.7f;

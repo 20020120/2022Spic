@@ -18,6 +18,9 @@ private:
     enum AnimationClips
     {
         Idle,//待機
+        TransformWing,//飛行機モードになる
+        IdleWing,//変形待機
+        TransformHum,//人型モードになる
         Move,//移動
         Avoidance,//回避
         ChargeInit,//突進開始
