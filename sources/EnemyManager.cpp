@@ -441,7 +441,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 
         ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","MiddleBoss"};
+        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","Shield","MiddleBoss"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 

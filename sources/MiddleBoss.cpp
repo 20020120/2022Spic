@@ -72,6 +72,10 @@ void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
            fChangeState(State::TourBeamReady);
        }
 
+       if(ImGui::Button("SecondMode"))
+       {
+           fChangeState(State::ModeChange);
+       }
     }
     if(ImGui::Button("LuaReload"))
     {
@@ -156,7 +160,30 @@ void MiddleBoss::fRegisterFunctions()
         FunctionTuple tuple = std::make_tuple(Ini, up);
         mFunctionMap.insert(std::make_pair(State::TourShot, tuple));
     }
-
+    {
+        auto Ini = [=]()->void
+        {
+            fTourToSecondModeInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fTourToSecondModeUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::ModeChange, tuple));
+    }
+    {
+        auto Ini = [=]()->void
+        {
+            fSecondIdleInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fSecondIdleUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::SecondIdle, tuple));
+    }
 
     fChangeState(State::Tour);
 }
