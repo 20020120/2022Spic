@@ -23,6 +23,8 @@ public:
         inline static const std::string TourShot = "TourShot";
         inline static const std::string TourBeamReady = "TourBeamReady";
         inline static const std::string TourBeam = "TourBeam";
+        inline static const std::string ModeChange = "ModeChange";
+        inline static const std::string SecondIdle = "SecondIdle";
     };
     enum  AnimationName {
         wait,
@@ -116,6 +118,25 @@ private:
     void fTourShotInit();
     void fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    // 第一形態から第二形態に変形する
+    void fTourToSecondModeInit();
+    void fTourToSecondModeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //--------------------<以下第二形態>--------------------//
+    
+    // 待機
+    void fSecondIdleInit();
+    void fSecondIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // 射撃
+
+    // 近接攻撃（この行動の後スキをさらしてシールドに大ダメージを与える）
+
+    // ビーム
+
+    // 回避
+
+    // 後スキ
 
 public:
     void fRender(GraphicsPipeline& graphics_) override;

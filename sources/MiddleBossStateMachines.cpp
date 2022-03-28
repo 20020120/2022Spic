@@ -173,3 +173,33 @@ void MiddleBoss::fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     fChangeState(State::Tour);
 
 }
+
+void MiddleBoss::fTourToSecondModeInit()
+{
+    // 呼び出された敵がいなくなったら
+
+    // 位置をステージ正面に移動
+    mPosition = { 0.0f,0.0f,150.0f };
+
+    // 変形
+    mpSkinnedMesh->play_animation(AnimationName::inv_transform);
+}
+
+void MiddleBoss::fTourToSecondModeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    // 変形が終了したら待機状態に遷移
+    if (mpSkinnedMesh->end_of_animation())
+    {
+        fChangeState(State::SecondIdle);
+    }
+}
+
+void MiddleBoss::fSecondIdleInit()
+{
+    mpSkinnedMesh->play_animation(AnimationName::wait, true);
+}
+
+void MiddleBoss::fSecondIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
+}
