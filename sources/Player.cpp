@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_thirteenth.fbx");
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_fourteenth.fbx");
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -128,7 +128,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
