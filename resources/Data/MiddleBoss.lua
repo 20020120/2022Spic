@@ -14,6 +14,8 @@ Timer=0.0,         -- 制御時間
 NextStateTime=6.0
 }
 
+ReShotTimes=0 -- 連続で弾を撃った回数
+MaxShotTimes=5 --連続で打てる最大数
 
 function fTourMove(elapsedTime_)  -- 回転を制御
 local preRadian=gRotRadian;
@@ -76,4 +78,13 @@ function fTourLaserReady(elapsedTime_) -- ビームを撃つ準備をする関�
    local length=LaserReadyTable.PointerLength;
 
     return isNextState,pointerAlpha,length
+end
+
+function SelectedNextState()
+-- 連続で撃てば打つほど待機に戻る確率が高くなる
+
+local ReShot=false
+
+
+return ReShot    
 end

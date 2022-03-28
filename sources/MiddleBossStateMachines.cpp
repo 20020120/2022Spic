@@ -166,10 +166,7 @@ void MiddleBoss::fTourShotInit()
 void MiddleBoss::fTourShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // ËŒ‚•ûŒü‚ğZo
-    auto v = mPlayerPosition - mPosition;
-    v = Math::Normalize(v);
-    //v* TourBulletSpeed;
-    mfAddFunc(new StraightBullet(Graphics_, mPosition, v));
+    fShotToTarget(mPlayerPosition,Graphics_);
     fChangeState(State::Tour);
 
 }
@@ -202,4 +199,27 @@ void MiddleBoss::fSecondIdleInit()
 void MiddleBoss::fSecondIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     
+}
+
+void MiddleBoss::fSecondShotInit()
+{
+    mpSkinnedMesh->play_animation(AnimationName::Shot_Recoil);
+    mShotTimer = 0.0f;
+   
+}
+
+void MiddleBoss::fSecondShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mShotTimer += elapsedTime_;
+
+    if (mShotTimer > 0.6f)
+    {
+        fShotToTarget(mPlayerPosition,Graphics_);
+        // Ÿ‚Ìó‘Ô‚É‘JˆÚ‚³‚¹‚é‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+        mLuaWorld.fSetFunction("SelectedNextState");
+        mLuaWorld.fCallFunc(0, 1);
+        const bool goNextState = mLuaWorld.fGetBool(-1);
+
+        fChangeState(goNextState ? State::SecondIdle : State::SecondShot);
+    }
 }

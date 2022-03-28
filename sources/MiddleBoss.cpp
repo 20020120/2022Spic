@@ -76,6 +76,11 @@ void MiddleBoss::fGuiMenu(GraphicsPipeline& Graphics_)
        {
            fChangeState(State::ModeChange);
        }
+
+       if (ImGui::Button("SecondShot"))
+       {
+           fChangeState(State::SecondShot);
+       }
     }
     if(ImGui::Button("LuaReload"))
     {
@@ -184,6 +189,18 @@ void MiddleBoss::fRegisterFunctions()
         FunctionTuple tuple = std::make_tuple(Ini, up);
         mFunctionMap.insert(std::make_pair(State::SecondIdle, tuple));
     }
+    {
+        auto Ini = [=]()->void
+        {
+            fSecondShotInit();
+        };
+        auto up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fSecondShotUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, up);
+        mFunctionMap.insert(std::make_pair(State::SecondShot, tuple));
+    }
 
     fChangeState(State::Tour);
 }
@@ -193,6 +210,14 @@ void MiddleBoss::fShotStraightBullet(GraphicsPipeline& Graphics_)
     auto straightBullet = new StraightBullet(Graphics_,
         mPosition, Math::GetFront(mOrientation) * 10.0f);
     mfAddFunc(straightBullet);
+}
+
+void MiddleBoss::fShotToTarget(DirectX::XMFLOAT3 TargetPosition_,GraphicsPipeline& Graphics_)
+{
+    auto v = TargetPosition_ - mPosition;
+    v = Math::Normalize(v);
+    //v* TourBulletSpeed;
+    mfAddFunc(new StraightBullet(Graphics_, mPosition, v));
 }
 
 

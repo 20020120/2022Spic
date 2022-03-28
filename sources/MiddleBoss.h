@@ -25,6 +25,7 @@ public:
         inline static const std::string TourBeam = "TourBeam";
         inline static const std::string ModeChange = "ModeChange";
         inline static const std::string SecondIdle = "SecondIdle";
+        inline static const std::string SecondShot = "SecondShot";
     };
     enum  AnimationName {
         wait,
@@ -60,10 +61,11 @@ public:
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
     void fGuiMenu(GraphicsPipeline& Graphics_);
     void fDamaged(int Damage_, float InvinsibleTime_) override;
-protected:
+private:
     void fSetCapsulePoint() override;
     void fRegisterFunctions() override;
     void fShotStraightBullet(GraphicsPipeline& Graphics_); // 直進する弾をはっしゃ
+    void fShotToTarget(DirectX::XMFLOAT3 TargetPosition_, GraphicsPipeline& Graphics_);
 private:
     //****************************************************************
     // 
@@ -79,6 +81,9 @@ private:  // ビームに関する変数
     float mLaserBeamLength{};    // ビームの長さ
     float mBeamRadius{};         // ビームの太さ
     float mLaserShotTimer{};     // ビーム発射準備から発射での時間
+
+private: // 射撃に関する変数
+    float mShotTimer{};
 
 private:  // 全体に関係する変数
     float mTimer{}; 
@@ -129,6 +134,9 @@ private:
     void fSecondIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // 射撃
+    void fSecondShotInit();
+    void fSecondShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
 
     // 近接攻撃（この行動の後スキをさらしてシールドに大ダメージを与える）
 
