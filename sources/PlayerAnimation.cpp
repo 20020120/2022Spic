@@ -140,7 +140,12 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType1(0);
         }
     }
-    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
 
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
@@ -172,7 +177,13 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             }
         }
     }
-    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
@@ -203,7 +214,13 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             }
         }
     }
-    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
@@ -231,7 +248,13 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
-    mSwordTrail.fAddTrailPoint(sword_capsule_param.start, sword_capsule_param.end);
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
 }
@@ -308,7 +331,8 @@ void Player::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::TransitionIdle()
 {
     end_dash_effect = true;
-    model->play_animation(AnimationClips::Idle, true);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true);
+    else model->play_animation(AnimationClips::Idle, true);
     is_attack = false;
     player_activity = &Player::IdleUpdate;
 }
@@ -316,7 +340,8 @@ void Player::TransitionIdle()
 void Player::TransitionMove()
 {
     end_dash_effect = true;
-    model->play_animation(AnimationClips::Move, true);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingMove, true);
+    else model->play_animation(AnimationClips::Move, true);
     is_attack = false;
     player_activity = &Player::MoveUpdate;
 }
@@ -345,7 +370,8 @@ void Player::TransitionAvoidance()
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
     //-----------------------------------------------------------------------------------------//
-    model->play_animation(AnimationClips::Avoidance, false);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false);
+    else model->play_animation(AnimationClips::Avoidance, false);
     is_avoidance = true;
     is_attack = false;
     player_activity = &Player::AvoidanceUpdate;
@@ -364,7 +390,8 @@ void Player::TransitionBehindAvoidance()
 
 void Player::TransitionChargeInit()
 {
-    model->play_animation(AnimationClips::ChargeInit, false);
+   if(is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false);
+   else model->play_animation(AnimationClips::ChargeInit, false);
     is_attack = true;
     player_activity = &Player::ChargeInitUpdate;
 }
@@ -373,7 +400,8 @@ void Player::TransitionCharge()
 {
     end_dash_effect = false;
     start_dash_effect = true;//ポストエフェクトをかける
-    model->play_animation(AnimationClips::Charge, false,0);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingCharge, false, 0);
+    else model->play_animation(AnimationClips::Charge, false, 0);
     is_attack = true;
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
     player_activity = &Player::ChargeUpdate;
@@ -383,21 +411,24 @@ void Player::TransitionCharge()
 void Player::TransitionAttackType1(float blend_seconds)
 {
     end_dash_effect = true;
-    model->play_animation(AnimationClips::AttackType1, false, 0);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, 0);
+    else model->play_animation(AnimationClips::AttackType1, false, 0);
     is_attack = true;
     player_activity = &Player::AttackType1Update;
 }
 
 void Player::TransitionAttackType2(float blend_seconds)
 {
-    model->play_animation(AnimationClips::AttackType2, false, 0);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType2, false, 0);
+    else model->play_animation(AnimationClips::AttackType1, false, 0);
     is_attack = true;
     player_activity = &Player::AttackType2Update;
 }
 
 void Player::TransitionAttackType3(float blend_seconds)
 {
-    model->play_animation(AnimationClips::AttackType3, false, 0);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType3, false, 0);
+    else model->play_animation(AnimationClips::AttackType3, false, 0);
     is_attack = true;
     player_activity = &Player::AttackType3Update;
 }

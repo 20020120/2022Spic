@@ -161,7 +161,7 @@ private:
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{      nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
-    SwordTrail mSwordTrail{};
+    SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
 private:
     //プレイヤーのパラメータの変化
@@ -181,7 +181,7 @@ private:
         float rasius{ 1.2f };
     };
 
-    CapsuleParam sword_capsule_param{};
+    CapsuleParam sword_capsule_param[2]{};
     CapsuleParam body_capsule_param{};
 
     DirectX::XMFLOAT3 capsule_body_start{0,2.6f,0};
@@ -205,8 +205,16 @@ public:
     bool GetIsSpecialSurge() { return is_special_surge; }
     bool GetStartDashEffect() { return start_dash_effect; }
     bool GetEndDashEffect() { return end_dash_effect; }
+    bool GetIsAwakening() { return is_awakening; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
-    CapsuleParam GetSwordCapsuleParam() { return sword_capsule_param; }
+    CapsuleParam GetSwordCapsuleParam(int i)
+    {
+        if (is_awakening)
+        {
+           return sword_capsule_param[i];
+        }
+        return sword_capsule_param[0];
+    }
     std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }

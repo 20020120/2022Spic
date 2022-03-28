@@ -87,11 +87,28 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	if (player->GetIsPlayerAttack())
 	{
-		player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
-			player->GetSwordCapsuleParam().start,
-			player->GetSwordCapsuleParam().end,
-			player->GetSwordCapsuleParam().rasius,
-			player->GetPlayerPower()));
+		if (player->GetIsAwakening())
+		{
+				player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+					player->GetSwordCapsuleParam(0).start,
+					player->GetSwordCapsuleParam(0).end,
+					player->GetSwordCapsuleParam(0).rasius,
+					player->GetPlayerPower()));
+
+				player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+					player->GetSwordCapsuleParam(1).start,
+					player->GetSwordCapsuleParam(1).end,
+					player->GetSwordCapsuleParam(1).rasius,
+					player->GetPlayerPower()));
+		}
+		else
+		{
+			player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+				player->GetSwordCapsuleParam(0).start,
+				player->GetSwordCapsuleParam(0).end,
+				player->GetSwordCapsuleParam(0).rasius,
+				player->GetPlayerPower()));
+		}
 	}
 
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
