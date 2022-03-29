@@ -184,8 +184,6 @@ public:
     void update_animation(float elapsed_time);
     bool end_of_animation() const { return anim_para.end_of_animation; }
 
-    void regeneration(ID3D11Device* device, const char* fbx_filename);
-
     void find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
 private:
     //--------< \‘¢‘Ì >--------//
@@ -212,8 +210,9 @@ private:
         DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
         DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-        std::string texture_filenames[7];
-        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[7];
+        static const int TEXTURE_COUNT = 8;
+        std::string texture_filenames[TEXTURE_COUNT];
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[TEXTURE_COUNT];
 
         template<class T>
         void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }

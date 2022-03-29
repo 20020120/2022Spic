@@ -175,24 +175,6 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
 #endif
 }
 
-void SkinnedMesh::regeneration(ID3D11Device* device, const char* fbx_filename)
-{
-    std::string texture_maps[4] = { "temporary\\Color.png" , "temporary\\Normal.png" , "temporary\\Metallic.png" , "temporary\\Roughness.png" };
-    for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
-        iterator != materials.end(); ++iterator)
-    {
-        for (size_t texture_index = 0; texture_index < 4; ++texture_index)
-        {
-            std::filesystem::path path(fbx_filename);
-            path.replace_filename(texture_maps[texture_index]);
-            D3D11_TEXTURE2D_DESC texture2d_desc;
-            iterator->second.shader_resource_views[texture_index].Reset();
-            load_texture_from_file(device, path.c_str(),
-                iterator->second.shader_resource_views[texture_index].GetAddressOf(), &texture2d_desc);
-        }
-    }
-}
-
 void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
 {
     for (const mesh& mesh : meshes)
@@ -298,6 +280,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 dc->PSSetShaderResources(4, 1, material.shader_resource_views[4].GetAddressOf());
                 dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
                 dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
+                dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
                 // •`‰æ
                 dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
             }
@@ -688,6 +671,26 @@ void SkinnedMesh::fetch_materials(const char* fbx_filename, FbxScene* fbx_scene,
                         material.texture_filenames[6] = "";
                     }
                 }
+                // Glow map
+                {
+                    std::string color_map_filename = material.texture_filenames[0];
+                    std::string glow_map_filename = "";
+                    if (color_map_filename.find("Color.png") != std::string::npos)
+                    {
+                        glow_map_filename = color_map_filename.erase(color_map_filename.find("Color.png")) + "Glow.png";
+                    }
+                    std::filesystem::path fbm_filename(fbx_filename);
+                    fbm_filename.remove_filename();
+                    std::string s = fbm_filename.string() + glow_map_filename;
+                    if (std::filesystem::exists(s.c_str()))
+                    {
+                        material.texture_filenames[7] = glow_map_filename;
+                    }
+                    else
+                    {
+                        material.texture_filenames[7] = "";
+                    }
+                }
 
                 materials.emplace(material.unique_id, std::move(material));
             }
@@ -869,7 +872,7 @@ void SkinnedMesh::create_com_objects(ID3D11Device* device, const char* fbx_filen
         for (std::unordered_map<uint64_t, material>::iterator iterator = materials.begin();
             iterator != materials.end(); ++iterator)
         {
-            for (size_t texture_index = 0; texture_index < 7; ++texture_index)
+            for (size_t texture_index = 0; texture_index < material::TEXTURE_COUNT; ++texture_index)
             {
                 if (iterator->second.texture_filenames[texture_index].size() > 0)
                 {
@@ -884,6 +887,7 @@ void SkinnedMesh::create_com_objects(ID3D11Device* device, const char* fbx_filen
                     DWORD tex_color = 0xFFFFFFFF;
                     if (texture_index == 1) { tex_color = 0xFFFF7F7F; }
                     if (texture_index == 5) { tex_color = 0x0000; }
+                    if (texture_index == 7) { tex_color = 0x0000; }
                     make_dummy_texture(device, iterator->second.shader_resource_views[texture_index].GetAddressOf(), tex_color, 16);
                 }
             }

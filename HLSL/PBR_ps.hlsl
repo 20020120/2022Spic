@@ -20,6 +20,7 @@ Texture2D shadow_map : register(t6);
 SamplerState shadow_sampler_state : register(s6);
 
 Texture2D dissolve_map : register(t8);
+Texture2D glow_map : register(t9);
 
 static const float PI = 3.1415926f; // π
 
@@ -187,7 +188,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     color_map.rgb = pow(color_map.rgb, GAMMA);
 #endif
 
-        // 点光源の処理
+    // 点光源の処理
     float3 E = normalize(pin.world_position.xyz - camera_position.xyz);
     float3 point_diffuse = 0;
     float3 point_specular = 0;
@@ -216,18 +217,24 @@ float4 main(VS_OUT pin) : SV_TARGET
     // emissive
     float3 emissive = emissive_map.r * emissive_color.w * emissive_color.rgb;
     finalColor.xyz += emissive;
+
+    // glow
+    float4 glow = glow_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float3 glow_power = glow.rgb * emissive_color.w;
+    finalColor.xyz += glow_power;
+
     // ブルームで暴走しないように強制
     finalColor.xyz = min(finalColor.xyz, 6.0);
 
     // dissolve
-    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w, finalColor.a) * pin.color;
+    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w * pin.color.rgb, finalColor.a * pin.color.a);
     float4 dst_color = float4(0, 0, 0, 0);
-    float4 mask = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord) * float4(1, 1, 1, 1);
+    float4 mask = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
 
     float4 outcolor = lerp(last_color, dst_color, step(mask.r, dissolve_threshold.x));
     if (dissolve_threshold.x < 0.95)
     {
-        float4 destiny = float4(emissive_color.rgb, 1) * emissive_color.w;
+        float4 destiny = float4(emissive_color.rgb * emissive_color.w, 1);
         outcolor += lerp(destiny, dst_color, step(step(mask.r, dissolve_threshold.x), step(0.1, abs(dissolve_threshold.x - mask.r))));
     }
 
