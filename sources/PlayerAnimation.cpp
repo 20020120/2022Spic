@@ -123,12 +123,14 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
             charge_time = 0;
+            is_charge = false;
             TransitionMove();
         }
         //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
         else
         {
             charge_time = 0;
+            is_charge = false;
             TransitionIdle();
         }
     }
@@ -137,7 +139,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (is_enemy_hit)
         {
             //“G‚É“–‚½‚Á‚ÄUŒ‚ƒ{ƒ^ƒ“(“Ëiƒ{ƒ^ƒ“)‚ð‰Ÿ‚µ‚½‚çˆêŒ‚–Ú
-                TransitionAttackType1(0);
+            is_charge = false;
+            TransitionAttackType1(0);
         }
     }
     if (is_awakening)
@@ -404,6 +407,7 @@ void Player::TransitionCharge()
     else model->play_animation(AnimationClips::Charge, false, 0);
     is_attack = true;
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    is_charge = true;
     player_activity = &Player::ChargeUpdate;
 
 }

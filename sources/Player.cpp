@@ -344,18 +344,14 @@ void Player::InflectionCombo(float elapsed_time)
 
 void Player::BodyCapsule()
 {
-    body_capsule_param.start =
-    {
-        position.x + capsule_body_start.x,
-        position.y + capsule_body_start.y,
-        position.z + capsule_body_start.z
-    };
-    body_capsule_param.end =
-    {
-        position.x + capsule_body_end.x,
-        position.y + capsule_body_end.y,
-        position.z + capsule_body_end.z
-    };
+    DirectX::XMFLOAT3 pos = {}, up = {};
+    DirectX::XMFLOAT3 end = {}, e_up = {};
+
+    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "body_joint", pos, up);
+    model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "face_joint", end, e_up);
+
+    body_capsule_param.start = pos;
+    body_capsule_param.end = end;
     body_capsule_param.rasius = 0.5f;
 }
 void Player::SwordCapsule()
@@ -366,18 +362,35 @@ void Player::SwordCapsule()
     DirectX::XMFLOAT3 end_2 = {}, e_up_2 = {};
     if (is_awakening)
     {
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_joint", pos, up);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_top_joint", end, e_up);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_joint", pos_2, up_2);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_top_joint", end_2, e_up_2);
+        if (is_charge)
+        {
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "body_joint", pos, up);
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "face_joint", end, e_up);
 
-        sword_capsule_param[0].start = pos;
-        sword_capsule_param[0].end = end;
-        sword_capsule_param[0].rasius = 1.7f;
+            sword_capsule_param[0].start = pos;
+            sword_capsule_param[0].end = end;
+            sword_capsule_param[0].rasius = 1.7f;
 
-        sword_capsule_param[1].start = pos_2;
-        sword_capsule_param[1].end = end_2;
-        sword_capsule_param[1].rasius = 1.7f;
+            sword_capsule_param[1].start = pos;
+            sword_capsule_param[1].end = end;
+            sword_capsule_param[1].rasius = 1.7f;
+
+        }
+        else
+        {
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_joint", pos, up);
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_top_joint", end, e_up);
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_joint", pos_2, up_2);
+            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_top_joint", end_2, e_up_2);
+
+            sword_capsule_param[0].start = pos;
+            sword_capsule_param[0].end = end;
+            sword_capsule_param[0].rasius = 1.7f;
+
+            sword_capsule_param[1].start = pos_2;
+            sword_capsule_param[1].end = end_2;
+            sword_capsule_param[1].rasius = 1.7f;
+        }
 
     }
     else
@@ -525,13 +538,10 @@ void Player::ChargeAcceleration(float elapse_time)
 
     DirectX::XMFLOAT3 pos = {}, up = {};
 
-       if(is_awakening) model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_joint", pos, up);
-       else model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "shortsword_handle_joint", pos, up);
     //位置を補間
     //ロックオンしていたらターゲットに向かって行く
     if (is_lock_on)
     {
-
         position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else

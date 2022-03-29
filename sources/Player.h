@@ -158,6 +158,8 @@ private:
     bool end_dash_effect{ false };
     //覚醒状態かどうか
     bool is_awakening{ false };
+    //突進中かどうか
+    bool is_charge{ false };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{      nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
