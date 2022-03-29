@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_fourteenth.fbx");
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_fifteenth.fbx");
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
