@@ -219,9 +219,12 @@ float4 main(VS_OUT pin) : SV_TARGET
     finalColor.xyz += emissive;
 
     // glow
-    float4 glow = glow_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
-    float3 glow_power = glow.rgb * emissive_color.w;
-    finalColor.xyz += glow_power;
+    float3 glow = glow_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord).rgb;
+    float glow_thickness = 0.8f;
+    float glow_interval  = -1.0f;
+    float sin_v = sin(pin.texcoord.y * glow_thickness + dissolve_threshold.y * glow_interval);
+    float steped = step(0.99, sin_v * sin_v);
+    finalColor.rgb += glow * steped * emissive_color.w;
 
     // ÉuÉãÅ[ÉÄÇ≈ñ\ëñÇµÇ»Ç¢ÇÊÇ§Ç…ã≠êß
     finalColor.xyz = min(finalColor.xyz, 6.0);

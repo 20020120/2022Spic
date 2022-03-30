@@ -175,8 +175,9 @@ public:
     //--------< コンストラクタ/関数等 >--------//
     SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
     virtual ~SkinnedMesh() = default;
-    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& material_color, float threshold = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4( 1.0f, 1.0f, 1.0f, 1.0f ));
+    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
+        const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
     // アニメーション
     void play_animation(int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
     void pause_animation() { anim_para.stop_animation = true; }

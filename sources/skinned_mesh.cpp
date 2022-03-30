@@ -213,9 +213,11 @@ void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::strin
 }
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
-    const DirectX::XMFLOAT4& material_color, float threshold, const DirectX::XMFLOAT4& emissive_color)
+    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
+    const DirectX::XMFLOAT4& emissive_color)
 {
     geometry_constants->data.dissolve_threshold.x = threshold;
+    geometry_constants->data.dissolve_threshold.y = glow_time;
     geometry_constants->data.emissive_color = emissive_color;
     for (const mesh& mesh : meshes)
     {
