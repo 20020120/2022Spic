@@ -324,7 +324,8 @@ void Player::InflectionCombo(float elapsed_time)
         //    duration_combo_timer = 0;
         //    combo_count -= 1;
         //}
-        combo_count -= elapsed_time;
+
+        //combo_count -= elapsed_time;
     }
     else
     {
@@ -470,6 +471,7 @@ void Player::Damaged(int damage, float InvincibleTime)
 
     if (invincible_timer > 0.0f)return;
 
+    TransitionDamage();
     //ñ≥ìGéûä‘ê›íË
     invincible_timer = InvincibleTime;
     //É_ÉÅÅ[ÉWèàóù
@@ -554,7 +556,14 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
 {
     if (is_special_surge)
     {
-        position = Math::lerp(position, target, 15.0f * elapse_time);
+        if (is_lock_on)
+        {
+            position = Math::lerp(position, target, 15.0f * elapse_time);
+        }
+        else
+        {
+            position = Math::lerp(position, charge_point, 15.0f * elapse_time);
+        }
     }
 }
 

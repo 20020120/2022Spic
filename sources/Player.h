@@ -144,6 +144,7 @@ private:
     //ゲージ消費の突進の隙
     float special_surge_opportunity{ 1.5f };
     float special_surge_timer{ 0 };
+    float opportunity_timer{ 0 };
     //プレイヤーの体力
     int player_health = 100;
     //無敵時間
@@ -285,7 +286,10 @@ private:
     void AttackType2Update(float elapsed_time, SkyDome* sky_dome);//攻撃2撃目の更新処理
     void AttackType3Update(float elapsed_time, SkyDome* sky_dome);//攻撃3撃目の更新処理
     void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
-    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
+    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費突進が終わってからの隙
+    void DamageUpdate(float elapsed_time, SkyDome* sky_dome);//ダメージ受けたとき
+    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);//人型に戻る
+    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);//飛行機モード
     //アニメーション遷移(1frameだけしか呼ばないもの)
     void TransitionIdle();
     void TransitionMove();
@@ -298,4 +302,7 @@ private:
     void TransitionAttackType3(float blend_seconds);
     void TransitionSpecialSurge();
     void TransitionOpportunity();
+    void TransitionDamage();
+    void TransitionTransformHum();
+    void TransitionTransformWing();
 };
