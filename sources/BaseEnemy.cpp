@@ -12,11 +12,11 @@
 BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* ModelName_)
 {
     // ƒ‚ƒfƒ‹‚ğ‰Šú‰»
-    mpSkinnedMesh = std::make_unique<SkinnedMesh>(graphics_.get_device().Get(), ModelName_);
+    mpSkinnedMesh = resource_manager->load_model_resource(graphics_.get_device().Get(), ModelName_,true);
     mUniqueId = UniqueId_;
     mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), 
         "./resources/Effect/bomb_2.efk");
-
+    
 }
 
 BaseEnemy::~BaseEnemy() = default;

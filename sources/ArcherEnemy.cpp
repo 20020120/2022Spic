@@ -11,7 +11,7 @@
 //****************************************************************
 ArcherEnemy::ArcherEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
     ParamGetFunction Function_, AddBulletFunc Func_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_4.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_arrow.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;

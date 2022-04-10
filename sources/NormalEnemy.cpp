@@ -9,7 +9,7 @@
 //****************************************************************
 NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_arrow.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_sword.fbx")
 {
     // ˆÊ’u‚ð‰Šú‰»
     mPosition = EmitterPoint_;
@@ -20,7 +20,7 @@ NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterP
     fGetParam(this, Function_);
     fRegisterFunctions();
 
-    mpSkinnedMesh->play_animation(0, true);
+    mpSkinnedMesh->play_animation(0, false);
 }
 
 void NormalEnemy::fInitialize()
@@ -122,8 +122,6 @@ void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 
 void NormalEnemy::fIdleInit()
 {
-    //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
-    
 }
 
 void NormalEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -162,7 +160,7 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void NormalEnemy::fAttackInit()
 {
-   // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
+    mpSkinnedMesh->play_animation(0, false, 0.1f);
     mAttackingTime = 0.0f;
     fSetAttackPower(2, 1.5f);
 }

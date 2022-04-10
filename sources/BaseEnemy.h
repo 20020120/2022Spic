@@ -200,7 +200,7 @@ protected:
 
     int mUniqueId{};
     // ƒ‚ƒfƒ‹
-    std::unique_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+    std::shared_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
     std::unique_ptr<Effect> mDieEffect{ nullptr };
     private:
 

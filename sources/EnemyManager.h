@@ -127,7 +127,7 @@ private:
     void fCollisionEnemyVsEnemy();
 
     //--------------------<ƒvƒƒg>--------------------//
-    void fProtoSpawn(GraphicsPipeline& graphics_);
+    void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     
 
     //****************************************************************

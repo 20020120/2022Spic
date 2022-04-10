@@ -44,7 +44,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 
     //--------------------<敵のスポナー>--------------------//
     // fSpawn();
-    fProtoSpawn(graphics_);
+    fProtoSpawn(graphics_, Func_);
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 }
@@ -383,7 +383,7 @@ void EnemyManager::fCollisionEnemyVsEnemy()
     }
 }
 
-void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
+void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 {
     if (!mIsProtoSpawn) return;
     if (mEnemyVec.size() > 10) return;
@@ -392,8 +392,8 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_)
     const int separateTime = static_cast<int>(mWaveTimer) % 4;
     if(separateTime==1&&!IsSpawn)
     {
-        //auto enemy = new ChaseEnemy(graphics_, {0.0f,0.0f,10.0f}, mUniqueCount, mEditor.fGetFunction());
-        //mEnemyVec.emplace_back(enemy);
+        auto enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
+        mEnemyVec.emplace_back(enemy);
         auto enemy1 = new NormalEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy1);
         IsSpawn = true;
