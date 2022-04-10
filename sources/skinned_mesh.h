@@ -172,69 +172,15 @@ struct animation
 class SkinnedMesh
 {
 public:
-    //--------< コンストラクタ/関数等 >--------//
+    //--------<constructor/destructor>--------//
     SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
     virtual ~SkinnedMesh() = default;
-    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
-        const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-    // アニメーション
-    void play_animation(int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
-    void pause_animation() { anim_para.stop_animation = true; }
-    void progress_animation() { anim_para.stop_animation = false; }
-    void update_animation(float elapsed_time);
-    bool end_of_animation() const { return anim_para.end_of_animation; }
-
-    void find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
 private:
-    //--------< 構造体 >--------//
+    //--------< 変数 >--------//
     static const int MAX_BONE_INFLUENCES{ 4 };
     static const int MAX_BONES{ 256 };
-    struct GeometryConstants
-    {
-        DirectX::XMFLOAT4X4 world;
-        DirectX::XMFLOAT4 material_color;
-        DirectX::XMFLOAT4X4 bone_transforms[MAX_BONES]{
-            {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1}
-        };
-        DirectX::XMFLOAT4 emissive_color{ 1,1,1,1 }; // xyz:emissive_color w:emissive_strength
-        DirectX::XMFLOAT4 dissolve_threshold{ 0,0,0,0 };
-    };
-    std::unique_ptr<Constants<GeometryConstants>> geometry_constants;
-    // FBXファイルからメッシュが使用するマテリアル情報（色・テクスチャ）を抽出する
-    struct material
-    {
-        uint64_t unique_id{ 0 };
-        std::string name;
-
-        DirectX::XMFLOAT4 Ka{ 0.2f, 0.2f, 0.2f, 1.0f };
-        DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
-        DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
-
-        static const int TEXTURE_COUNT = 8;
-        std::string texture_filenames[TEXTURE_COUNT];
-        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[TEXTURE_COUNT];
-
-        template<class T>
-        void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }
-    };
-    std::unordered_map<uint64_t, material> materials;
-    struct anim_Parameters
-    {
-        int current_anim_index{ 0 };               // 現在のアニメーションのインデックス
-        int old_anim_index{ 0 };                   // ひとつ前ののアニメーションのインデックス
-        int frame_index{ 0 };                      // 再生中のアニメーションのフレーム
-        float animation_tick{ 0 };                 // フレームの中の再生時間
-        bool do_loop{ false };                     // ループ再生するか
-        bool stop_animation{ false };              // アニメーションの停止
-        bool end_of_animation{ false };            // アニメーションが1ループ再生したか
-        float animation_blend_time = 0.0f;         // アニメーション間の補完時間
-        float animation_blend_seconds = 0.0f;      // アニメーション間の補完割合
-
-        animation animation{};
-        animation::keyframe current_keyframe{};
-    } anim_para;
 public:
+    //--------< 構造体 >--------//
     struct vertex
     {
         DirectX::XMFLOAT3 position{};
@@ -291,11 +237,83 @@ public:
         };
         friend class SkinnedMesh;
     };
+    struct anim_Parameters
+    {
+        int current_anim_index{ 0 };               // 現在のアニメーションのインデックス
+        int old_anim_index{ 0 };                   // ひとつ前ののアニメーションのインデックス
+        int frame_index{ 0 };                      // 再生中のアニメーションのフレーム
+        float animation_tick{ 0 };                 // フレームの中の再生時間
+        bool do_loop{ false };                     // ループ再生するか
+        bool stop_animation{ false };              // アニメーションの停止
+        bool end_of_animation{ false };            // アニメーションが1ループ再生したか
+        float animation_blend_time = 0.0f;         // アニメーション間の補完時間
+        float animation_blend_seconds = 0.0f;      // アニメーション間の補完割合
+
+        animation animation{};
+        animation::keyframe current_keyframe{};
+    };
+private:
+    struct GeometryConstants
+    {
+        DirectX::XMFLOAT4X4 world;
+        DirectX::XMFLOAT4 material_color;
+        DirectX::XMFLOAT4X4 bone_transforms[MAX_BONES]{
+            {1,0,0,0,  0,1,0,0,  0,0,1,0,  0,0,0,1}
+        };
+        DirectX::XMFLOAT4 emissive_color{ 1,1,1,1 }; // xyz:emissive_color w:emissive_strength
+        DirectX::XMFLOAT4 dissolve_threshold{ 0,0,0,0 };
+    };
+    struct material
+    {
+        uint64_t unique_id{ 0 };
+        std::string name;
+
+        DirectX::XMFLOAT4 Ka{ 0.2f, 0.2f, 0.2f, 1.0f };
+        DirectX::XMFLOAT4 Kd{ 0.8f, 0.8f, 0.8f, 1.0f };
+        DirectX::XMFLOAT4 Ks{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+        static const int TEXTURE_COUNT = 8;
+        std::string texture_filenames[TEXTURE_COUNT];
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[TEXTURE_COUNT];
+
+        template<class T>
+        void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }
+    };
+public:
+    //--------< 関数 >--------//
+    void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
+        const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+    void render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
+        const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+    // アニメーション
+    void play_animation(int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
+    void play_animation(anim_Parameters& para, int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
+    void pause_animation() { anim_para.stop_animation = true; }
+    void pause_animation(anim_Parameters& para) { para.stop_animation = true; }
+    void progress_animation() { anim_para.stop_animation = false; }
+    void progress_animation(anim_Parameters& para) { para.stop_animation = false; }
+    void update_animation(float elapsed_time);
+    void update_animation(anim_Parameters& para, float elapsed_time);
+    bool end_of_animation() const { return anim_para.end_of_animation; }
+    bool end_of_animation(anim_Parameters& para) const { return para.end_of_animation; }
+
+    void find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
+    void find_bone_by_name(anim_Parameters& para, const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
+    //--------<getter/setter>--------//
+    const std::vector<mesh>& get_meshes() const { return meshes; }
+    const anim_Parameters& get_anim_para() const { return anim_para; }
 private:
     //--------< 変数 >--------//
+    std::unique_ptr<Constants<GeometryConstants>> geometry_constants;
+    // FBXファイルからメッシュが使用するマテリアル情報（色・テクスチャ）を抽出する
+    std::unordered_map<uint64_t, material> materials;
+    anim_Parameters anim_para;
     std::vector<mesh> meshes;
     std::vector<animation> animation_clips;
 private:
+    //--------< 関数 >--------//
     void fetch_meshes(FbxScene* fbx_scene, std::vector<mesh>& meshes);
     void fetch_materials(const char* fbx_filename, FbxScene* fbx_scene, std::unordered_map<uint64_t, material>& materials);
     // FBXメッシュからバインドポーズの情報を抽出する
@@ -313,8 +331,4 @@ private:
     FbxNode* find_fbxNode_by_uniqueId(FbxScene* fbx_scene, uint64_t id);
 protected:
     scene scene_view;
-public:
-    //--------<getter/setter>--------//
-    const std::vector<mesh>& get_meshes() const { return meshes; }
-    const anim_Parameters& get_anim_para() const { return anim_para; }
 };

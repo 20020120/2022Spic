@@ -212,6 +212,43 @@ void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::strin
     assert("指定された名前のボーンがありません");
 }
 
+void SkinnedMesh::find_bone_by_name(anim_Parameters& para, const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+{
+    for (const mesh& mesh : meshes)
+    {
+        if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
+        {
+            const size_t bone_count{ mesh.bind_pose.bones.size() };
+            _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
+            for (int bone_index = 0; bone_index < bone_count; ++bone_index)
+            {
+                const skeleton::bone& bone = mesh.bind_pose.bones.at(bone_index);
+                if (bone.name == name)
+                {
+                    const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
+                    DirectX::XMFLOAT4X4 w;
+                    XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
+
+                    pos = { w._41,w._42,w._43 };
+                    DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
+
+                    DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
+                    DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
+                    DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S) * DirectX::XMMatrixInverse(nullptr, T);
+
+                    DirectX::XMFLOAT4X4 r = {};
+                    DirectX::XMStoreFloat4x4(&r, R);
+                    DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
+                    XMStoreFloat3(&up, right_vec);
+
+                    return;
+                }
+            }
+        }
+    }
+    assert("指定された名前のボーンがありません");
+}
+
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
     const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
     const DirectX::XMFLOAT4& emissive_color)
@@ -246,6 +283,83 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 {
                     const skeleton::bone& bone{ mesh.bind_pose.bones.at(bone_index) };
                     const animation::keyframe::node& bone_node{ (&anim_para.current_keyframe)->nodes.at(bone.node_index) };
+                    XMStoreFloat4x4(&geometry_constants->data.bone_transforms[bone_index],
+                        XMLoadFloat4x4(&bone.offset_transform) *
+                        XMLoadFloat4x4(&bone_node.global_transform) *
+                        XMMatrixInverse(nullptr, XMLoadFloat4x4(&mesh.default_global_transform))
+                    );
+                }
+            }
+            else
+            {
+                XMStoreFloat4x4(&geometry_constants->data.world,
+                    XMLoadFloat4x4(&mesh.default_global_transform) * XMLoadFloat4x4(&world));
+                for (size_t bone_index = 0; bone_index < MAX_BONES; ++bone_index)
+                {
+                    geometry_constants->data.bone_transforms[bone_index] = {
+                        1, 0, 0, 0,
+                        0, 1, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1,
+                    };
+                }
+            }
+            for (const mesh::subset& subset : mesh.subsets)
+            {
+                using namespace DirectX;
+                const material& material{ materials.at(subset.material_unique_id) };
+
+                XMStoreFloat4(&geometry_constants->data.material_color, XMLoadFloat4(&material_color) * XMLoadFloat4(&material.Kd));
+                geometry_constants->bind(dc, 0, CB_FLAG::PS_VS);
+                // シェーダーリソースビューのセット
+                dc->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
+                dc->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
+                dc->PSSetShaderResources(2, 1, material.shader_resource_views[2].GetAddressOf());
+                dc->PSSetShaderResources(3, 1, material.shader_resource_views[3].GetAddressOf());
+                dc->PSSetShaderResources(4, 1, material.shader_resource_views[4].GetAddressOf());
+                dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
+                dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
+                dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
+                // 描画
+                dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
+            }
+        }
+    }
+}
+
+void SkinnedMesh::render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
+    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time, const DirectX::XMFLOAT4& emissive_color)
+{
+    geometry_constants->data.dissolve_threshold.x = threshold;
+    geometry_constants->data.dissolve_threshold.y = glow_time;
+    geometry_constants->data.emissive_color = emissive_color;
+    for (const mesh& mesh : meshes)
+    {
+        //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
+        //{
+        //    continue;
+        //}
+
+        uint32_t stride{ sizeof(vertex) };
+        uint32_t offset{ 0 };
+        dc->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+        dc->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+        dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        // 定数バッファのバインド
+        {
+            if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
+            {
+                // ※メッシュのglobal_transform（位置・姿勢）が時間軸で変化しているので、その行列をキーフレームから取得する
+                // ※取得したglobal_transform行列を定数バッファのワールド変換行列に合成する
+                const animation::keyframe::node& mesh_node{ (&para.current_keyframe)->nodes.at(mesh.node_index) };
+                XMStoreFloat4x4(&geometry_constants->data.world, XMLoadFloat4x4(&mesh_node.global_transform) * XMLoadFloat4x4(&world));
+
+                const size_t bone_count{ mesh.bind_pose.bones.size() };
+                _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
+                for (int bone_index = 0; bone_index < bone_count; ++bone_index)
+                {
+                    const skeleton::bone& bone{ mesh.bind_pose.bones.at(bone_index) };
+                    const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
                     XMStoreFloat4x4(&geometry_constants->data.bone_transforms[bone_index],
                         XMLoadFloat4x4(&bone.offset_transform) *
                         XMLoadFloat4x4(&bone_node.global_transform) *
@@ -938,6 +1052,24 @@ void SkinnedMesh::play_animation(int animation_index, bool is_loop, float blend_
     anim_para.end_of_animation = false;
 }
 
+void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, bool is_loop, float blend_seconds)
+{
+    assert("!!アニメーションが無いのにplay_animation関数を呼び出しています!!"
+        && animation_clips.size() > 0);
+    assert("!!存在しないインデックスのアニメーションを再生しようとしています!!"
+        && animation_index >= 0 && animation_index <= animation_clips.size() - 1);
+    // アニメーションのパラメーターリセット
+    para.old_anim_index = para.current_anim_index;
+    para.animation_blend_seconds = blend_seconds;
+    para.animation_blend_time = 0.0f;
+    para.current_anim_index = animation_index;
+    para.frame_index = 0;
+    para.animation_tick = 0;
+    para.do_loop = is_loop;
+    para.stop_animation = false;
+    para.end_of_animation = false;
+}
+
 void SkinnedMesh::update_animation(float elapsed_time)
 {
     // アサート
@@ -996,5 +1128,66 @@ void SkinnedMesh::update_animation(float elapsed_time)
         }
 
         anim_para.current_keyframe = anim_para.animation.sequence.at(anim_para.frame_index);
+    }
+}
+
+void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
+{
+    // アサート
+    if (end_of_animation()) return;
+    assert("!!アニメーションが無いのにupdate_animation関数を呼び出しています!!"
+        && animation_clips.size() > 0);
+
+    // アニメーション＆アニメーションのフレーム算出
+    para.animation = animation_clips.at(para.current_anim_index);
+    para.frame_index = static_cast<int>(para.animation_tick * para.animation.sampling_rate);
+    // アニメーション間の補完割合算出
+    float blendRate = 1.0f;
+    if (para.animation_blend_time < para.animation_blend_seconds)
+    {
+        para.animation_blend_time += elapsed_time;
+        if (para.animation_blend_time >= para.animation_blend_seconds) { para.animation_blend_time = para.animation_blend_seconds; }
+        blendRate = para.animation_blend_time / para.animation_blend_seconds;
+        blendRate *= blendRate;
+    }
+
+    // アニメーション間の補完
+    if (blendRate < 1.0f)
+    {
+        const animation::keyframe* keyframes[2]{
+          &animation_clips.at(para.old_anim_index).sequence.at(para.frame_index),
+          &animation_clips.at(para.current_anim_index).sequence.at(para.frame_index)
+        };
+        blend_animations(keyframes, blendRate, para.current_keyframe);
+        update_blend_animation(para.current_keyframe);
+    }
+    // 通常時
+    else
+    {
+        // 再生が1ループ終了
+        if (para.frame_index > para.animation.sequence.size() - 1)
+        {
+            // ループ再生
+            if (para.do_loop)
+            {
+                para.frame_index = 0;
+                para.animation_tick = 0;
+            }
+            // 非ループ再生
+            else
+            {
+                para.end_of_animation = true;
+                para.frame_index = static_cast<int>(para.animation.sequence.size()) - 1;
+            }
+        }
+        // 再生中
+        else
+        {
+            if (!para.stop_animation) {
+                para.animation_tick += elapsed_time;
+            }
+        }
+
+        para.current_keyframe = para.animation.sequence.at(para.frame_index);
     }
 }
