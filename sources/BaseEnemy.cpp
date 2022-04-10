@@ -5,18 +5,18 @@
 #include"Effekseer.h"
 #include<typeinfo>
 //****************************************************************
-// 
-// 敵の基底クラス 
-// 
+//
+// 敵の基底クラス
+//
 //****************************************************************
 BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* ModelName_)
 {
     // モデルを初期化
     mpSkinnedMesh = resource_manager->load_model_resource(graphics_.get_device().Get(), ModelName_,true);
     mUniqueId = UniqueId_;
-    mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), 
+    mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(),
         "./resources/Effect/bomb_2.efk");
-    
+
 }
 
 BaseEnemy::~BaseEnemy() = default;
@@ -26,7 +26,7 @@ void BaseEnemy::fRender(GraphicsPipeline& graphics_)
     graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
     // ワールド行列を作成
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
-    mpSkinnedMesh->render(graphics_.get_dc().Get(), worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
+    mpSkinnedMesh->render(graphics_.get_dc().Get(), mAnimPara, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)> Function_)
@@ -65,7 +65,7 @@ void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     // 死亡したら爆発エフェクトを出す
     if (mParam.mHitPoint <= 0)
     {
-        fDieEffect(); 
+        fDieEffect();
     }
 }
 
@@ -182,7 +182,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
     //--------------------<無敵時間の更新>--------------------//
     fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
-    mpSkinnedMesh->update_animation(elapsedTime_);
+    mpSkinnedMesh->update_animation(mAnimPara, elapsedTime_);
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
     //--------------------<ステートマシン>--------------------//
@@ -197,7 +197,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
 void BaseEnemy::fUpdateStateMachine(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // 中身が何も設定されていなかった場合の挙動は未知数なので気を付けて
-   
+
     // ステートを初期化
     if (!mIsInitialize)
     {

@@ -6,9 +6,9 @@
 #include<memory>
 
 //****************************************************************
-// 
-// 敵の基底クラス 
-// 
+//
+// 敵の基底クラス
+//
 //****************************************************************
 typedef std::function<void()> InitFunc;
 typedef std::function<void(float,GraphicsPipeline&)> UpdateFunc;
@@ -60,9 +60,9 @@ class BaseEnemy :public EnemyMove
 {
 protected:
     //****************************************************************
-    // 
+    //
     // 構造体
-    // 
+    //
     //****************************************************************
     struct Param
     {
@@ -112,9 +112,9 @@ public:
     };
 
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
 public:
     BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_,const char* ModelName_);
@@ -130,7 +130,7 @@ public:
     void fDieEffect() const;
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_, float InvinsibleTime_);
-    
+
 
     // プレイヤー敵との距離を計算する
     void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
@@ -139,7 +139,7 @@ public:
     [[nodiscard]] bool fGetIsFrustum()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const;
-    [[nodiscard]] bool fGetIsAlive()const; 
+    [[nodiscard]] bool fGetIsAlive()const;
     [[nodiscard]] CapsuleCollider fGetCapsuleData()const;
     [[nodiscard]] int fGetUniqueId()const;
     [[nodiscard]] float fGetLengthFromNearEstEnemy()const;
@@ -173,9 +173,9 @@ protected:
     void fGetDirections(DirectX::XMFLOAT4& o);
 
     //****************************************************************
-    // 
-    // 変数 
-    // 
+    //
+    // 変数
+    //
     //****************************************************************
 protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
@@ -185,7 +185,7 @@ protected:
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
     float mLengthFromPlayer{};     // プレイヤーからの距離
     float mLengthFromTargetEnemy{}; // プレイヤーがロックオンしている敵との距離
-    EnemyData mData{}; 
+    EnemyData mData{};
     Param mParam{};
     CapsuleCollider mCapsuleCollider{};
     CapsuleCollider mAttackCapsuleCollider{};
@@ -201,6 +201,7 @@ protected:
     int mUniqueId{};
     // モデル
     std::shared_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
+    SkinnedMesh::anim_Parameters mAnimPara;
     std::unique_ptr<Effect> mDieEffect{ nullptr };
     private:
 
@@ -213,14 +214,14 @@ protected:
 
 protected:
     //****************************************************************
-    // 
+    //
     // 簡易的なステートマシンを仮実装（実装速度が必要じゃないなら変えるかも）
-    // 
+    //
     //****************************************************************
     std::map<std::string, FunctionTuple> mFunctionMap{};
     FunctionTuple mCurrentTuple{};
 
-    virtual void fRegisterFunctions() {}; 
+    virtual void fRegisterFunctions() {};
     void fChangeState(std::string Tag_);
 
 };

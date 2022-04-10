@@ -2,9 +2,9 @@
 #include"Operators.h"
 #include"StraightBullet.h"
 //****************************************************************
-// 
-// 中型のボスのステートマシンを定義する 
-// 
+//
+// 中型のボスのステートマシンを定義する
+//
 //****************************************************************
 
 
@@ -31,7 +31,7 @@ void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     DirectX::XMFLOAT3 baseForward{ 0.0f,0.0f,1.0f };
     // 回転後のベクトル
     DirectX::XMFLOAT3 forward{};
-    
+
     DirectX::XMFLOAT3 up = DirectX::XMFLOAT3(0.0f, 150.0f, 0.0f) - mPosition;
     up = Math::Normalize(up);
 
@@ -57,7 +57,7 @@ void MiddleBoss::fTourUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     // 前と上のベクトルから回転軸を算出
     auto rotAxis = Math::Cross(baseForward, forward, true);
-    
+
     mOrientation = Math::RotQuaternion(DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), rotAxis, dot);
 
 
@@ -124,7 +124,7 @@ void MiddleBoss::fTourLaserInit()
     DirectX::XMFLOAT3 v = endPoint - mPosition;
     v = Math::Normalize(v);
     endPoint = mPosition + (v * 500.0f);
-    
+
     mLaserBeam.fSetPosition(mPosition, endPoint);
 }
 void MiddleBoss::fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_)
@@ -138,7 +138,7 @@ void MiddleBoss::fTourLaserUpdate(float elapsedTime_, GraphicsPipeline& Graphic_
     {
         mLaserBeamLength = 1.0f;
     }
-    
+
 
     mLaserShotTimer += elapsedTime_;
     if(mLaserShotTimer>=5.0f)
@@ -179,13 +179,13 @@ void MiddleBoss::fTourToSecondModeInit()
     mPosition = { 0.0f,0.0f,150.0f };
 
     // 変形
-    mpSkinnedMesh->play_animation(AnimationName::inv_transform);
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::inv_transform);
 }
 
 void MiddleBoss::fTourToSecondModeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // 変形が終了したら待機状態に遷移
-    if (mpSkinnedMesh->end_of_animation())
+    if (mpSkinnedMesh->end_of_animation(mAnimPara))
     {
         fChangeState(State::SecondIdle);
     }
@@ -193,19 +193,19 @@ void MiddleBoss::fTourToSecondModeUpdate(float elapsedTime_, GraphicsPipeline& G
 
 void MiddleBoss::fSecondIdleInit()
 {
-    mpSkinnedMesh->play_animation(AnimationName::wait, true);
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::wait, true);
 }
 
 void MiddleBoss::fSecondIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    
+
 }
 
 void MiddleBoss::fSecondShotInit()
 {
-    mpSkinnedMesh->play_animation(AnimationName::Shot_Recoil);
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::Shot_Recoil);
     mShotTimer = 0.0f;
-   
+
 }
 
 void MiddleBoss::fSecondShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

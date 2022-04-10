@@ -3,9 +3,9 @@
 #include"imgui_include.h"
 #include "user.h"
 //****************************************************************
-// 
+//
 // ‚‚È‚µ’ÊíUŒ‚‚ÌŽG‹›“G‚Ì”h¶ƒNƒ‰ƒX
-// 
+//
 //****************************************************************
 NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_,int UniqueId_,
     ParamGetFunction Function_)
@@ -20,7 +20,7 @@ NormalEnemy::NormalEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterP
     fGetParam(this, Function_);
     fRegisterFunctions();
 
-    mpSkinnedMesh->play_animation(0, false);
+    mpSkinnedMesh->play_animation(mAnimPara, 0, false);
 }
 
 void NormalEnemy::fInitialize()
@@ -92,7 +92,7 @@ void NormalEnemy::fParamInitialize()
     //mParam.mMoveSpeed = 10;   // ˆÚ“®‘¬“x
     //mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
     mStayTimer = 1.0f;
-    mAttack_flg = false;    
+    mAttack_flg = false;
 }
 
 void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
@@ -160,7 +160,7 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void NormalEnemy::fAttackInit()
 {
-    mpSkinnedMesh->play_animation(0, false, 0.1f);
+    mpSkinnedMesh->play_animation(mAnimPara, 0, false, 0.1f);
     mAttackingTime = 0.0f;
     fSetAttackPower(2, 1.5f);
 }

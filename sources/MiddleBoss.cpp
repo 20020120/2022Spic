@@ -23,13 +23,13 @@ MiddleBoss::MiddleBoss(GraphicsPipeline& Graphics_, std::function<EnemyData(std:
     mLuaWorld.fLoadFile("./resources/Data/MiddleBoss.lua");
 
     //--------------------<アニメーション再生>--------------------//
-    mpSkinnedMesh->play_animation(wing, true);
+    mpSkinnedMesh->play_animation(mAnimPara, wing, true);
 
 }
 
 void MiddleBoss::fInitialize()
 {
-    
+
 }
 void MiddleBoss::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
 {

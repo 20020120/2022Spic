@@ -20,7 +20,7 @@ FrontShieldEnemy::FrontShieldEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT
     fGetParam(this, Function_);
     fRegisterFunctions();
 
-    mpSkinnedMesh->play_animation(0, true);
+    mpSkinnedMesh->play_animation(mAnimPara, 0, true);
 }
 
 //‰Šú‰»

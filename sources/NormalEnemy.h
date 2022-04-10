@@ -6,16 +6,16 @@
 
 #include "EnemiesEditor.h"
 //****************************************************************
-// 
-// 盾なし通常攻撃の雑魚敵の派生クラス 
-// 
+//
+// 盾なし通常攻撃の雑魚敵の派生クラス
+//
 //****************************************************************
 class NormalEnemy final :public BaseEnemy
 {
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
 public:
 
@@ -29,7 +29,7 @@ public:
     void fGuiMenu() override;
 
     void fDamaged(int damage_, float InvinsibleTime_) override;
- 
+
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
@@ -49,16 +49,16 @@ private:
     void fDamagedInit(); //ひるみの初期化
     void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
 
-  
+
     // ステートの名前を定義する
     struct  State : public BaseEnemy::StateTag
     {
        inline static const std::string Attack = "Attack";
     };
     //****************************************************************
-   // 
-   // 変数 
-   // 
+   //
+   // 変数
+   //
    //****************************************************************
     State mNowState;
     float mStayTimer;
