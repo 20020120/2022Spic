@@ -101,7 +101,6 @@ void PlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
     SetDirections(orientation);
 
 
-
 }
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)

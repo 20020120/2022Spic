@@ -65,6 +65,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
     player_config->update(graphics,elapsed_time);
 
+
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -554,9 +555,9 @@ void Player::ChargeAcceleration(float elapse_time)
         DirectX::XMFLOAT3 v{};
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
 
-        velocity.x = v.x * 100.0f;
-        velocity.y = v.y * 100.0f;
-        velocity.z = v.z * 100.0f;
+        velocity.x = v.x * 50.0f;
+        velocity.y = v.y * 50.0f;
+        velocity.z = v.z * 50.0f;
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
