@@ -113,6 +113,7 @@ private:
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
+    float enemy_length{ 0 };//敵とプレイヤーの距離
     int target_count{ 0 };
     int old_target_count{ 0 };
 private:
