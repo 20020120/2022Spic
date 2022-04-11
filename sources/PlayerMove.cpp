@@ -357,7 +357,37 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
 void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& camera_pos, const DirectX::XMFLOAT3& camera_forward, DirectX::XMFLOAT4& orientation,float elapsed_time)
 {
     using namespace DirectX;
+#if 0
 
+    XMVECTOR camera_f_vec{ XMLoadFloat3(&camera_forward) };//カメラの前方向
+    XMFLOAT3 camera_up{ 0,1.0f,0 };
+    XMVECTOR camera_u_vec{ XMLoadFloat3(&camera_up) };//カメラの上(0,1,0でいい)
+
+    XMVECTOR cross{ XMVector3Cross(camera_f_vec,XMVector3Cross(camera_f_vec,camera_u_vec)) };
+
+    XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
+    DirectX::XMVECTOR forward, right, up;
+    DirectX::XMMATRIX m = DirectX::XMMatrixRotationQuaternion(orientation_vec);
+    DirectX::XMFLOAT4X4 m4x4 = {};
+    DirectX::XMStoreFloat4x4(&m4x4, m);
+    right = { m4x4._11, m4x4._12, m4x4._13 };
+    up = { m4x4._21, m4x4._22, m4x4._23 };
+    forward = { m4x4._31, m4x4._32, m4x4._33 };
+
+    float angle{};
+    XMVECTOR dot{ XMVector3Dot(cross,up) };
+    DirectX::XMStoreFloat(&angle, dot);
+    angle = acosf(angle);
+    if (fabs(angle) > DirectX::XMConvertToRadians(10.0f))
+    {
+        //回転軸と回転角から回転クオータニオンを求める
+        XMVECTOR q;
+        q = XMQuaternionRotationAxis(right, angle);
+
+        orientation_vec = q;
+    }
+    DirectX::XMStoreFloat4(&orientation, orientation_vec);
+#else
     //ターゲットに向かって回転
     XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
     DirectX::XMVECTOR f, right;
@@ -371,7 +401,6 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
     XMStoreFloat3(&forw, f);
     forw.x = camera_forward.x;
     forw.z = camera_forward.z;
-
 
     XMVECTOR camera_forward_vec{ XMVector3Normalize(XMLoadFloat3(&camera_forward)) };
     XMVECTOR player_forward_vec{ XMVector3Normalize(XMLoadFloat3(&forw)) };
@@ -406,6 +435,8 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
         orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
+
+#endif // 0
 }
 
 void PlayerMove::RollTurn(DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, float elapsed_time)
