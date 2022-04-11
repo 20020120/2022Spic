@@ -40,11 +40,11 @@ private:
     IXAudio2* pXAudio2;
     //----bgm----//
     IXAudio2SourceVoice* bgm_source_voices[MAX_BGM_COUNT];
-    BYTE* bgm_pdata_buffer;
+    BYTE* bgm_pdata_buffer[MAX_BGM_COUNT];
     //----se----//
     IXAudio2SourceVoice* se_source_voices[MAX_SE_COUNT];
     XAUDIO2_BUFFER buffer_se[MAX_SE_COUNT] = { 0 };
-    BYTE* se_pdata_buffer;
+    BYTE* se_pdata_buffer[MAX_BGM_COUNT];
 private:
     //--------< ŠÖ” >--------//
     void initialize_XAudio2();

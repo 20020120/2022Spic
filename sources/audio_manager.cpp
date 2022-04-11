@@ -17,6 +17,7 @@ AudioManager::~AudioManager()
 			bgm_source_voices[i]->DestroyVoice();
 			bgm_source_voices[i] = nullptr;
 		}
+		if (bgm_pdata_buffer[i] != nullptr) { delete bgm_pdata_buffer[i]; }
 	}
 	for (int i = 0; i < MAX_SE_COUNT; ++i) {
 		if (se_source_voices[i] != nullptr)
@@ -24,14 +25,13 @@ AudioManager::~AudioManager()
 			se_source_voices[i]->DestroyVoice();
 			se_source_voices[i] = nullptr;
 		}
+		if (se_pdata_buffer[i] != nullptr) { delete se_pdata_buffer[i]; }
 	}
 	if (pXAudio2 != nullptr)
 	{
 		pXAudio2->Release();
 		pXAudio2 = nullptr;
 	}
-	delete[] bgm_pdata_buffer;
-	delete[] se_pdata_buffer;
 	CoUninitialize();
 }
 
@@ -87,11 +87,11 @@ void AudioManager::register_bgm(const LPCWSTR filename,
 	ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
 	// Locate the 'data' chunk, and read its contents into a buffer.
 	FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
-	bgm_pdata_buffer = new BYTE[dwChunkSize];
-	ReadChunkData(hFile, bgm_pdata_buffer, dwChunkSize, dwChunkPosition);
+	bgm_pdata_buffer[static_cast<int>(index)] = new BYTE[dwChunkSize];
+	ReadChunkData(hFile, bgm_pdata_buffer[static_cast<int>(index)], dwChunkSize, dwChunkPosition);
 	// Populate an XAUDIO2_BUFFER structure.
 	buffer.AudioBytes = dwChunkSize;  //size of the audio buffer in bytes
-	buffer.pAudioData = bgm_pdata_buffer;  //buffer containing audio data
+	buffer.pAudioData = bgm_pdata_buffer[static_cast<int>(index)];  //buffer containing audio data
 	buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
 	if (is_loop) {
 		// ループの設定 https://docs.microsoft.com/ja-jp/windows/win32/api/xaudio2/ns-xaudio2-xaudio2_buffer?redirectedfrom=MSDN
@@ -180,11 +180,11 @@ void AudioManager::register_se(const LPCWSTR filename,
 	ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
 	// Locate the 'data' chunk, and read its contents into a buffer.
 	FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
-	se_pdata_buffer = new BYTE[dwChunkSize];
-	ReadChunkData(hFile, se_pdata_buffer, dwChunkSize, dwChunkPosition);
+	se_pdata_buffer[static_cast<int>(index)] = new BYTE[dwChunkSize];
+	ReadChunkData(hFile, se_pdata_buffer[static_cast<int>(index)], dwChunkSize, dwChunkPosition);
 	// Populate an XAUDIO2_BUFFER structure.
 	buffer_se[static_cast<int>(index)].AudioBytes = dwChunkSize;  //size of the audio buffer in bytes
-	buffer_se[static_cast<int>(index)].pAudioData = se_pdata_buffer;  //buffer containing audio data
+	buffer_se[static_cast<int>(index)].pAudioData = se_pdata_buffer[static_cast<int>(index)];  //buffer containing audio data
 	buffer_se[static_cast<int>(index)].Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
 	assert(loop_count >= -1 && "loop_countが有り得ない数字になっています。loop_countは-1以上254未満の数字にしてください");
 	loop_count = (std::min)(XAUDIO2_MAX_LOOP_COUNT, loop_count);
