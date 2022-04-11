@@ -185,6 +185,7 @@ private:
     };
 
     CapsuleParam sword_capsule_param[2]{};
+    CapsuleParam charge_capsule_param{};
     CapsuleParam body_capsule_param{};
 
     DirectX::XMFLOAT3 capsule_body_start{0,2.6f,0};
@@ -212,9 +213,13 @@ public:
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
     {
+        if (is_charge)
+        {
+            return charge_capsule_param;
+        }
         if (is_awakening)
         {
-           return sword_capsule_param[i];
+            return sword_capsule_param[i];
         }
         return sword_capsule_param[0];
     }
