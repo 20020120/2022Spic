@@ -284,8 +284,7 @@ public:
     typedef std::tuple<std::string, float> mesh_tuple;
     void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-        mesh_tuple mesh_t = std::tuple<std::string, float>{ "", 0 });
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
     void render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
         const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -301,11 +300,11 @@ public:
             //    continue;
             //}
 
-            for (mesh_tuple i : std::initializer_list<mesh_tuple>{ mesh_tuples... })
+            for (mesh_tuple tup : std::initializer_list<mesh_tuple>{ mesh_tuples... })
             {
-                if (mesh.name == std::get<0>(i))
+                if (mesh.name == std::get<0>(tup))
                 {
-                    geometry_constants->data.dissolve_threshold.x = std::get<1>(i);
+                    geometry_constants->data.dissolve_threshold.x = std::get<1>(tup);
                     break;
                 }
                 else
