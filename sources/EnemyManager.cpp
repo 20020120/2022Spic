@@ -392,7 +392,7 @@ void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_)
     const int separateTime = static_cast<int>(mWaveTimer) % 4;
     if(separateTime==1&&!IsSpawn)
     {
-        auto enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
+        auto enemy = new FrontShieldEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
         auto enemy1 = new NormalEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy1);
