@@ -205,21 +205,39 @@ void MiddleBoss::fSecondShotInit()
 {
     mpSkinnedMesh->play_animation(mAnimPara, AnimationName::Shot_Recoil);
     mShotTimer = 0.0f;
-
 }
 
 void MiddleBoss::fSecondShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fTurnToTarget(elapsedTime_, mPlayerPosition);
     mShotTimer += elapsedTime_;
 
     if (mShotTimer > 0.6f)
     {
         fShotToTarget(mPlayerPosition,Graphics_);
-        // 次の状態に遷移させるかどうかのフラグ
-        mLuaWorld.fSetFunction("SelectedNextState");
-        mLuaWorld.fCallFunc(0, 1);
-        const bool goNextState = mLuaWorld.fGetBool(-1);
-
-        fChangeState(goNextState ? State::SecondIdle : State::SecondShot);
+        // 現在の体力に応じて射撃数を調整する
+        int random = rand() % 2;
+        
+        switch (random)
+        {
+        case 0 :
+            fChangeState(State::SecondIdle);
+            break;
+        case 1 :
+            fChangeState(State::SecondShot);
+            break;
+        default: ;
+        }
     }
+}
+
+void MiddleBoss::fSecondBeamReadyInit()
+{
+   // ビームチャージのアニメーションを再生
+    mpSkinnedMesh->play_animation(AnimationName::finisher_begin);
+}
+
+void MiddleBoss::fSecondBeamReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
 }

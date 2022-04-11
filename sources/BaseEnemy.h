@@ -75,6 +75,7 @@ protected:
     // ステートの名前を定義する
     struct StateTag
     {
+        inline static const std::string Start = "Start";
         inline static const std::string Idle = "Idle";
         inline static const std::string Move = "Move";
         inline static const std::string Damaged = "Damaged";

@@ -893,17 +893,31 @@ void camera::gameInitialize(GraphicsPipeline& graphics, Player* player)
 	const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 
+	//DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
+	////const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
+	////DirectX::XMStoreFloat(&radius, Radius);
+	//radius = 15;
+	//EyeVector = DirectX::XMVector3Normalize(EyeVector);
+	//DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+
+	//const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
+	//DirectX::XMStoreFloat3(&target, Target);
+
+	//const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
+	//DirectX::XMStoreFloat3(&eye, Eye);
+
+	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 6;
+	DirectX::XMStoreFloat3(&target, Target);
+
 	DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
-	//const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
-	//DirectX::XMStoreFloat(&radius, Radius);
-	radius = 15;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
-	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
-	DirectX::XMStoreFloat3(&target, Target);
+	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
-	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
+	radius = 15;
+	const DirectX::XMVECTOR Eye = EyeCenter + EyeVector * radius;
 	DirectX::XMStoreFloat3(&eye, Eye);
 
 }
@@ -920,13 +934,16 @@ void camera::gameUpdate(float elapsedTime, Player* player)
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 	const DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 
+	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
+
 	if (player->GetEnemyLockOn())
 	{
 		if (player->GetCameraReset())
 		{
 			const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
 			const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
-			RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
+			RockOnCalculateEyeVector(PlayerPosition, PlayerTarget,PlayerUp);
 			if (RockOnCameraReset(elapsedTime, PlayerForward, PlayerUp))
 			{
 				player->FalseCameraReset();
@@ -935,13 +952,13 @@ void camera::gameUpdate(float elapsedTime, Player* player)
 		SetAngle(elapsedTime);
 		const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
 		const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
-		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget);
+		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget,PlayerUp);
 		if(RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn()))
 		{
 		    player->FalseCameraLockOn();
 		}
 		UpdateEyeVector(elapsedTime, PlayerUp);
-
+		UpdateRockOnTarget(PlayerTarget);
 	}
 	else
 	{
@@ -954,8 +971,8 @@ void camera::gameUpdate(float elapsedTime, Player* player)
 		}
 		SetAngle(elapsedTime);
 		UpdateEyeVector(elapsedTime, PlayerUp);
+   	    UpdateTarget(PlayerPosition, PlayerUp);
 	}
-	UpdateTarget(PlayerPosition, PlayerUp);
 	UpdateEye();
 
 }
@@ -1076,9 +1093,9 @@ void camera::UpdateEye()
 {
 	using namespace DirectX;
 
-	const DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
+	const DirectX::XMVECTOR EyeCenter = DirectX::XMLoadFloat3(&eyeCenter);
 	const DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
-	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
+	const DirectX::XMVECTOR Eye = EyeCenter + EyeVector * radius;
 	DirectX::XMStoreFloat3(&eye, Eye);
 }
 
@@ -1086,7 +1103,17 @@ void camera::UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR Pl
 {
 	using namespace DirectX;
 
-	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 3;
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 6;
+	DirectX::XMStoreFloat3(&target, Target);
+
+	//DirectX::XMVECTOR CameraForward = DirectX::XMLoadFloat3(&forward);
+	//Target = CameraForward;
+
+}
+
+void camera::UpdateRockOnTarget(DirectX::XMVECTOR PlayerTarget)
+{
+	DirectX::XMVECTOR Target = PlayerTarget;
 	DirectX::XMStoreFloat3(&target, Target);
 }
 
@@ -1273,24 +1300,29 @@ bool camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 	}
 }
 
-void camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition)
+void camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR RockOnPosition,DirectX::XMVECTOR PlayerUp)
 {
 	using namespace DirectX;
 
 	DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
 	Target -= PlayerPosition;
-	const DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
+	DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
 	const DirectX::XMVECTOR Distance = DirectX::XMVector3Length(PlayerToRockOn);
 	float distance{};
 	DirectX::XMStoreFloat(&distance, Distance);
 
 	const DirectX::XMVECTOR CameraRockOnPosition = PlayerToRockOn * 1.0f;
 
-	DirectX::XMVECTOR RockOnEyeVector = CameraRockOnPosition - Target;
+	PlayerToRockOn = DirectX::XMVector3Normalize(PlayerToRockOn);
+
+
+	//DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp;
+	DirectX::XMVECTOR RockOnEyeVector = RockOnPosition - DirectX::XMLoadFloat3(&eyeCenter);
+
 	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 	RockOnEyeVector *= -1;
 
-	DirectX::XMFLOAT3 up{ 0,1,0 };
+    DirectX::XMFLOAT3 up{ 0,1,0 };
 	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
 	//ê^è„ÅAê^â∫Ç…ãﬂÇ¢Ç∆Ç´èCê≥
 	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(RockOnEyeVector, DirectX::XMVector3Normalize(Up));
