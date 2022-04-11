@@ -3,13 +3,13 @@
 #include"imgui_include.h"
 #include "user.h"
 //****************************************************************
-// 
-// 盾なし通常攻撃の雑魚敵の派生クラス
-// 
+//
+//  盾なし通常攻撃の雑魚敵の派生クラス
+//
 //****************************************************************
 FrontShieldEnemy::FrontShieldEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_arrow.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_shield.fbx")
 {
     // 位置を初期化
     mPosition = EmitterPoint_;
@@ -190,7 +190,7 @@ void FrontShieldEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
 void FrontShieldEnemy::fDamagedInit()
 {
-   
+
 }
 
 
@@ -225,10 +225,10 @@ void FrontShieldEnemy::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Grap
         //正面からの攻撃ならダメージを3分の1にする
         return damage_ /= 3;
     }
-    
+
 	//そうでないなら、受けたダメージをそのままにする
     return damage_;
-    
+
 }
 
 void FrontShieldEnemy::fGuiMenu()

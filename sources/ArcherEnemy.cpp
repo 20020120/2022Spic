@@ -5,13 +5,13 @@
 #include "StraightBullet.h"
 #include "Operators.h"
 //****************************************************************
-// 
+//
 // ‚‚È‚µ’ÊíUŒ‚‚ÌG‹›“G‚Ì”h¶ƒNƒ‰ƒX
-// 
+//
 //****************************************************************
 ArcherEnemy::ArcherEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
     ParamGetFunction Function_, AddBulletFunc Func_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/tx_arrow.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_arrow.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;
@@ -193,7 +193,7 @@ void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void ArcherEnemy::fMoveApproachInit()
 {
-    
+
 }
 
 void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -206,7 +206,7 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
         //’e‘•“U
         auto straightBullet = new StraightBullet(Graphics_,
             mPosition, Math::GetFront(mOrientation) * 10.0f);
-        mfAddFunc(straightBullet); 
+        mfAddFunc(straightBullet);
         return;
     }
 

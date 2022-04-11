@@ -1,14 +1,14 @@
 #include"ChaseEnemy.h"
 #include"Operators.h"
 //****************************************************************
-// 
-// 移動だけのザコ敵 
-// 
+//
+// 移動だけのザコ敵
+//
 //****************************************************************
 
 ChaseEnemy::ChaseEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 Point_, int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_5.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_spear.fbx")
 {
     //初期化
     mPosition = Point_;
@@ -26,7 +26,7 @@ ChaseEnemy::ChaseEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 Point_, in
 
 void ChaseEnemy::fInitialize()
 {
-   
+
 }
 
  void ChaseEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
@@ -34,12 +34,12 @@ void ChaseEnemy::fInitialize()
      fUpdateBase(elapsedTime_,Graphics_);
      mTimerComponent.fUpdate(elapsedTime_);
 
-    
+
 }
- 
+
 void ChaseEnemy::fMove(float elapsedTime_)
 {
-   
+
 }
 
  void ChaseEnemy::fRotate(float elapsedTime_)

@@ -9,9 +9,9 @@
 #include "Common.h"
 
 //****************************************************************
-// 
+//
 // 構造体
-// 
+//
 //****************************************************************
 class Emitter
 {
@@ -31,16 +31,16 @@ private:
 };
 
 //****************************************************************
-// 
-// 敵の管理クラス 
-// 
+//
+// 敵の管理クラス
+//
 //****************************************************************
 class EnemyManager final
 {
     //****************************************************************
-    // 
+    //
     //  構造体
-    // 
+    //
     //****************************************************************
     // 敵の種類
     enum EnemyType
@@ -57,9 +57,9 @@ class EnemyManager final
     };
 
     //****************************************************************
-    // 
+    //
     // 関数
-    //  
+    //
     //****************************************************************
 public:
     EnemyManager() = default;
@@ -73,15 +73,15 @@ public:
 
     // プレイヤーの攻撃と敵の当たり判定
     int fCalcPlayerCapsuleVsEnemies(           // 戻り値 ： 当たった敵の数
-        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
-        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
         float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
         int PlayerAttackPower_                 // プレイヤーの攻撃力
     );
     // 敵の攻撃とプレイヤーの当たり判定
     bool fCalcEnemiesAttackVsPlayer(
-        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報    
-        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報  
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
         float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
         AddDamageFunc Func_
     );
@@ -101,7 +101,7 @@ public:
     //--------------------<敵の実体を削除する関数>--------------------//
     void fDeleteEnemies();
 
-     
+
 
 private:
     //--------------------<敵と関連する処理>--------------------//
@@ -122,18 +122,18 @@ private:
 
     //--------------------<管理クラス内で完結する処理>--------------------//
     void fAllClear(); // 敵を全削除する関数
-    
+
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
 
     //--------------------<プロト>--------------------//
     void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
-    
+
 
     //****************************************************************
-    // 
-    // 変数 
-    // 
+    //
+    // 変数
+    //
     //****************************************************************
 private:
     std::vector<BaseEnemy*> mEnemyVec;  // 敵を格納するコンテナ
@@ -156,9 +156,9 @@ private:
     //--------------------<プロト>--------------------//
     bool mIsProtoSpawn{ true };
     //****************************************************************
-    // 
+    //
     // 定数
-    // 
+    //
     //****************************************************************
 
     const char* mWaveFileNameArray[1]
@@ -168,5 +168,5 @@ private:
 
     // ImGui
     bool mOpenGuiMenu{};
-   
+
 };
