@@ -26,6 +26,8 @@ public:
         inline static const std::string ModeChange = "ModeChange";
         inline static const std::string SecondIdle = "SecondIdle";
         inline static const std::string SecondShot = "SecondShot";
+        inline static const std::string SecondBeamReady = "SecondBeamReady";
+        inline static const std::string SecondBeam = "SecondBeam";
     };
     enum  AnimationName {
         wait,
@@ -137,10 +139,11 @@ private:
     void fSecondShotInit();
     void fSecondShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-
     // 近接攻撃（この行動の後スキをさらしてシールドに大ダメージを与える）
 
     // ビーム
+    void fSecondBeamReadyInit();
+    void fSecondBeamReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // 回避
 
