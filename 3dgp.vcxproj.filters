@@ -154,6 +154,18 @@
     <Filter Include="Shaders\debug\debug_2D">
       <UniqueIdentifier>{a75be414-fb67-4c0c-b9b1-229877fba54b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\enemy\01_Sword">
+      <UniqueIdentifier>{483f5c7c-2f15-4a25-aed8-fc76f34e5e6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\character\enemy\02_Spear">
+      <UniqueIdentifier>{403bb152-7f1a-475e-97fe-65398d92d50d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\character\enemy\03_Shield">
+      <UniqueIdentifier>{695fb948-d253-4629-b880-84e9104f6d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\character\enemy\04_Archer">
+      <UniqueIdentifier>{5237e367-b4cd-4a6a-9118-f317b98c5a3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -419,6 +431,9 @@
     </ClCompile>
     <ClCompile Include="sources\game_icon.cpp">
       <Filter>Sources\scene\option</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\SwordEnemy.cpp">
+      <Filter>Sources\character\enemy\01_Sword</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -700,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="sources\debug_2D.h">
       <Filter>Sources\debug\debug2D</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SwordEnemy.h">
+      <Filter>Sources\character\enemy\01_Sword</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
