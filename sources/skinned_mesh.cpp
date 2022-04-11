@@ -251,17 +251,19 @@ void SkinnedMesh::find_bone_by_name(anim_Parameters& para, const DirectX::XMFLOA
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
     const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
-    const DirectX::XMFLOAT4& emissive_color)
+    const DirectX::XMFLOAT4& emissive_color, std::string mesh_name, float mesh_threshold)
 {
-    geometry_constants->data.dissolve_threshold.x = threshold;
-    geometry_constants->data.dissolve_threshold.y = glow_time;
-    geometry_constants->data.emissive_color = emissive_color;
     for (const mesh& mesh : meshes)
     {
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
         //{
         //    continue;
         //}
+
+        if (mesh.name == mesh_name) { geometry_constants->data.dissolve_threshold.x = mesh_threshold; }
+        else { geometry_constants->data.dissolve_threshold.x = threshold; }
+        geometry_constants->data.dissolve_threshold.y = glow_time;
+        geometry_constants->data.emissive_color = emissive_color;
 
         uint32_t stride{ sizeof(vertex) };
         uint32_t offset{ 0 };
