@@ -40,7 +40,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         }
     }
 
-
+    Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time);
 }
@@ -78,7 +78,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
             TransitionTransformWing();
         }
     }
-
+    Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time);
 }
@@ -99,6 +99,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             TransitionIdle();
         }
+        Awaiking();
     }
     UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     model->update_animation(elapsed_time * AVOIDANCE_ANIMATION_SPEED);
@@ -151,6 +152,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             is_charge = false;
             TransitionIdle();
         }
+        Awaiking();
     }
     else
     {
@@ -380,11 +382,33 @@ void Player::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
     model->update_animation(elapsed_time);
 }
 
-void Player::TransitionIdle()
+void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (model->end_of_animation()) TransitionIdle();
+    model->update_animation(elapsed_time);
+}
+
+void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (model->end_of_animation()) TransitionIdle(0);
+    model->update_animation(elapsed_time);
+}
+
+void Player::Awaiking()
+{
+    //ボタン入力
+    if (game_pad->get_button() & GamePad::BTN_A)
+    {
+        if (combo_count >= MAX_COMBO_COUNT)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+    }
+    if (is_awakening &&combo_count <= 0) TransitionInvAwaking();//覚醒状態のときにカウントが0になったら通常状態になる
+}
+
+void Player::TransitionIdle(float blend_second)
 {
     end_dash_effect = true;
-    if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true);
-    else model->play_animation(AnimationClips::Idle, true);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true,blend_second);
+    else model->play_animation(AnimationClips::Idle, true,blend_second);
     is_attack = false;
     player_activity = &Player::IdleUpdate;
 }
@@ -525,4 +549,19 @@ void Player::TransitionTransformWing()
 {
     model->play_animation(AnimationClips::TransformWing, false);
     player_activity = &Player::TransformWingUpdate;
+}
+
+void Player::TransitionAwaking()
+{
+    model->play_animation(AnimationClips::Awaking, false);
+    is_awakening = true;
+    player_activity = &Player::AwakingUpdate;
+}
+
+void Player::TransitionInvAwaking()
+{
+    model->play_animation(AnimationClips::InvAwaking, false);
+    is_awakening = false;
+    player_activity = &Player::InvAwakingUpdate;
+
 }

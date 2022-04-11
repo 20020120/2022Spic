@@ -290,8 +290,12 @@ private:
     void DamageUpdate(float elapsed_time, SkyDome* sky_dome);//ダメージ受けたとき
     void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);//人型に戻る
     void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);//飛行機モード
+    void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);//覚醒状態に変形するときの更新
+    void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);//通常状態に変形するときの更新
+
+    void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
-    void TransitionIdle();
+    void TransitionIdle(float blend_second = 0.3f);
     void TransitionMove();
     void TransitionAvoidance();
     void TransitionBehindAvoidance();//背後に回り込む回避
@@ -305,4 +309,6 @@ private:
     void TransitionDamage();
     void TransitionTransformHum();
     void TransitionTransformWing();
+    void TransitionAwaking();
+    void TransitionInvAwaking();
 };
