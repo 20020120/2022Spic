@@ -19,6 +19,8 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position,orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
     //ロックオンしていなかったら入力方向を向く
@@ -44,6 +46,8 @@ void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& 
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
 
@@ -63,6 +67,8 @@ void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFL
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
 
@@ -84,6 +90,8 @@ void PlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
     if (is_enemy && is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
+        const DirectX::XMFLOAT3 cameraForward = camera_forward;
+        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
     UpdateVerticalVelocity(elapsed_frame);
@@ -321,37 +329,37 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         }
     }
     //right
-    {
+    //{
 
-        DirectX::XMFLOAT3 point = Math::calc_designated_point(position, front, d_length);
-        //point.x = target.x;
-        //point.z = target.z;
-        DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
+    //    DirectX::XMFLOAT3 point = Math::calc_designated_point(position, front, d_length);
+    //    //point.x = target.x;
+    //    //point.z = target.z;
+    //    DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
 
 
-        XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
+    //    XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
 
-        float an;
-        XMVECTOR a = XMVector3Dot(d2, d);
-        XMStoreFloat(&an, a);
-        an = acosf(an);
-        float de = DirectX::XMConvertToDegrees(an);
-        if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
-        {
-            //回転軸と回転角から回転クオータニオンを求める
-            XMVECTOR q;
-            if (point.y > target.y)
-            {
-                q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
-            }
-            else\
-            {
-                q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
-            }
-            XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
-            orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
-        }
-    }
+    //    float an;
+    //    XMVECTOR a = XMVector3Dot(d2, d);
+    //    XMStoreFloat(&an, a);
+    //    an = acosf(an);
+    //    float de = DirectX::XMConvertToDegrees(an);
+    //    if (fabs(an) > DirectX::XMConvertToRadians(0.1f) && fabs(an) < DirectX::XMConvertToRadians(170.0f))
+    //    {
+    //        //回転軸と回転角から回転クオータニオンを求める
+    //        XMVECTOR q;
+    //        if (point.y > target.y)
+    //        {
+    //            q = XMQuaternionRotationAxis(right, an);//正の方向に動くクオータニオン
+    //        }
+    //        else\
+    //        {
+    //            q = XMQuaternionRotationAxis(right, -an);//正の方向に動くクオータニオン
+    //        }
+    //        XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+    //        orientation_vec = XMQuaternionSlerp(orientation_vec, Q, 10.0f * elapsed_time);
+    //    }
+    //}
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
 

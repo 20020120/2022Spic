@@ -544,14 +544,21 @@ void Player::ChargeAcceleration(float elapse_time)
         DirectX::XMFLOAT3 v{};
         DirectX::XMStoreFloat3(&v,DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
 
-        velocity.x = v.x;
-        velocity.y = v.y;
-        velocity.z = v.z;
-        position = Math::lerp(position, target, 10.0f * elapse_time);
+        velocity.x = v.x * 10.0f;
+        velocity.y = v.y * 10.0f;
+        velocity.z = v.z * 10.0f;
+        //position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
     {
-        position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+
+        velocity.x = v.x * 10.0f;
+        velocity.y = v.y * 10.0f;
+        velocity.z = v.z * 10.0f;
+
+        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
 }
 
