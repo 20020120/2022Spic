@@ -138,6 +138,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
+        velocity = {};
+
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
@@ -160,6 +162,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
+            velocity = {};
             TransitionAttackType1(0);
         }
     }
