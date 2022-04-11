@@ -8,7 +8,7 @@
 #include"FrontShieldEnemy.h"
 #include"MiddleBoss.h"
 
-#include"imgui_include.h" 
+#include"imgui_include.h"
 #include "user.h"
 #include"collision.h"
 #include"Operators.h"
@@ -16,9 +16,9 @@
 
 
 //****************************************************************
-// 
-// 敵の管理クラス 
-// 
+//
+// 敵の管理クラス
+//
 //****************************************************************
 
 void EnemyManager::fInitialize()
@@ -275,7 +275,7 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
             mRemoveVec.emplace_back(enemy);
         }
     }
-    
+
 
 }
 

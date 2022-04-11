@@ -141,8 +141,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
+    glow_time += 1.0f * elapsed_time;
+    if (glow_time >= 3.0f) glow_time = 0;
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
@@ -408,28 +410,28 @@ void Player::SwordCapsule()
 
 void Player::SetTarget(const BaseEnemy* target_enemies)
 {
-    //ターゲットしている敵が死んでいたらnullptrを入れる
+    //ターゲットしている敵が死んでいたら次の敵を入れる
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
-        target_enemy = nullptr;
-        target_count = 0;
-        old_target_count = 0;
+        target_enemy = target_enemies;
+        //target_count = 0;
+        //old_target_count = 0;
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
-        old_target_count = target_count;
-        target_count++;
+        //target_count++;
+        //old_target_count = target_count;
     }
-    else if (is_lock_on && target_enemy == nullptr)
-    {
-        target_enemy = target_enemies;
-        old_target_count = target_count;
-        target_count++;
-    }
-}
+    //else if (is_lock_on && target_enemy == nullptr && target_enemies != nullptr)
+    //{
+    //    target_enemy = target_enemies;
+    //    target_count++;
+    //    old_target_count = target_count;
+    //}
 
+}
 
 void Player::AddCombo(int count)
 {
@@ -553,24 +555,25 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
     {
         if (is_lock_on)
         {
-            position = Math::lerp(position, target, 15.0f * elapse_time);
+            position = Math::lerp(position, target, 5.0f * elapse_time);
         }
         else
         {
-            position = Math::lerp(position, charge_point, 15.0f * elapse_time);
+            position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }
     }
 }
 
 void Player::LockOn()
 {
+    //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいたら
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
     {
-        target = target_enemy->fGetPosition();
-        is_enemy = true;
+        target = target_enemy->fGetPosition();//敵の位置を代入して
+        is_enemy = true;//trueにする
     }
     else is_enemy = false;
-
+    enemy_length = Math::calc_vector_AtoB_length(position, target);
     //自分と敵の距離を見る
     float length{ Math::calc_vector_AtoB_length(position, target) };
 

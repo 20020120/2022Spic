@@ -190,7 +190,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (target_count != old_target_count)
+            if (enemy_length > 10.0f)
             {
                 TransitionCharge();
             }
@@ -227,7 +227,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (target_count != old_target_count)
+            if (enemy_length > 10.0f)
             {
                 TransitionCharge();
             }
@@ -292,7 +292,7 @@ void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionOpportunity();
     }
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    model->update_animation(elapsed_time * ATTACK_ANIMATION_SPEED);
+    model->update_animation(elapsed_time);
 }
 
 void Player::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -346,7 +346,7 @@ void Player::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
         }
         else
         {
-            TransitionIdle();
+            TransitionIdle(0);
         }
         //‰ñ”ð‚É‘JˆÚ
         float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -368,7 +368,7 @@ void Player::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
 
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    model->update_animation(elapsed_time);
+    model->update_animation(elapsed_time * 2.0f);
 
 }
 
@@ -379,7 +379,7 @@ void Player::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
         TransitionSpecialSurge();
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    model->update_animation(elapsed_time);
+    model->update_animation(elapsed_time * 2.0f);
 }
 
 void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
