@@ -19,6 +19,8 @@ protected:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };
+    float threshold;
+    float glow_time;
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };
