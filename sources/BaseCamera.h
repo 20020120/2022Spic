@@ -67,6 +67,7 @@ protected:
     DirectX::XMFLOAT4X4 projection{};
 
     DirectX::XMFLOAT3 eyeVector{};
+    DirectX::XMFLOAT3 eyeCenter{};
     DirectX::XMFLOAT3 rockOnEyeVector{};
     DirectX::XMFLOAT3 playerToRockOn{};
 

@@ -160,7 +160,7 @@ void NormalEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void NormalEnemy::fAttackInit()
 {
-    mpSkinnedMesh->play_animation(mAnimPara, 0, false, 0.1f);
+    mpSkinnedMesh->play_animation(mAnimPara, 1, false, 0.1f);
     mAttackingTime = 0.0f;
     fSetAttackPower(2, 1.5f);
 }

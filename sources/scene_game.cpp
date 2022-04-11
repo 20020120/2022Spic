@@ -83,7 +83,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
 	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
-
+	  
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁZ)
 	if (player->GetIsPlayerAttack())
 	{
@@ -114,9 +114,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+	// camera
+    //camera->Update(elapsed_time,player.get());
+	cameraManager->Update(elapsed_time, player.get());
 
-	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
+	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
@@ -153,9 +156,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 
 
-	// camera
-	//camera->Update(elapsed_time,player.get());
-	cameraManager->Update(elapsed_time, player.get());
 	//camera->update_with_quaternion(elapsed_time);
 	// shadow_map
 	shadow_map->debug_imgui();
