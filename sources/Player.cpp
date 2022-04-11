@@ -414,19 +414,19 @@ void Player::SwordCapsule()
 
 void Player::SetTarget(const BaseEnemy* target_enemies)
 {
-    //ƒ^[ƒQƒbƒg‚µ‚Ä‚¢‚é“G‚ª€‚ñ‚Å‚¢‚½‚çnullptr‚ğ“ü‚ê‚é
+    //ƒ^[ƒQƒbƒg‚µ‚Ä‚¢‚é“G‚ª€‚ñ‚Å‚¢‚½‚çŸ‚Ì“G‚ğ“ü‚ê‚é
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
-        target_enemy = nullptr;
-        target_count = 0;
-        old_target_count = 0;
+        target_enemy = target_enemies;
+        //target_count = 0;
+        //old_target_count = 0;
     }
     //ƒ^[ƒQƒbƒg‚ğİ’è‚·‚é‚Ì‚ÍƒƒbƒNƒIƒ“‚µ‚½uŠÔ‚¾‚¯
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
-        target_count++;
-        old_target_count = target_count;
+        //target_count++;
+        //old_target_count = target_count;
     }
     //else if (is_lock_on && target_enemy == nullptr && target_enemies != nullptr)
     //{
@@ -436,7 +436,6 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     //}
 
 }
-
 
 void Player::AddCombo(int count)
 {
@@ -578,7 +577,7 @@ void Player::LockOn()
         is_enemy = true;//true‚É‚·‚é
     }
     else is_enemy = false;
-
+    enemy_length = Math::calc_vector_AtoB_length(position, target);
     //©•ª‚Æ“G‚Ì‹——£‚ğŒ©‚é
     float length{ Math::calc_vector_AtoB_length(position, target) };
 

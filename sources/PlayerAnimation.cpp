@@ -190,7 +190,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (target_count != old_target_count)
+            if (enemy_length > 10.0f)
             {
                 TransitionCharge();
             }
@@ -227,7 +227,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (target_count != old_target_count)
+            if (enemy_length > 10.0f)
             {
                 TransitionCharge();
             }
