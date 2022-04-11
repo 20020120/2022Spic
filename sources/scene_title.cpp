@@ -49,7 +49,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneGame()));
+			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 			return;
 		}
 		break;

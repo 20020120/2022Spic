@@ -13,6 +13,7 @@ enum class DISSOLVE_TYPE
     NONE = -1,
     TYPE1,
     TYPE2,
+    DOT,
 };
 
 class SceneManager : public PracticalEntities

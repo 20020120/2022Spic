@@ -8,15 +8,18 @@ float SceneManager::dissolve_speed = 1.0f;
 SceneManager::SceneManager(GraphicsPipeline& graphics)
 {
     SpriteDissolve* sprite_dissolve;
+    // TYPE1
     sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png",
         L".\\resources\\Sprites\\mask\\PushOver.png", 1);
-    // map‚É’Ç‰Á
     dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::TYPE1, sprite_dissolve));
-
+    // TYPE2
     sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png",
         L".\\resources\\Sprites\\mask\\MoveUp.png", 1);
-    // map‚É’Ç‰Á
     dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::TYPE2, sprite_dissolve));
+    // DOT
+    sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png",
+        L".\\resources\\Sprites\\mask\\dot.png", 1);
+    dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::DOT, sprite_dissolve));
 }
 
 SceneManager::~SceneManager()
