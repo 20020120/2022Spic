@@ -15,7 +15,6 @@ void EnemyMove::fCalcVelocity(float elasedFrame_)
     const float length{ sqrtf((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) };
     if (length > 0.0f)
     {
-
         //–€ŽC—Í
         const float friction{ this->friction * elasedFrame_ };
         //–€ŽC‚É‚æ‚é‰¡•ûŒü‚ÌŒ¸‘¬ˆ—

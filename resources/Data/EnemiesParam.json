@@ -16,6 +16,21 @@
             }
         },
         {
+            "key": "class ArcherEnemy",
+            "value": {
+                "Name": "class ArcherEnemy",
+                "MaxHp": 10,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 0.0,
+                    "LengthB": 0.0,
+                    "Radius": 0.0
+                }
+            }
+        },
+        {
             "key": "class ChaseEnemy",
             "value": {
                 "Name": "class ChaseEnemy",

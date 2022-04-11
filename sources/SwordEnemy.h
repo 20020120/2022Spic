@@ -81,6 +81,8 @@ private:
     // ‚â‚ç‚ê
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+public:
+    void fInitialize() override{};
 };
 
 
