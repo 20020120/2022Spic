@@ -52,6 +52,7 @@ class EnemyManager final
         Archer, //‰“‹——£UŒ‚
         Shield,//‚‚¿
         MiddleBoss_, // ’†ƒ{ƒX
+        Sword,// “‚Ì“G 
         // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
         Count, // í—Ş‚Ì‘—Ê
     };
