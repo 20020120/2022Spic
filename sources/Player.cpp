@@ -132,10 +132,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::TreePop();
             }
 
-            ImGui::InputInt("target_count", &target_count);
-            ImGui::InputInt("old_target_count",&old_target_count);
-            ImGui::DragFloat("threshold", &threshold, 0.1f);
-            ImGui::DragFloat("glow_time", &glow_time, 0.1f);
             ImGui::End();
         }
     }
@@ -559,11 +555,11 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
     {
         if (is_lock_on)
         {
-            position = Math::lerp(position, target, 15.0f * elapse_time);
+            position = Math::lerp(position, target, 5.0f * elapse_time);
         }
         else
         {
-            position = Math::lerp(position, charge_point, 15.0f * elapse_time);
+            position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }
     }
 }
