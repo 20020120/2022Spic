@@ -363,7 +363,8 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
     XMFLOAT3 camera_up{ 0,1.0f,0 };
     XMVECTOR camera_u_vec{ XMLoadFloat3(&camera_up) };//カメラの上(0,1,0でいい)
 
-    XMVECTOR cross{ XMVector3Cross(camera_f_vec,XMVector3Cross(camera_f_vec,camera_u_vec)) };
+    XMVECTOR cross{ (XMVector3Cross(camera_f_vec,XMVector3Cross(camera_u_vec,camera_f_vec))) };
+    XMVECTOR cross_normalize{ XMVector3Normalize(cross) };
 
     XMVECTOR orientation_vec = DirectX::XMLoadFloat4(&orientation);
     DirectX::XMVECTOR forward, right, up;
@@ -375,16 +376,18 @@ void PlayerMove::PitchTurn(DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3&
     forward = { m4x4._31, m4x4._32, m4x4._33 };
 
     float angle{};
-    XMVECTOR dot{ XMVector3Dot(cross,up) };
+    XMVECTOR dot{ XMVector3Dot(cross_normalize,XMVector3Normalize(up)) };
     DirectX::XMStoreFloat(&angle, dot);
     angle = acosf(angle);
-    if (fabs(angle) > DirectX::XMConvertToRadians(10.0f))
+    if (fabs(angle) > DirectX::XMConvertToRadians(0.1f))
     {
         //回転軸と回転角から回転クオータニオンを求める
         XMVECTOR q;
-        q = XMQuaternionRotationAxis(right, angle);
+        XMVECTOR axis{XMVector3Cross(forward,cross)};
 
-        orientation_vec = q;
+        q = XMQuaternionRotationAxis(right, angle);
+        XMVECTOR Q = XMQuaternionMultiply(orientation_vec, q);
+        orientation_vec = Q;
     }
     DirectX::XMStoreFloat4(&orientation, orientation_vec);
 #else
