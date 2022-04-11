@@ -541,6 +541,12 @@ void Player::ChargeAcceleration(float elapse_time)
     //ロックオンしていたらターゲットに向かって行く
     if (is_lock_on)
     {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v,DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+
+        velocity.x = v.x;
+        velocity.y = v.y;
+        velocity.z = v.z;
         position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
