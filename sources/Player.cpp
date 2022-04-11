@@ -132,6 +132,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::TreePop();
             }
 
+            ImGui::InputInt("target_count", &target_count);
+            ImGui::InputInt("old_target_count",&old_target_count);
+            ImGui::DragFloat("threshold", &threshold, 0.1f);
+            ImGui::DragFloat("glow_time", &glow_time, 0.1f);
             ImGui::End();
         }
     }
@@ -141,8 +145,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
+    glow_time += 1.0f * elapsed_time;
+    if (glow_time >= 3.0f) glow_time = 0;
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f });
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
@@ -419,14 +425,14 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
-        old_target_count = target_count;
         target_count++;
+        old_target_count = target_count;
     }
-    else if (is_lock_on && target_enemy == nullptr)
+    else if (is_lock_on && target_enemy == nullptr && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
-        old_target_count = target_count;
         target_count++;
+        old_target_count = target_count;
     }
 }
 
