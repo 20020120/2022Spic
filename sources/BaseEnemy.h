@@ -33,7 +33,6 @@ struct CapsuleSaveData
             cereal::make_nvp("LengthB", mLengthFromPositionB),
             cereal::make_nvp("Radius", mRadius));
     }
-
 };
 struct EnemyData
 {
@@ -180,7 +179,7 @@ protected:
     //****************************************************************
 protected:
     DirectX::XMFLOAT3 mPosition{};    // 位置
-    DirectX::XMFLOAT4 mOrientation{}; // 回転
+    DirectX::XMFLOAT4 mOrientation{0.0f,0.0f,0.0f,1.0f}; // 回転
     DirectX::XMFLOAT3 mScale{};       // 大きさ
 
     DirectX::XMFLOAT3 mPlayerPosition{}; // プレイヤーの位置
@@ -198,12 +197,15 @@ protected:
     DirectX::XMFLOAT3 forward;
     DirectX::XMFLOAT3 right;
     DirectX::XMFLOAT3 up = { 0.0f, 1.0f, 0.1f };
-
+    
     int mUniqueId{};
     // モデル
     std::shared_ptr<SkinnedMesh> mpSkinnedMesh{ nullptr };
     SkinnedMesh::anim_Parameters mAnimPara;
     std::unique_ptr<Effect> mDieEffect{ nullptr };
+
+    float mAnimationSpeed{1.0f}; // アニメーションの再生速度
+
     private:
 
     //--------------------<ステートマシンに関連する変数>--------------------//

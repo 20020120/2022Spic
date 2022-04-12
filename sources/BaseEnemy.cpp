@@ -182,7 +182,7 @@ void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
     //--------------------<無敵時間の更新>--------------------//
     fUpdateInvicibleTimer(elapsedTime_);
     //--------------------<アニメーション更新>--------------------//
-    mpSkinnedMesh->update_animation(mAnimPara, elapsedTime_);
+    mpSkinnedMesh->update_animation(mAnimPara, elapsedTime_*mAnimationSpeed);
     //--------------------<視錐台カリング>--------------------//
     fCalcFrustum();
     //--------------------<ステートマシン>--------------------//

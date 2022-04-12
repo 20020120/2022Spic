@@ -59,15 +59,28 @@ void SwordEnemy::fRegisterFunctions()
     {
         InitFunc ini = [=]()->void
         {
-            fAttackInit();
+            fAttackPreActionInit();
         };
         UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
         {
-            fAttackUpdate(elapsedTime_, Graphics_);
+            fAttackPreActionUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::AttackMiddle, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fAttackEndInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fAttackEndUpdate(elapsedTime_, Graphics_);
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::AttackEnd, tuple));
     }
+
     fChangeState(DivedState::Start);
 }
 
@@ -114,38 +127,50 @@ void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     }
 }
 
-//--------------------<UŒ‚‚Í‚¶‚ß>--------------------//
+//--------------------<Œ•‚ðU‚èã‚°‚é>--------------------//
 void SwordEnemy::fAttackBeginInit()
 {
     mpSkinnedMesh->play_animation(mAnimPara,AnimationName::attack_idle);
+    mWaitTimer = 0.0f;
 }
 void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     fTurnToTarget(elapsedTime_, mPlayerPosition, 20.0f);
-    if(mpSkinnedMesh->end_of_animation())
+
+    // ƒ^ƒCƒ}[‚ð‰ÁŽZ
+    mWaitTimer += elapsedTime_;
+    if(mWaitTimer>=mAttackBeginTimeSec*mAnimationSpeed)
     {
         fChangeState(DivedState::AttackMiddle);
     }
 }
-
+//--------------------<Œ•‚ðU‚è‰º‚ë‚·—\”õ“®ì>--------------------//
+void SwordEnemy::fAttackPreActionInit()
+{
+    mpSkinnedMesh->play_animation(AnimationName::attack_up,false,0.0f);
+    mWaitTimer = 0.0f;
+}
+void SwordEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    if (mWaitTimer >= mAttackPreActionTimeSec * mAnimationSpeed)
+    {
+        fChangeState(DivedState::AttackEnd);
+    }
+}
 //--------------------<UŒ‚’†i“–‚½‚è”»’èONj>--------------------//
-void SwordEnemy::fAttackInit()
-{
-    mpSkinnedMesh->play_animation(mAnimPara,AnimationName::attack_down);
-}
-void SwordEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-{
-    
-}
-
-//--------------------<UŒ‚I‚í‚èiŒãŒ„)>--------------------//
 void SwordEnemy::fAttackEndInit()
 {
-    
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_down);
+    mWaitTimer = 0.0f;
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    throw std::logic_error("Not implemented");
+    mWaitTimer += elapsedTime_;
+    if(mWaitTimer>=mAttackDownSec)
+    {
+        fChangeState(DivedState::Start);
+    }
 }
 
 

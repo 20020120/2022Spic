@@ -166,6 +166,9 @@
     <Filter Include="Sources\character\enemy\04_Archer">
       <UniqueIdentifier>{5237e367-b4cd-4a6a-9118-f317b98c5a3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\EventFlag">
+      <UniqueIdentifier>{fb1abd32-9354-48c7-bc9d-1c293b09190b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -718,6 +721,9 @@
     </ClInclude>
     <ClInclude Include="sources\SwordEnemy.h">
       <Filter>Sources\character\enemy\01_Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EventFlag.h">
+      <Filter>Sources\EventFlag</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -325,6 +325,7 @@
     <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\EnemyMove.h" />
     <ClInclude Include="sources\enemy_hp_gauge.h" />
+    <ClInclude Include="sources\EventFlag.h" />
     <ClInclude Include="sources\FrontShieldEnemy.h" />
     <ClInclude Include="sources\game_icon.h" />
     <ClInclude Include="sources\graphics_pipeline.h" />

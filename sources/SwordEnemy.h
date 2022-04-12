@@ -1,5 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
+#include"EventFlag.h"
 class SwordEnemy :public BaseEnemy
 {
 public:
@@ -10,9 +11,9 @@ public:
     //****************************************************************
      struct DivedState: public StateTag
      {
-         inline static const std::string AttackBegin = "AttackBegin";
-         inline static const std::string AttackMiddle = "AttackMiddle";
-         inline static const std::string AttackEnd = "AttackEnd";
+         inline static const std::string AttackBegin = "AttackBegin"; // U‚èã‚°
+         inline static const std::string AttackMiddle = "AttackMiddle";  // ‚½‚ß
+         inline static const std::string AttackEnd = "AttackEnd"; // U‚è‰º‚ë‚µ
          inline static const std::string Die = "Die";
      };
      enum  AnimationName {
@@ -51,6 +52,12 @@ private:
     const float mAttackRange{ 10.0f };    // UŒ‚”ÍˆÍ
     const float mAttackDelaySec{ 1.0f };  // UŒ‚Œã‚ÌŒ„‚Ì’·‚³i•bj
     const float mSpawnDelaySec{ 1.0f };   // “oêŒã‚Ì’·‚³i•bj
+
+    //--------------------<ŠeƒXƒe[ƒg‚Ì‘Ò‚¿ŠÔ>--------------------//
+    const float mAttackBeginTimeSec{ 0.85f };    // Œ•‚ğU‚è‚ ‚°‚é‚Ü‚Å‚ÌŠÔ
+    const float mAttackPreActionTimeSec{0.1f};   // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì @@
+    const float mAttackDownSec{ 1.0f };          // Œ•‚ğU‚è‰º‚ë‚·
+
 private:
     //****************************************************************
     // 
@@ -66,15 +73,15 @@ private:
     void fWalkInit();
     void fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    // UŒ‚‚Í‚¶‚ß
+    // Œ•‚ğU‚èã‚°‚é
     void fAttackBeginInit();
     void fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    // UŒ‚
-    void fAttackInit();
-    void fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì
+    void fAttackPreActionInit();
+    void fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);;
 
-    // UŒ‚I‚í‚è
+    // UŒ‚
     void fAttackEndInit();
     void fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
@@ -82,7 +89,7 @@ private:
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
-    void fInitialize() override{};
+    void fInitialize() override{}
 };
 
 
