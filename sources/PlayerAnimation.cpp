@@ -292,6 +292,7 @@ void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
 
     if (special_surge_timer > 2.0f)
     {
+        velocity = {};
         TransitionOpportunity();
     }
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -519,7 +520,7 @@ void Player::TransitionSpecialSurge()
     special_surge_combo_count = 0;//ƒQ[ƒWÁ”ï‚Ì“Ëi’†‚É“–‚½‚Á‚½“G‚Ì”‚ğ‰Šú‰»‚µ‚Ä‚¨‚­
     is_special_surge = true;
     is_attack = true;
-    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     player_activity = &Player::SpecialSurgeUpdate;
     combo_count -= 10.0f;
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);

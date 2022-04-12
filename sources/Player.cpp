@@ -544,20 +544,22 @@ void Player::ChargeAcceleration(float elapse_time)
     {
         DirectX::XMFLOAT3 v{};
         DirectX::XMStoreFloat3(&v,DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+        float length{ Math::calc_vector_AtoB_length(position,target) };
 
-        velocity.x = v.x * 50.0f;
-        velocity.y = v.y * 50.0f;
-        velocity.z = v.z * 50.0f;
+        velocity.x = v.x * length * 5.0f;
+        velocity.y = v.y * length * 5.0f;
+        velocity.z = v.z * length * 5.0f;
         //position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
     {
         DirectX::XMFLOAT3 v{};
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+        float length{ Math::calc_vector_AtoB_length(position,charge_point) };
 
-        velocity.x = v.x * 50.0f;
-        velocity.y = v.y * 50.0f;
-        velocity.z = v.z * 50.0f;
+        velocity.x = v.x * length * 5.0f;
+        velocity.y = v.y * length * 5.0f;
+        velocity.z = v.z * length * 5.0f;
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
@@ -569,11 +571,23 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
     {
         if (is_lock_on)
         {
-            position = Math::lerp(position, target, 5.0f * elapse_time);
+            DirectX::XMFLOAT3 v{};
+            DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+            velocity.x = v.x * 90.0f;
+            velocity.y = v.y * 90.0f;
+            velocity.z = v.z * 90.0f;
+
+            //position = Math::lerp(position, target, 5.0f * elapse_time);
         }
         else
         {
-            position = Math::lerp(position, charge_point, 5.0f * elapse_time);
+            DirectX::XMFLOAT3 v{};
+            DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+            velocity.x = v.x * 90.0f;
+            velocity.y = v.y * 90.0f;
+            velocity.z = v.z * 90.0f;
+
+            //position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }
     }
 }
