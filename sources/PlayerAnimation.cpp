@@ -3,7 +3,6 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //自分のクラスの関数ポインタを呼ぶ
     (this->*player_activity)(elapsed_time, sky_dome);
-
 }
 
 void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)

@@ -363,7 +363,7 @@ void Player::BodyCapsule()
 
         body_capsule_param.start = pos;
         body_capsule_param.end = end;
-        body_capsule_param.rasius = 0.5f;
+        body_capsule_param.rasius = 1.5f;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
