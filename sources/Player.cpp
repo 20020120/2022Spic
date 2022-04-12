@@ -133,6 +133,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::TreePop();
             }
 
+            ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
+            ImGui::DragFloat("glow_time", &glow_time);
+
             ImGui::End();
         }
     }
@@ -573,9 +576,11 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
         {
             DirectX::XMFLOAT3 v{};
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
-            velocity.x = v.x * 90.0f;
-            velocity.y = v.y * 90.0f;
-            velocity.z = v.z * 90.0f;
+            float length{ Math::calc_vector_AtoB_length(position,target) };
+
+            velocity.x = v.x * length * 6.0f;
+            velocity.y = v.y * length * 6.0f;
+            velocity.z = v.z * length * 6.0f;
 
             //position = Math::lerp(position, target, 5.0f * elapse_time);
         }
@@ -583,9 +588,10 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
         {
             DirectX::XMFLOAT3 v{};
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
-            velocity.x = v.x * 90.0f;
-            velocity.y = v.y * 90.0f;
-            velocity.z = v.z * 90.0f;
+            float length{ Math::calc_vector_AtoB_length(position,charge_point) };
+            velocity.x = v.x * length * 6.0f;
+            velocity.y = v.y * length * 6.0f;
+            velocity.z = v.z * length * 6.0f;
 
             //position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }

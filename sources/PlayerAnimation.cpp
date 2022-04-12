@@ -516,7 +516,7 @@ void Player::TransitionAttackType3(float blend_seconds)
 
 void Player::TransitionSpecialSurge()
 {
-    model->play_animation(AnimationClips::IdleWing, true);
+    model->play_animation(AnimationClips::IdleWing, true,0);
     special_surge_combo_count = 0;//ƒQ[ƒWÁ”ï‚Ì“Ëi’†‚É“–‚½‚Á‚½“G‚Ì”‚ğ‰Šú‰»‚µ‚Ä‚¨‚­
     is_special_surge = true;
     is_attack = true;
