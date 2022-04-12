@@ -242,5 +242,8 @@ float4 main(VS_OUT pin) : SV_TARGET
         outcolor += lerp(destiny, dst_color, smoothstep(0, smoothstep(0, mask.r, dissolve_threshold.x), smoothstep(0, 0.1, abs(dissolve_threshold.x - mask.r))));
     }
 
+    // マテリアルのアルファ値が0.1未満ならそのピクセルを破棄する
+    clip(outcolor.a < 0.1f ? -1 : 1);
+
     return outcolor;
 }
