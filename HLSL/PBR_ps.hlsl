@@ -224,7 +224,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     float glow_interval  = -1.0f;
     float sin_v = sin(pin.texcoord.y * glow_thickness + dissolve_threshold.y * glow_interval);
     float steped = smoothstep(1, sin_v * sin_v, 0.99);
-    //float steped = step(0.99, sin_v * sin_v);
     finalColor.rgb += glow * steped * emissive_color.w;
 
     // ƒuƒ‹[ƒ€‚Å–\‘–‚µ‚È‚¢‚æ‚¤‚É‹­§

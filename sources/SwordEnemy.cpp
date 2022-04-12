@@ -119,7 +119,7 @@ void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     //--------------------<ƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‰ñ“]>--------------------//
     fTurnToTarget(elapsedTime_, mPlayerPosition);
-    
+
     // ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ªˆê’èˆÈ‰º‚É‚È‚Á‚½‚ç
     if(mAttackRange >= Math::Length(mPlayerPosition-mPosition))
     {
@@ -147,7 +147,7 @@ void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 //--------------------<Œ•‚ðU‚è‰º‚ë‚·—\”õ“®ì>--------------------//
 void SwordEnemy::fAttackPreActionInit()
 {
-    mpSkinnedMesh->play_animation(AnimationName::attack_up,false,0.0f);
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_up, false, false);
     mWaitTimer = 0.0f;
 }
 void SwordEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -161,7 +161,7 @@ void SwordEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Gr
 //--------------------<UŒ‚’†i“–‚½‚è”»’èONj>--------------------//
 void SwordEnemy::fAttackEndInit()
 {
-    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_down);
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_down, false, false);
     mWaitTimer = 0.0f;
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

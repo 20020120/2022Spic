@@ -239,15 +239,16 @@ public:
     };
     struct anim_Parameters
     {
-        int current_anim_index{ 0 };               // 現在のアニメーションのインデックス
-        int old_anim_index{ 0 };                   // ひとつ前ののアニメーションのインデックス
-        int frame_index{ 0 };                      // 再生中のアニメーションのフレーム
-        float animation_tick{ 0 };                 // フレームの中の再生時間
-        bool do_loop{ false };                     // ループ再生するか
-        bool stop_animation{ false };              // アニメーションの停止
-        bool end_of_animation{ false };            // アニメーションが1ループ再生したか
-        float animation_blend_time = 0.0f;         // アニメーション間の補完時間
-        float animation_blend_seconds = 0.0f;      // アニメーション間の補完割合
+        int current_anim_index        = 0;       // 現在のアニメーションのインデック
+        int old_anim_index            = 0;       // ひとつ前ののアニメーションのインデックス
+        int frame_index               = 0;       // 再生中のアニメーションのフレーム
+        float animation_tick          = 0;       // フレームの中の再生時間
+        bool do_loop                  = false;   // ループ再生するか
+        bool stop_animation           = false;   // アニメーションの停止
+        bool end_of_animation         = false;   // アニメーションが1ループ再生したか
+        float animation_blend_time    = 0.0f;    // アニメーション間の補完時間
+        float animation_blend_seconds = 0.0f;    // アニメーション間の補完割合
+        bool interpolation            = true;    // 補完するか
 
         animation animation{};
         animation::keyframe current_keyframe{};
@@ -381,8 +382,8 @@ public:
 
 
     // アニメーション
-    void play_animation(int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
-    void play_animation(anim_Parameters& para, int animation_index, bool is_loop = false, float blend_seconds = 0.3f);
+    void play_animation(int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f);
+    void play_animation(anim_Parameters& para, int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f);
     void pause_animation() { anim_para.stop_animation = true; }
     void pause_animation(anim_Parameters& para) { para.stop_animation = true; }
     void progress_animation() { anim_para.stop_animation = false; }
