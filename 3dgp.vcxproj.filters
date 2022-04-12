@@ -438,6 +438,9 @@
     <ClCompile Include="sources\SwordEnemy.cpp">
       <Filter>Sources\character\enemy\01_Sword</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SpearEnemy.cpp">
+      <Filter>Sources\character\enemy\02_Spear</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -724,6 +727,9 @@
     </ClInclude>
     <ClInclude Include="sources\EventFlag.h">
       <Filter>Sources\EventFlag</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SpearEnemy.h">
+      <Filter>Sources\character\enemy\02_Spear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

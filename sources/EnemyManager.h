@@ -53,6 +53,7 @@ class EnemyManager final
         Shield,//‚‚¿
         MiddleBoss_, // ’†ƒ{ƒX
         Sword,// “‚Ì“G 
+        Spear,
         // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
         Count, // í—Ş‚Ì‘—Ê
     };
