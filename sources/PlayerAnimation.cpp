@@ -374,8 +374,11 @@ void Player::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation()) TransitionIdle();
-    model->update_animation(elapsed_time);
+    if (model->end_of_animation())
+    {
+        TransitionIdle(10.0f);
+    }
+    model->update_animation(elapsed_time * 0.2f);
 }
 
 void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -397,7 +400,7 @@ void Player::Awaiking()
 void Player::TransitionIdle(float blend_second)
 {
     end_dash_effect = true;
-    if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true,blend_second);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true,true,blend_second);
     else model->play_animation(AnimationClips::Idle, true,blend_second);
     is_attack = false;
     player_activity = &Player::IdleUpdate;
