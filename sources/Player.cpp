@@ -125,8 +125,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
-                int c = static_cast<int>(combo_count);
-                ImGui::DragInt("combo", &c);
+                ImGui::DragFloat("combo", &combo_count);
+
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
