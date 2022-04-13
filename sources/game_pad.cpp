@@ -136,6 +136,7 @@ void GamePad::update(float elapsed_time)
 	}
 	// キーボードでエミュレーション
 	{
+#ifdef _DEBUG
 		float lx = 0.0f;
 		float ly = 0.0f;
 		float rx = 0.0f;
@@ -181,6 +182,7 @@ void GamePad::update(float elapsed_time)
 			axisRx = rx / power;
 			axisRy = ry / power;
 		}
+#endif
 	}
 	// ボタン情報の更新
 	if (operable)
