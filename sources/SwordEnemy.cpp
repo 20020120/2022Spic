@@ -98,9 +98,9 @@ void SwordEnemy::fSetAttackCapsuleCollider()
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 up{};
     // ボーンの名前から位置と上ベクトルを取得
-    /*mpSkinnedMesh->find_bone_by_name(mAnimPara,
+    mpSkinnedMesh->find_bone_by_name(mAnimPara,
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
-        "hand_r_joint", position, up);*/
+        "hand_r_joint", position, up);
     up = Math::Normalize(up);
     
     mAttackCapsuleCollider.mPointA = position + up * 5.0f;
