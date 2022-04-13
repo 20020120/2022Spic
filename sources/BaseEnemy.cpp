@@ -43,7 +43,7 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
 void BaseEnemy::fDieEffect() const
 {
     mDieEffect->play(effect_manager->get_effekseer_manager(), mPosition,2.0f);
-    hit_stop->damage_hit_stop();
+    //\hit_stop->damage_hit_stop();
 }
 
 void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)

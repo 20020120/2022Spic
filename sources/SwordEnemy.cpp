@@ -1,6 +1,7 @@
 #include"SwordEnemy.h"
 #include"Operators.h"
-SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_)
+SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_, 
+    int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_,ParamGetFunction Func_ )
     :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.cereal")
 {
     // 位置の初期化
@@ -9,7 +10,8 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFL
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     // ステートマシンを初期化
     SwordEnemy::fRegisterFunctions();
-    mParam.mHitPoint = 1;
+    mParam.mHitPoint = 10;
+    fGetParam(this, Func_);
 }
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

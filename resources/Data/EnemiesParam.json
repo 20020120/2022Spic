@@ -76,6 +76,21 @@
             }
         },
         {
+            "key": "class SwordEnemy",
+            "value": {
+                "Name": "class SwordEnemy",
+                "MaxHp": 10,
+                "AttackPower": 0,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 3.0,
+                    "LengthB": -1.0,
+                    "Radius": 1.0
+                }
+            }
+        },
+        {
             "key": "class TestEnemy",
             "value": {
                 "Name": "class TestEnemy",
