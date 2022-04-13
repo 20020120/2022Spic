@@ -23,12 +23,15 @@
 //
 //****************************************************************
 
-void EnemyManager::fInitialize()
+void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 {
     //--------------------<初期化>--------------------//
     fAllClear();
     fRegisterEmitter();
     mUniqueCount = 0;
+
+    // キャッシュに登録
+    fRegisterCash(graphics_,Func_);
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -59,6 +62,7 @@ void EnemyManager::fRender(GraphicsPipeline& graphics_)
 void EnemyManager::fFinalize()
 {
     fAllClear();
+    fDeleteCash();
 }
 
 int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
@@ -569,4 +573,28 @@ void EnemyManager::fDeleteEnemies()
         }
     }
     mRemoveVec.clear();
+}
+
+void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_)
+{
+    // キャッシュにモデルを登録
+    BaseEnemy* enemy = 
+        new SwordEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f });
+    mCashEnemyVec.emplace_back(enemy);
+}
+
+void EnemyManager::fDeleteCash()
+{
+
+    for (const auto enemy : mCashEnemyVec)
+    {
+        // 存在していれば削除
+        if (enemy)
+        {
+            delete enemy;
+        }
+    }
+    mCashEnemyVec.clear();
 }

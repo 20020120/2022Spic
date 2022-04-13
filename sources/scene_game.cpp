@@ -28,10 +28,10 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	// effect
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
 
-	//--------------------<敵の管理クラスを初期化>--------------------//
-	mWaveManager.fInitialize(graphics);
 	//--------------------<弾の管理クラスを初期化>--------------------//
 	mBulletManager.fInitialize();
+	//--------------------<敵の管理クラスを初期化>--------------------//
+	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
 
     player = std::make_unique<Player>(graphics);
 	// カメラ

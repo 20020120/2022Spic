@@ -16,7 +16,8 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     // 攻撃に関するparameterを初期化
     mAttackInformation.mDamage = 10;
     mAttackInformation.mInvincible_time = { 0.2f };
-    
+     // ボーンを初期化
+    mSwordBone = mpSkinnedMesh->get_bone_by_name("hand_r_joint");
 }
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -98,9 +99,9 @@ void SwordEnemy::fSetAttackCapsuleCollider()
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 up{};
     // ボーンの名前から位置と上ベクトルを取得
-    mpSkinnedMesh->find_bone_by_name(mAnimPara,
+    mpSkinnedMesh->fech_by_bone(mAnimPara,
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
-        "hand_r_joint", position, up);
+        mSwordBone, position, up);
     up = Math::Normalize(up);
     
     mAttackCapsuleCollider.mPointA = position + up * 5.0f;

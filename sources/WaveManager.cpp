@@ -1,9 +1,9 @@
 #include"WaveManager.h"
 #define ProtoType
-void WaveManager::fInitialize(GraphicsPipeline& graphics_)
+void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
 {
     // ‰Šú‰»
-    mEnemyManager.fInitialize();
+    mEnemyManager.fInitialize(graphics_,Func_);
 
     mWaveState = WaveState::Start;
 }

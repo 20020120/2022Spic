@@ -67,7 +67,7 @@ public:
     EnemyManager() = default;
     ~EnemyManager() = default;
 
-    void fInitialize();
+    void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
     void fRender(GraphicsPipeline& graphics_);
     void fFinalize();
@@ -108,8 +108,9 @@ public:
     //--------------------<敵の実体を削除する関数>--------------------//
     void fDeleteEnemies();
 
-
-
+    //--------------------<キャッシュにモデルデータを登録>--------------------//
+    void fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fDeleteCash(); // キャッシュを削除
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_); // 敵の生成を管理
@@ -147,7 +148,8 @@ private:
     std::vector<BaseEnemy*> mEnemyVec;  // 敵を格納するコンテナ
     std::vector<BaseEnemy*> mRemoveVec; // 敵を格納するコンテナ
     std::map<int, Emitter> mEmitterMap{}; // 敵の出現口
-
+    // リソースマネージャーが情報を保持できるようにキャッシュとしてモデルデーを登録する
+    std::vector<BaseEnemy*> mCashEnemyVec{}; 
     //--------------------<ウェーブに関する変数>--------------------//
     float mWaveTimer{}; // 各ウェーブ開始からの経過時間
     int mCurrentWave{}; // 現在のウェーブ

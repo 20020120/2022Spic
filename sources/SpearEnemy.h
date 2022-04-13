@@ -48,6 +48,7 @@ private:
     // 
     //****************************************************************
     float mWaitTime{}; // 待機時間
+    DirectX::XMFLOAT3 mThrustTarget{}; // 突進中のターゲット
 private:
     //****************************************************************
     // 
@@ -55,16 +56,22 @@ private:
     // 
     //****************************************************************
     const float mIdleSec{ 2.0f };       // 待機時間
-    const float mAttackLength{ 30.0f }; // プレイヤーとの距離がこの距離以下になったら
+    const float mAttackLength{ 100.0f }; // プレイヤーとの距離がこの距離以下になったら
     const float mMoveSpeed{ 20.0f };    // 移動速度
     const float mThrustBeginSec{ 1.0f }; // 突進準備の時間
-
+    const float mThrustMiddleSec{ 0.2f }; // 槍を突き出す長さ
+    const float mThrustEndSec{ 3.0f }; // 突進中の長さ
+    const float mThrustSpeed{ 60.0f }; // 突進の速さ
+    const float mThrustDegree{ 30.0f }; // 突進の角度
 private:
     //****************************************************************
     // 
     // ステートマシン
     // 
     //****************************************************************
+    //--------------------<開始時>--------------------//
+    void fStartInit();
+    void fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     //--------------------<待機>--------------------//
     void fIdleInit();
     void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
