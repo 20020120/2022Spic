@@ -167,6 +167,9 @@ private:
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
+
+
+    skeleton::bone player_bones[8];
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
