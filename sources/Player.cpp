@@ -21,6 +21,15 @@ Player::Player(GraphicsPipeline& graphics)
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {Damaged(damage, invincible); };
 
+
+    player_bones[0] = model->get_bone_by_name("body_joint");
+    player_bones[1] = model->get_bone_by_name("face_joint");
+    player_bones[2] = model->get_bone_by_name("largeblade_L_joint");
+    player_bones[3] = model->get_bone_by_name("largeblade_L_top_joint");
+    player_bones[4] = model->get_bone_by_name("largeblade_R_joint");
+    player_bones[5] = model->get_bone_by_name("largeblade_R_top_joint");
+    player_bones[6] = model->get_bone_by_name("shortsword_joint");
+    player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
 }
 
 Player::~Player()
@@ -358,8 +367,8 @@ void Player::BodyCapsule()
         DirectX::XMFLOAT3 pos = {}, up = {};
         DirectX::XMFLOAT3 end = {}, e_up = {};
 
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "body_joint", pos, up);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "face_joint", end, e_up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[0], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[1], end, e_up);
 
         body_capsule_param.start = pos;
         body_capsule_param.end = end;
@@ -369,8 +378,8 @@ void Player::BodyCapsule()
         DirectX::XMFLOAT3 pos = {}, up = {};
         DirectX::XMFLOAT3 end = {}, e_up = {};
 
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "body_joint", pos, up);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "face_joint", end, e_up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[0], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[1], end, e_up);
 
         charge_capsule_param.start = pos;
         charge_capsule_param.end = end;
@@ -386,10 +395,10 @@ void Player::SwordCapsule()
     if (is_awakening)
     {
 
-            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_joint", pos, up);
-            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_L_top_joint", end, e_up);
-            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_joint", pos_2, up_2);
-            model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "largeblade_R_top_joint", end_2, e_up_2);
+            model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[2], pos, up);
+            model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[3], end, e_up);
+            model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[4], pos_2, up_2);
+            model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[5], end_2, e_up_2);
 
             sword_capsule_param[0].start = pos;
             sword_capsule_param[0].end = end;
@@ -402,8 +411,8 @@ void Player::SwordCapsule()
     }
     else
     {
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "shortsword_joint", pos, up);
-        model->find_bone_by_name(Math::calc_world_matrix(scale, orientation, position), "shortsword_top_joint", end, e_up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[6], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[7], end, e_up);
 
         sword_capsule_param[0].start = pos;
         sword_capsule_param[0].end = end;

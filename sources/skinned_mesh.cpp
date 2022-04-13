@@ -175,78 +175,70 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
 #endif
 }
 
-void SkinnedMesh::find_bone_by_name(const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+const skeleton::bone& SkinnedMesh::get_bone_by_name(std::string name)
 {
+    skeleton::bone dummy = {};
     for (const mesh& mesh : meshes)
     {
-        if (&anim_para.current_keyframe && (&anim_para.current_keyframe)->nodes.size() > 0)
+        const size_t bone_count{ mesh.bind_pose.bones.size() };
+        _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
+        for (int bone_index = 0; bone_index < bone_count; ++bone_index)
         {
-            const size_t bone_count{ mesh.bind_pose.bones.size() };
-            _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
-            for (int bone_index = 0; bone_index < bone_count; ++bone_index)
+            const skeleton::bone& bone = mesh.bind_pose.bones.at(bone_index);
+            if (bone.name == name)
             {
-                const skeleton::bone& bone = mesh.bind_pose.bones.at(bone_index);
-                if (bone.name == name)
-                {
-                    const animation::keyframe::node& bone_node{ (&anim_para.current_keyframe)->nodes.at(bone.node_index) };
-                    DirectX::XMFLOAT4X4 w;
-                    XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
-
-                    pos = { w._41,w._42,w._43 };
-                    DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
-
-                    DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
-                    DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
-                    DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S)* DirectX::XMMatrixInverse(nullptr, T);
-
-                    DirectX::XMFLOAT4X4 r = {};
-                    DirectX::XMStoreFloat4x4(&r, R);
-                    DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
-                    XMStoreFloat3(&up, right_vec);
-
-                    return;
-                }
+                return bone;
             }
         }
     }
     assert("指定された名前のボーンがありません");
+    return dummy;
 }
 
-void SkinnedMesh::find_bone_by_name(anim_Parameters& para, const DirectX::XMFLOAT4X4& world, std::string name, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+void SkinnedMesh::fech_by_bone(const DirectX::XMFLOAT4X4& world, const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
 {
-    for (const mesh& mesh : meshes)
+    if (&anim_para.current_keyframe && (&anim_para.current_keyframe)->nodes.size() > 0)
     {
-        if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
-        {
-            const size_t bone_count{ mesh.bind_pose.bones.size() };
-            _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
-            for (int bone_index = 0; bone_index < bone_count; ++bone_index)
-            {
-                const skeleton::bone& bone = mesh.bind_pose.bones.at(bone_index);
-                if (bone.name == name)
-                {
-                    const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
-                    DirectX::XMFLOAT4X4 w;
-                    XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
+        const animation::keyframe::node& bone_node{ (&anim_para.current_keyframe)->nodes.at(bone.node_index) };
+        DirectX::XMFLOAT4X4 w;
+        XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
 
-                    pos = { w._41,w._42,w._43 };
-                    DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
+        pos = { w._41,w._42,w._43 };
+        DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
 
-                    DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
-                    DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
-                    DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S) * DirectX::XMMatrixInverse(nullptr, T);
+        DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
+        DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
+        DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S) * DirectX::XMMatrixInverse(nullptr, T);
 
-                    DirectX::XMFLOAT4X4 r = {};
-                    DirectX::XMStoreFloat4x4(&r, R);
-                    DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
-                    XMStoreFloat3(&up, right_vec);
-
-                    return;
-                }
-            }
-        }
+        DirectX::XMFLOAT4X4 r = {};
+        DirectX::XMStoreFloat4x4(&r, R);
+        DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
+        XMStoreFloat3(&up, right_vec);
     }
-    assert("指定された名前のボーンがありません");
+}
+
+void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
+    const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+{
+    if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
+    {
+        const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
+        DirectX::XMFLOAT4X4 w;
+        XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
+
+        pos = { w._41,w._42,w._43 };
+        DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
+
+        DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
+        DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
+        DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S) * DirectX::XMMatrixInverse(nullptr, T);
+
+        DirectX::XMFLOAT4X4 r = {};
+        DirectX::XMStoreFloat4x4(&r, R);
+        DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
+        XMStoreFloat3(&up, right_vec);
+
+    }
 }
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
@@ -1095,9 +1087,11 @@ void SkinnedMesh::update_animation(float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
+        animation old_animation = animation_clips.at(anim_para.old_anim_index);
+        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2] {
-          &animation_clips.at(anim_para.old_anim_index).sequence.at(anim_para.frame_index),
-          &animation_clips.at(anim_para.current_anim_index).sequence.at(anim_para.frame_index)
+          &animation_clips.at(anim_para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(anim_para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, anim_para.current_keyframe);
         update_blend_animation(anim_para.current_keyframe);
@@ -1156,9 +1150,11 @@ void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
+        animation old_animation = animation_clips.at(para.old_anim_index);
+        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2]{
-          &animation_clips.at(para.old_anim_index).sequence.at(para.frame_index),
-          &animation_clips.at(para.current_anim_index).sequence.at(para.frame_index)
+          &animation_clips.at(para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, para.current_keyframe);
         update_blend_animation(para.current_keyframe);

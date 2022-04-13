@@ -167,6 +167,9 @@ private:
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
+
+
+    skeleton::bone player_bones[8];
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
@@ -302,7 +305,7 @@ private:
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
     void TransitionIdle(float blend_second = 0.3f);
-    void TransitionMove();
+    void TransitionMove(float blend_second = 0.3f);
     void TransitionAvoidance();
     void TransitionBehindAvoidance();//背後に回り込む回避
     void TransitionChargeInit();
