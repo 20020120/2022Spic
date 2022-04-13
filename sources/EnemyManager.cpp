@@ -113,6 +113,7 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
                 if (result)
                 {
                     Func_(enemy->fGetAttackInfo().mDamage, enemy->fGetAttackInfo().mInvincible_time);
+                    return  true;
                 }
             }
         }

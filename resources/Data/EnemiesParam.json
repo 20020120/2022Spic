@@ -84,9 +84,9 @@
                 "MoveSpeed": 0.0,
                 "AttackSpeed": 0.0,
                 "Capsule": {
-                    "LengthA": 3.0,
-                    "LengthB": -1.0,
-                    "Radius": 1.0
+                    "LengthA": 4.0,
+                    "LengthB": -2.0,
+                    "Radius": 2.0
                 }
             }
         },

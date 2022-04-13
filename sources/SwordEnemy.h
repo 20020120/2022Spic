@@ -38,6 +38,8 @@ public:
 
     void fRegisterFunctions() override; // ステートを登録
 
+    void fSetAttackCapsuleCollider();
+
     //****************************************************************
     // 
     // 変数

@@ -19,5 +19,5 @@ float4 main(PsInput PsInput_) : SV_TARGET
 	float4 baseColor =   gTexColor.Sample(gSampler, PsInput_.Texcoord);
 	float4 finalColor = lerp(baseColor, yugamicolor, yugamiThreshold);
 
-	return finalColor;
+	return float4(30.0f,6.0f,6.0f,1.0f);
 }

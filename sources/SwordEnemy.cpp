@@ -2,7 +2,7 @@
 #include"Operators.h"
 SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_, 
     int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_,ParamGetFunction Func_ )
-    :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.cereal")
+    :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.fbx")
 {
     // 位置の初期化
     mPosition = EmitterPoint_;
@@ -10,13 +10,19 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     // ステートマシンを初期化
     SwordEnemy::fRegisterFunctions();
-    mParam.mHitPoint = 10;
+    mParam.mHitPoint = 100;
     fGetParam(this, Func_);
+
+    // 攻撃に関するparameterを初期化
+    mAttackInformation.mDamage = 10;
+    mAttackInformation.mInvincible_time = { 0.2f };
+    
 }
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     fUpdateBase(elapsedTime_,Graphics_);
+    fSetAttackCapsuleCollider(); // 攻撃用のカプセル位置を更新
 }
 
 void SwordEnemy::fRegisterFunctions()
@@ -84,6 +90,23 @@ void SwordEnemy::fRegisterFunctions()
     }
 
     fChangeState(DivedState::Start);
+}
+
+void SwordEnemy::fSetAttackCapsuleCollider()
+{
+    //--------------------<剣のカプセルの位置を決定する>--------------------//
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    // ボーンの名前から位置と上ベクトルを取得
+    mpSkinnedMesh->find_bone_by_name(mAnimPara,
+        Math::calc_world_matrix(mScale, mOrientation, mPosition),
+        "hand_r_joint", position, up);
+    up = Math::Normalize(up);
+    
+    mAttackCapsuleCollider.mPointA = position + up * 5.0f;
+    mAttackCapsuleCollider.mPointB = position + up * 1.0f;
+    mAttackCapsuleCollider.mRadius = 2.0f;
+
 }
 
 void SwordEnemy::fSpawnInit()
@@ -165,6 +188,7 @@ void SwordEnemy::fAttackEndInit()
 {
     mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_down, false, false);
     mWaitTimer = 0.0f;
+    mAttackInformation.mIsAttack = true;
 }
 void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -172,6 +196,7 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     if(mWaitTimer>=mAttackDownSec)
     {
         fChangeState(DivedState::Start);
+        mAttackInformation.mIsAttack = false;
     }
 }
 
