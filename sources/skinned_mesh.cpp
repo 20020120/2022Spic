@@ -1037,6 +1037,7 @@ void SkinnedMesh::play_animation(int animation_index, bool is_loop, bool interpo
     anim_para.animation_blend_seconds = blend_seconds;
     anim_para.animation_blend_time    = 0.0f;
     anim_para.current_anim_index      = animation_index;
+    anim_para.last_frame_index        = anim_para.frame_index;
     anim_para.frame_index             = 0;
     anim_para.animation_tick          = 0;
     anim_para.do_loop                 = is_loop;
@@ -1056,6 +1057,7 @@ void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, boo
     para.animation_blend_seconds = blend_seconds;
     para.animation_blend_time    = 0.0f;
     para.current_anim_index      = animation_index;
+    para.last_frame_index        = para.frame_index;
     para.frame_index             = 0;
     para.animation_tick          = 0;
     para.do_loop                 = is_loop;
@@ -1087,10 +1089,8 @@ void SkinnedMesh::update_animation(float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
-        animation old_animation = animation_clips.at(anim_para.old_anim_index);
-        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2] {
-          &animation_clips.at(anim_para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(anim_para.old_anim_index).sequence.at(anim_para.last_frame_index),
           &animation_clips.at(anim_para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, anim_para.current_keyframe);
@@ -1150,10 +1150,8 @@ void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
-        animation old_animation = animation_clips.at(para.old_anim_index);
-        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2]{
-          &animation_clips.at(para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(para.old_anim_index).sequence.at(para.last_frame_index),
           &animation_clips.at(para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, para.current_keyframe);

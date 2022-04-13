@@ -240,8 +240,9 @@ public:
     struct anim_Parameters
     {
         int current_anim_index        = 0;       // 現在のアニメーションのインデック
-        int old_anim_index            = 0;       // ひとつ前ののアニメーションのインデックス
+        int old_anim_index            = 0;       // ひとつ前のアニメーションのインデックス
         int frame_index               = 0;       // 再生中のアニメーションのフレーム
+        int last_frame_index          = 0;       // ひとつ前のアニメーションが終わった時点のフレーム
         float animation_tick          = 0;       // フレームの中の再生時間
         bool do_loop                  = false;   // ループ再生するか
         bool stop_animation           = false;   // アニメーションの停止
