@@ -68,9 +68,9 @@ float3 cast_shadow(in float3 color, float depth, float3 shadow_texcoord)
 float3 get_normal(float3 normal, float3 tangent, float3 binormal, float2 uv)
 {
     float3 bin_space_normal = texture_maps[NORMAL].SampleLevel(sampler_states[ANISOTROPIC], uv, 0.0f).xyz;
-    bin_space_normal = (bin_space_normal * 2.0f) - 1.0f;
+    bin_space_normal        = (bin_space_normal * 2.0f) - 1.0f;
 
-    float3 new_normal = tangent * bin_space_normal.x + binormal * bin_space_normal.y + normal * bin_space_normal.z;
+    float3 new_normal       = tangent * bin_space_normal.x + binormal * bin_space_normal.y + normal * bin_space_normal.z;
 
     return new_normal;
 }
