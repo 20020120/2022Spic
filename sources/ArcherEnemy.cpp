@@ -40,17 +40,31 @@ void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 
 void ArcherEnemy::fRegisterFunctions()
 {
-    //‘Ò‹@ó‘Ô‚Ì“o˜^
+    //“oêó‘Ô‚Ì“o˜^
     InitFunc Ini = [=]()->void
     {
-        fIdleInit();
+        fSpawnInit();
     };
     UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fIdleUpdate(elapsedTime_, Graphics_);
+        fSpawnUpdate(elapsedTime_, Graphics_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(State::Start, tuple));
+
+    //‘Ò‹@ó‘Ô‚Ì“o˜^
+    Ini = [=]()->void
+    {
+        fIdleInit();
+    };
+    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+    {
+        fIdleUpdate(elapsedTime_, Graphics_);
+    };
+    tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Idle, tuple));
+
+    
 
     //ˆÚ“®ó‘Ô‚Ì“o˜^
     Ini = [=]()->void
@@ -125,6 +139,21 @@ void ArcherEnemy::fParamInitialize()
     //mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
     mStayTimer = 1.0f;
     mAttack_flg = false;
+}
+
+void ArcherEnemy::fSpawnInit()
+{
+}
+
+void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mStayTimer += elapsedTime_;
+
+    // ˆê’èŽžŠÔŒo‰ß‚ÅˆÚ“®‚É‘JˆÚ
+    if (mStayTimer >= SPAWN_STAY_TIME)
+    {
+        fChangeState(State::Move);
+    }
 }
 
 void ArcherEnemy::fDamaged(int Damage_, float InvinsibleTime_)

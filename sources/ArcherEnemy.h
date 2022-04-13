@@ -37,6 +37,9 @@ private:
     void fParamInitialize();
 
     //--------------------<各ステートの関数>--------------------//
+    void fSpawnInit();   // 登場の初期化
+    void fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // 登場の更新処理
+
     void fIdleInit();   // 待機の初期化
     void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // 待機の更新処理
 
@@ -73,7 +76,13 @@ private:
     float mAttackingTime;
     bool mAttack_flg;
     AddBulletFunc mfAddFunc;
-
+    //****************************************************************
+   // 　
+   // 定数 
+   // 
+   //****************************************************************
+    //登場後の待機時間
+    const float SPAWN_STAY_TIME = 2.0f;
     //プレイヤーに攻撃を開始する最短距離
     const float AT_SHORTEST_DISTANCE = 30.0f;
     //プレイヤーに攻撃を開始する最長距離
