@@ -99,9 +99,13 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         Awaiking();
+        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
-    UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    model->update_animation(elapsed_time * AVOIDANCE_ANIMATION_SPEED);
+    else
+    {
+        UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    }
+    model->update_animation(elapsed_time);
 }
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -399,11 +403,11 @@ void Player::TransitionIdle(float blend_second)
     player_activity = &Player::IdleUpdate;
 }
 
-void Player::TransitionMove()
+void Player::TransitionMove(float blend_second)
 {
     end_dash_effect = true;
-    if(is_awakening)model->play_animation(AnimationClips::AwakingMove, true);
-    else model->play_animation(AnimationClips::Move, true);
+    if(is_awakening)model->play_animation(AnimationClips::AwakingMove, true, blend_second);
+    else model->play_animation(AnimationClips::Move, true, blend_second);
     is_attack = false;
     player_activity = &Player::MoveUpdate;
 }
@@ -415,7 +419,7 @@ void Player::TransitionAvoidance()
     avoidance_start = velocity;
     if (is_lock_on)
     {
-        leverage = 5.0f;
+        leverage = 15.0f;
         DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
         if (sqrtf((movevec.x * movevec.x) + (movevec.y * movevec.y) + (movevec.z * movevec.z)) <= 0.0f)
         {
@@ -428,7 +432,7 @@ void Player::TransitionAvoidance()
     }
     else
     {
-        leverage = 15.0f;
+        leverage = 30.0f;
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
     //-----------------------------------------------------------------------------------------//
