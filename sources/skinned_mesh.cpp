@@ -1087,9 +1087,11 @@ void SkinnedMesh::update_animation(float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
+        animation old_animation = animation_clips.at(anim_para.old_anim_index);
+        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2] {
-          &animation_clips.at(anim_para.old_anim_index).sequence.at(anim_para.frame_index),
-          &animation_clips.at(anim_para.current_anim_index).sequence.at(anim_para.frame_index)
+          &animation_clips.at(anim_para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(anim_para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, anim_para.current_keyframe);
         update_blend_animation(anim_para.current_keyframe);
@@ -1148,9 +1150,11 @@ void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
     // アニメーション間の補完
     if (blendRate < 1.0f)
     {
+        animation old_animation = animation_clips.at(para.old_anim_index);
+        int old_animation_max_frame_index = static_cast<int>(old_animation.sequence.size()) - 1;
         const animation::keyframe* keyframes[2]{
-          &animation_clips.at(para.old_anim_index).sequence.at(para.frame_index),
-          &animation_clips.at(para.current_anim_index).sequence.at(para.frame_index)
+          &animation_clips.at(para.old_anim_index).sequence.at(old_animation_max_frame_index),
+          &animation_clips.at(para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, para.current_keyframe);
         update_blend_animation(para.current_keyframe);
