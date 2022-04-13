@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_fifteenth.fbx",true,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_sixteenth.fbx",true,60.0f);
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -125,8 +125,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
-                int c = static_cast<int>(combo_count);
-                ImGui::DragInt("combo", &c);
+                ImGui::DragFloat("combo", &combo_count);
+
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);

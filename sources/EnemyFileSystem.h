@@ -11,7 +11,7 @@
 struct EnemySource
 {
     float mSpawnTimer{};  // 出現タイミングを記録
-    int mEmitterNumber{}; // 出現位置の番号
+    DirectX::XMFLOAT3 mEmitterPoint{}; // 出現位置の番号
     int mType{};          // 敵の種類
 
     // シリアライズ
@@ -20,7 +20,7 @@ struct EnemySource
     {
         archive(
             cereal::make_nvp("Timer", mSpawnTimer),
-            cereal::make_nvp("Emitter", mEmitterNumber),
+            cereal::make_nvp("Emitter", mEmitterPoint),
             cereal::make_nvp("Type", mType));
     }
 };

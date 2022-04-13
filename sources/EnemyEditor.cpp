@@ -39,7 +39,7 @@ void EnemyEditor::fGuiMenu()
 
     //imgui_menu_bar("Game","EnemyEditor", mIsOpenEditor);
 
-    if (mIsOpenEditor)\
+    if (mIsOpenEditor)
     {
         ImGui::Begin("WaveEditor");
         
@@ -56,18 +56,18 @@ void EnemyEditor::fGuiMenu()
 
         if (ImGui::CollapsingHeader("Setting"))
         {
-            static int emitterPoint = 0;
+            static DirectX::XMFLOAT3 emitterPoint = {};
             static float time = 0.0f;
             int enemyType = 0;
 
-            ImGui::InputInt("EmitterNumber", &emitterPoint);
+            ImGui::DragFloat3("EmitterNumber", &emitterPoint.x);
             ImGui::DragFloat("SpawnTime", &time);
             ImGui::InputInt("Type", &enemyType);
 
             if (ImGui::Button("Add"))
             {
                 EnemySource source;
-                source.mEmitterNumber = emitterPoint;
+                source.mEmitterPoint = emitterPoint;
                 source.mSpawnTimer = time;
                 source.mType = enemyType;
                 mEditorSourceVec.emplace_back(source);
@@ -82,9 +82,6 @@ void EnemyEditor::fGuiMenu()
                 ImGui::SameLine();
                 ImGui::Text(std::to_string(source.mSpawnTimer).c_str());
 
-                ImGui::Text("EmitterNumber");
-                ImGui::SameLine();
-                ImGui::Text(std::to_string(source.mEmitterNumber).c_str());
 
                 ImGui::Text("Type");
                 ImGui::SameLine();

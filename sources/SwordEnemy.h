@@ -1,5 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
+#include "EnemiesEditor.h"
 #include"EventFlag.h"
 class SwordEnemy :public BaseEnemy
 {
@@ -30,7 +31,9 @@ public:
     // 関数
     // 
     //****************************************************************
-    SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+    SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, 
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
+        ParamGetFunction Func_);
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
 
     void fRegisterFunctions() override; // ステートを登録

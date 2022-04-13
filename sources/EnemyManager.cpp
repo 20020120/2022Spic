@@ -45,8 +45,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     fCollisionEnemyVsEnemy();
 
     //--------------------<敵のスポナー>--------------------//
-    // fSpawn();
-    fProtoSpawn(graphics_, Func_);
+    fSpawn(graphics_, Func_);
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 }
@@ -215,37 +214,34 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBu
 {
     // 送られてきたデータをもとに敵を出現させる
 
-     // 出現位置を決定
-    const auto point = mEmitterMap.at(Source_.mEmitterNumber);
-
     switch (Source_.mType)
     {
     case EnemyType::Test:
     {
-        auto enemy = new TestEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new TestEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
     break;
     case EnemyType::Normal:
     {
-        auto enemy = new NormalEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new NormalEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
     break;
     case EnemyType::Chase:
     {
-        auto enemy = new ChaseEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction());
+        auto enemy = new ChaseEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
     break;
     case EnemyType::Archer:
     {
-        auto enemy = new ArcherEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction(), Func_);
+        auto enemy = new ArcherEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction(), Func_);
         mEnemyVec.emplace_back(enemy);
     }
     case EnemyType::Shield:
     {
-        auto enemy = new ArcherEnemy(graphics_, point.fGetPosition(), mUniqueCount, mEditor.fGetFunction(), Func_);
+        auto enemy = new ArcherEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction(), Func_);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -257,14 +253,15 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBu
     break;
     case EnemyType::Sword :
     {
-        auto enemy = new SwordEnemy(graphics_, mUniqueCount, point.fGetPosition());
+        auto enemy = new SwordEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint,
+            mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
         break;
 
     case EnemyType::Spear :
     {
-        auto enemy = new SpearEnemy(graphics_, mUniqueCount, point.fGetPosition());
+        auto enemy = new SpearEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -326,6 +323,14 @@ void EnemyManager::fReLoadEnemyParam()
     {
         enemy->fGetParam(enemy, mEditor.fGetFunction());
     }
+}
+
+void EnemyManager::fSave()
+{
+    EnemySource source{};
+    std::vector<EnemySource> vec{};
+    vec.emplace_back(source);
+    EnemyFileSystem::fSaveToJson(vec, "Wave1.json");
 }
 
 void EnemyManager::fAllClear()
@@ -463,9 +468,14 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         if (ImGui::Button("CreateEnemy"))
         {
             EnemySource source{};
-            source.mEmitterNumber = 0;
+            source.mEmitterPoint = {};
             source.mType = elem;
             fSpawn(source,Graphics_,Func_);
+        }
+
+        if(ImGui::Button("ss"))
+        {
+            fSave();
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);
@@ -498,6 +508,15 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
             fAllClear();
         }
 
+        ImGui::Text("LastTimer");
+        ImGui::SameLine();
+        ImGui::Text(std::to_string(mLastTimer).c_str());
+        ImGui::RadioButton("ClearWave", fWaveClear());
+
+        if (ImGui::Button("AddWaveTimer"))
+        {
+            mWaveTimer += 10.0f;
+        }
 
         if (ImGui::Button("Close"))
         {
@@ -516,6 +535,24 @@ void EnemyManager::fStartWave(int WaveIndex_)
     fAllClear();
     mWaveTimer = 0.0f;
     fLoad(mWaveFileNameArray[WaveIndex_]);
+
+    // 何秒でこのウェーブが終わるかを初期化する
+    mLastTimer = mCurrentWaveVec.back().mSpawnTimer;
+}
+
+bool EnemyManager::fWaveClear() const
+{
+    // 最後の敵が出現しているかを判定する
+    if (mLastTimer >= mWaveTimer)
+    {
+        return false;
+    }
+    // すべての敵が死んでいたら
+    if (mEnemyVec.size() > 0)
+    {
+        return false;
+    }
+    return true;
 }
 
 void EnemyManager::fDeleteEnemies()

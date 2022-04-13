@@ -15,8 +15,9 @@ class WaveManager final
 public:
     enum class WaveState
     {
-        Game,
-        Clear,
+        Start, // ゲーム開始前
+        Game,  // ゲーム中
+        Clear, // ゲームクリア
     };
 
     //****************************************************************
@@ -40,11 +41,15 @@ public:
     // ウェーブ開始
     void fStartWave();
 
+
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]]  EnemyManager* fGetEnemyManager() ;
 
     //--------------------<セッター関数>--------------------//
+    void fSetStartGame(bool Arg_);
 
+    //--------------------<ImGui>--------------------//
+    void fGuiMenu();
 
 private:
 
@@ -58,8 +63,15 @@ private:
     // 現在のウェーブ
     int mCurrentWave{};
 
+    // 最小の演出が終了したかどうか
+    bool mStartGame{};
+
     EnemyManager mEnemyManager{};
     WaveState mWaveState;
+
+    //--------------------<ImGui>--------------------//
+    bool mOpenGui{};
+
 };
 
 

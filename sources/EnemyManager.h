@@ -71,6 +71,8 @@ public:
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
     void fRender(GraphicsPipeline& graphics_);
     void fFinalize();
+
+public:
     //--------------------<当たり判定>--------------------//
 
     // プレイヤーの攻撃と敵の当たり判定
@@ -87,7 +89,7 @@ public:
         float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
         AddDamageFunc Func_
     );
-
+public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
     [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
@@ -95,10 +97,13 @@ public:
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
+public:
     //--------------------<ImGui>--------------------//
     void fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_);
     //--------------------<ウェーブ切り替え関数>--------------------//
     void fStartWave(int WaveIndex_);
+    //--------------------<ウェーブクリアしたかどうかを判定する>--------------------//
+    [[nodiscard]] bool fWaveClear() const;
 
     //--------------------<敵の実体を削除する関数>--------------------//
     void fDeleteEnemies();
@@ -121,6 +126,7 @@ private:
     //--------------------<外部ファイルに干渉する>--------------------//
     void fLoad(const char* FileName_);
     void fReLoadEnemyParam();
+    void fSave();
 
     //--------------------<管理クラス内で完結する処理>--------------------//
     void fAllClear(); // 敵を全削除する関数
@@ -147,7 +153,8 @@ private:
     int mCurrentWave{}; // 現在のウェーブ
     // 現在のウェーブのデータ
     std::vector<EnemySource> mCurrentWaveVec{};
-
+    std::vector<EnemySource> mFirstTest{};
+    float mLastTimer{};// 最後に出てくる敵の時間
     EnemyEditor mEditor{};
 
     //--------------------<プレイヤーの位置>--------------------//
@@ -165,7 +172,7 @@ private:
 
     const char* mWaveFileNameArray[1]
     {
-        "./resources/Data/Test.json",
+        "./resources/Data/Wave1.json",
     };
 
     // ImGui
