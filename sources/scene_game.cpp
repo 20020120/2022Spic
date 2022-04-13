@@ -114,6 +114,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+
+	//’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
+		player->GetBodyCapsuleParam().end,
+		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
+
 	// camera
     //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time, player.get());

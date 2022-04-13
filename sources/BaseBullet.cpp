@@ -1,5 +1,6 @@
 #include "BaseBullet.h"
 #include "effect_manager.h"
+#include "Operators.h"
 BaseBullet::BaseBullet(GraphicsPipeline& Graphics_, const char* FileName_)
 {
     mpEffect = std::make_unique<Effect>(
@@ -14,4 +15,13 @@ void BaseBullet::fUpdate(float elapsedTime_)
     mpEffect->set_position(effect_manager->get_effekseer_manager(), mPosition);
     mpEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
     mpEffect->set_scale(effect_manager->get_effekseer_manager(), mScale);
+    setCapsuleData();
+}
+
+void BaseBullet::setCapsuleData()
+{
+    DirectX::XMFLOAT3 up = Math::GetUp(mOrientation);
+    mBulletData.mRadius = mBulletData.mRadius;
+    mBulletData.mPointA = mPosition + (up * mBulletData.mLengthFromPositionA);
+    mBulletData.mPointB = mPosition - (up * mBulletData.mLengthFromPositionB);
 }
