@@ -573,7 +573,7 @@ void Player::ChargeAcceleration(float elapse_time)
     }
 }
 
-void Player::SpecialSurgeAcceleration(float elapse_time)
+void Player::SpecialSurgeAcceleration()
 {
     if (is_special_surge)
     {
@@ -583,9 +583,9 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
             float length{ Math::calc_vector_AtoB_length(position,target) };
 
-            velocity.x = v.x * length * 6.0f;
-            velocity.y = v.y * length * 6.0f;
-            velocity.z = v.z * length * 6.0f;
+            velocity.x = v.x * length * 4.0f;
+            velocity.y = v.y * length * 4.0f;
+            velocity.z = v.z * length * 4.0f;
 
             //position = Math::lerp(position, target, 5.0f * elapse_time);
         }
@@ -594,9 +594,9 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
             DirectX::XMFLOAT3 v{};
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
             float length{ Math::calc_vector_AtoB_length(position,charge_point) };
-            velocity.x = v.x * length * 6.0f;
-            velocity.y = v.y * length * 6.0f;
-            velocity.z = v.z * length * 6.0f;
+            velocity.x = v.x * length * 4.0f;
+            velocity.y = v.y * length * 4.0f;
+            velocity.z = v.z * length * 4.0f;
 
             //position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }

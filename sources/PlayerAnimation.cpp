@@ -287,9 +287,8 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     special_surge_timer += 1.0f * elapsed_time;
-    SpecialSurgeAcceleration(elapsed_time);
 
-    if (special_surge_timer > 2.0f)
+    if (special_surge_timer > 1.0f)
     {
         velocity = {};
         TransitionOpportunity();
@@ -300,33 +299,17 @@ void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    ////このカウントが多ければ隙がなくなっていく
-    ////special_surge_combo_count
-    ////ここでどれだけほかの動きに遷移するのに必要な待ち時間を決める
-    //switch (static_cast<int>(special_surge_combo_count / 5))
-    //{
-    //case 0:
-    //    special_surge_opportunity = 1.5f;
-    //    break;
-    //case 1:
-    //    special_surge_opportunity = 1.0f;
-    //    break;
-    //case 2:
-    //    special_surge_opportunity = 0.5f;
-    //    break;
-    //default:
-    //    special_surge_opportunity = 0;
-    //    break;
-    //}
-    special_surge_opportunity = 1.0f;
     opportunity_timer += 1.0f * elapsed_time;
+    if (special_surge_combo_count > 0)special_surge_opportunity = 2.0f / special_surge_combo_count;
+    else special_surge_opportunity = 2.0f;
+
     //設定した隙よりも時間がたったらそれぞれの行動に遷移する
     if (opportunity_timer > special_surge_opportunity)
     {
         special_surge_combo_count = 0;
         TransitionTransformHum();
     }
-        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+        //UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
         model->update_animation(elapsed_time);
 }
 
@@ -519,7 +502,8 @@ void Player::TransitionSpecialSurge()
     special_surge_combo_count = 0;//ゲージ消費の突進中に当たった敵の数を初期化しておく
     is_special_surge = true;
     is_attack = true;
-    charge_point = Math::calc_designated_point(position, forward, 100.0f);
+    charge_point = Math::calc_designated_point(position, forward, 10.0f);
+    SpecialSurgeAcceleration();
     player_activity = &Player::SpecialSurgeUpdate;
     combo_count -= 10.0f;
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);

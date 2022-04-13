@@ -263,7 +263,7 @@ private:
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
     //ゲージ消費の突進
-    void SpecialSurgeAcceleration(float elapse_time);
+    void SpecialSurgeAcceleration();
 private:
     //ロックオン
     void LockOn();
