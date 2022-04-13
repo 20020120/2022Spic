@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_fifteenth.fbx",true,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_sixteenth.fbx",true,60.0f);
     model->play_animation(AnimationClips::Idle, true);
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -125,8 +125,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("PlayerGameParm"))
             {
                 ImGui::DragInt("player_health", &player_health);
-                int c = static_cast<int>(combo_count);
-                ImGui::DragInt("combo", &c);
+                ImGui::DragFloat("combo", &combo_count);
+
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
@@ -134,6 +134,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             }
 
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
+            ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
 
             ImGui::End();
@@ -148,7 +149,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     glow_time += 1.0f * elapsed_time;
     if (glow_time >= 3.0f) glow_time = 0;
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time);
+
+    SkinnedMesh::mesh_tuple mesh_r = std::make_tuple("armor_R_mdl", threshold_mesh);
+    SkinnedMesh::mesh_tuple mesh_l = std::make_tuple("armor_L_mdl", threshold_mesh);
+
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, {1.0f,1.0f,1.0f,1.0f}, mesh_r, mesh_l);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
@@ -358,7 +363,7 @@ void Player::BodyCapsule()
 
         body_capsule_param.start = pos;
         body_capsule_param.end = end;
-        body_capsule_param.rasius = 0.5f;
+        body_capsule_param.rasius = 1.5f;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
@@ -568,7 +573,7 @@ void Player::ChargeAcceleration(float elapse_time)
     }
 }
 
-void Player::SpecialSurgeAcceleration(float elapse_time)
+void Player::SpecialSurgeAcceleration()
 {
     if (is_special_surge)
     {
@@ -578,9 +583,9 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
             float length{ Math::calc_vector_AtoB_length(position,target) };
 
-            velocity.x = v.x * length * 6.0f;
-            velocity.y = v.y * length * 6.0f;
-            velocity.z = v.z * length * 6.0f;
+            velocity.x = v.x * length * 4.0f;
+            velocity.y = v.y * length * 4.0f;
+            velocity.z = v.z * length * 4.0f;
 
             //position = Math::lerp(position, target, 5.0f * elapse_time);
         }
@@ -589,9 +594,9 @@ void Player::SpecialSurgeAcceleration(float elapse_time)
             DirectX::XMFLOAT3 v{};
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
             float length{ Math::calc_vector_AtoB_length(position,charge_point) };
-            velocity.x = v.x * length * 6.0f;
-            velocity.y = v.y * length * 6.0f;
-            velocity.z = v.z * length * 6.0f;
+            velocity.x = v.x * length * 4.0f;
+            velocity.y = v.y * length * 4.0f;
+            velocity.z = v.z * length * 4.0f;
 
             //position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }
