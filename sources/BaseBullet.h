@@ -21,6 +21,30 @@ public:
     ~BaseBullet() override = default;
 
     virtual void fUpdate(float elapsedTime_);
+
+    struct BulletData
+    {
+        DirectX::XMFLOAT3 mPointA{};
+        float mLengthFromPositionA{};
+        DirectX::XMFLOAT3 mPointB{};
+        float mLengthFromPositionB{};
+        float mRadius{};
+        int mDamage;
+        float mInvincible_time;
+    };
+
+    BulletData fGetBulletData() const { return mBulletData; }
+
+    void fSetBulletData(float mLengthA, float mLengthB, float radius, int damage, float invincible_time)
+    {
+        mBulletData.mLengthFromPositionA = mLengthA;
+        mBulletData.mLengthFromPositionB = mLengthB;
+        mBulletData.mRadius = radius;
+        mBulletData.mDamage = damage;
+        mBulletData.mInvincible_time = invincible_time;
+    }
+
+    void setCapsuleData();
 protected:
     //****************************************************************
     // 
@@ -33,5 +57,7 @@ protected:
     DirectX::XMFLOAT4 mOrientation{};
     bool mIsAlive{}; // íeÇÃê∂ë∂îªíË
     DirectX::XMFLOAT3 mVelocity{}; // ë¨ìx
+public:
+    BulletData mBulletData{};
 
 };

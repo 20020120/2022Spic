@@ -23,6 +23,13 @@ public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]]AddBulletFunc fGetAddFunction() const;
 
+    // 弾とプレイヤーの当たり判定
+    bool fCalcBulletsVsPlayer(
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
+        float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
+        AddDamageFunc Func_
+    );
 private:
     void fAllClear();
 

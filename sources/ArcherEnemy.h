@@ -74,5 +74,9 @@ private:
     bool mAttack_flg;
     AddBulletFunc mfAddFunc;
 
+    //プレイヤーに攻撃を開始する最短距離
+    const float AT_SHORTEST_DISTANCE = 30.0f;
+    //プレイヤーに攻撃を開始する最長距離
+    const float AT_LONGEST_DISTANCE = 40.0f;
 };
 

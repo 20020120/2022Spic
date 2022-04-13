@@ -160,13 +160,15 @@ void ArcherEnemy::fIdleInit()
 
 void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-
+    mStayTimer -= elapsedTime_;
+    if (mStayTimer > 0.0f) return;
+    mStayTimer = 0.0f;
     fChangeState(State::Move);
 }
 
 void ArcherEnemy::fMoveInit()
 {
-    max_move_speed = mParam.mMoveSpeed;
+    max_move_speed = 5.0f;
     // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
     mAttackingTime = 0.0f;
 }
@@ -176,15 +178,15 @@ void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     MovingProcess(forward, max_move_speed);
     fTurnToTarget(elapsedTime_, mPlayerPosition);
 
-    //プレイヤーとの距離が８以下なら離れていく行動をとる
-    if (mLengthFromPlayer < 8.0f)
+    //プレイヤーとの距離が攻撃可能距離以下なら離れていく行動をとる
+    if (mLengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
         fChangeState(State::Leave);
         return;
     }
 
-    //プレイヤーとの距離が15以上なら近づく行動をとる
-    if (mLengthFromPlayer > 15.0f)
+    //プレイヤーとの距離が攻撃可能距離以上なら近づく行動をとる
+    if (mLengthFromPlayer > AT_LONGEST_DISTANCE)
     {
         fChangeState(State::Approach);
     }
@@ -200,17 +202,13 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
 {
     MovingProcess(forward, max_move_speed);
     fTurnToTarget(elapsedTime_, mPlayerPosition);
-    if (mLengthFromPlayer > 15.0f  && mLengthFromPlayer < 30.0f)
+    if (mLengthFromPlayer > AT_SHORTEST_DISTANCE && mLengthFromPlayer < AT_LONGEST_DISTANCE)
     {
         fChangeState(State::Attack);
-        //弾装填
-        auto straightBullet = new StraightBullet(Graphics_,
-            mPosition, Math::GetFront(mOrientation) * 10.0f);
-        mfAddFunc(straightBullet);
         return;
     }
 
-    if(mLengthFromPlayer < 14.0f)
+    if (mLengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
         fChangeState(State::Leave);
     }
@@ -236,18 +234,13 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     MovingProcess(forward, max_move_speed);
     fTurnToTarget(elapsedTime_, target_pos);
 
-    if (mLengthFromPlayer > 15.0f && mLengthFromPlayer < 30.0f)
+    if (mLengthFromPlayer > AT_SHORTEST_DISTANCE && mLengthFromPlayer < AT_LONGEST_DISTANCE)
     {
         fChangeState(State::Attack);
-
-        //弾装填
-        auto straightBullet = new StraightBullet(Graphics_,
-            mPosition, Math::GetFront(mOrientation) * 10.0f);
-        mfAddFunc(straightBullet);
         return;
     }
 
-    if (mLengthFromPlayer > 30.0f)
+    if (mLengthFromPlayer > AT_LONGEST_DISTANCE)
     {
         fChangeState(State::Approach);
     }
@@ -263,17 +256,22 @@ void ArcherEnemy::fAttackInit()
 
 void ArcherEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fAttackStart();
-    DirectX::XMVECTOR Forward = DirectX::XMLoadFloat3(&forward);
-    DirectX::XMFLOAT3 attack_pos;
-    DirectX::XMStoreFloat3(&attack_pos, DirectX::XMVectorScale(Forward, 2.0f));
-    fSetAttackRange(attack_pos, up, 1.5f, 1.5f);
-
+    DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 3.5f, mPlayerPosition.z };
+    fTurnToTarget(elapsedTime_, tar_pos);
     mAttackingTime += elapsedTime_;
     if (mAttackingTime > 2.0f)
     {
-        fAttackEnd();
+        //弾装填
+        float bullet_speed = 1.0f * 0.2f;
+        auto straightBullet = new StraightBullet(Graphics_,
+            mPosition, Math::GetFront(mOrientation) * bullet_speed);
+        //パラメータ設定
+        straightBullet->fSetBulletData(0.5f, 0.5f, 0.5f, 1, 1.0f);
+        //登録
+        mfAddFunc(straightBullet);
 
+        //待機時間設定
+        mStayTimer = 3.0f;
         fChangeState(State::Idle);
     }
 }
