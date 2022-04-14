@@ -3,13 +3,14 @@
 #include"EnemyManager.h"
 #include "sprite_dissolve.h"
 #include "sprite_batch.h"
+#include "practical_entities.h"
 
 //****************************************************************
 //
 // ウェーブを管理するクラス
 //
 //****************************************************************
-class WaveManager final
+class WaveManager final : public PracticalEntities
 {
     //****************************************************************
     //
@@ -86,15 +87,63 @@ private:
     //----------------------------------
     // TODO:藤岡が書いたところ1
     //----------------------------------
-    bool close = false;
-    static const int STAGE_COUNT = 10;
-    DirectX::XMFLOAT2 stage_points[STAGE_COUNT] =
+    enum class CLEAR_STATE
     {
-        { 1500, 2700 },{ 900, 2100 },{ 2100, 2100 },{ 300, 1200 },{ 1500, 1500 },{ 2700, 1500 },{ 1500, 900 },{ 2700, 900 },{ 2200, 300 },{ 1200, 300 }
+        REDUCTION,    // 縮小
+        SELECTION,    // ステージ選択
+        ENLARGEMENT,  // 拡大
     };
-    int current_stage = 0;
-    int next_stage = 0;
-    DirectX::XMFLOAT2 viewpoint = {};
+    CLEAR_STATE clear_state = CLEAR_STATE::REDUCTION;
+    // reduction
+    void transition_reduction();
+    void update_reduction(float elapsed_time);
+    // selection
+    void transition_selection();
+    void update_selection(float elapsed_time);
+    // enlargement
+    void transition_enlargement();
+    void update_enlargement(float elapsed_time);
+
+    bool close = false;
+    float wait_timer = 1.5f;
+
+    enum STAGE_IDENTIFIER /*S_到達数_左からの数*/
+    {
+        S_1_1,
+        S_2_1,
+        S_2_2,
+        S_3_1,
+        S_3_2,
+        S_3_3,
+        S_4_1,
+        S_4_2,
+        S_5_1,
+        BOSS,
+
+
+        STAGE_COUNT,
+    };
+
+    struct StageDetails
+    {
+        enum class ROUTE
+        {
+            LEFT,
+            RIGHT,
+            UP,
+            DOWN,
+        };
+        DirectX::XMFLOAT2 position = {};            // 各ステージの位置
+        int route_count = 0;                        // 各ステージのルート数
+        // 各ステージのルートとその行先
+        std::map<ROUTE, STAGE_IDENTIFIER> journeys;
+    };
+    StageDetails stage_details[STAGE_IDENTIFIER::STAGE_COUNT];
+    STAGE_IDENTIFIER current_stage = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER next_stage    = STAGE_IDENTIFIER::S_1_1;
+    DirectX::XMFLOAT2 viewpoint         = {};
+    DirectX::XMFLOAT2 arrival_viewpoint = {};
+    DirectX::XMFLOAT2 arrival_scale     = {};
     struct SpriteArg
     {
         DirectX::XMFLOAT2 pos = {};
@@ -105,20 +154,16 @@ private:
         DirectX::XMFLOAT2 texpos = {};
         DirectX::XMFLOAT2 texsize = {};
     };
-    struct Map
+    struct Icon
     {
-        std::unique_ptr<SpriteBatch> sprite;
-        //std::unique_ptr<SpriteDissolve> sprite;
+        std::unique_ptr<SpriteDissolve> sprite;
         float threshold = 1.0f;
         SpriteArg arg;
     };
-    Map map;
-    struct Icon
-    {
-        std::unique_ptr<SpriteBatch> sprite;
-        SpriteArg arg;
-    };
+    Icon map;
     Icon player_icon;
+
+    StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
     void clear_initialize();
 
     //---ここまで--//
