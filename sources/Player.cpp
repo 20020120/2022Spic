@@ -73,7 +73,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         mSwordTrail[0].fEraseTrailPoint();
     }
     player_config->update(graphics,elapsed_time);
-
+    model->update_animation(elapsed_time * animation_speed);
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;

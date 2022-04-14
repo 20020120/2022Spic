@@ -11,7 +11,6 @@ EnemyEditor::EnemyEditor()
 
     mFunction = [=](std::string ClassName_)->EnemyData
     {
-        EnemyFileSystem::fLoadFromJson(mKindsMap, "./resources/Data/EnemiesParam");
         const auto it = mKindsMap.find(ClassName_);
         if (it != mKindsMap.end())
         {

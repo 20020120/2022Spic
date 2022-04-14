@@ -266,7 +266,8 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBu
 
     case EnemyType::Spear :
     {
-        auto enemy = new SpearEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint);
+        auto enemy = new SpearEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint,
+            mEditor.fGetFunction());
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -581,7 +582,7 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func
     BaseEnemy* enemy = 
         new SwordEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
     mCashEnemyVec.emplace_back(enemy);
-    enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f });
+    enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
     mCashEnemyVec.emplace_back(enemy);
 }
 
