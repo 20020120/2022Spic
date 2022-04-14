@@ -173,6 +173,11 @@ void BaseEnemy::fAttackEnd()
     mAttackInformation.mIsAttack = false;
 }
 
+void BaseEnemy::fSetHitVector(DirectX::XMFLOAT3 Arg_)
+{
+    mHitVector = Arg_;
+}
+
 void BaseEnemy::fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<à⁄ìÆó ÇçXêV>--------------------//
@@ -370,5 +375,13 @@ void BaseEnemy::fGetDirections(DirectX::XMFLOAT4& o_)
     XMStoreFloat3(&right, right_vec);
     XMStoreFloat3(&up, up_vec);
     XMStoreFloat3(&forward, forward_vec);
+
+}
+
+void BaseEnemy::fMoveVelocity(float elapsedTime_, DirectX::XMFLOAT3 Velocity_, float Speed_)
+{
+    // ë¨ìxÇê≥ãKâªÇ∑ÇÈ
+    const auto v = Math::Normalize(Velocity_);
+    mPosition += v * Speed_*elapsedTime_;
 
 }

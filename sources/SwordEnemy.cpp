@@ -137,11 +137,8 @@ void SwordEnemy::fWalkInit()
 void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<プレイヤーのいる向きに移動>--------------------//
-    auto moveVec = mPlayerPosition - mPosition;
-    moveVec = Math::Normalize(moveVec);
-    velocity = moveVec * mMoveSpeed;
-    mPosition += velocity * elapsedTime_;
-
+    const auto moveVec = mPlayerPosition - mPosition;
+    fMoveVelocity(elapsedTime_, moveVec, mMoveSpeed);
     //--------------------<プレイヤーの方向に回転>--------------------//
     fTurnToTarget(elapsedTime_, mPlayerPosition);
 

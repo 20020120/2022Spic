@@ -365,14 +365,19 @@ void EnemyManager::fCollisionEnemyVsEnemy()
             {
                 continue;
             }
-            const auto capsule1 = enemy1->fGetCapsuleData();
-            const auto capsule2 = enemy2->fGetCapsuleData();
+             auto capsule1 = enemy1->fGetCapsuleData();
+             auto capsule2 = enemy2->fGetCapsuleData();
             // ‚à‚µ”¼Œa‚ª‚OˆÈ‰º‚È‚çŒvŽZ‚µ‚È‚¢
             if(capsule1.mRadius<=0.0f||capsule2.mRadius<=0.0f)
             {
                 continue;
             }
 
+            //--------------------<“G“¯Žm‚Ì‹——£Š´‚ð’²®‚·‚é>--------------------//
+            capsule1.mRadius *= mAdjustmentEnemies;
+            capsule2.mRadius *= mAdjustmentEnemies;
+
+            
             const bool result=Collision::capsule_vs_capsule(
                 capsule1.mPointA, capsule1.mPointB, capsule1.mRadius,
                 capsule2.mPointA, capsule2.mPointB, capsule2.mRadius);
@@ -583,6 +588,8 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func
         new SwordEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,0.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
     mCashEnemyVec.emplace_back(enemy);
 }
 

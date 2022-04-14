@@ -2,6 +2,7 @@ struct VsInput
 {
 	float3 mWorldPosition : POSITION;
 	float2 mTexCoord : TEXCOORD;
+	float3 mNormal : NORMAL;
 };
 
 struct VsOutput
