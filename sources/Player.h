@@ -64,10 +64,18 @@ private:
     static constexpr float MAX_COMBO_COUNT = 50.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.8f;
-    //攻撃の時のアニメーションスピード
-    static constexpr float ATTACK_ANIMATION_SPEED = 3.0f;
+    //攻撃1の時のアニメーションスピード
+    static constexpr float ATTACK1_ANIMATION_SPEED = 1.0f;
+    //攻撃2の時のアニメーションスピード
+    static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
+    //攻撃3の時のアニメーションスピード
+    static constexpr float ATTACK3_ANIMATION_SPEED = 3.0f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
+    //人型に戻るときのアニメーションスピード
+    static constexpr float TRANSFORM_HUM_ANIMATION_SPEED = 2.0f;
+    //飛行機モードになるときのアニメーションスピード
+    static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
@@ -162,6 +170,8 @@ private:
     bool is_awakening{ false };
     //突進中かどうか
     bool is_charge{ false };
+    //プレイヤーのアニメーションスピード
+    float animation_speed{ 1.0f };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{      nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
@@ -285,22 +295,22 @@ private:
     //自分のメンバ関数の関数ポインタを呼ぶ
     void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
 
-    void IdleUpdate(float elapsed_time, SkyDome* sky_dome);//待機アニメーション中の更新処理
-    void MoveUpdate(float elapsed_time, SkyDome* sky_dome);//移動アニメーション中の更新処理
-    void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);//回避アニメーション中の更新処理
+    void IdleUpdate(float elapsed_time, SkyDome* sky_dome);                  //待機アニメーション中の更新処理
+    void MoveUpdate(float elapsed_time, SkyDome* sky_dome);               //移動アニメーション中の更新処理
+    void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);         //回避アニメーション中の更新処理
     void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);//後ろに回り込む回避の更新処理
-    void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);//突進開始アニメーション中の更新処理
-    void ChargeUpdate(float elapsed_time, SkyDome* sky_dome);//突進中の更新処理
-    void AttackType1Update(float elapsed_time, SkyDome* sky_dome);//攻撃1撃目の更新処理
-    void AttackType2Update(float elapsed_time, SkyDome* sky_dome);//攻撃2撃目の更新処理
-    void AttackType3Update(float elapsed_time, SkyDome* sky_dome);//攻撃3撃目の更新処理
-    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費する突進
-    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);//ゲージ消費突進が終わってからの隙
-    void DamageUpdate(float elapsed_time, SkyDome* sky_dome);//ダメージ受けたとき
-    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);//人型に戻る
-    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);//飛行機モード
-    void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);//覚醒状態に変形するときの更新
-    void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);//通常状態に変形するときの更新
+    void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);         //突進開始アニメーション中の更新処理
+    void ChargeUpdate(float elapsed_time, SkyDome* sky_dome);             //突進中の更新処理
+    void AttackType1Update(float elapsed_time, SkyDome* sky_dome);      //攻撃1撃目の更新処理
+    void AttackType2Update(float elapsed_time, SkyDome* sky_dome);      //攻撃2撃目の更新処理
+    void AttackType3Update(float elapsed_time, SkyDome* sky_dome);      //攻撃3撃目の更新処理
+    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);     //ゲージ消費する突進
+    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);     //ゲージ消費突進が終わってからの隙
+    void DamageUpdate(float elapsed_time, SkyDome* sky_dome);          //ダメージ受けたとき
+    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome) ; //人型に戻る
+    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome); //飛行機モード
+    void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);          //覚醒状態に変形するときの更新
+    void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);      //通常状態に変形するときの更新
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
@@ -310,9 +320,9 @@ private:
     void TransitionBehindAvoidance();//背後に回り込む回避
     void TransitionChargeInit();
     void TransitionCharge();
-    void TransitionAttackType1(float blend_seconds);
-    void TransitionAttackType2(float blend_seconds);
-    void TransitionAttackType3(float blend_seconds);
+    void TransitionAttackType1(float blend_seconds = 0.3f);
+    void TransitionAttackType2(float blend_seconds = 0.3f);
+    void TransitionAttackType3(float blend_seconds = 0.3f);
     void TransitionSpecialSurge();
     void TransitionOpportunity();
     void TransitionDamage();
