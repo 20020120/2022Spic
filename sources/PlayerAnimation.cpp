@@ -187,17 +187,21 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //猶予時間よりも早く押したら攻撃2撃目に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (enemy_length > 10.0f)
+#if 0
+            if (enemy_length > 20.0f)
             {
-                TransitionCharge(attack_animation_blends_speeds.x);
+                TransitionChargeInit();
             }
             else
             {
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
+#else
+           TransitionAttackType2(attack_animation_blends_speeds.z);
+#endif // 0
         }
     }
     if (is_awakening)
@@ -213,6 +217,13 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
 
+    if (is_enemy_hit)
+    {
+        is_update_animation = true;
+        velocity = {};
+    }
+    else ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -223,17 +234,21 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //猶予時間よりも早く押したら攻撃3撃目に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            if (enemy_length > 10.0f)
+#if 0
+            if (enemy_length > 0.0f)
             {
-                TransitionCharge(attack_animation_blends_speeds.x);
+                TransitionChargeInit();
             }
             else
             {
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
+#else
+             TransitionAttackType3(attack_animation_blends_speeds.w);
+#endif // 0
         }
     }
     if (is_awakening)
@@ -249,9 +264,16 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
 
+    if (is_enemy_hit)
+    {
+        is_update_animation = true;
+        velocity = {};
+    }
+    else ChargeAcceleration(elapsed_time);
+
     if (model->end_of_animation())
     {
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
             TransitionCharge(attack_animation_blends_speeds.x);
@@ -325,7 +347,7 @@ void Player::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
         }
         else
         {
-            TransitionIdle(0);
+            TransitionIdle();
         }
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -479,14 +501,15 @@ void Player::TransitionChargeInit()
    else model->play_animation(AnimationClips::ChargeInit, false,true);
    //攻撃中かどうかの設定
    is_attack = true;
-   //突進中かどうかの設定
-   is_charge = true;
+   ////突進中かどうかの設定
+   //is_charge = true;
    //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
     //突進の加速の設定
     SetAccelerationVelocity();
+    //加速のレート
     lerp_rate = 1.0f;
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
@@ -513,6 +536,7 @@ void Player::TransitionCharge(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.x;
 #endif // 0
+    //加速のレート
     lerp_rate = 4.0f;
     //突進中の更新関数に切り替える
     player_activity = &Player::ChargeUpdate;
@@ -536,6 +560,8 @@ void Player::TransitionAttackType1(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.y;
 #endif // 0
+    //加速のレート
+    lerp_rate = 4.0f;
     //１撃目の更新関数に切り替える
     player_activity = &Player::AttackType1Update;
 }
@@ -555,6 +581,12 @@ void Player::TransitionAttackType2(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.z;
 #endif // 0
+    //突進の加速の設定
+    SetAccelerationVelocity();
+    //加速のレート
+    lerp_rate = 2.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = false;
     //２撃目の更新関数に切り替える
     player_activity = &Player::AttackType2Update;
 }
@@ -574,6 +606,12 @@ void Player::TransitionAttackType3(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.w;
 #endif // 0
+    //突進の加速の設定
+    SetAccelerationVelocity();
+    //加速のレート
+    lerp_rate =2.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = false;
     //３撃目の更新関数に切り替える
     player_activity = &Player::AttackType3Update;
 }

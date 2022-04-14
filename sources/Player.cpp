@@ -73,7 +73,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         mSwordTrail[0].fEraseTrailPoint();
     }
     player_config->update(graphics,elapsed_time);
-    model->update_animation(elapsed_time * animation_speed);
+    if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -309,7 +309,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 void Player::InflectionParameters(float elapsed_time)
 {
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / 100.0f));
-    player_config->set_mp_percent(combo_count / 50.0f);
+    player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //攻撃力の変動
     InflectionPower(elapsed_time);
     //コンボの変動
@@ -462,7 +462,7 @@ void Player::AddCombo(int count)
         else
         {
             combo_count += static_cast<float>(count);
-            if(is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
+            if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         }
         is_enemy_hit = true;
     }
