@@ -34,7 +34,7 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
     // 敵のデータをロード
     const type_info& id = typeid(*This_);
     mData = Function_(id.name());
-    mParam.mAttackPower = mData.mAttackPower;
+    mAttackInformation.mDamage = mData.mAttackPower;
     mParam.mAttackSpeed = mData.mAttackSpeed;
     mParam.mHitPoint = mData.mMaxHitPoint;
     mParam.mMoveSpeed = mData.mMoveSpeed;

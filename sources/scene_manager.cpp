@@ -103,7 +103,7 @@ void SceneManager::render(GraphicsPipeline& graphics, float elapsed_time)
         // 描画ステート設定
         graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
         dissolve_sprites.at(dissolve_type)->begin(graphics.get_dc().Get());
-        dissolve_sprites.at(dissolve_type)->render(graphics.get_dc().Get(), { 0,0 }, { 1280,720 }, threshold);
+        dissolve_sprites.at(dissolve_type)->render(graphics.get_dc().Get(), { 0,0 }, { 1,1 }, threshold);
         dissolve_sprites.at(dissolve_type)->end(graphics.get_dc().Get());
     }
 }

@@ -76,11 +76,26 @@
             }
         },
         {
+            "key": "class SpearEnemy",
+            "value": {
+                "Name": "class SpearEnemy",
+                "MaxHp": 10,
+                "AttackPower": 5,
+                "MoveSpeed": 0.0,
+                "AttackSpeed": 0.0,
+                "Capsule": {
+                    "LengthA": 3.0,
+                    "LengthB": -2.0,
+                    "Radius": 2.5
+                }
+            }
+        },
+        {
             "key": "class SwordEnemy",
             "value": {
                 "Name": "class SwordEnemy",
                 "MaxHp": 10,
-                "AttackPower": 0,
+                "AttackPower": 10,
                 "MoveSpeed": 0.0,
                 "AttackSpeed": 0.0,
                 "Capsule": {

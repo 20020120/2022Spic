@@ -1,6 +1,6 @@
 #pragma once
-
 #include"BaseEnemy.h"
+#include "EnemiesEditor.h"
 
 class SpearEnemy final  : public BaseEnemy
 {
@@ -33,7 +33,8 @@ public:
     //****************************************************************
     SpearEnemy(GraphicsPipeline& graphics_, 
         int UniqueId_, 
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/);
+        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
+        ParamGetFunction Func_);
     ~SpearEnemy() override;
 
     void fInitialize() override;
@@ -55,14 +56,14 @@ private:
     // 定数
     // 
     //****************************************************************
-    const float mIdleSec{ 2.0f };       // 待機時間
+    const float mIdleSec{ 2.0f };        // 待機時間
     const float mAttackLength{ 100.0f }; // プレイヤーとの距離がこの距離以下になったら
-    const float mMoveSpeed{ 20.0f };    // 移動速度
+    const float mMoveSpeed{ 20.0f };     // 移動速度
     const float mThrustBeginSec{ 1.0f }; // 突進準備の時間
-    const float mThrustMiddleSec{ 0.2f }; // 槍を突き出す長さ
-    const float mThrustEndSec{ 3.0f }; // 突進中の長さ
-    const float mThrustSpeed{ 60.0f }; // 突進の速さ
-    const float mThrustDegree{ 30.0f }; // 突進の角度
+    const float mThrustMiddleSec{ 0.2f };// 槍を突き出す長さ
+    const float mThrustEndSec{ 3.0f };   // 突進中の長さ
+    const float mThrustSpeed{ 60.0f };   // 突進の速さ
+    const float mThrustDegree{ 30.0f };  // 突進の角度
 private:
     //****************************************************************
     // 

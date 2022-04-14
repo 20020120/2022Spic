@@ -1,6 +1,7 @@
 #include"SpearEnemy.h"
 #include"Operators.h"
-SpearEnemy::SpearEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_)
+SpearEnemy::SpearEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_,
+    ParamGetFunction Func_)
     :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_spear.fbx")
 {
    // épê®Çèâä˙âª
@@ -9,7 +10,9 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& graphics_, int UniqueId_, DirectX::XMFL
     mScale = { 0.05f,0.05f,0.05f };
     mParam.mHitPoint = 1;
     fRegisterFunctions();
+    fGetParam(this, Func_);
 }
+
 
 void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {

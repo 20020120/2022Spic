@@ -14,7 +14,6 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     fGetParam(this, Func_);
 
     // UŒ‚‚ÉŠÖ‚·‚éparameter‚ð‰Šú‰»
-    mAttackInformation.mDamage = 10;
     mAttackInformation.mInvincible_time = { 0.2f };
      // ƒ{[ƒ“‚ð‰Šú‰»
     mSwordBone = mpSkinnedMesh->get_bone_by_name("hand_r_joint");

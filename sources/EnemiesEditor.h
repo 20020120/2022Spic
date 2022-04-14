@@ -29,8 +29,10 @@ private:
     // 変数
     // 
     //****************************************************************
-    
-    
+
+    // 何回もJsonを開くと重いので初回だけ開く
+    bool mFirstOpenJson{}; // Jsonを開くのは最初かどうかの変数 
+
     //--------------------<エディタ用>--------------------//
     ParamGetFunction mFunction{};
     std::map<std::string, EnemyData> mKindsMap{}; //敵の種類ごとのマップ

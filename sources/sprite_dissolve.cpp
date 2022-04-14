@@ -68,7 +68,7 @@ SpriteDissolve::SpriteDissolve(ID3D11Device* device, const wchar_t* filename, co
     create_ps_from_cso(device, cso_name_ps, pixel_shader.GetAddressOf());
     // 画像ファイルのロードとシェーダーリソースビューオブジェクト(ID3D11ShaderResourceView)の生成
     load_texture_from_file(device, filename, shader_resource_view.GetAddressOf(), &texture2d_desc);
-    load_texture_from_file(device, mask_filename, mask_shader_resource_view.GetAddressOf(), &texture2d_desc);
+    load_texture_from_file(device, mask_filename, mask_shader_resource_view.GetAddressOf(), &mask_texture2d_desc);
 }
 
 SpriteDissolve::~SpriteDissolve()
@@ -76,9 +76,8 @@ SpriteDissolve::~SpriteDissolve()
     release_all_textures();
 }
 
-void SpriteDissolve::render(ID3D11DeviceContext* dc,
-    float position_x, float position_y, /* 矩形の左上の座標（スクリーン座標系）*/float size_w, float size_h/* 矩形のサイズ（スクリーン座標系）*/,
-    float color_r, float color_g, float color_b, float color_a, float angle/*degree*/, float threshold)
+void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
+    float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle, float threshold)
 {
     // スクリーン（ビューポート）のサイズを取得する
     D3D11_VIEWPORT viewport{};
@@ -94,22 +93,22 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc,
     //  (x2, y2) *----* (x3, y3)
 
     // left-top
-    float x0{ position_x };
-    float y0{ position_y };
+    float x0{ position_x - (pivot_x * scale_x) };
+    float y0{ position_y - (pivot_y * scale_y) };
     // right-top
-    float x1{ position_x + size_w };
-    float y1{ position_y };
+    float x1{ position_x + ((texture2d_desc.Width - pivot_x) * scale_x) };
+    float y1{ position_y - (pivot_y * scale_y) };
     // left-bottom
-    float x2{ position_x };
-    float y2{ position_y + size_h };
+    float x2{ position_x - (pivot_x * scale_x) };
+    float y2{ position_y + ((texture2d_desc.Height - pivot_y) * scale_y) };
     // right-bottom
-    float x3{ position_x + size_w };
-    float y3{ position_y + size_h };
+    float x3{ position_x + ((texture2d_desc.Width - pivot_x) * scale_x) };
+    float y3{ position_y + ((texture2d_desc.Height - pivot_y) * scale_y) };
 
 
     //回転の中心を矩形の中心点にした場合
-    float cx = position_x + size_w * 0.5f;
-    float cy = position_y + size_h * 0.5f;
+    float cx = position_x;
+    float cy = position_y;
     Math::rotate(x0, y0, cx, cy, angle);
     Math::rotate(x1, y1, cx, cy, angle);
     Math::rotate(x2, y2, cx, cy, angle);
@@ -141,15 +140,13 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc,
 }
 
 void SpriteDissolve::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position,
-    DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle, float threshold)
+    DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, float threshold)
 {
-    render(dc, position.x, position.y, size.x, size.y, color.x, color.y, color.z, color.w, angle, threshold);
+    render(dc, position.x, position.y, scale.x, scale.y, pivot.x, pivot.y, color.x, color.y, color.z, color.w, angle, threshold);
 }
 
-// 追加する引数変数sx, sy, sw, shはテクセル座標系における矩形の左上座標(sx, sy)とサイズ(sw, sh)とする
-// テクセル座標系からテクスチャ座標系への変換をおこなう
-void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float position_y, float size_w, float size_h,
-    float color_r, float color_g, float color_b, float color_a, float angle,
+void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
+    float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle,
     float texpos_x, float texpos_y, float texsize_w, float texsize_h, float threshold)
 {
     // スクリーン（ビューポート）のサイズを取得する
@@ -166,21 +163,21 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float pos
     //  (x2, y2) *----* (x3, y3)
 
     // left-top
-    float x0{ position_x };
-    float y0{ position_y };
+    float x0{ position_x - (pivot_x * scale_x) };
+    float y0{ position_y - (pivot_y * scale_y) };
     // right-top
-    float x1{ position_x + size_w };
-    float y1{ position_y };
+    float x1{ position_x + ((fabsf(texsize_w) - pivot_x) * scale_x) };
+    float y1{ position_y - (pivot_y * scale_y) };
     // left-bottom
-    float x2{ position_x };
-    float y2{ position_y + size_h };
+    float x2{ position_x - (pivot_x * scale_x) };
+    float y2{ position_y + ((fabsf(texsize_h) - pivot_y) * scale_y) };
     // right-bottom
-    float x3{ position_x + size_w };
-    float y3{ position_y + size_h };
+    float x3{ position_x + ((fabsf(texsize_w) - pivot_x) * scale_x) };
+    float y3{ position_y + ((fabsf(texsize_h) - pivot_y) * scale_y) };
 
     //回転の中心を矩形の中心点にした場合
-    float cx = position_x + size_w * 0.5f;
-    float cy = position_y + size_h * 0.5f;
+    float cx = position_x;
+    float cy = position_y;
     Math::rotate(x0, y0, cx, cy, angle);
     Math::rotate(x1, y1, cx, cy, angle);
     Math::rotate(x2, y2, cx, cy, angle);
@@ -201,12 +198,24 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float pos
     float u1{ (texpos_x + texsize_w) / texture2d_desc.Width };
     float v1{ (texpos_y + texsize_h) / texture2d_desc.Height };
 
-    vertices.push_back({ { x0, y0 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v0 } });
-    vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v0 } });
-    vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
-    vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
-    vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v0 } });
-    vertices.push_back({ { x3, y3 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v1 } });
+    if (scale_x >= 0)
+    {
+        vertices.push_back({ { x0, y0 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v0 } });
+        vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v0 } });
+        vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
+        vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
+        vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v0 } });
+        vertices.push_back({ { x3, y3 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v1 } });
+    }
+    else
+    {
+        vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v0 } });
+        vertices.push_back({ { x0, y0 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v0 } });
+        vertices.push_back({ { x3, y3 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v1 } });
+        vertices.push_back({ { x3, y3 , 0 }, { color_r, color_g, color_b, color_a }, { u1, v1 } });
+        vertices.push_back({ { x0, y0 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v0 } });
+        vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
+    }
 
     // 定数バッファの更新
     dissolve_constants data{ {threshold, 0, 0, 0} };
@@ -214,16 +223,14 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float pos
     dc->PSSetConstantBuffers(2, 1, constant_buffer.GetAddressOf());
 }
 
-void SpriteDissolve::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position,
-    DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle,
-    DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize, float threshold)
+void SpriteDissolve::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale,
+    DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize, float threshold)
 {
-    render(dc, position.x, position.y, size.x, size.y,
+    render(dc, position.x, position.y, scale.x, scale.y, pivot.x, pivot.y,
         color.x, color.y, color.z, color.w, angle, texpos.x, texpos.y, texsize.x, texsize.y, threshold);
 }
 
-void SpriteDissolve::render(ID3D11DeviceContext* dc,
-    float position_x, float position_y, float size_w, float size_h, float threshold)
+void SpriteDissolve::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y, float threshold)
 {
     // スクリーン（ビューポート）のサイズを取得する
     D3D11_VIEWPORT viewport{};
@@ -234,14 +241,14 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc,
     float x0{ position_x };
     float y0{ position_y };
     // right-top
-    float x1{ position_x + size_w };
+    float x1{ position_x + (texture2d_desc.Width * scale_x) };
     float y1{ position_y };
     // left-bottom
     float x2{ position_x };
-    float y2{ position_y + size_h };
+    float y2{ position_y + (texture2d_desc.Height * scale_y) };
     // right-bottom
-    float x3{ position_x + size_w };
-    float y3{ position_y + size_h };
+    float x3{ position_x + (texture2d_desc.Width * scale_x) };
+    float y3{ position_y + (texture2d_desc.Height * scale_y) };
 
     // Convert to NDC space
     x0 = 2.0f * x0 / viewport.Width - 1.0f;
@@ -271,10 +278,9 @@ void SpriteDissolve::render(ID3D11DeviceContext* dc,
     dc->PSSetConstantBuffers(2, 1, constant_buffer.GetAddressOf());
 }
 
-void SpriteDissolve::render(ID3D11DeviceContext* dc,
-    DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 size, float threshold)
+void SpriteDissolve::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float threshold)
 {
-    render(dc, position.x, position.y, size.x, size.y, threshold);
+    render(dc, position.x, position.y, scale.x, scale.y, threshold);
 }
 
 void SpriteDissolve::begin(ID3D11DeviceContext* dc)
