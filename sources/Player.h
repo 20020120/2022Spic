@@ -65,7 +65,7 @@ private:
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
     //突進開始の時のアニメーションスピード
-    static constexpr float CHARGEINIT_ANIMATION_SPEED = 2.0f;
+    static constexpr float CHARGEINIT_ANIMATION_SPEED = 1.0f;
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 1.0f;
     //攻撃1の時のアニメーションスピード
@@ -180,6 +180,12 @@ private:
     bool is_charge{ false };
     //プレイヤーのアニメーションスピード
     float animation_speed{ 1.0f };
+    //突進の加速用のvelocity
+    DirectX::XMFLOAT3 acceleration_velocity;
+    //突進のvelocityの補間のレート
+    float lerp_rate{ 1.0f };
+    //突進のターゲットまでの距離の倍率(どれだけ伸ばすか)
+    float charge_length_magnification{ 1.0f };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{      nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
@@ -283,8 +289,8 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
-    //突進の加速(線形補間)
-    void ChargeInitAcceleration(float elapse_time);
+    //突進の加速の設定
+    void SetAccelerationVelocity();
     //ゲージ消費の突進
     void SpecialSurgeAcceleration();
 private:

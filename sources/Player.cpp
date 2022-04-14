@@ -148,6 +148,11 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::DragFloat4("attack_animation_speeds", &attack_animation_speeds.x,0.1f);
             ImGui::DragFloat4("attack_animation_blends_speeds", &attack_animation_blends_speeds.x,0.1f);
+            float frame{ model->get_anim_para().animation_tick };
+            ImGui::DragFloat("frame", &frame);
+
+            ImGui::DragFloat("charge_length_magnification", &charge_length_magnification,0.1f);
+            ImGui::DragFloat("lerp_rate", &lerp_rate,0.1f);
 
             ImGui::End();
         }
@@ -541,51 +546,18 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 
 void Player::ChargeAcceleration(float elapse_time)
 {
-
-    DirectX::XMFLOAT3 pos = {}, up = {};
-
     //位置を補間
     //ロックオンしていたらターゲットに向かって行く
-    if (is_lock_on)
-    {
-        DirectX::XMFLOAT3 v{};
-        DirectX::XMStoreFloat3(&v,DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-
-        velocity.x = v.x * length * 5.0f;
-        velocity.y = v.y * length * 5.0f;
-        velocity.z = v.z * length * 5.0f;
-        //position = Math::lerp(position, target, 10.0f * elapse_time);
-    }
-    else
-    {
-        DirectX::XMFLOAT3 v{};
-        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
-        float length{ Math::calc_vector_AtoB_length(position,charge_point) };
-
-        velocity.x = v.x * length * 5.0f;
-        velocity.y = v.y * length * 5.0f;
-        velocity.z = v.z * length * 5.0f;
-
-        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
-    }
-}
-
-void Player::ChargeInitAcceleration(float elapse_time)
-{
-    DirectX::XMFLOAT3 pos = {}, up = {};
-
-    //位置を補間
-    //ロックオンしていたらターゲットに向かって行く
+#if 0
     if (is_lock_on)
     {
         DirectX::XMFLOAT3 v{};
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
         float length{ Math::calc_vector_AtoB_length(position,target) };
 
-        velocity.x = v.x * 7.0f;
-        velocity.y = v.y * 7.0f;
-        velocity.z = v.z * 7.0f;
+        velocity.x = v.x * length * 5.0f;
+        velocity.y = v.y * length * 5.0f;
+        velocity.z = v.z * length * 5.0f;
         //position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
@@ -594,12 +566,47 @@ void Player::ChargeInitAcceleration(float elapse_time)
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
         float length{ Math::calc_vector_AtoB_length(position,charge_point) };
 
-        velocity.x = v.x * 10.0f;
-        velocity.y = v.y * 10.0f;
-        velocity.z = v.z * 10.0f;
+        velocity.x = v.x * length * 5.0f;
+        velocity.y = v.y * length * 5.0f;
+        velocity.z = v.z * length * 5.0f;
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
+#else
+
+    velocity = Math::lerp(velocity, acceleration_velocity, lerp_rate * elapse_time);
+
+#endif // 0
+}
+
+void Player::SetAccelerationVelocity()
+{
+    //位置を補間
+//ロックオンしていたらターゲットに向かって行く
+    if (is_lock_on)
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        acceleration_velocity.x = v.x * length * charge_length_magnification;
+        acceleration_velocity.y = v.y * length * charge_length_magnification;
+        acceleration_velocity.z = v.z * length * charge_length_magnification;
+        //position = Math::lerp(position, target, 10.0f * elapse_time);
+    }
+    else
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+        float length{ Math::calc_vector_AtoB_length(position,charge_point) };
+
+        acceleration_velocity.x = v.x * length * charge_length_magnification;
+        acceleration_velocity.y = v.y * length * charge_length_magnification;
+        acceleration_velocity.z = v.z * length * charge_length_magnification;
+
+        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+    }
+
 }
 
 void Player::SpecialSurgeAcceleration()
