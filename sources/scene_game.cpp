@@ -83,7 +83,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
 	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
-	  
+
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	if (player->GetIsPlayerAttack())
 	{
@@ -312,7 +312,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// wave
 	wave->render(graphics.get_dc().Get());
 
-
+	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 
 	effect_manager->render(camera::get_keep_view(), camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);

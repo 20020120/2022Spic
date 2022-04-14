@@ -32,6 +32,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_view;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mask_shader_resource_view;
     D3D11_TEXTURE2D_DESC texture2d_desc;
+    D3D11_TEXTURE2D_DESC mask_texture2d_desc;
 
 public:
     //--コンストラクタ/関数--//
@@ -41,22 +42,24 @@ public:
 
     //--------<render関数>--------//
     // 位置、サイズ、角度、描画色
-    void render(ID3D11DeviceContext* dc,
-        float position_x, float position_y, /* 矩形の左上の座標（スクリーン座標系）*/float size_w, float size_h/* 矩形のサイズ（スクリーン座標系）*/,
-        float color_r, float color_g, float color_b, float color_a, float angle/*degree*/, float threshold);
+    void render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
+        float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle, float threshold);
     void render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position,
-        DirectX::XMFLOAT2 size, DirectX::XMFLOAT4 color, float angle, float threshold);
+        DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, float threshold);
     // 位置、サイズ、角度、描画色、 切り取り位置、切り取りサイズ
-    void render(ID3D11DeviceContext* dc, float position_x, float position_y, float size_w, float size_h,
-        float color_r, float color_g, float color_b, float color_a, float angle,
+    void render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
+        float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle,
         float texpos_x, float texpos_y, float texsize_w, float texsize_h, float threshold);
-    void render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 size,
-        DirectX::XMFLOAT4 color, float angle, DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize, float threshold);
+    void render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale,
+        DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize, float threshold);
     // 位置、サイズ
     // 画面上の描画位置とサイズの指定のみでテクスチャ全体を描画する
-    void render(ID3D11DeviceContext* dc, float position_x, float position_y, float size_w, float size_h, float threshold);
-    void render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 size, float threshold);
+    void render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y, float threshold);
+    void render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float threshold);
 
     void begin(ID3D11DeviceContext* dc);
     void end(ID3D11DeviceContext* dc);
+
+    //--------<getter/setter>--------//
+    const D3D11_TEXTURE2D_DESC& get_texture2d_desc() const { return texture2d_desc; }
 };
