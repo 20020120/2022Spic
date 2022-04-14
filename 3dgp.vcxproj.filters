@@ -894,6 +894,9 @@
     <FxCompile Include="HLSL\debug_2D_vs.hlsl">
       <Filter>Shaders\debug\debug_2D</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\SwordTrailGs.hlsl">
+      <Filter>Shaders\sword-trail</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">

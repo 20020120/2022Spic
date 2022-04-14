@@ -45,6 +45,7 @@ class SwordTrail final
     {
         DirectX::XMFLOAT3 mPosition{};  // à íu
         DirectX::XMFLOAT2 mTexCoord{};  // UV
+        DirectX::XMFLOAT3 mNormal{};    // ñ@ê¸
     };
 
     struct TrailConstantBuffer
@@ -94,6 +95,7 @@ private:
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mShaderResourceView{ nullptr };
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> mTrailColorSrv{ nullptr };
     D3D11_TEXTURE2D_DESC mTexture2DDesc{};
+    Microsoft::WRL::ComPtr<ID3D11GeometryShader> mGeometryShader{ nullptr };
 
     //****************************************************************
     //

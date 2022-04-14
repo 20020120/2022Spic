@@ -156,7 +156,7 @@ public:
     void fSetAttackRange(DirectX::XMFLOAT3 Position_, DirectX::XMFLOAT3 Up_, float LengthFromPositionA_, float LengthFromPositionB_);
     void fAttackStart();//攻撃開始
     void fAttackEnd();//攻撃終了
-
+    void fSetHitVector(DirectX::XMFLOAT3 Arg_);
 protected:
     void fUpdateBase(float elapsedTime_, GraphicsPipeline& Graphics_);
 
@@ -171,6 +171,9 @@ protected:
     bool fTurnToTarget(float elapsedTime_, DirectX::XMFLOAT3 target_pos,float turn_speed = 10.0f);
     //方向取得
     void fGetDirections(DirectX::XMFLOAT4& o);
+
+    // 引数のベクトルの方向に移動する
+    void fMoveVelocity(float elapsedTime_, DirectX::XMFLOAT3 Velocity_, float Speed_);
 
     //****************************************************************
     //
@@ -206,8 +209,11 @@ protected:
 
     float mAnimationSpeed{1.0f}; // アニメーションの再生速度
 
-    private:
+   //--------------------<ほかの敵に当たった時のベクトル>--------------------//
+    DirectX::XMFLOAT3 mHitVector{}; 
 
+
+    private:
     //--------------------<ステートマシンに関連する変数>--------------------//
     int mState{}; // 状態
     bool mIsInitialize{ false }; // 初期化したかどうか

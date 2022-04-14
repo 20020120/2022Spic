@@ -1,7 +1,8 @@
 #include"SwordTrail.h"
 #include"texture.h"
 #include"shader.h"
-
+#include"Operators.h"
+#include"user.h"
 #include <stdexcept>
 #include<memory>
 #include "misc.h"
@@ -117,10 +118,18 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, c
     //入力レイアウトオブジェクトの生成
     D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
     {
-        {"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,
-        D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
-        {"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,
-        D3D11_APPEND_ALIGNED_ELEMENT,D3D11_INPUT_PER_VERTEX_DATA,0},
+        {"POSITION",0,
+            DXGI_FORMAT_R32G32B32_FLOAT,0,
+        D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,0},
+        {"TEXCOORD",0,
+            DXGI_FORMAT_R32G32_FLOAT,0,
+        D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,0},
+        {"NORMAL",0,
+            DXGI_FORMAT_R32G32B32_FLOAT,0,
+        D3D11_APPEND_ALIGNED_ELEMENT,
+            D3D11_INPUT_PER_VERTEX_DATA,0},
     };
 
     //頂点シェーダーオブジェクトの生成
@@ -132,6 +141,11 @@ void SwordTrail::fInitialize(ID3D11Device* pDevice_, const wchar_t* FileName_, c
     //ピクセルシェーダーオブジェクトの生成
     const char* cso_ps_name{ "./shaders/SwordTrailPs.cso" };
     hr = create_ps_from_cso(pDevice_, cso_ps_name, mPixelShader.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+
+    // ジオメトリシェーダーを作成
+    const char* cso_gs_name{ "./shaders/SwordTrailGs.cso" };
+    hr = create_gs_from_cso(pDevice_, cso_gs_name, mGeometryShader.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 
     // 定数バッファを作成
@@ -153,31 +167,68 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
     // 剣の位置データから頂点を生成する
     for (int i = mDataVec.size() - 1; i > 0; i--)
     {
-        TrailVertex vertex{};
+        TrailVertex vertex[6]{};
+
         // 左上
-        vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { startPoint+static_cast<float>(texXSeparate*i) ,0.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[0].mPosition = mDataVec[i].mTopPoint;
+        vertex[0].mTexCoord =
+        { startPoint + (i * texXSeparate) ,0.0f };
+
         // 右下
-        vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[1].mPosition = mDataVec[i - 1].mBottomPoint;
+        vertex[1].mTexCoord = 
+        { startPoint + static_cast<float>(texXSeparate * i),1.0f };
+
         // 左下
-        vertex.mPosition = mDataVec[i].mBottomPoint;
-        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[2].mPosition = mDataVec[i].mBottomPoint;
+        vertex[2].mTexCoord = 
+        { startPoint + static_cast<float>(texXSeparate * i),1.0f };
+
         // 左上
-        vertex.mPosition = mDataVec[i].mTopPoint;
-        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),0.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[3].mPosition = mDataVec[i].mTopPoint;
+        vertex[3].mTexCoord = 
+        { startPoint + static_cast<float>(texXSeparate * i),0.0f };
+
         //右上
-        vertex.mPosition = mDataVec[i - 1].mTopPoint;
-        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),0.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[4].mPosition = mDataVec[i - 1].mTopPoint;
+        vertex[4].mTexCoord = 
+        { startPoint + static_cast<float>(texXSeparate * i),0.0f };
+
         // 右下
-        vertex.mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex.mTexCoord = { startPoint + static_cast<float>(texXSeparate * i),1.0f };
-        mTrailVertexVec.emplace_back(vertex);
+        vertex[5].mPosition = mDataVec[i - 1].mBottomPoint;
+        vertex[5].mTexCoord = 
+        { startPoint + static_cast<float>(texXSeparate * i),1.0f };
+
+        // 各頂点の法線を計算
+        auto v1 = vertex[0].mPosition - vertex[2].mPosition;
+        auto v2 = vertex[5].mPosition - vertex[2].mPosition;
+        auto cross = Math::Normalize(Math::Cross(v1, v2));
+        vertex[2].mNormal = cross;
+
+        // 頂点が三角で共有されているところは法線の平均を採用する
+        auto Vertex03Normal = cross; // 変数の中の数字は値が共有されている頂点の配列の番号
+        auto Vertex15Normal = cross; // 変数の中の数字は値が共有されている頂点の配列の番号
+
+        v1 = vertex[3].mPosition - vertex[4].mPosition;
+        v2 = vertex[1].mPosition - vertex[4].mPosition;
+        cross = Math::Normalize(Math::Cross(v1, v2));
+        vertex[4].mNormal = cross;
+        Vertex03Normal += cross;
+        Vertex03Normal *= 0.5f;
+        vertex[0].mNormal = Vertex03Normal;
+        vertex[3].mNormal = Vertex03Normal;
+
+        Vertex15Normal += cross;
+        Vertex15Normal *= 0.5f;
+        vertex[1].mNormal = Vertex15Normal;
+        vertex[5].mNormal = Vertex15Normal;
+
+        mTrailVertexVec.emplace_back(vertex[0]);
+        mTrailVertexVec.emplace_back(vertex[1]);
+        mTrailVertexVec.emplace_back(vertex[2]);
+        mTrailVertexVec.emplace_back(vertex[3]);
+        mTrailVertexVec.emplace_back(vertex[4]);
+        mTrailVertexVec.emplace_back(vertex[5]);
     }
 
 
@@ -196,6 +247,9 @@ void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
     }
     pDeviceContext_->VSSetShader(mVertexShader.Get(), nullptr, 0);
     pDeviceContext_->PSSetShader(mPixelShader.Get(), nullptr, 0);
+    pDeviceContext_->GSSetShader(mGeometryShader.Get(), nullptr, 0);
+
+
     pDeviceContext_->PSSetShaderResources(0, 1, mShaderResourceView.GetAddressOf());
     pDeviceContext_->PSSetShaderResources(1, 1, mTrailColorSrv.GetAddressOf());
 
@@ -232,6 +286,8 @@ void SwordTrail::fRender(ID3D11DeviceContext* pDeviceContext_)
 
     //プリミティブの描画
     pDeviceContext_->Draw(static_cast<UINT>(vertex_count), 0);
+
+    pDeviceContext_->GSSetShader(nullptr, nullptr,0);
 
 }
 
