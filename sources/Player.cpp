@@ -99,6 +99,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("speed"))
             {
                 ImGui::DragFloat3("velocity", &velocity.x);
+                ImGui::DragFloat3("acceleration_velocity", &acceleration_velocity.x);
                 ImGui::DragFloat("max_speed", &move_speed);
                 ImGui::TreePop();
             }
@@ -589,9 +590,9 @@ void Player::SetAccelerationVelocity()
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
         float length{ Math::calc_vector_AtoB_length(position,target) };
 
-        acceleration_velocity.x = v.x * length * charge_length_magnification;
-        acceleration_velocity.y = v.y * length * charge_length_magnification;
-        acceleration_velocity.z = v.z * length * charge_length_magnification;
+        acceleration_velocity.x = v.x * charge_length_magnification;
+        acceleration_velocity.y = v.y * charge_length_magnification;
+        acceleration_velocity.z = v.z * charge_length_magnification;
         //position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
@@ -600,9 +601,9 @@ void Player::SetAccelerationVelocity()
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
         float length{ Math::calc_vector_AtoB_length(position,charge_point) };
 
-        acceleration_velocity.x = v.x * length * charge_length_magnification;
-        acceleration_velocity.y = v.y * length * charge_length_magnification;
-        acceleration_velocity.z = v.z * length * charge_length_magnification;
+        acceleration_velocity.x = v.x * charge_length_magnification;
+        acceleration_velocity.y = v.y * charge_length_magnification;
+        acceleration_velocity.z = v.z * charge_length_magnification;
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
