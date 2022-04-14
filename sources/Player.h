@@ -64,6 +64,8 @@ private:
     static constexpr float MAX_COMBO_COUNT = 50.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
+    //突進開始の時のアニメーションスピード
+    static constexpr float CHARGEINIT_ANIMATION_SPEED = 2.0f;
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 1.0f;
     //攻撃1の時のアニメーションスピード
@@ -281,6 +283,8 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
+    //突進の加速(線形補間)
+    void ChargeInitAcceleration(float elapse_time);
     //ゲージ消費の突進
     void SpecialSurgeAcceleration();
 private:

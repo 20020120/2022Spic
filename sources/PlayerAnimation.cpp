@@ -124,7 +124,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionCharge(attack_animation_blends_speeds.x);
     }
-
+    ChargeInitAcceleration(elapsed_time);
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -480,7 +480,9 @@ void Player::TransitionChargeInit()
    //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
-    animation_speed = 1.0f;
+    animation_speed = CHARGEINIT_ANIMATION_SPEED;
+    //ロックオンしてない場合のターゲットの設定
+    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
 }
@@ -497,8 +499,6 @@ void Player::TransitionCharge(float blend_seconds)
     else model->play_animation(AnimationClips::Charge, false, true, blend_seconds);
     //攻撃中かどうかの設定
     is_attack = true;
-    //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     //突進中かどうかの設定
     is_charge = true;
     //アニメーションスピードの設定
