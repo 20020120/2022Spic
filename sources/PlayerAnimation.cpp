@@ -122,7 +122,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
-        TransitionCharge();
+        TransitionCharge(attack_animation_blends_speeds.x);
     }
 
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -161,7 +161,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity = {};
-            TransitionAttackType1(0);
+            TransitionAttackType1(attack_animation_blends_speeds.y);
         }
     }
     if (is_awakening)
@@ -192,11 +192,11 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             attack_time = 0;
             if (enemy_length > 10.0f)
             {
-                TransitionCharge();
+                TransitionCharge(attack_animation_blends_speeds.x);
             }
             else
             {
-                TransitionAttackType2();
+                TransitionAttackType2(attack_animation_blends_speeds.z);
             }
         }
     }
@@ -228,11 +228,11 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             attack_time = 0;
             if (enemy_length > 10.0f)
             {
-                TransitionCharge();
+                TransitionCharge(attack_animation_blends_speeds.x);
             }
             else
             {
-                TransitionAttackType3(3);
+                TransitionAttackType3(attack_animation_blends_speeds.w);
             }
         }
     }
@@ -254,7 +254,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            TransitionCharge();
+            TransitionCharge(attack_animation_blends_speeds.x);
         }
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -387,6 +387,7 @@ void Player::TransitionIdle(float blend_second)
     if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true,true,blend_second);
     else model->play_animation(AnimationClips::Idle, true,true,blend_second);
     is_attack = false;
+    animation_speed = 1.0f;
     player_activity = &Player::IdleUpdate;
 }
 
@@ -396,6 +397,7 @@ void Player::TransitionMove(float blend_second)
     if(is_awakening)model->play_animation(AnimationClips::AwakingMove, true,true, blend_second);
     else model->play_animation(AnimationClips::Move, true, true,blend_second);
     is_attack = false;
+    animation_speed = 1.0f;
     player_activity = &Player::MoveUpdate;
 }
 
@@ -427,6 +429,7 @@ void Player::TransitionAvoidance()
     else model->play_animation(AnimationClips::Avoidance, false,true);
     is_avoidance = true;
     is_attack = false;
+    animation_speed = 1.0f;
     player_activity = &Player::AvoidanceUpdate;
 }
 
@@ -438,6 +441,7 @@ void Player::TransitionBehindAvoidance()
     behind_late = 0;
     velocity = {};
     is_attack = false;
+    animation_speed = 1.0f;
     player_activity = &Player::BehindAvoidanceUpdate;;
 }
 
@@ -446,20 +450,24 @@ void Player::TransitionChargeInit()
    if(is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false,true);
    else model->play_animation(AnimationClips::ChargeInit, false,true);
     is_attack = true;
-    animation_speed = ATTACK1_ANIMATION_SPEED;
+    animation_speed = 1.0f;
     player_activity = &Player::ChargeInitUpdate;
 }
 
-void Player::TransitionCharge()
+void Player::TransitionCharge(float blend_seconds)
 {
     end_dash_effect = false;
     start_dash_effect = true;//ポストエフェクトをかける
-    if (is_awakening)model->play_animation(AnimationClips::AwakingCharge, false, true);
-    else model->play_animation(AnimationClips::Charge, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingCharge, false, true, blend_seconds);
+    else model->play_animation(AnimationClips::Charge, false, true, blend_seconds);
     is_attack = true;
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
     is_charge = true;
-    animation_speed = ATTACK1_ANIMATION_SPEED;
+#if 1
+    animation_speed = CHARGE_ANIMATION_SPEED;
+#else
+    animation_speed = attack_animation_speeds.x;
+#endif // 0
     player_activity = &Player::ChargeUpdate;
 
 }
@@ -467,28 +475,40 @@ void Player::TransitionCharge()
 void Player::TransitionAttackType1(float blend_seconds)
 {
     end_dash_effect = true;
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, true);
-    else model->play_animation(AnimationClips::AttackType1, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_seconds);
+    else model->play_animation(AnimationClips::AttackType1, false, true, blend_seconds);
     is_attack = true;
+#if 1
     animation_speed = ATTACK1_ANIMATION_SPEED;
+#else
+    animation_speed = attack_animation_speeds.y;
+#endif // 0
     player_activity = &Player::AttackType1Update;
 }
 
 void Player::TransitionAttackType2(float blend_seconds)
 {
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType2, false, true);
-    else model->play_animation(AnimationClips::AttackType1, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_seconds);
+    else model->play_animation(AnimationClips::AttackType2, false, true, blend_seconds);
     is_attack = true;
+#if 1
     animation_speed = ATTACK2_ANIMATION_SPEED;
+#else
+    animation_speed = attack_animation_speeds.z;
+#endif // 0
     player_activity = &Player::AttackType2Update;
 }
 
 void Player::TransitionAttackType3(float blend_seconds)
 {
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType3, false, true);
-    else model->play_animation(AnimationClips::AttackType3, false, true);
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_seconds);
+    else model->play_animation(AnimationClips::AttackType3, false, true, blend_seconds);
     is_attack = true;
+#if 1
     animation_speed = ATTACK3_ANIMATION_SPEED;
+#else
+    animation_speed = attack_animation_speeds.w;
+#endif // 0
     player_activity = &Player::AttackType3Update;
 }
 
@@ -500,10 +520,11 @@ void Player::TransitionSpecialSurge()
     is_attack = true;
     charge_point = Math::calc_designated_point(position, forward, 10.0f);
     SpecialSurgeAcceleration();
-    player_activity = &Player::SpecialSurgeUpdate;
     combo_count -= 10.0f;
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
     special_surge_timer = 0.0f;
+    animation_speed = 1.0f;
+    player_activity = &Player::SpecialSurgeUpdate;
 }
 
 void Player::TransitionOpportunity()
@@ -511,6 +532,7 @@ void Player::TransitionOpportunity()
     is_special_surge = false;//突進攻撃終了
     is_attack = false;
     special_surge_timer = 0;//隙が生じた時の経過時間をリセット
+    animation_speed = 1.0f;
     player_activity = &Player::OpportunityUpdate;
 }
 
@@ -521,6 +543,7 @@ void Player::TransitionDamage()
     is_attack = false;
     if (is_awakening)model->play_animation(AnimationClips::AwakingDamage, false, true);
     else model->play_animation(AnimationClips::Damage, false, true);
+    animation_speed = 1.0f;
     player_activity = &Player::DamageUpdate;
 }
 
@@ -542,6 +565,7 @@ void Player::TransitionAwaking()
 {
     model->play_animation(AnimationClips::Awaking, false,true);
     is_awakening = true;
+    animation_speed = 1.0f;
     player_activity = &Player::AwakingUpdate;
 }
 
@@ -549,6 +573,7 @@ void Player::TransitionInvAwaking()
 {
     model->play_animation(AnimationClips::InvAwaking, false,true);
     is_awakening = false;
+    animation_speed = 1.0f;
     player_activity = &Player::InvAwakingUpdate;
 
 }

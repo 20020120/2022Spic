@@ -146,6 +146,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
 
+            ImGui::DragFloat4("attack_animation_speeds", &attack_animation_speeds.x,0.1f);
+            ImGui::DragFloat4("attack_animation_blends_speeds", &attack_animation_blends_speeds.x,0.1f);
+
             ImGui::End();
         }
     }
@@ -335,23 +338,8 @@ void Player::InflectionPower(float elapsed_time)
 void Player::InflectionCombo(float elapsed_time)
 {
     duration_combo_timer += 1.0f * elapsed_time;
-    if (is_awakening == false)
+    if (is_awakening)
     {
-        //if (duration_combo_timer >= 1.0f)
-        //{
-        //    duration_combo_timer = 0;
-        //    combo_count -= 1;
-        //}
-
-        //combo_count -= elapsed_time;
-    }
-    else
-    {
-        //if (duration_combo_timer >= 1.0f)
-        //{
-        //    duration_combo_timer = 0;
-        //    combo_count -= 2;
-        //}
         combo_count -= elapsed_time * 2.0f;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
@@ -473,6 +461,7 @@ void Player::AddCombo(int count)
         is_enemy_hit = true;
     }
     else is_enemy_hit = false;
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
 void Player::Damaged(int damage, float InvincibleTime)
