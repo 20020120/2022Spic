@@ -6,6 +6,7 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     mEnemyManager.fInitialize(graphics_,Func_);
 
     mWaveState = WaveState::Start;
+    fSetStartGame(true);
 }
 
 void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
