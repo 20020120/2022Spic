@@ -99,6 +99,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::TreeNode("speed"))
             {
                 ImGui::DragFloat3("velocity", &velocity.x);
+                ImGui::DragFloat3("acceleration_velocity", &acceleration_velocity.x);
                 ImGui::DragFloat("max_speed", &move_speed);
                 ImGui::TreePop();
             }
@@ -145,6 +146,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
+
+            ImGui::DragFloat4("attack_animation_speeds", &attack_animation_speeds.x,0.1f);
+            ImGui::DragFloat4("attack_animation_blends_speeds", &attack_animation_blends_speeds.x,0.1f);
+            float frame{ model->get_anim_para().animation_tick };
+            ImGui::DragFloat("frame", &frame);
+
+            ImGui::DragFloat("charge_length_magnification", &charge_length_magnification,0.1f);
+            ImGui::DragFloat("lerp_rate", &lerp_rate,0.1f);
 
             ImGui::End();
         }
@@ -335,23 +344,8 @@ void Player::InflectionPower(float elapsed_time)
 void Player::InflectionCombo(float elapsed_time)
 {
     duration_combo_timer += 1.0f * elapsed_time;
-    if (is_awakening == false)
+    if (is_awakening)
     {
-        //if (duration_combo_timer >= 1.0f)
-        //{
-        //    duration_combo_timer = 0;
-        //    combo_count -= 1;
-        //}
-
-        //combo_count -= elapsed_time;
-    }
-    else
-    {
-        //if (duration_combo_timer >= 1.0f)
-        //{
-        //    duration_combo_timer = 0;
-        //    combo_count -= 2;
-        //}
         combo_count -= elapsed_time * 2.0f;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
@@ -473,6 +467,7 @@ void Player::AddCombo(int count)
         is_enemy_hit = true;
     }
     else is_enemy_hit = false;
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
 void Player::Damaged(int damage, float InvincibleTime)
@@ -552,15 +547,13 @@ void Player::AvoidanceAcceleration(float elapsed_time)
 
 void Player::ChargeAcceleration(float elapse_time)
 {
-
-    DirectX::XMFLOAT3 pos = {}, up = {};
-
     //位置を補間
     //ロックオンしていたらターゲットに向かって行く
+#if 0
     if (is_lock_on)
     {
         DirectX::XMFLOAT3 v{};
-        DirectX::XMStoreFloat3(&v,DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
         float length{ Math::calc_vector_AtoB_length(position,target) };
 
         velocity.x = v.x * length * 5.0f;
@@ -580,6 +573,41 @@ void Player::ChargeAcceleration(float elapse_time)
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
+#else
+
+    velocity = Math::lerp(velocity, acceleration_velocity, lerp_rate * elapse_time);
+
+#endif // 0
+}
+
+void Player::SetAccelerationVelocity()
+{
+    //位置を補間
+//ロックオンしていたらターゲットに向かって行く
+    if (is_lock_on)
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        acceleration_velocity.x = v.x * charge_length_magnification;
+        acceleration_velocity.y = v.y * charge_length_magnification;
+        acceleration_velocity.z = v.z * charge_length_magnification;
+        //position = Math::lerp(position, target, 10.0f * elapse_time);
+    }
+    else
+    {
+        DirectX::XMFLOAT3 v{};
+        DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
+        float length{ Math::calc_vector_AtoB_length(position,charge_point) };
+
+        acceleration_velocity.x = v.x * charge_length_magnification;
+        acceleration_velocity.y = v.y * charge_length_magnification;
+        acceleration_velocity.z = v.z * charge_length_magnification;
+
+        //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
+    }
+
 }
 
 void Player::SpecialSurgeAcceleration()

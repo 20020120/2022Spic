@@ -49,9 +49,9 @@ private:
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
-    static constexpr float ATTACK_TYPE1_MAX_TIME = 0.2f;
+    static constexpr float ATTACK_TYPE1_MAX_TIME = 0.5f;
     //攻撃2撃目の猶予時間
-    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.3f;
+    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.5f;
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 70.0f;
     //後ろに回り込める距離
@@ -63,19 +63,27 @@ private:
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 50.0f;
     //回避の時のアニメーションスピード
-    static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.8f;
+    static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
+    //突進開始の時のアニメーションスピード
+    static constexpr float CHARGEINIT_ANIMATION_SPEED = 1.5f;
+    //突進の時のアニメーションスピード
+    static constexpr float CHARGE_ANIMATION_SPEED = 1.0f;
     //攻撃1の時のアニメーションスピード
-    static constexpr float ATTACK1_ANIMATION_SPEED = 1.0f;
+    static constexpr float ATTACK1_ANIMATION_SPEED = 2.0f;
     //攻撃2の時のアニメーションスピード
     static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
     //攻撃3の時のアニメーションスピード
-    static constexpr float ATTACK3_ANIMATION_SPEED = 3.0f;
+    static constexpr float ATTACK3_ANIMATION_SPEED = 2.0f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
     //人型に戻るときのアニメーションスピード
     static constexpr float TRANSFORM_HUM_ANIMATION_SPEED = 2.0f;
     //飛行機モードになるときのアニメーションスピード
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
+
+    DirectX::XMFLOAT4 attack_animation_speeds{ 1.0f,1.0f,1.0f,1.0f };//攻撃のアニメーションスピードのデバッグ用
+    DirectX::XMFLOAT4 attack_animation_blends_speeds{ 0.3f,0.0f,0.0f,0.0f };//攻撃のアニメーション補間の時間
+
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
@@ -172,8 +180,14 @@ private:
     bool is_charge{ false };
     //プレイヤーのアニメーションスピード
     float animation_speed{ 1.0f };
+    //突進の加速用のvelocity
+    DirectX::XMFLOAT3 acceleration_velocity;
+    //突進のvelocityの補間のレート
+    float lerp_rate{ 1.0f };
+    //突進のターゲットまでの距離の倍率(どれだけ伸ばすか)
+    float charge_length_magnification{ 65.0f };
     //プレイヤーのパラメータ
-    std::unique_ptr<PlayerConfig> player_config{      nullptr };
+    std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
@@ -275,6 +289,8 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
+    //突進の加速の設定
+    void SetAccelerationVelocity();
     //ゲージ消費の突進
     void SpecialSurgeAcceleration();
 private:
@@ -319,7 +335,7 @@ private:
     void TransitionAvoidance();
     void TransitionBehindAvoidance();//背後に回り込む回避
     void TransitionChargeInit();
-    void TransitionCharge();
+    void TransitionCharge(float blend_seconds = 0.3f);
     void TransitionAttackType1(float blend_seconds = 0.3f);
     void TransitionAttackType2(float blend_seconds = 0.3f);
     void TransitionAttackType3(float blend_seconds = 0.3f);
