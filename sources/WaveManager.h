@@ -133,14 +133,14 @@ private:
             UP,
             DOWN,
         };
-        DirectX::XMFLOAT2 position = {};            // 各ステージの位置
-        int route_count = 0;                        // 各ステージのルート数
+        DirectX::XMFLOAT2 position = {}; // 各ステージの位置
         // 各ステージのルートとその行先
         std::map<ROUTE, STAGE_IDENTIFIER> journeys;
     };
     StageDetails stage_details[STAGE_IDENTIFIER::STAGE_COUNT];
-    STAGE_IDENTIFIER current_stage = STAGE_IDENTIFIER::S_1_1;
-    STAGE_IDENTIFIER next_stage    = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER current_stage      = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER next_stage         = STAGE_IDENTIFIER::S_1_1;
+    STAGE_IDENTIFIER candidate_stage    = STAGE_IDENTIFIER::S_1_1; // 次に選べるルート候補
     DirectX::XMFLOAT2 viewpoint         = {};
     DirectX::XMFLOAT2 arrival_viewpoint = {};
     DirectX::XMFLOAT2 arrival_scale     = {};
@@ -164,7 +164,6 @@ private:
     Icon player_icon;
 
     StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
-    void clear_initialize();
 
     //---ここまで--//
 

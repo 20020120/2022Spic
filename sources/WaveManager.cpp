@@ -23,63 +23,53 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     /*1-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_1_1;
-        stage_details[index].route_count = 2;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::S_2_1));
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::RIGHT, STAGE_IDENTIFIER::S_2_2));
     }
     /*2-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_2_1;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::S_3_1));
     }
     /*2-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_2_2;
-        stage_details[index].route_count = 2;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::S_3_2));
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::RIGHT, STAGE_IDENTIFIER::S_3_3));
     }
     /*3-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_1;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
     }
     /*3-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_2;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_4_1));
     }
     /*3-3*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_3;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_4_2));
     }
     /*4-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_4_1;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
     }
     /*4-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_4_2;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_5_1));
     }
     /*5-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_5_1;
-        stage_details[index].route_count = 1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::BOSS));
     }
     /*BOSS*/
     {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::BOSS;
-        stage_details[index].route_count = 0;
+        // 次のルートなし
     }
 
     // map
@@ -92,7 +82,7 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     player_icon.arg.texsize = { (float)player_icon.sprite->get_texture2d_desc().Width, (float)player_icon.sprite->get_texture2d_desc().Height };
     player_icon.arg.pivot = player_icon.arg.texsize * DirectX::XMFLOAT2{ 0.5f, 0.5f };
 
-    clear_initialize();
+    transition_reduction();
     //---ここまで--//
 }
 
@@ -119,7 +109,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             //----------------------------------
             // TODO:藤岡が書いたところ6
             //----------------------------------
-            clear_initialize();
+            transition_reduction();
             //---ここまで--//
         }
 
@@ -178,7 +168,7 @@ void WaveManager::fWaveClear()
             //----------------------------------
             // TODO:藤岡が書いたところ7
             //----------------------------------
-            clear_initialize();
+            transition_reduction();
             //---ここまで--//
         }
         else
@@ -224,7 +214,7 @@ void WaveManager::fGuiMenu()
         if (ImGui::Button("ClearGame"))
         {
             mWaveState = WaveState::Clear;
-            clear_initialize();
+            transition_reduction();
         }
         //---ここまで--//
 
@@ -265,10 +255,17 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
     else
     {
-        map.threshold = Math::lerp(map.threshold, 1.0f, 2.0f * elapsedTime_);
-        player_icon.threshold = Math::lerp(player_icon.threshold, 1.0f, 2.0f * elapsedTime_);
+        map.threshold = Math::lerp(map.threshold, 1.5f, 2.0f * elapsedTime_);
+        player_icon.threshold = Math::lerp(player_icon.threshold, 1.5f, 2.0f * elapsedTime_);
+        if (Math::equal_check(player_icon.threshold, 1.0f, 0.01f))
+        {
+            // クリア演出終了、次のステージへ
+            mWaveState = WaveState::Game;
+            mCurrentWave++;
+            fStartWave();
+        }
     }
-
+    // state別の更新処理
     switch (clear_state)
     {
     case CLEAR_STATE::REDUCTION:   // 縮小
@@ -282,30 +279,21 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         break;
     }
 
-
-
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "1-1","2-1","2-2","3-1","3-2","3-3","4-1","4-2","5-1","BOSS" };
     {
-        //static int elem = current_stage;
-        //const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
-        //if (ImGui::SliderInt("current_stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name))
-        //{
-        //    current_stage = (STAGE_IDENTIFIER)elem;
-        //}
-        //ImGui::Separator();
-    }
-    if (ImGui::Button("transition")) { clear_initialize(); }
-    ImGui::DragFloat2("viewpoint", &viewpoint.x);
-    if (current_stage != STAGE_IDENTIFIER::BOSS)
-    {
-        ImGui::Separator();
-        int elem = (int)stage_details[current_stage].journeys.at(route_state);
+        static int elem = current_stage;
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
-        ImGui::SliderInt("next stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
+        if (ImGui::SliderInt("change stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name))
+        {
+            current_stage = (STAGE_IDENTIFIER)elem;
+            transition_reduction();
+        }
         ImGui::Separator();
     }
+    if (ImGui::Button("transition")) { transition_reduction(); }
+    ImGui::DragFloat2("viewpoint", &viewpoint.x);
     ImGui::End();
 #endif
 
@@ -335,6 +323,8 @@ void WaveManager::transition_reduction()
 {
     clear_state = CLEAR_STATE::REDUCTION;
 
+    close = false;
+    viewpoint = { 640.0f, 360.0f };
     wait_timer = 1.5f;
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
@@ -369,7 +359,10 @@ void WaveManager::update_reduction(float elapsed_time)
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f))
     {
         if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
-        else {}
+        else // ゲームクリア
+        {
+
+        }
     }
 }
 
@@ -382,7 +375,6 @@ void WaveManager::transition_selection()
     }
 
     clear_state = CLEAR_STATE::SELECTION;
-
     route_state = stage_details[current_stage].journeys.begin()->first;
 }
 
@@ -428,7 +420,6 @@ void WaveManager::update_selection(float elapsed_time)
             }
         }
     };
-
     switch (route_state)
     {
     case StageDetails::ROUTE::LEFT:
@@ -458,41 +449,51 @@ void WaveManager::update_selection(float elapsed_time)
         next_stage = stage_details[current_stage].journeys.at(route_state);
         transition_enlargement();
     }
+
+
+#ifdef USE_IMGUI
+    ImGui::Begin("ClearProto");
+    {
+        ImGui::Separator();
+        int elem = stage_details[current_stage].journeys.at(route_state);
+        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "1-1","2-1","2-2","3-1","3-2","3-3","4-1","4-2","5-1","BOSS" };
+        const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
+        ImGui::SliderInt("candidate stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
+        ImGui::Separator();
+    }
+    ImGui::End();
+#endif // USE_IMGUI
 }
 
 void WaveManager::transition_enlargement()
 {
     clear_state = CLEAR_STATE::ENLARGEMENT;
 
+    wait_timer = 3.0f;
     arrival_viewpoint = { 640.0f, 360.0f };
     arrival_scale     = { 10.0f,10.0f };
 }
 
 void WaveManager::update_enlargement(float elapsed_time)
 {
+    current_stage = next_stage;
+
+    wait_timer -= elapsed_time;
+    wait_timer = (std::max)(wait_timer, 0.0f);
+
     // viewpointの移動
     float lerp_rate = 2.0f;
     viewpoint = Math::lerp(viewpoint, arrival_viewpoint, lerp_rate * elapsed_time);
     // positionの移動
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
     player_icon.arg.pos = viewpoint;
+
+    if (wait_timer > 0.0f) return;
     // scaleの変更
     map.arg.scale = Math::lerp(map.arg.scale, arrival_scale, lerp_rate * elapsed_time);
     player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
 
-    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f))
-    {
-        current_stage = next_stage;
-        // バグ防止
-        if (current_stage != STAGE_IDENTIFIER::BOSS) route_state = stage_details[current_stage].journeys.begin()->first;
-    }
+    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f)) { close = true; }
 }
 
-void WaveManager::clear_initialize()
-{
-    close                 = false;
-    viewpoint             = { 640.0f, 360.0f };
-
-    transition_reduction();
-}
 //---ここまで--//
