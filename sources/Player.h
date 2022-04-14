@@ -69,11 +69,11 @@ private:
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 1.0f;
     //攻撃1の時のアニメーションスピード
-    static constexpr float ATTACK1_ANIMATION_SPEED = 1.0f;
+    static constexpr float ATTACK1_ANIMATION_SPEED = 2.0f;
     //攻撃2の時のアニメーションスピード
-    static constexpr float ATTACK2_ANIMATION_SPEED = 1.0f;
+    static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
     //攻撃3の時のアニメーションスピード
-    static constexpr float ATTACK3_ANIMATION_SPEED = 1.0f;
+    static constexpr float ATTACK3_ANIMATION_SPEED = 1.5f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
     //人型に戻るときのアニメーションスピード
@@ -104,7 +104,7 @@ private:
     float charge_time{ 0 };
     //突進中の時間をどれだけ増やすか
     float charge_add_time{ 1.0f };
-    //攻撃の時間(アニメーションが終わったら増える)
+    //攻撃の時間
     float attack_time{ 0 };
     //攻撃中の時間をどれだけ増やすか
     float attack_add_time{ 1.0f };
@@ -123,6 +123,10 @@ private:
     float leverage{ 15.0f };
     //カメラ用の回避した瞬間
     bool is_avoidance{ false };
+    //倒した敵の位置を保存する(カメラ用)
+    DirectX::XMFLOAT3 old_target{};
+    //次の敵にカメラを補間していいかどうか
+    bool is_target_camera_lerp{ false };
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
@@ -204,7 +208,6 @@ private:
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
-    //ダメージ受けたときに後ろにはじかれる
 
 private:
     //カプセル敵との当たり判定
@@ -292,7 +295,7 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
-    //突進の加速の設定
+    //攻撃の加速の設定
     void SetAccelerationVelocity();
     //ゲージ消費の突進
     void SpecialSurgeAcceleration();
@@ -301,6 +304,10 @@ private:
     void LockOn();
     //カメラリセット
     void CameraReset();
+    //カメラがターゲットする位置の補間
+    void InterpolationCameraTarget(float elapsed_time);
+    //倒した敵の位置を保存する
+    void SetOldTarget();
 private:
     //-----------アニメーションに関係する関数,変数------------//
 

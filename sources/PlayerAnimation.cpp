@@ -216,17 +216,24 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
-
-    if (is_enemy_hit)
+    attack_time += attack_add_time * elapsed_time;
+    //敵に当たったか時間が2秒たったら加速を終わる
+    if (is_enemy_hit || attack_time > 2.0f)
     {
+        is_charge = false;
+        attack_time = 0;
         is_update_animation = true;
-        velocity = {};
+        //velocity = {};
     }
-    else ChargeAcceleration(elapsed_time);
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        if(length > 5.0f)ChargeAcceleration(elapsed_time);
+    }
 
     if (model->end_of_animation())
     {
-        attack_time += attack_add_time * elapsed_time;
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
@@ -264,12 +271,20 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
 
-    if (is_enemy_hit)
+    attack_time += attack_add_time * elapsed_time;
+    //敵に当たったか時間が2秒たったら加速を終わる
+    if (is_enemy_hit || attack_time > 2.0f)
     {
+        is_charge = false;
+        attack_time = 0;
         is_update_animation = true;
-        velocity = {};
+        //velocity = {};
     }
-    else ChargeAcceleration(elapsed_time);
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+        if (length > 5.0f) ChargeAcceleration(elapsed_time);
+    }
 
     if (model->end_of_animation())
     {
@@ -415,6 +430,8 @@ void Player::TransitionIdle(float blend_second)
     is_attack = false;
     //アニメーション速度
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //待機状態の時の更新関数に切り替える
     player_activity = &Player::IdleUpdate;
 }
@@ -431,6 +448,8 @@ void Player::TransitionMove(float blend_second)
     is_attack = false;
     //アニメーション速度
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //移動状態の時の更新関数に切り替える
     player_activity = &Player::MoveUpdate;
 }
@@ -469,6 +488,8 @@ void Player::TransitionAvoidance()
     is_attack = false;
     //アニメーションの速度
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //回避状態の時の更新関数に切り替える
     player_activity = &Player::AvoidanceUpdate;
 }
@@ -489,6 +510,8 @@ void Player::TransitionBehindAvoidance()
     is_attack = false;
     //アニメーションの速度
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;;
 }
@@ -501,16 +524,18 @@ void Player::TransitionChargeInit()
    else model->play_animation(AnimationClips::ChargeInit, false,true);
    //攻撃中かどうかの設定
    is_attack = true;
-   ////突進中かどうかの設定
-   //is_charge = true;
+   //突進中かどうかの設定
+   is_charge = true;
    //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
-    //突進の加速の設定
+    //攻撃の加速の設定
     SetAccelerationVelocity();
     //加速のレート
     lerp_rate = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //突進の始まりの時の更新関数に切り替える
     player_activity = &Player::ChargeInitUpdate;
 }
@@ -536,6 +561,8 @@ void Player::TransitionCharge(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.x;
 #endif // 0
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //加速のレート
     lerp_rate = 4.0f;
     //突進中の更新関数に切り替える
@@ -560,6 +587,8 @@ void Player::TransitionAttackType1(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.y;
 #endif // 0
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //加速のレート
     lerp_rate = 4.0f;
     //１撃目の更新関数に切り替える
@@ -581,12 +610,16 @@ void Player::TransitionAttackType2(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.z;
 #endif // 0
-    //突進の加速の設定
+    //攻撃の加速の設定
     SetAccelerationVelocity();
     //加速のレート
     lerp_rate = 2.0f;
+    //攻撃の時間
+    attack_time = 0;
     //アニメーションをしていいかどうか
     is_update_animation = false;
+    //突進中かどうかの設定
+    is_charge = true;
     //２撃目の更新関数に切り替える
     player_activity = &Player::AttackType2Update;
 }
@@ -606,12 +639,16 @@ void Player::TransitionAttackType3(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.w;
 #endif // 0
-    //突進の加速の設定
+    //攻撃の加速の設定
     SetAccelerationVelocity();
     //加速のレート
     lerp_rate =2.0f;
+    //攻撃の時間
+    attack_time = 0;
     //アニメーションをしていいかどうか
     is_update_animation = false;
+    //突進中かどうかの設定
+    is_charge = true;
     //３撃目の更新関数に切り替える
     player_activity = &Player::AttackType3Update;
 }
@@ -638,6 +675,8 @@ void Player::TransitionSpecialSurge()
     special_surge_timer = 0.0f;
     //アニメーションスピードの設定
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //ゲージ消費の突進の更新関数に切り替える
     player_activity = &Player::SpecialSurgeUpdate;
 }
@@ -652,6 +691,8 @@ void Player::TransitionOpportunity()
     special_surge_timer = 0;
     //アニメーションスピードの設定
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //ゲージ消費の突進の隙の更新関数に切り替える
     player_activity = &Player::OpportunityUpdate;
 }
@@ -669,6 +710,8 @@ void Player::TransitionDamage()
     else model->play_animation(AnimationClips::Damage, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //ダメージ受けたときの更新関数に切り替える
     player_activity = &Player::DamageUpdate;
 }
@@ -679,6 +722,8 @@ void Player::TransitionTransformHum()
     model->play_animation(AnimationClips::TransformHum, false,true);
     //アニメーション速度の設定
     animation_speed = TRANSFORM_HUM_ANIMATION_SPEED;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //人型になってるときの更新関数に切り替える
     player_activity = &Player::TransformHumUpdate;
 }
@@ -689,6 +734,8 @@ void Player::TransitionTransformWing()
     model->play_animation(AnimationClips::TransformWing, false,true);
     //アニメーション速度の設定
     animation_speed = TRANSFORM_WING_ANIMATION_SPEED;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //飛行機モード中の更新関数に切り替える
     player_activity = &Player::TransformWingUpdate;
 }
@@ -701,6 +748,8 @@ void Player::TransitionAwaking()
     is_awakening = true;
     //アニメーション速度の設定
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //覚醒状態になる途中の更新関数に切り替える
     player_activity = &Player::AwakingUpdate;
 }
@@ -713,6 +762,8 @@ void Player::TransitionInvAwaking()
     is_awakening = false;
     //アニメーション速度の設定
     animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::InvAwakingUpdate;
 
