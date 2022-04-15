@@ -73,10 +73,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         mSwordTrail[0].fEraseTrailPoint();
     }
     player_config->update(graphics,elapsed_time);
-    //今ターゲットしている敵を倒したら場所を保存する
-    //SetOldTarget();
-    //InterpolationCameraTarget(elapsed_time);
-    debug_figure->create_sphere(target, 1.0f, DirectX::XMFLOAT4(1.0f, 0, 0, 1.0f));
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
 #ifdef USE_IMGUI
@@ -158,13 +154,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::DragFloat("charge_length_magnification", &charge_length_magnification,0.1f);
             ImGui::DragFloat("lerp_rate", &lerp_rate,0.1f);
-
-            float l{Math::calc_vector_AtoB_length(target,old_target)};
-            ImGui::DragFloat("l", &l);
-            ImGui::DragFloat3("old_target", &old_target.x);
-            ImGui::DragFloat3("target", &target.x);
-            ImGui::Checkbox("is_target_camera_lerp", &is_target_camera_lerp);
-
             ImGui::End();
         }
     }
@@ -436,22 +425,12 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         target_enemy = target_enemies;
-        //target_count = 0;
-        //old_target_count = 0;
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
     {
         target_enemy = target_enemies;
-        //target_count++;
-        //old_target_count = target_count;
     }
-    //else if (is_lock_on && target_enemy == nullptr && target_enemies != nullptr)
-    //{
-    //    target_enemy = target_enemies;
-    //    target_count++;
-    //    old_target_count = target_count;
-    //}
 
 }
 
@@ -683,7 +662,6 @@ void Player::LockOn()
         is_camera_lock_on = false;
         is_lock_on = false;
         target_count = 0;
-
     }
 
 }
@@ -694,31 +672,5 @@ void Player::CameraReset()
     {
         camera_reset = true;
         orientation = { 0,0,0,1.0f };//期待の向きもリセットしてる(プロトでは)
-    }
-}
-
-void Player::InterpolationCameraTarget(float elapsed_time)
-{
-    if (is_enemy == false) is_target_camera_lerp = false;
-    if (is_lock_on && target_enemy != nullptr && is_target_camera_lerp)
-    {
-        DirectX::XMFLOAT3 p{target_enemy->fGetPosition()};
-        float length{ Math::calc_vector_AtoB_length(target, p) };
-        if (length < 5.0f)
-        {
-            is_target_camera_lerp = false;
-            return;
-        }
-        target = Math::lerp(old_target, p, 1.0f * elapsed_time);
-    }
-
-}
-
-void Player::SetOldTarget()
-{
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
-    {
-        is_target_camera_lerp = true;
-        old_target = target;
     }
 }
