@@ -49,9 +49,9 @@ private:
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
-    static constexpr float ATTACK_TYPE1_MAX_TIME = 0.5f;
+    static constexpr float ATTACK_TYPE1_MAX_TIME = 0.7f;
     //攻撃2撃目の猶予時間
-    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.5f;
+    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.7f;
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 70.0f;
     //後ろに回り込める距離
@@ -59,9 +59,9 @@ private:
     //攻撃力の最低値
     static const int MIN_PLAYER_ATTACK_POWER = 1;
     //攻撃力の最大値
-    static const int MAX_PLAYER_ATTACK_POWER = 10;
+    static const int MAX_PLAYER_ATTACK_POWER = 20;
     //コンボの最大数
-    static constexpr float MAX_COMBO_COUNT = 50.0f;
+    static constexpr float MAX_COMBO_COUNT = 200.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
     //突進開始の時のアニメーションスピード
@@ -73,16 +73,13 @@ private:
     //攻撃2の時のアニメーションスピード
     static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
     //攻撃3の時のアニメーションスピード
-    static constexpr float ATTACK3_ANIMATION_SPEED = 2.0f;
+    static constexpr float ATTACK3_ANIMATION_SPEED = 1.5f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
     //人型に戻るときのアニメーションスピード
     static constexpr float TRANSFORM_HUM_ANIMATION_SPEED = 2.0f;
     //飛行機モードになるときのアニメーションスピード
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
-
-    DirectX::XMFLOAT4 attack_animation_speeds{ 1.0f,1.0f,1.0f,1.0f };//攻撃のアニメーションスピードのデバッグ用
-    DirectX::XMFLOAT4 attack_animation_blends_speeds{ 0.3f,0.0f,0.0f,0.0f };//攻撃のアニメーション補間の時間
 
 
 private:
@@ -107,7 +104,7 @@ private:
     float charge_time{ 0 };
     //突進中の時間をどれだけ増やすか
     float charge_add_time{ 1.0f };
-    //攻撃の時間(アニメーションが終わったら増える)
+    //攻撃の時間
     float attack_time{ 0 };
     //攻撃中の時間をどれだけ増やすか
     float attack_add_time{ 1.0f };
@@ -126,6 +123,10 @@ private:
     float leverage{ 15.0f };
     //カメラ用の回避した瞬間
     bool is_avoidance{ false };
+    //倒した敵の位置を保存する(カメラ用)
+    DirectX::XMFLOAT3 old_target{};
+    //次の敵にカメラを補間していいかどうか
+    bool is_target_camera_lerp{ false };
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
@@ -186,6 +187,12 @@ private:
     float lerp_rate{ 1.0f };
     //突進のターゲットまでの距離の倍率(どれだけ伸ばすか)
     float charge_length_magnification{ 65.0f };
+    //攻撃のアニメーションスピードのデバッグ用
+    DirectX::XMFLOAT4 attack_animation_speeds{ 1.0f,1.0f,1.0f,1.0f };
+    //攻撃のアニメーション補間の時間
+    DirectX::XMFLOAT4 attack_animation_blends_speeds{ 0.3f,0.0f,0.0f,0.0f };
+    //アニメーションをしていいかどうか
+    bool is_update_animation{ true };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
@@ -201,7 +208,6 @@ private:
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
-    //ダメージ受けたときに後ろにはじかれる
 
 private:
     //カプセル敵との当たり判定
@@ -289,7 +295,7 @@ private:
     void AvoidanceAcceleration(float elapse_time);
     //突進の加速(線形補間)
     void ChargeAcceleration(float elapse_time);
-    //突進の加速の設定
+    //攻撃の加速の設定
     void SetAccelerationVelocity();
     //ゲージ消費の突進
     void SpecialSurgeAcceleration();
@@ -298,6 +304,10 @@ private:
     void LockOn();
     //カメラリセット
     void CameraReset();
+    //カメラがターゲットする位置の補間
+    void InterpolationCameraTarget(float elapsed_time);
+    //倒した敵の位置を保存する
+    void SetOldTarget();
 private:
     //-----------アニメーションに関係する関数,変数------------//
 
