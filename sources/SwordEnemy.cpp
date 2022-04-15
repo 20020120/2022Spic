@@ -4,6 +4,8 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_,ParamGetFunction Func_ )
     :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.fbx")
 {
+    //スラスターエフェクト
+    mVernier_effect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
     // 位置の初期化
     mPosition = EmitterPoint_;
     mScale = { 0.05f,0.05f,0.05f };
@@ -12,17 +14,22 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     SwordEnemy::fRegisterFunctions();
     mParam.mHitPoint = 100;
     fGetParam(this, Func_);
-
+    mVernier_effect->play(effect_manager->get_effekseer_manager(), mPosition);
+    
     // 攻撃に関するparameterを初期化
     mAttackInformation.mInvincible_time = { 1.0f };
      // ボーンを初期化
     mSwordBone = mpSkinnedMesh->get_bone_by_name("hand_r_joint");
+    mVernierBone = mpSkinnedMesh->get_bone_by_name("burner_r_f_fire");
+
 }
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     fUpdateBase(elapsedTime_,Graphics_);
     fSetAttackCapsuleCollider(); // 攻撃用のカプセル位置を更新
+    fSetVernierEffectPos();//バーニアの位置を更新
+
 }
 
 void SwordEnemy::fRegisterFunctions()
@@ -107,6 +114,22 @@ void SwordEnemy::fSetAttackCapsuleCollider()
     mAttackCapsuleCollider.mPointB = position + up * 1.0f;
     mAttackCapsuleCollider.mRadius = 2.0f;
 
+}
+
+void SwordEnemy::fSetVernierEffectPos()
+{
+    //--------------------<バーニアのの位置を決定する>--------------------//
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    DirectX::XMFLOAT4X4 rotate_mat{};
+    // ボーンの名前から位置と上ベクトルを取得
+    mpSkinnedMesh->fech_by_bone(mAnimPara,
+        Math::calc_world_matrix(mScale, mOrientation, mPosition),
+        mVernierBone, position, up, rotate_mat);
+   
+    mVernier_effect->set_position(effect_manager->get_effekseer_manager(), position);
+   // DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::LHS_ZUP);
+    mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), rotate_mat);
 }
 
 void SwordEnemy::fSpawnInit()

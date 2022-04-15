@@ -218,7 +218,7 @@ void SkinnedMesh::fech_by_bone(const DirectX::XMFLOAT4X4& world, const skeleton:
 }
 
 void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
-    const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up)
+    const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up, DirectX::XMFLOAT4X4& rotate_mat)
 {
     if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
     {
@@ -235,6 +235,7 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4&
 
         DirectX::XMFLOAT4X4 r = {};
         DirectX::XMStoreFloat4x4(&r, R);
+        rotate_mat = r;
         DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
         XMStoreFloat3(&up, right_vec);
 

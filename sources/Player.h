@@ -123,10 +123,6 @@ private:
     float leverage{ 15.0f };
     //カメラ用の回避した瞬間
     bool is_avoidance{ false };
-    //倒した敵の位置を保存する(カメラ用)
-    DirectX::XMFLOAT3 old_target{};
-    //次の敵にカメラを補間していいかどうか
-    bool is_target_camera_lerp{ false };
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;
@@ -304,10 +300,6 @@ private:
     void LockOn();
     //カメラリセット
     void CameraReset();
-    //カメラがターゲットする位置の補間
-    void InterpolationCameraTarget(float elapsed_time);
-    //倒した敵の位置を保存する
-    void SetOldTarget();
 private:
     //-----------アニメーションに関係する関数,変数------------//
 
@@ -340,20 +332,20 @@ private:
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
-    void TransitionIdle(float blend_second = 0.3f);
-    void TransitionMove(float blend_second = 0.3f);
-    void TransitionAvoidance();
-    void TransitionBehindAvoidance();//背後に回り込む回避
-    void TransitionChargeInit();
-    void TransitionCharge(float blend_seconds = 0.3f);
-    void TransitionAttackType1(float blend_seconds = 0.3f);
-    void TransitionAttackType2(float blend_seconds = 0.3f);
-    void TransitionAttackType3(float blend_seconds = 0.3f);
-    void TransitionSpecialSurge();
-    void TransitionOpportunity();
-    void TransitionDamage();
-    void TransitionTransformHum();
-    void TransitionTransformWing();
-    void TransitionAwaking();
-    void TransitionInvAwaking();
+    void TransitionIdle(float blend_second = 0.3f);               //待機に遷移
+    void TransitionMove(float blend_second = 0.3f);            //移動に遷移
+    void TransitionAvoidance();                                       //回避に遷移
+    void TransitionBehindAvoidance();                              //背後に回り込む回避に遷移
+    void TransitionChargeInit();                                       //突進開始に遷移
+    void TransitionCharge(float blend_seconds = 0.3f);         //突進に遷移
+    void TransitionAttackType1(float blend_seconds = 0.3f);  //１撃目に遷移
+    void TransitionAttackType2(float blend_seconds = 0.3f);  //２撃目に遷移
+    void TransitionAttackType3(float blend_seconds = 0.3f);  //３撃目に遷移
+    void TransitionSpecialSurge();                                    //ゲージ消費の突進に遷移
+    void TransitionOpportunity();                                     //ゲージ消費の突進後の隙に遷移
+    void TransitionDamage();                                          //ダメージ受けたときに遷移
+    void TransitionTransformHum();                                 //人型に変形に遷移
+    void TransitionTransformWing();                                 //飛行機モードに遷移
+    void TransitionAwaking();                                          //覚醒状態に遷移
+    void TransitionInvAwaking();                                      //通常状態に遷移
 };

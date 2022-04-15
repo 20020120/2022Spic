@@ -40,6 +40,8 @@ public:
 
     void fSetAttackCapsuleCollider();
 
+    void fSetVernierEffectPos();
+
     //****************************************************************
     // 
     // ïœêî
@@ -48,7 +50,8 @@ public:
 private:
     float mWaitTimer{}; // ë“Çøéûä‘
     skeleton::bone mSwordBone{  };
-
+    skeleton::bone mVernierBone{  };
+    std::unique_ptr<Effect> mVernier_effect;
 
     //****************************************************************
     // 

@@ -134,7 +134,7 @@ private:
 
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
-
+    
     //--------------------<プロト>--------------------//
     void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
 
@@ -158,6 +158,8 @@ private:
     std::vector<EnemySource> mFirstTest{};
     float mLastTimer{};// 最後に出てくる敵の時間
     EnemyEditor mEditor{};
+
+    bool mDebugMode{};
 
     //--------------------<プレイヤーの位置>--------------------//
     DirectX::XMFLOAT3 mPlayerPosition{};
