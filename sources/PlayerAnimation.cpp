@@ -187,7 +187,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚2Œ‚–Ú‚É‘JˆÚ
-        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
 #if 0
@@ -241,7 +241,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚3Œ‚–Ú‚É‘JˆÚ
-        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
 #if 0
@@ -288,7 +288,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 
     if (model->end_of_animation())
     {
-        if (is_enemy && game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
             TransitionCharge(attack_animation_blends_speeds.x);

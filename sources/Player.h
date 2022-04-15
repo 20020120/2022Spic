@@ -123,6 +123,15 @@ private:
     float leverage{ 15.0f };
     //カメラ用の回避した瞬間
     bool is_avoidance{ false };
+    //倒した敵の位置を保存
+    DirectX::XMFLOAT3 old_target{};
+    //カメラの補間のゴール地点
+    DirectX::XMFLOAT3 end_target{};
+    //補間率
+    float target_lerp_rate{ 0 };
+    //カメラのターゲットの補間
+    void LerpCameraTarget(float elapsed_time);
+
 private:
     //ターゲットの敵
     const  BaseEnemy* target_enemy;

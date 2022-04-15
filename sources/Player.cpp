@@ -72,6 +72,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         mSwordTrail[0].fUpdate(elapsed_time, 10);
         mSwordTrail[0].fEraseTrailPoint();
     }
+    LerpCameraTarget(elapsed_time);
     player_config->update(graphics,elapsed_time);
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
@@ -184,6 +185,17 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     }
 
     player_config->render(graphics.get_dc().Get());
+}
+
+void Player::LerpCameraTarget(float elapsed_time)
+{
+    target_lerp_rate += 1.0f * elapsed_time;
+    if (target_lerp_rate < 1.0f)
+    {
+        //float length{ Math::calc_vector_AtoB_length(end_target,target) };
+        //if (length < 2.0f)target_lerp_rate = 1.0f;
+        target = Math::lerp(old_target, end_target, target_lerp_rate);
+    }
 }
 
 void Player::BehindAvoidancePosition()
@@ -424,6 +436,11 @@ void Player::SetTarget(const BaseEnemy* target_enemies)
     //ターゲットしている敵が死んでいたら次の敵を入れる
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
+        //倒した敵の位置を保存
+        if (target_lerp_rate > 1.0f)old_target = target;
+        //補間率の初期化
+        target_lerp_rate = 0;
+        //一番近い敵を保存する
         target_enemy = target_enemies;
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
@@ -631,6 +648,7 @@ void Player::SpecialSurgeAcceleration()
 
 void Player::LockOn()
 {
+#if 0
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいたら
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
     {
@@ -641,7 +659,6 @@ void Player::LockOn()
     enemy_length = Math::calc_vector_AtoB_length(position, target);
     //自分と敵の距離を見る
     float length{ Math::calc_vector_AtoB_length(position, target) };
-
     if (is_enemy && length < LOCK_ON_LANGE)
     {
         if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
@@ -663,6 +680,51 @@ void Player::LockOn()
         is_lock_on = false;
         target_count = 0;
     }
+#else
+    //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
+    if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
+    {
+        //敵の位置を補完のゴールターゲットに入れる
+        end_target = target_enemy->fGetPosition();
+        //敵と自分の距離を求める
+        float length{ Math::calc_vector_AtoB_length(position,end_target) };
+        //敵との距離がロックオン出来る距離よりも短かい場合
+        if (length < LOCK_ON_LANGE)
+        {
+            //ロックオンするボタンを押したら
+            if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
+            {
+                //まだロックオンしていなかったらカメラに渡す用の変数にtrueを入れる
+                if (is_lock_on == false)
+                {
+                    //ターゲットに入れる(最初の一回だけ)
+                    old_target = target_enemy->fGetPosition();
+                    target_lerp_rate = 0;
+                    is_camera_lock_on = true;
+                }
+                //ロックオンしたかどうかを設定
+                is_lock_on = true;
+                //攻撃の加速の設定
+                SetAccelerationVelocity();
+            }
+            else
+            {
+                is_lock_on = false;
+                is_camera_lock_on = false;
+            }
+        }
+        else
+        {
+            is_lock_on = false;
+            is_camera_lock_on = false;
+        }
+    }
+    else
+    {
+        is_lock_on = false;
+        is_camera_lock_on = false;
+    }
+#endif // 0
 
 }
 

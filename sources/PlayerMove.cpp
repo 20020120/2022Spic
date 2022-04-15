@@ -16,7 +16,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
     move_vec_y = movevec.y;//MovingProcess関数は敵でも使ってるからここに書いておく
     SetDirections(orientation);
     //敵にロックオンしたら敵の方向を向く
-    if (is_enemy && is_lock_on)
+    if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position,orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
@@ -43,7 +43,7 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 
 void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
-    if (is_enemy && is_lock_on)
+    if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
@@ -64,7 +64,7 @@ void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& 
 
 void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
-    if (is_enemy && is_lock_on)
+    if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
@@ -87,13 +87,18 @@ void PlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
     //経過フレーム
     float elapsed_frame = 60.0f * elapsed_time;
 
-    if (is_enemy && is_lock_on)
+    if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
         PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
+    else
+    {
+        Turn(elapsed_time, velocity, turn_speed, position, orientation);
+    }
+
     UpdateVerticalVelocity(elapsed_frame);
     UpdateVerticalMove(elapsed_time, position, sky_dome);
     UpdateHrizontalVelocity(elapsed_frame);
