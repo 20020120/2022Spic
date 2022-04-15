@@ -1,6 +1,6 @@
 #pragma once
 
-#include"EnemyManager.h"
+#include "EnemyManager.h"
 #include "sprite_dissolve.h"
 #include "sprite_batch.h"
 #include "practical_entities.h"
@@ -144,6 +144,7 @@ private:
     DirectX::XMFLOAT2 viewpoint         = {};
     DirectX::XMFLOAT2 arrival_viewpoint = {};
     DirectX::XMFLOAT2 arrival_scale     = {};
+
     struct SpriteArg
     {
         DirectX::XMFLOAT2 pos = {};
@@ -156,12 +157,19 @@ private:
     };
     struct Icon
     {
-        std::unique_ptr<SpriteDissolve> sprite;
+        std::unique_ptr<SpriteDissolve> sprite = nullptr;
         float threshold = 1.0f;
-        SpriteArg arg;
+        SpriteArg arg = {};
+    };
+    std::unique_ptr<SpriteDissolve> arrow_sprite = nullptr;
+    struct Arrow
+    {
+        float threshold = 1.0f;
+        SpriteArg arg = {};
     };
     Icon map;
     Icon player_icon;
+    std::map<StageDetails::ROUTE, Arrow> arrows;
 
     StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
 
