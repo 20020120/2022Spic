@@ -88,7 +88,7 @@ void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT
     DirectX::XMFLOAT4X4 r_mat;
     DirectX::XMStoreFloat4x4(&r_mat, R_MAT);
     Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(r_mat);*/
-    Effekseer::Matrix44 a;
+ 
     
     Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(rotate_mat);
     
