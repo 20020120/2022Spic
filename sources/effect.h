@@ -23,7 +23,11 @@ public:
     void set_rotationY(Effekseer::Manager* effekseer_manager, const float angle);
     // クオータニオン
     void set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4 orientation);
+    //任意の回転行列をエフェクトの回転行列にセット
+    void set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat);
 private:
+    //XMFLOAT4X4からMatrix43への変換関数
+    Effekseer::Matrix43 transform_XMFLOAT4X4toMatrix43(DirectX::XMFLOAT4X4& mat_4x4);
     Effekseer::Effect* effekseer_effect{ nullptr };
     Effekseer::Handle effekseer_handle{ -1 };
 };
