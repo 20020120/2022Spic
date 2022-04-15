@@ -1034,17 +1034,17 @@ void SkinnedMesh::play_animation(int animation_index, bool is_loop, bool interpo
     assert("!!存在しないインデックスのアニメーションを再生しようとしています!!"
         && animation_index >= 0 && animation_index <= animation_clips.size() - 1);
     // アニメーションのパラメーターリセット
-    anim_para.old_anim_index          = anim_para.current_anim_index;
     anim_para.animation_blend_seconds = blend_seconds;
     anim_para.animation_blend_time    = 0.0f;
     anim_para.current_anim_index      = animation_index;
-    anim_para.last_frame_index        = anim_para.frame_index;
     anim_para.frame_index             = 0;
     anim_para.animation_tick          = 0;
     anim_para.do_loop                 = is_loop;
     anim_para.stop_animation          = false;
     anim_para.end_of_animation        = false;
     anim_para.interpolation           = interpolation;
+
+    anim_para.old_keyframe = anim_para.current_keyframe;
 }
 
 void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, bool is_loop, bool interpolation, float blend_seconds)
@@ -1054,17 +1054,17 @@ void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, boo
     assert("!!存在しないインデックスのアニメーションを再生しようとしています!!"
         && animation_index >= 0 && animation_index <= animation_clips.size() - 1);
     // アニメーションのパラメーターリセット
-    para.old_anim_index          = para.current_anim_index;
     para.animation_blend_seconds = blend_seconds;
     para.animation_blend_time    = 0.0f;
     para.current_anim_index      = animation_index;
-    para.last_frame_index        = para.frame_index;
     para.frame_index             = 0;
     para.animation_tick          = 0;
     para.do_loop                 = is_loop;
     para.stop_animation          = false;
     para.end_of_animation        = false;
     para.interpolation           = interpolation;
+
+    para.old_keyframe = para.current_keyframe;
 }
 
 void SkinnedMesh::update_animation(float elapsed_time)
@@ -1091,7 +1091,7 @@ void SkinnedMesh::update_animation(float elapsed_time)
     if (blendRate < 1.0f)
     {
         const animation::keyframe* keyframes[2] {
-          &animation_clips.at(anim_para.old_anim_index).sequence.at(anim_para.last_frame_index),
+          &anim_para.old_keyframe,
           &animation_clips.at(anim_para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, anim_para.current_keyframe);
@@ -1152,7 +1152,7 @@ void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
     if (blendRate < 1.0f)
     {
         const animation::keyframe* keyframes[2]{
-          &animation_clips.at(para.old_anim_index).sequence.at(para.last_frame_index),
+          &para.old_keyframe,
           &animation_clips.at(para.current_anim_index).sequence.at(0)
         };
         blend_animations(keyframes, blendRate, para.current_keyframe);
