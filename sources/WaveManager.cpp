@@ -2,13 +2,14 @@
 #include "Operators.h"
 
 #define ProtoType
+
 void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
 {
     // 初期化
     mEnemyManager.fInitialize(graphics_,Func_);
 
     mWaveState = WaveState::Start;
-
+    mStartGame = true;
 
     //----------------------------------
     // TODO:藤岡が書いたところ2
@@ -81,6 +82,34 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
         L".\\resources\\Sprites\\clear_wave\\player_icon.png", L".\\resources\\Sprites\\clear_wave\\player_icon_mask.png", 1);
     player_icon.arg.texsize = { (float)player_icon.sprite->get_texture2d_desc().Width, (float)player_icon.sprite->get_texture2d_desc().Height };
     player_icon.arg.pivot = player_icon.arg.texsize * DirectX::XMFLOAT2{ 0.5f, 0.5f };
+    // arrows
+    {
+        arrow_sprite = std::make_unique<SpriteDissolve>(graphics_.get_device().Get(),
+            L".\\resources\\Sprites\\clear_wave\\arrow.png", L".\\resources\\Sprites\\clear_wave\\player_icon_mask.png", 4);
+        Arrow arrow;
+        arrow.arg.texsize = { (float)arrow_sprite->get_texture2d_desc().Width, (float)arrow_sprite->get_texture2d_desc().Height };
+        arrow.arg.pivot = arrow.arg.texsize * DirectX::XMFLOAT2{ 0.5f, 0.5f };
+        /*LEFT*/
+        {
+            arrow.arg.angle = 180.0f;
+            arrows.insert(std::make_pair(StageDetails::ROUTE::LEFT, arrow));
+        }
+        /*RIGHT*/
+        {
+            arrow.arg.angle = 0.0f;
+            arrows.insert(std::make_pair(StageDetails::ROUTE::RIGHT, arrow));
+        }
+        /*UP*/
+        {
+            arrow.arg.angle = -90.0f;
+            arrows.insert(std::make_pair(StageDetails::ROUTE::UP, arrow));
+        }
+        /*DOWN*/
+        {
+            arrow.arg.angle = 90.0f;
+            arrows.insert(std::make_pair(StageDetails::ROUTE::DOWN, arrow));
+        }
+    }
 
     transition_reduction();
     //---ここまで--//
@@ -145,6 +174,17 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
         };
         r_dissolve("Map", map.sprite.get(), map.arg, map.threshold);
         r_dissolve("player icon", player_icon.sprite.get(), player_icon.arg, player_icon.threshold);
+        for (auto& arrow : arrows)
+        {
+            for (const auto& journey : stage_details[current_stage].journeys)
+            {
+                if (arrow.first == journey.first && clear_state == CLEAR_STATE::SELECTION)
+                {
+                    std::string s = "arrow " + std::to_string((int)arrow.first);
+                    r_dissolve(s, arrow_sprite.get(), arrow.second.arg, arrow.second.threshold);
+                }
+            }
+        }
     }
 
     //---ここまで--//
@@ -278,7 +318,14 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         update_enlargement(elapsedTime_);
         break;
     }
-
+    // 矢印の位置
+    {
+        DirectX::XMFLOAT2 offset = arrows.at(StageDetails::ROUTE::LEFT).arg.texsize * arrows.at(StageDetails::ROUTE::LEFT).arg.scale * 1.2f;
+        if (arrows.count(StageDetails::ROUTE::LEFT)) { arrows.at(StageDetails::ROUTE::LEFT).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(-offset.x, 0); }
+        if (arrows.count(StageDetails::ROUTE::RIGHT)) { arrows.at(StageDetails::ROUTE::RIGHT).arg.pos = player_icon.arg.pos + DirectX::XMFLOAT2(offset.x, 0); }
+        if (arrows.count(StageDetails::ROUTE::UP)) { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
+        if (arrows.count(StageDetails::ROUTE::DOWN)) { arrows.at(StageDetails::ROUTE::DOWN).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(0, offset.y); }
+    }
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "1-1","2-1","2-2","3-1","3-2","3-3","4-1","4-2","5-1","BOSS" };
@@ -376,6 +423,13 @@ void WaveManager::transition_selection()
 
     clear_state = CLEAR_STATE::SELECTION;
     route_state = stage_details[current_stage].journeys.begin()->first;
+
+    // 矢印のスケール
+    for (auto& arrow : arrows)
+    {
+        arrow.second.arg.scale = player_icon.arg.scale;
+        arrow.second.threshold = 1.0f;
+    }
 }
 
 void WaveManager::update_selection(float elapsed_time)
@@ -442,6 +496,14 @@ void WaveManager::update_selection(float elapsed_time)
         r_transition_right();
         r_transition_up();
         break;
+    }
+    // 選択している矢印は大きく
+    for (auto& arrow : arrows)
+    {
+        arrow.second.threshold = Math::lerp(arrow.second.threshold, -0.5f, 2.0f * elapsed_time);
+
+        if (arrow.first == route_state) { arrow.second.arg.scale = player_icon.arg.scale * 1.5f; }
+        else { arrow.second.arg.scale = player_icon.arg.scale; }
     }
     // next_stageのセット
     if (game_pad->get_button_down() & GamePad::BTN_B)
