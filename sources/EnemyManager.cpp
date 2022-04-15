@@ -39,7 +39,10 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     //--------------------<管理クラス自体の更新処理>--------------------//
 
     // ウェーブ開始からの時間を更新
-    mWaveTimer += elapsedTime_;
+    if (!mDebugMode)
+    {
+        mWaveTimer += elapsedTime_;
+    }
 
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
@@ -528,6 +531,8 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         {
             mWaveTimer += 10.0f;
         }
+
+        ImGui::Checkbox("DebugMode", &mDebugMode);
 
         if (ImGui::Button("Close"))
         {

@@ -8,7 +8,7 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     mEnemyManager.fInitialize(graphics_,Func_);
 
     mWaveState = WaveState::Start;
-
+    mStartGame = true;
 
     //----------------------------------
     // TODO:“¡‰ª‚ª‘‚¢‚½‚Æ‚±‚ë2
