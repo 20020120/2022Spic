@@ -21,10 +21,14 @@ public:
     void set_speed(Effekseer::Manager* effekseer_manager, float speed);
     // 行列をセット
     void set_rotationY(Effekseer::Manager* effekseer_manager, const float angle);
+    //任意軸回転
+    void set_rotation_axis(Effekseer::Manager* effekseer_manager,const DirectX::XMFLOAT3& Axis, const float angle);
     // クオータニオン
     void set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4 orientation);
+    //指定の向きにエフェクトの角度を合わせる
+    void set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3& orient);
     //任意の回転行列をエフェクトの回転行列にセット
-    void set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat);
+    void set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat,float ang);
 private:
     //XMFLOAT4X4からMatrix43への変換関数
     Effekseer::Matrix43 transform_XMFLOAT4X4toMatrix43(DirectX::XMFLOAT4X4& mat_4x4);

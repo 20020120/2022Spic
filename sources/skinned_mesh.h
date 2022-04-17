@@ -397,7 +397,7 @@ public:
     const skeleton::bone& get_bone_by_name(std::string name);
     void fech_by_bone(const DirectX::XMFLOAT4X4& world, const skeleton::bone& bone, DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up);
     void fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4& world, const skeleton::bone& bone,
-        DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up,DirectX::XMFLOAT4X4& rotate_mat = DirectX::XMFLOAT4X4{});
+        DirectX::XMFLOAT3& pos, DirectX::XMFLOAT3& up,DirectX::XMFLOAT4X4& rotation_mat = DirectX::XMFLOAT4X4{});
     //--------<getter/setter>--------//
     const std::vector<mesh>& get_meshes() const { return meshes; }
     const anim_Parameters& get_anim_para() const { return anim_para; }

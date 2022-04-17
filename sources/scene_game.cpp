@@ -26,7 +26,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	// モデルのロード
 	sky_dome = std::make_unique<SkyDome>(graphics);
 	// effect
-	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\bomb_2.efk");
+	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
 
 	//--------------------<弾の管理クラスを初期化>--------------------//
 	mBulletManager.fInitialize();
@@ -175,6 +175,10 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		if (ImGui::Button("play_effect"))
 		{
 			test_effect->play(effect_manager->get_effekseer_manager(), { 0,1,0 }, 3);
+		}
+		if (ImGui::Button("stop_effect"))
+		{
+			test_effect->stop(effect_manager->get_effekseer_manager());
 		}
 		{
 			static DirectX::XMFLOAT3 pos{};

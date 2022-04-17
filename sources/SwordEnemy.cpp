@@ -121,15 +121,43 @@ void SwordEnemy::fSetVernierEffectPos()
     //--------------------<バーニアのの位置を決定する>--------------------//
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 up{};
-    DirectX::XMFLOAT4X4 rotate_mat{};
+    DirectX::XMFLOAT4X4 q{};
+
+
     // ボーンの名前から位置と上ベクトルを取得
     mpSkinnedMesh->fech_by_bone(mAnimPara,
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
-        mVernierBone, position, up, rotate_mat);
-   
+        mVernierBone, position, up, q);
+
     mVernier_effect->set_position(effect_manager->get_effekseer_manager(), position);
-   // DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::LHS_ZUP);
-    mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), rotate_mat);
+    DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP);
+    /* DirectX::XMMATRIX R_MAT = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&rotate_mat));
+    DirectX::XMFLOAT4X4 r_mat;
+    DirectX::XMStoreFloat4x4(&r_mat, R_MAT);*/
+    auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
+        float qx, float qy, float qz, float qw)
+    {
+        q._11 = 1.0f - 2.0f * qy * qy - 2.0f * qz * qz;
+        q._12 = 2.0f * qx * qy + 2.0f * qw * qz;
+        q._13 = 2.0f * qx * qz - 2.0f * qw * qy;
+
+        q._21 = 2.0f * qx * qy - 2.0f * qw * qz;
+        q._22 = 1.0f - 2.0f * qx * qx - 2.0f * qz * qz;
+        q._23 = 2.0f * qy * qz + 2.0f * qw * qx;
+
+        q._31 = 2.0f * qx * qz + 2.0f * qw * qy;
+        q._32 = 2.0f * qy * qz - 2.0f * qw * qx;
+        q._33 = 1.0f - 2.0f * qx * qx - 2.0f * qy * qy;
+    };
+    DirectX::XMFLOAT4X4 r_mat;
+
+    transformQuaternionToRotMat(r_mat, mOrientation.x, mOrientation.y, mOrientation.z, mOrientation.w);
+    static float ang = 0;
+    ImGui::Begin("efec_ang");
+    ImGui::DragFloat("efec_ang", &ang);
+    ImGui::End();
+    //mVernier_effect->set_rotationY(effect_manager->get_effekseer_manager(), DirectX::XMConvertToRadians(ang));
+    mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), r_mat,ang);
 }
 
 void SwordEnemy::fSpawnInit()

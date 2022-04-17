@@ -10,7 +10,7 @@
 //****************************************************************
 TestEnemy::TestEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
     ParamGetFunction Function_)
-    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/character_3.fbx")
+    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_shield.fbx")
 {
     // ˆÊ’u‚ğ‰Šú‰»
     mPosition = EmitterPoint_;

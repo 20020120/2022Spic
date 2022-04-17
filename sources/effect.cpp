@@ -73,23 +73,30 @@ void Effect::set_rotationY(Effekseer::Manager* effekseer_manager, const float an
     effekseer_manager->SetRotation(effekseer_handle, up, angle);
 }
 
+void Effect::set_rotation_axis(Effekseer::Manager* effekseer_manager, const DirectX::XMFLOAT3& axis, const float angle)
+{
+    Effekseer::Vector3D Axis = { axis.x,axis.y,axis.z };
+    effekseer_manager->SetRotation(effekseer_handle, Axis, angle);
+
+}
+
 
 void Effect::set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4 orientation)
 {
     effekseer_manager->GetBaseMatrix(effekseer_handle);
 }
 
+void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3& orient)
+{
+
+}
+
 //-----------------------------------------------//
 //エフェクトの回転行列を任意の回転行列に合わせる
 //----------------------------------------------//
-void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat)
+void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4X4& rotate_mat,float ang)
 {
-   /* DirectX::XMMATRIX R_MAT = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&rotate_mat));
-    DirectX::XMFLOAT4X4 r_mat;
-    DirectX::XMStoreFloat4x4(&r_mat, R_MAT);
-    Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(r_mat);*/
- 
-    
+   
     Effekseer::Matrix43 rotate_mat_efec = transform_XMFLOAT4X4toMatrix43(rotate_mat);
     
     Effekseer::Matrix43 base_mat = effekseer_manager->GetMatrix(effekseer_handle);
@@ -99,8 +106,7 @@ void Effect::set_posture(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT
 
     Effekseer::Vector3D pos{};
     base_mat.GetTranslation(pos);
-
-    base_mat.RotationZ(DirectX::XMConvertToRadians(90));
+   // rotate_mat_efec.RotationZ(DirectX::XMConvertToRadians(ang));
     Effekseer::Matrix43 srt{};
     srt.SetSRT(scale, rotate_mat_efec, pos);
     effekseer_manager->SetMatrix(effekseer_handle, srt);
