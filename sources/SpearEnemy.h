@@ -64,7 +64,7 @@ private:
     const float mThrustBeginSec{ 1.0f }; // 突進準備の時間
     const float mThrustMiddleSec{ 0.2f };// 槍を突き出す長さ
     const float mThrustEndSec{ 3.0f };   // 突進中の長さ
-    const float mThrustSpeed{ 100.0f };   // 突進の速さ
+    const float mThrustSpeed{ 70.0f };   // 突進の速さ
     const float mThrustDegree{ 30.0f };  // 突進の角度
 private:
     //****************************************************************
