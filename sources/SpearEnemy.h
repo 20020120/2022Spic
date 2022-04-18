@@ -40,6 +40,7 @@ public:
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fStopEffect() override;
+    void fSetEffectPosition();
 protected:
     void fRegisterFunctions() override;
 
@@ -51,6 +52,8 @@ private:
     //****************************************************************
     float mWaitTime{}; // 待機時間
     DirectX::XMFLOAT3 mThrustTarget{}; // 突進中のターゲット
+    skeleton::bone mVernierBone{  };
+    std::unique_ptr<Effect> mVernier_effect;
 private:
     //****************************************************************
     // 
