@@ -1,6 +1,6 @@
 #include"SwordEnemy.h"
 #include"Operators.h"
-SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_, 
+SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     int UniqueId_, DirectX::XMFLOAT3 EmitterPoint_,ParamGetFunction Func_ )
     :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.fbx")
 {
@@ -15,7 +15,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     mParam.mHitPoint = 100;
     fGetParam(this, Func_);
     mVernier_effect->play(effect_manager->get_effekseer_manager(), mPosition);
-    
+
     // UŒ‚‚ÉŠÖ‚·‚éparameter‚ğ‰Šú‰»
     mAttackInformation.mInvincible_time = { 1.0f };
      // ƒ{[ƒ“‚ğ‰Šú‰»
@@ -109,7 +109,7 @@ void SwordEnemy::fSetAttackCapsuleCollider()
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
         mSwordBone, position, up);
     up = Math::Normalize(up);
-    
+
     mAttackCapsuleCollider.mPointA = position + up * 5.0f;
     mAttackCapsuleCollider.mPointB = position + up * 1.0f;
     mAttackCapsuleCollider.mRadius = 2.0f;
@@ -153,9 +153,6 @@ void SwordEnemy::fSetVernierEffectPos()
 
     transformQuaternionToRotMat(r_mat, mOrientation.x, mOrientation.y, mOrientation.z, mOrientation.w);
     static float ang = 0;
-    ImGui::Begin("efec_ang");
-    ImGui::DragFloat("efec_ang", &ang);
-    ImGui::End();
     //mVernier_effect->set_rotationY(effect_manager->get_effekseer_manager(), DirectX::XMConvertToRadians(ang));
     mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), r_mat,ang);
 }
