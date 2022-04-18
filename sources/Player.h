@@ -193,7 +193,7 @@ private:
     //突進のvelocityの補間のレート
     float lerp_rate{ 1.0f };
     //突進のターゲットまでの距離の倍率(どれだけ伸ばすか)
-    float charge_length_magnification{ 65.0f };
+    float charge_length_magnification{ 75.0f };
     //攻撃のアニメーションスピードのデバッグ用
     DirectX::XMFLOAT4 attack_animation_speeds{ 1.0f,1.0f,1.0f,1.0f };
     //攻撃のアニメーション補間の時間
