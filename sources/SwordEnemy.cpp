@@ -5,7 +5,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     :BaseEnemy(graphics_,UniqueId_, "./resources/Models/Enemy/enemy_sword.fbx")
 {
     //スラスターエフェクト
-    mVernier_effect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
+    mVernier_effect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\sluster_enemy2.efk");
     // 位置の初期化
     mPosition = EmitterPoint_;
     mScale = { 0.05f,0.05f,0.05f };
@@ -20,8 +20,13 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& graphics_,
     mAttackInformation.mInvincible_time = { 1.0f };
      // ボーンを初期化
     mSwordBone = mpSkinnedMesh->get_bone_by_name("hand_r_joint");
-    mVernierBone = mpSkinnedMesh->get_bone_by_name("burner_r_f_fire");
+    mVernierBone = mpSkinnedMesh->get_bone_by_name("burner_back_center_fire");
 
+}
+
+SwordEnemy::~SwordEnemy()
+{
+    mVernier_effect->stop(effect_manager->get_effekseer_manager());
 }
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

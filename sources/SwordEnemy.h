@@ -34,6 +34,7 @@ public:
     SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, 
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
         ParamGetFunction Func_);
+    ~SwordEnemy();
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
 
     void fRegisterFunctions() override; // ステートを登録
