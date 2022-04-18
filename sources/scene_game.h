@@ -83,4 +83,8 @@ private:
     std::unique_ptr<Counter> wave{ nullptr };
     // option
     std::unique_ptr<Option> option{ nullptr };
+
+    // ƒNƒŠƒA‰‰o
+    bool during_clear = false;
+    float divisions = 2000.0f;
 };

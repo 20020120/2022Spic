@@ -405,7 +405,8 @@ void WaveManager::update_reduction(float elapsed_time)
     // 選択状態に遷移
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f))
     {
-        if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
+        if (current_stage != STAGE_IDENTIFIER::S_5_1) { transition_selection(); }
+        //if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
         else // ゲームクリア
         {
 

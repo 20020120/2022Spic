@@ -58,6 +58,7 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	// option
 	if (option->get_validity())
 	{
 		option->update(graphics, elapsed_time);
@@ -72,11 +73,38 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			return;
 		}
 	}
+	// クリア演出
+	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+	if (mWaveManager.during_clear_performance())
+	{
+		divisions -= 500 * elapsed_time;
+		divisions = (std::max)(divisions, 100.0f);
+		post_effect->stage_choice_post_effect(graphics.get_dc().Get(), divisions);
+
+		during_clear = true;
+
+		return;
+	}
+	else
+	{
+		if (during_clear)
+		{
+			divisions += 500 * elapsed_time;
+			divisions = (std::min)(divisions, 2000.0f);
+			post_effect->stage_choice_post_effect(graphics.get_dc().Get(), divisions);
+			if (Math::equal_check(divisions, 2000.0f, 0.1f))
+			{
+				divisions = 2000.0f;
+				post_effect->clear_post_effect();
+				during_clear = false;
+			}
+		}
+	}
+
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
     const auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
-	mWaveManager.fUpdate(graphics,elapsed_time,mBulletManager.fGetAddFunction());
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
@@ -315,10 +343,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// reticle
 	reticle->render(graphics.get_dc().Get());
 	// wave
-	wave->render(graphics.get_dc().Get());
+	//wave->render(graphics.get_dc().Get());
 
-	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 
 	effect_manager->render(camera::get_keep_view(), camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
@@ -362,6 +388,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
 
+	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 }
 
