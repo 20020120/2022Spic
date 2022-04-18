@@ -161,6 +161,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat3("old_target", &old_target.x);
             ImGui::DragFloat3("end_target", &end_target.x);
             ImGui::DragFloat3("target", &target.x);
+            ImGui::DragFloat3("camera_target", &camera_target.x);
 
 
             ImGui::End();
@@ -203,6 +204,10 @@ void Player::LerpCameraTarget(float elapsed_time)
         //float length{ Math::calc_vector_AtoB_length(end_target,target) };
         //if (length < 2.0f)target_lerp_rate = 1.0f;
         target = Math::lerp(old_target, end_target, target_lerp_rate);
+    }
+    else
+    {
+        target = end_target;
     }
 }
 
@@ -696,9 +701,17 @@ void Player::LockOn()
         if (target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
         {
             //敵の位置を補完のゴールターゲットに入れる
+#if 1
             end_target = target_enemy->fGetPosition();
+#else
+            target = target_enemy->fGetPosition();
+#endif // 0
             //敵と自分の距離を求める
+#if 1
             float length{ Math::calc_vector_AtoB_length(position,end_target) };
+#else
+            float length{ Math::calc_vector_AtoB_length(position,target) };
+#endif // 0
             //敵との距離がロックオン出来る距離よりも短かい場合
             if (length < LOCK_ON_LANGE)
             {
