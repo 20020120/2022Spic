@@ -131,7 +131,8 @@ public:
     //--------------------<プレイヤーからダメージを受ける>--------------------//
     virtual void fDamaged(int Damage_, float InvinsibleTime_);
 
-
+    //再生中のエフェクトを停止する
+    virtual void fStopEffect() = 0;
     // プレイヤー敵との距離を計算する
     void fCalcNearestEnemy(DirectX::XMFLOAT3 NearPosition_);
 

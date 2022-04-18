@@ -180,6 +180,10 @@ void ArcherEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     }
 }
 
+void ArcherEnemy::fStopEffect()
+{
+}
+
 
 void ArcherEnemy::fIdleInit()
 {

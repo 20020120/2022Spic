@@ -19,6 +19,10 @@ void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     fUpdateBase(elapsedTime_, Graphics_);
 }
 
+void SpearEnemy::fStopEffect()
+{
+}
+
 void SpearEnemy::fRegisterFunctions()
 {
     // 関数をステートマシンに登録

@@ -32,6 +32,7 @@ public:
 
     void fDamaged(int damage_, float InvinsibleTime_) override;
 
+    void fStopEffect() override;
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;

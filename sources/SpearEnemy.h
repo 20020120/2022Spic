@@ -39,6 +39,7 @@ public:
 
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fStopEffect() override;
 protected:
     void fRegisterFunctions() override;
 

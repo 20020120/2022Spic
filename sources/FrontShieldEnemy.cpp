@@ -123,6 +123,10 @@ void FrontShieldEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     }
 }
 
+void FrontShieldEnemy::fStopEffect()
+{
+}
+
 
 void FrontShieldEnemy::fIdleInit()
 {

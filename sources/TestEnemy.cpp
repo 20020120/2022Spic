@@ -30,6 +30,10 @@ void TestEnemy::fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
     fUpdateBase(elapsedTime_,Graphics_);
 }
 
+void TestEnemy::fStopEffect()
+{
+}
+
 void TestEnemy::fGuiMenu()
 {
 #ifdef USE_IMGUI

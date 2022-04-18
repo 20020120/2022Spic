@@ -32,6 +32,8 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 
     // キャッシュに登録
     fRegisterCash(graphics_,Func_);
+    //キャッシュ敵のエフェクト停止
+    fCashEnemysStopEffect(graphics_);
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -610,4 +612,13 @@ void EnemyManager::fDeleteCash()
         }
     }
     mCashEnemyVec.clear();
+}
+
+void EnemyManager::fCashEnemysStopEffect(GraphicsPipeline& graphics_)
+{
+    for (const auto enemy : mCashEnemyVec)
+    {
+        // 存在していれば削除
+        enemy->fStopEffect();
+    }
 }

@@ -63,6 +63,7 @@ public:
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
     void fGuiMenu(GraphicsPipeline& Graphics_);
     void fDamaged(int Damage_, float InvinsibleTime_) override;
+    void fStopEffect() override;
 private:
     void fSetCapsulePoint() override;
     void fRegisterFunctions() override;

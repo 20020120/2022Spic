@@ -162,6 +162,11 @@ void SwordEnemy::fSetVernierEffectPos()
     mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), r_mat,ang);
 }
 
+void SwordEnemy::fStopEffect()
+{
+    mVernier_effect->stop(effect_manager->get_effekseer_manager());
+}
+
 void SwordEnemy::fSpawnInit()
 {
     mpSkinnedMesh->play_animation(mAnimPara,AnimationName::idle, true);

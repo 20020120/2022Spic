@@ -111,6 +111,9 @@ public:
     //--------------------<キャッシュにモデルデータを登録>--------------------//
     void fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     void fDeleteCash(); // キャッシュを削除
+        //--------------------<キャッシュデータにあるエフェクト停止>--------------------//
+    void fCashEnemysStopEffect(GraphicsPipeline& graphics_);
+
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_); // 敵の生成を管理
@@ -137,7 +140,6 @@ private:
     
     //--------------------<プロト>--------------------//
     void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
-
 
     //****************************************************************
     //
