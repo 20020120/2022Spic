@@ -67,6 +67,14 @@ private:
         inline static const std::string Approach = "Approach";
         inline static const std::string Leave = "Leave";
     };
+    enum  AnimationName {
+        idle,
+        walk,
+        attack_idle,
+        attack_up,
+        attack_down,
+        damage,
+    };
     //****************************************************************
    // @
    // •Ï” 
