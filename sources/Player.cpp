@@ -137,6 +137,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             {
                 ImGui::DragInt("player_health", &player_health);
                 ImGui::DragFloat("combo", &combo_count);
+                ImGui::DragFloat("attack_time", &attack_time);
 
                 ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
                 ImGui::DragInt("player_attack_power", &player_attack_power);
@@ -342,12 +343,13 @@ void Player::InflectionPower(float elapsed_time)
     //äoê¡èÛë‘Ç©Ç«Ç§Ç©
     if (is_awakening)
     {
-        player_attack_power = (int)combo_count * 2;
+        player_attack_power = (int)combo_count / 5 * 2;
         player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
     }
     else
     {
-        player_attack_power = (int)combo_count;
+        //5ÉRÉìÉ{Ç≈1çUåÇóÕÇ™è„Ç™ÇÈÇÊÇ§Ç…Ç∑ÇÈ
+        player_attack_power = (int)combo_count / 5;
         player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
     }
 }
