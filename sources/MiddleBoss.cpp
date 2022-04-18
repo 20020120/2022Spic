@@ -99,6 +99,10 @@ void MiddleBoss::fDamaged(int damage, float invinsible_time)
     BaseEnemy::fDamaged(damage, invinsible_time);
 }
 
+void MiddleBoss::fStopEffect()
+{
+}
+
 void MiddleBoss::fSetCapsulePoint()
 {
     BaseEnemy::fSetCapsulePoint();

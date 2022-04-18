@@ -43,6 +43,7 @@ public:
 
     void fSetVernierEffectPos();
 
+    void fStopEffect() override;
     //****************************************************************
     // 
     // •Ï”

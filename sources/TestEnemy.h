@@ -26,6 +26,7 @@ public:
 
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
+    void fStopEffect() override;
 
     void fGuiMenu()override;
     //****************************************************************

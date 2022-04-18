@@ -37,6 +37,7 @@ public:
     ~ChaseEnemy()override = default;
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_,float elapsedTime_) override;
+    void fStopEffect() override;
 private:
     void fMove(float elapsedTime_);
     void fRotate(float elapsedTime_);

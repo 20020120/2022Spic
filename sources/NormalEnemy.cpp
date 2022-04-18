@@ -119,6 +119,10 @@ void NormalEnemy::fDamaged(int Damage_, float InvinsibleTime_)
     }
 }
 
+void NormalEnemy::fStopEffect()
+{
+}
+
 
 void NormalEnemy::fIdleInit()
 {

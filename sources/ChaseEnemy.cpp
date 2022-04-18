@@ -37,6 +37,10 @@ void ChaseEnemy::fInitialize()
 
 }
 
+ void ChaseEnemy::fStopEffect()
+ {
+ }
+
 void ChaseEnemy::fMove(float elapsedTime_)
 {
 
