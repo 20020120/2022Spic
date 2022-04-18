@@ -75,6 +75,22 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics,elapsed_time);
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
+    //==================================================================//
+    //==================================================================//
+    //==================================================================//
+    //----------------------プレイヤーの死亡処理を仮で作ったから本番では使うな!!!----------------------------//
+    if (player_health <= 0)
+    {
+        threshold += 1.0f * elapsed_time;
+        threshold_mesh += 1.0f * elapsed_time;
+        if (threshold > 1.0f && threshold_mesh > 1.0f)
+        {
+            is_alive = false;
+        }
+    }
+    //==================================================================//
+    //==================================================================//
+    //==================================================================//
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -333,7 +349,7 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 
 void Player::InflectionParameters(float elapsed_time)
 {
-    player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / 100.0f));
+    player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //攻撃力の変動
     InflectionPower(elapsed_time);
@@ -372,7 +388,7 @@ void Player::InflectionCombo(float elapsed_time)
     duration_combo_timer += 1.0f * elapsed_time;
     if (is_awakening)
     {
-        combo_count -= elapsed_time * 2.0f;
+        combo_count -= elapsed_time * 5.0f;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
