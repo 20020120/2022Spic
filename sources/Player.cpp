@@ -723,7 +723,7 @@ void Player::LockOn()
                     if (is_lock_on == false)
                     {
                         //ターゲットに入れる(最初の一回だけ)
-                        old_target = camera_target;
+                        old_target = end_target;
                         target_lerp_rate = 0;
                         is_camera_lock_on = true;
                     }
