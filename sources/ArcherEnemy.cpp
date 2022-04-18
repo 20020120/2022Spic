@@ -148,6 +148,7 @@ void ArcherEnemy::fSpawnInit()
 void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mStayTimer += elapsedTime_;
+    mDissolveThreshold -= elapsedTime_;
 
     // ˆê’èŽžŠÔŒo‰ß‚ÅˆÚ“®‚É‘JˆÚ
     if (mStayTimer >= SPAWN_STAY_TIME)
