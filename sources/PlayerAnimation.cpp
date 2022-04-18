@@ -412,7 +412,7 @@ void Player::Awaiking()
     //ボタン入力
     if (game_pad->get_button() & GamePad::BTN_A)
     {
-        if (combo_count >= MAX_COMBO_COUNT)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+        if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
     }
     if (is_awakening &&combo_count <= 0) TransitionInvAwaking();//覚醒状態のときにカウントが0になったら通常状態になる
 }
@@ -729,6 +729,7 @@ void Player::TransitionTransformHum()
 
 void Player::TransitionTransformWing()
 {
+    velocity = {};
     //飛行機モードになるアニメーションに設定
     model->play_animation(AnimationClips::TransformWing, false,true);
     //アニメーション速度の設定
