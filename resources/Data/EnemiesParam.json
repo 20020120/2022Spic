@@ -101,7 +101,7 @@
                 "Capsule": {
                     "LengthA": 4.0,
                     "LengthB": -2.0,
-                    "Radius": 2.0
+                    "Radius": 1.5
                 }
             }
         },
