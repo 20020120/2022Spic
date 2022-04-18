@@ -112,6 +112,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
 
+	if(player->GetIsAlive() == false)	SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
+
+
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	if (player->GetIsPlayerAttack())
 	{

@@ -47,6 +47,8 @@ public:
     void Render(GraphicsPipeline& graphics, float     elapsed_time)override;
 private:
     //突進時間
+    static constexpr float MAX_HEALTH = 50.0f;
+    //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.7f;
@@ -171,7 +173,9 @@ private:
     float special_surge_timer{ 0 };
     float opportunity_timer{ 0 };
     //プレイヤーの体力
-    int player_health = 100;
+    int player_health = 50;
+    //プレイヤー死んだかどうか
+    bool is_alive{ true };
     //無敵時間
     float invincible_timer{};
     //コンボの持続時間
@@ -252,6 +256,7 @@ public:
     bool GetStartDashEffect() { return start_dash_effect; }
     bool GetEndDashEffect() { return end_dash_effect; }
     bool GetIsAwakening() { return is_awakening; }
+    bool GetIsAlive() { return is_alive; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
     {
