@@ -134,7 +134,7 @@ void ArcherEnemy::fRegisterFunctions()
 void ArcherEnemy::fParamInitialize()
 {
     //mParam.mHitPoint = 10;      // ‘Ì—Í
-    //mParam.mAttackPower = 10;   // UŒ‚—Í
+    mParam.mAttackPower = 10;   // UŒ‚—Í
     //mParam.mMoveSpeed = 10;   // ˆÚ“®‘¬“x
     //mParam.mAttackSpeed = 2; // UŒ‚ŠÔŠu
     mStayTimer = 1.0f;
@@ -156,7 +156,7 @@ void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // ˆê’èŽžŠÔŒo‰ß‚ÅˆÚ“®‚É‘JˆÚ
     if (mStayTimer >= SPAWN_STAY_TIME)
     {
-        fChangeState(State::Move);
+        fChangeState(State::Idle);
     }
 }
 
