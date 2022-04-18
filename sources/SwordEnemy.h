@@ -61,7 +61,7 @@ private:
     // 
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // ˆÚ“®‘¬“x
-    const float mAttackRange{ 10.0f };    // UŒ‚”ÍˆÍ
+    const float mAttackRange{ 5.0f };    // UŒ‚”ÍˆÍ
     const float mAttackDelaySec{ 1.0f };  // UŒ‚Œã‚ÌŒ„‚Ì’·‚³i•bj
     const float mSpawnDelaySec{ 1.0f };   // “oêŒã‚Ì’·‚³i•bj
 

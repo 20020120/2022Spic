@@ -173,6 +173,8 @@ private:
 
     StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
 
+    float clear_wait_timer = 3.0f;
+    bool clear_flg = false;
     //---‚±‚±‚Ü‚Å--//
 
 

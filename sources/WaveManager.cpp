@@ -120,6 +120,21 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
 
 void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
 {
+    // 3秒待ってクリア演出へ
+    if (clear_flg)
+    {
+        clear_wait_timer -= elapsedTime_;
+        if (clear_wait_timer < 0)
+        {
+            mWaveState = WaveState::Clear;
+            //----------------------------------
+            // TODO:藤岡が書いたところ6
+            //----------------------------------
+            transition_reduction();
+            //---ここまで--//
+        }
+    }
+
     switch (mWaveState)
     {
     case WaveState::Start:
@@ -135,15 +150,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
         // クリア状態に遷移
-        if(mEnemyManager.fGetClearWave())
-        {
-            mWaveState = WaveState::Clear;
-            //----------------------------------
-            // TODO:藤岡が書いたところ6
-            //----------------------------------
-            transition_reduction();
-            //---ここまで--//
-        }
+        if (mEnemyManager.fGetClearWave()) { clear_flg = true; }
 
         break;
     case WaveState::Clear:
@@ -207,12 +214,7 @@ void WaveManager::fWaveClear()
         if (mCurrentWave % 3 == 2)
         {
             // ３ウェーブごとにクリアシーンに遷移する
-            mWaveState = WaveState::Clear;
-            //----------------------------------
-            // TODO:藤岡が書いたところ7
-            //----------------------------------
-            transition_reduction();
-            //---ここまで--//
+            clear_flg = true;
         }
         else
         {
@@ -372,6 +374,9 @@ void WaveManager::fClearUpdate(float elapsedTime_)
 void WaveManager::transition_reduction()
 {
     clear_state = CLEAR_STATE::REDUCTION;
+
+    clear_flg = false;
+    clear_wait_timer = 3.0f;
 
     close = false;
     viewpoint = { 640.0f, 360.0f };
