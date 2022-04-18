@@ -179,9 +179,13 @@ private:
     // “G“¯m‚ÌŠÔŠu‚ğ’²®‚·‚é
     const float mAdjustmentEnemies{ 1.0f };
 
-    const char* mWaveFileNameArray[1]
+    const char* mWaveFileNameArray[5]
     {
         "./resources/Data/Wave1.json",
+        "./resources/Data/Wave2.json",
+        "./resources/Data/Wave3.json",
+        "./resources/Data/Wave4.json",
+        "./resources/Data/Wave5.json",
     };
 
     // ImGui

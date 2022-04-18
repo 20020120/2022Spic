@@ -300,9 +300,9 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         if (Math::equal_check(player_icon.threshold, 1.0f, 0.1f))
         {
             // クリア演出終了、次のステージへ
-            //mWaveState = WaveState::Game;
-            //mCurrentWave++;
-            //fStartWave();
+            mWaveState = WaveState::Game;
+            mCurrentWave++;
+            fStartWave();
         }
     }
     // state別の更新処理
