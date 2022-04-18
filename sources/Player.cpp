@@ -148,6 +148,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
+            ImGui::DragFloat4("emissive_color", &emissive_color.x,0.1f);
 
             ImGui::DragFloat4("attack_animation_speeds", &attack_animation_speeds.x,0.1f);
             ImGui::DragFloat4("attack_animation_blends_speeds", &attack_animation_blends_speeds.x,0.1f);
@@ -179,8 +180,8 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     SkinnedMesh::mesh_tuple mesh_r = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple mesh_l = std::make_tuple("armor_L_mdl", threshold_mesh);
-
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, {1.0f,1.0f,1.0f,1.0f}, mesh_r, mesh_l);
+    emissive_color.w = combo_count / 100.0f;
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, mesh_r, mesh_l);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     if (is_awakening)
@@ -198,7 +199,7 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 void Player::LerpCameraTarget(float elapsed_time)
 {
-    target_lerp_rate += 1.0f * elapsed_time;
+    target_lerp_rate += 0.5f * elapsed_time;
     if (target_lerp_rate < 1.0f)
     {
         //float length{ Math::calc_vector_AtoB_length(end_target,target) };

@@ -42,7 +42,7 @@ public:
     // TODO:“¡‰ª‚ª‘‚¢‚½‚Æ‚±‚ë
     //----------------------------------
     void render(ID3D11DeviceContext* dc, float elapsed_time);
-
+    bool during_clear_performance() { return mWaveState == WaveState::Clear; }
     //---‚±‚±‚Ü‚Å--//
 
     // I—¹ˆ—

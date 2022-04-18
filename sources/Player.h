@@ -61,7 +61,7 @@ private:
     //攻撃力の最大値
     static const int MAX_PLAYER_ATTACK_POWER = 20;
     //コンボの最大数
-    static constexpr float MAX_COMBO_COUNT = 200.0f;
+    static constexpr float MAX_COMBO_COUNT = 100.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
     //突進開始の時のアニメーションスピード

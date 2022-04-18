@@ -22,6 +22,7 @@ protected:
     float threshold;
     float threshold_mesh;
     float glow_time;
+    DirectX::XMFLOAT4 emissive_color{ 1.0f,1.0f,1.0f,1.0f };
 protected:
     std::shared_ptr<SkinnedMesh> model{ nullptr };
 };

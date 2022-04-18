@@ -1,5 +1,8 @@
 #include"WaveManager.h"
 #include "Operators.h"
+#include "scene_title.h"
+#include "scene_loading.h"
+#include "scene_manager.h"
 
 #define ProtoType
 
@@ -408,7 +411,8 @@ void WaveManager::update_reduction(float elapsed_time)
         if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
         else // ÉQÅ[ÉÄÉNÉäÉA
         {
-
+            SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
+            return;
         }
     }
 }

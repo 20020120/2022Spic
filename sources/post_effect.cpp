@@ -356,3 +356,11 @@ void PostEffect::dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOA
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR);
 }
+
+void PostEffect::stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions)
+{
+	effect_constants->data.low_resolution = -3.5f;
+	effect_constants->data.low_resolution_number_of_divisions = divisions;
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOW_RESOLUTION);
+}
