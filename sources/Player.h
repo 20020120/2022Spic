@@ -129,6 +129,8 @@ private:
     DirectX::XMFLOAT3 end_target{};
     //補間率
     float target_lerp_rate{ 0 };
+    //ロックオンしていないときのカメラのターゲット
+    DirectX::XMFLOAT3 camera_target{};
     //カメラのターゲットの補間
     void LerpCameraTarget(float elapsed_time);
 
@@ -234,6 +236,7 @@ private:
     //剣のカプセル判定
     void SwordCapsule();
 public:
+    void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }

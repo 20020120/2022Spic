@@ -128,6 +128,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->Update(elapsed_time, graphics,sky_dome.get());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
+	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
 	if (player->GetEndDashEffect())post_effect->clear_post_effect();
 

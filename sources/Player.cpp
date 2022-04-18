@@ -156,6 +156,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::DragFloat("charge_length_magnification", &charge_length_magnification,0.1f);
             ImGui::DragFloat("lerp_rate", &lerp_rate,0.1f);
+
+            ImGui::DragFloat("target_lerp_rate", &target_lerp_rate,0.1f);
+            ImGui::DragFloat3("old_target", &old_target.x);
+            ImGui::DragFloat3("end_target", &end_target.x);
+            ImGui::DragFloat3("target", &target.x);
+
+
             ImGui::End();
         }
     }
@@ -702,7 +709,7 @@ void Player::LockOn()
                     if (is_lock_on == false)
                     {
                         //ターゲットに入れる(最初の一回だけ)
-                        old_target = target_enemy->fGetPosition();
+                        old_target = camera_target;
                         target_lerp_rate = 0;
                         is_camera_lock_on = true;
                     }
