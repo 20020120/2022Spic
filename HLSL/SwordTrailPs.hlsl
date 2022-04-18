@@ -27,7 +27,7 @@ float4 main(PsInput PsInput_) : SV_TARGET
 	{
 		outPutColor = lerp(0.0f, 0.25f, 1.0f - PsInput_.Texcoord.y);
 	}
-	outPutColor.xyz *= 15.0f;
+	outPutColor.xyz *= 10.0f;
 	
 	return outPutColor;
 }

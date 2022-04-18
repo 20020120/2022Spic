@@ -178,7 +178,7 @@ private:
 
     // “G“¯m‚ÌŠÔŠu‚ğ’²®‚·‚é
     const float mAdjustmentEnemies{ 1.0f };
-
+    
     const char* mWaveFileNameArray[5]
     {
         "./resources/Data/Wave1.json",

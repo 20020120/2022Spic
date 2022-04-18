@@ -109,7 +109,11 @@ void SpearEnemy::fStartInit()
 
 void SpearEnemy::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fChangeState(DivedState::Idle);
+    mDissolveThreshold -= elapsedTime_;
+    if (mDissolveThreshold <= 0.0f)
+    {
+        fChangeState(DivedState::Idle);
+    }
 }
 
 //--------------------<‘Ò‹@>--------------------//

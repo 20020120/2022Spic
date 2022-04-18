@@ -18,6 +18,6 @@ void HitStop::update(GraphicsPipeline& graphics, float elapsed_time, CameraShake
 void HitStop::damage_hit_stop()
 {
     hit_stop_time = 0.1f;
-    hit_stop = true;
+    hit_stop = false;
     shake = true;
 }

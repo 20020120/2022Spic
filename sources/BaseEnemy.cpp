@@ -16,7 +16,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& graphics_,int UniqueId_, const char* Mode
     mUniqueId = UniqueId_;
     mDieEffect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(),
         "./resources/Effect/bomb_2.efk");
-
+    mDissolveThreshold = 1.0f;
 }
 
 BaseEnemy::~BaseEnemy() = default;
@@ -24,9 +24,10 @@ BaseEnemy::~BaseEnemy() = default;
 void BaseEnemy::fRender(GraphicsPipeline& graphics_)
 {
     graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
+    mDissolveThreshold = (std::max)(0.0f, mDissolveThreshold);
     // ƒ[ƒ‹ƒhs—ñ‚ðì¬
     const auto worldMatrix = Math::calc_world_matrix(mScale, mOrientation, mPosition);
-    mpSkinnedMesh->render(graphics_.get_dc().Get(), mAnimPara, worldMatrix, { 1.0f,1.0f,1.0f,1.0f });
+    mpSkinnedMesh->render(graphics_.get_dc().Get(), mAnimPara, worldMatrix, { 1.0f,1.0f,1.0f,1.0f },mDissolveThreshold);
 }
 
 void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)> Function_)
@@ -43,7 +44,7 @@ void BaseEnemy::fGetParam(BaseEnemy* This_, std::function<EnemyData(std::string)
 void BaseEnemy::fDieEffect() const
 {
     mDieEffect->play(effect_manager->get_effekseer_manager(), mPosition,2.0f);
-    //hit_stop->damage_hit_stop();
+    hit_stop->damage_hit_stop();
 }
 
 void BaseEnemy::fDamaged(int Damage_, float InvinsibleTime_)

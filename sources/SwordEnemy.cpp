@@ -177,7 +177,7 @@ void SwordEnemy::fSpawnInit()
 void SwordEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mWaitTimer += elapsedTime_;
-
+    mDissolveThreshold -= elapsedTime_;
     // ˆê’èŽžŠÔŒo‰ß‚ÅˆÚ“®‚É‘JˆÚ
     if(mWaitTimer>=mSpawnDelaySec)
     {

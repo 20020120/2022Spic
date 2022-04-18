@@ -221,7 +221,8 @@ protected:
 
     bool mIsFrustum{}; // ƒJƒŠƒ“ƒO‚³‚ê‚Ä‚¢‚é‚©
     CubeData mCubeData{};
-
+protected:
+    float mDissolveThreshold{};
 protected:
     //****************************************************************
     //

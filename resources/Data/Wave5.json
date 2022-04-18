@@ -7,52 +7,52 @@
                 "y": 0.0,
                 "z": 30.0
             },
-            "Type": 3
+            "Type": 7
         },
         {
-            "Timer": 6.0,
+            "Timer": 1.0,
             "Emitter": {
                 "x": 40.0,
                 "y": 0.0,
                 "z": 30.0
             },
-            "Type": 3
+            "Type": 7
         },
         {
-            "Timer": 6.0,
+            "Timer": 5.0,
             "Emitter": {
                 "x": 50.0,
                 "y": 0.0,
                 "z": 40.0
             },
-            "Type": 3
+            "Type": 7
         },
         {
-            "Timer": 13.0,
+            "Timer": 5.0,
             "Emitter": {
                 "x": -2.0,
                 "y": 0.0,
                 "z": -2.0
             },
-            "Type": 3
+            "Type": 7
         },
- {
-            "Timer": 12.5,
+        {
+            "Timer": 5.5,
             "Emitter": {
                 "x": 12.0,
                 "y": 0.0,
                 "z": 0.0
             },
-            "Type": 6
+            "Type": 7
         },
         {
-            "Timer": 12.5,
+            "Timer": 5.5,
             "Emitter": {
                 "x": 0.0,
                 "y": 20.0,
                 "z": 12.0
             },
-            "Type": 6
+            "Type": 7
         },
 
 
