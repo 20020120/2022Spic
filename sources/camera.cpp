@@ -957,7 +957,7 @@ void camera::gameUpdate(float elapsedTime, Player* player)
 		{
 		    player->FalseCameraLockOn();
 		}
-		UpdateEyeVector(elapsedTime, PlayerUp);
+		//UpdateEyeVector(elapsedTime, PlayerUp);
 		UpdateRockOnTarget(PlayerTarget);
 	}
 	else
@@ -1231,6 +1231,8 @@ bool camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 	}
 	else
 	{
+		eyeVector = rockOnEyeVector;
+
 		//左右のずれ修正
 		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 
@@ -1244,6 +1246,7 @@ bool camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 		EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
 		EyeVector = DirectX::XMVector3Normalize(EyeVector);
 
+#if 0
 		//変化が無ければスルー
 		if (horizonDegree < 0.1f && horizonDegree >-0.1f
 			&& verticalDegree < 0.1f && verticalDegree > -0.1f) {
@@ -1294,6 +1297,8 @@ bool camera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp
 				}
 			}
 		}
+#endif
+
 		//最後に一回だけ行う
 		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 		return false;
@@ -1304,6 +1309,10 @@ void camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX:
 {
 	using namespace DirectX;
 
+	DirectX::XMFLOAT3 up{ 0,1,0 };
+	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
+
+#if 1
 	DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
 	Target -= PlayerPosition;
 	DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
@@ -1319,27 +1328,35 @@ void camera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, DirectX:
 	//DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp;
 	DirectX::XMVECTOR RockOnEyeVector = RockOnPosition - DirectX::XMLoadFloat3(&eyeCenter);
 
-	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 	RockOnEyeVector *= -1;
+	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 
-    DirectX::XMFLOAT3 up{ 0,1,0 };
-	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
-	//真上、真下に近いとき修正
+#else
+	DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
+	PlayerToRockOn = DirectX::XMVector3Normalize(PlayerToRockOn);
+
+
+    //DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + Up;
+	DirectX::XMVECTOR RockOnEyeVector = RockOnPosition - DirectX::XMLoadFloat3(&eyeCenter);
+	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
+#endif
+
+    //真上、真下に近いとき修正
 	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(RockOnEyeVector, DirectX::XMVector3Normalize(Up));
 	float dot{};
 	DirectX::XMStoreFloat(&dot, Dot);
-	if (dot > 0.9f)
+	if (dot > 0.8f)
 	{
-		dot = 0.9f;
+		dot = 0.8f;
 		float radius = acosf(dot);
 		DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
 		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
 		RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
 		RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 	}
-	else if (dot < -0.9f)
+	else if (dot < -0.8f)
 	{
-		dot = -0.9f;
+		dot = -0.8f;
 		float radius = acosf(dot);
 		DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
 		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
