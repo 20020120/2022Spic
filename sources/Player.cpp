@@ -180,7 +180,7 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     SkinnedMesh::mesh_tuple mesh_r = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple mesh_l = std::make_tuple("armor_L_mdl", threshold_mesh);
-    emissive_color.w = combo_count / 100.0f;
+    emissive_color.w = combo_count / 28.0f;
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, mesh_r, mesh_l);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
@@ -501,7 +501,8 @@ void Player::Damaged(int damage, float InvincibleTime)
 
 
     if (invincible_timer > 0.0f)return;
-
+    //UŒ‚ó‘Ô‚È‚çƒ_ƒ[ƒW‚ğó‚¯‚È‚¢
+    if (is_attack) return;
     TransitionDamage();
     //–³“GŠÔİ’è
     invincible_timer = InvincibleTime;

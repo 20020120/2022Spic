@@ -378,8 +378,8 @@ void WaveManager::transition_reduction()
     wait_timer = 1.5f;
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
-    arrival_viewpoint = { 640.0f, ratio > 0.8f ? 600.0f * ratio : 360.0f };
-    arrival_scale = { 0.4f,0.4f };
+    arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
+    arrival_scale = { 0.25f,0.22f };
     // map
     map.threshold = 1.0f;
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
@@ -406,7 +406,7 @@ void WaveManager::update_reduction(float elapsed_time)
     player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
 
     // 選択状態に遷移
-    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f))
+    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
     {
         if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
         else // ゲームクリア

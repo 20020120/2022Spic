@@ -127,7 +127,7 @@ void ArcherEnemy::fRegisterFunctions()
     mFunctionMap.insert(std::make_pair(State::Damaged, tuple));
 
     //初期化
-    fChangeState(State::Idle);
+    fChangeState(State::Start);
 
 }
 
@@ -143,6 +143,9 @@ void ArcherEnemy::fParamInitialize()
 
 void ArcherEnemy::fSpawnInit()
 {
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::idle, true);
+    // 汎用タイマーを初期化
+    mStayTimer = 0.0f;
 }
 
 void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
