@@ -23,6 +23,7 @@ public:
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
         , int UniqueId_, ParamGetFunction Function_,  AddBulletFunc Func_
     );
+    ~ArcherEnemy();
 
     void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
@@ -53,8 +54,20 @@ private:
     void fMoveLeaveInit(); //接近移動の初期化
     void fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //後退移動の更新処理
 
-    void fAttackInit(); //移動の初期化
-    void fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //攻撃の更新処理
+    void fSetVernierEffectPos();
+
+
+    // 弓を引く
+    void fAttackBeginInit();
+    void fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //弓引いて待機
+    void fAttackPreActionInit();
+    void fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //弓を放つ
+    void fAttackEndInit();
+    void fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     void fDamagedInit(); //移動の初期化
     void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
@@ -63,16 +76,18 @@ private:
     // ステートの名前を定義する
     struct  State : public BaseEnemy::StateTag
     {
-        inline static const std::string Attack = "Attack";
+        inline static const std::string AttackReady = "AttackReady";
+        inline static const std::string AttackIdle = "AttackIdle";
+        inline static const std::string AttackShot = "AttackShot";
         inline static const std::string Approach = "Approach";
         inline static const std::string Leave = "Leave";
     };
     enum  AnimationName {
         idle,
         walk,
+        attack_ready,
         attack_idle,
-        attack_up,
-        attack_down,
+        attack_shot,
         damage,
     };
     //****************************************************************
@@ -85,6 +100,10 @@ private:
     float mAttackingTime;
     bool mAttack_flg;
     AddBulletFunc mfAddFunc;
+    skeleton::bone mVernierBone{  };
+
+    std::unique_ptr<Effect> mVernier_effect;
+
     //****************************************************************
    // 　
    // 定数 

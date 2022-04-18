@@ -77,7 +77,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
 	{
-		divisions -= 500 * elapsed_time;
+		divisions -= 450 * elapsed_time;
 		divisions = (std::max)(divisions, 100.0f);
 		post_effect->stage_choice_post_effect(graphics.get_dc().Get(), divisions);
 

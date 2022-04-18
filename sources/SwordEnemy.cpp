@@ -136,9 +136,7 @@ void SwordEnemy::fSetVernierEffectPos()
 
     mVernier_effect->set_position(effect_manager->get_effekseer_manager(), position);
     DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP);
-    /* DirectX::XMMATRIX R_MAT = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&rotate_mat));
-    DirectX::XMFLOAT4X4 r_mat;
-    DirectX::XMStoreFloat4x4(&r_mat, R_MAT);*/
+    //クォータニオン→回転行列
     auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
         float qx, float qy, float qz, float qw)
     {

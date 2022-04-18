@@ -13,6 +13,9 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterP
     ParamGetFunction Function_, AddBulletFunc Func_)
     :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_arrow.fbx")
 {
+    //ÉXÉâÉXÉ^Å[ÉGÉtÉFÉNÉg
+    mVernier_effect = std::make_unique<Effect>(graphics_, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\sluster_enemy2.efk");
+
     // à íuÇèâä˙âª
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
@@ -21,8 +24,16 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterP
     fParamInitialize();
     fGetParam(this, Function_);
     fRegisterFunctions();
+    mVernier_effect->play(effect_manager->get_effekseer_manager(), mPosition);
+    mVernierBone = mpSkinnedMesh->get_bone_by_name("burner_back_center_fire");
 
     mfAddFunc = Func_;
+
+}
+
+ArcherEnemy::~ArcherEnemy()
+{
+    mVernier_effect->stop(effect_manager->get_effekseer_manager());
 
 }
 
@@ -35,6 +46,7 @@ void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<çXêVèàóù>--------------------//
     fUpdateBase(elapsedTime_, Graphics_);
+    fSetVernierEffectPos();
 }
 
 
@@ -102,17 +114,41 @@ void ArcherEnemy::fRegisterFunctions()
     tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(State::Leave, tuple));
 
-    //çUåÇèÛë‘ÇÃìoò^
+    //çUåÇèÄîıèÛë‘ÇÃìoò^
     Ini = [=]()->void
     {
-        fAttackInit();
+        fAttackBeginInit();
     };
     Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
     {
-        fAttackUpdate(elapsedTime_, Graphics_);
+        fAttackBeginUpdate(elapsedTime_, Graphics_);
     };
     tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(State::Attack, tuple));
+    mFunctionMap.insert(std::make_pair(State::AttackReady, tuple));
+
+    //çUåÇë“ã@ÇÃìoò^
+    Ini = [=]()->void
+    {
+        fAttackPreActionInit();
+    };
+    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+    {
+        fAttackPreActionUpdate(elapsedTime_, Graphics_);
+    };
+    tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(State::AttackIdle, tuple));
+
+    //çUåÇèÛë‘ÇÃìoò^
+    Ini = [=]()->void
+    {
+        fAttackEndInit();
+    };
+    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+    {
+        fAttackEndUpdate(elapsedTime_, Graphics_);
+    };
+    tuple = std::make_tuple(Ini, Up);
+    mFunctionMap.insert(std::make_pair(State::AttackShot, tuple));
 
     //Ç–ÇÈÇ›èÛë‘ÇÃìoò^
     Ini = [=]()->void
@@ -186,6 +222,8 @@ void ArcherEnemy::fDamaged(int Damage_, float InvinsibleTime_)
 
 void ArcherEnemy::fStopEffect()
 {
+    mVernier_effect->stop(effect_manager->get_effekseer_manager());
+
 }
 
 
@@ -206,7 +244,7 @@ void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ArcherEnemy::fMoveInit()
 {
     max_move_speed = 5.0f;
-    // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
+     mpSkinnedMesh->play_animation(mAnimPara, AnimationName::walk, true, 0.1f);
     mAttackingTime = 0.0f;
 }
 
@@ -241,7 +279,7 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
     fTurnToTarget(elapsedTime_, mPlayerPosition);
     if (mLengthFromPlayer > AT_SHORTEST_DISTANCE && mLengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(State::Attack);
+        fChangeState(State::AttackReady);
         return;
     }
 
@@ -273,7 +311,7 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 
     if (mLengthFromPlayer > AT_SHORTEST_DISTANCE && mLengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(State::Attack);
+        fChangeState(State::AttackReady);
         return;
     }
 
@@ -283,21 +321,85 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     }
 }
 
-void ArcherEnemy::fAttackInit()
+void ArcherEnemy::fSetVernierEffectPos()
 {
-    // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
-    mAttackingTime = 0.0f;
-    fSetAttackPower(2, 1.5f);
+    //--------------------<ÉoÅ[ÉjÉAÇÃÇÃà íuÇåàíËÇ∑ÇÈ>--------------------//
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    DirectX::XMFLOAT4X4 q{};
+
+
+    // É{Å[ÉìÇÃñºëOÇ©ÇÁà íuÇ∆è„ÉxÉNÉgÉãÇéÊìæ
+    mpSkinnedMesh->fech_by_bone(mAnimPara,
+        Math::calc_world_matrix(mScale, mOrientation, mPosition),
+        mVernierBone, position, up, q);
+
+    mVernier_effect->set_position(effect_manager->get_effekseer_manager(), position);
+    DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP);
+    auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
+        float qx, float qy, float qz, float qw)
+    {
+        q._11 = 1.0f - 2.0f * qy * qy - 2.0f * qz * qz;
+        q._12 = 2.0f * qx * qy + 2.0f * qw * qz;
+        q._13 = 2.0f * qx * qz - 2.0f * qw * qy;
+
+        q._21 = 2.0f * qx * qy - 2.0f * qw * qz;
+        q._22 = 1.0f - 2.0f * qx * qx - 2.0f * qz * qz;
+        q._23 = 2.0f * qy * qz + 2.0f * qw * qx;
+
+        q._31 = 2.0f * qx * qz + 2.0f * qw * qy;
+        q._32 = 2.0f * qy * qz - 2.0f * qw * qx;
+        q._33 = 1.0f - 2.0f * qx * qx - 2.0f * qy * qy;
+    };
+    DirectX::XMFLOAT4X4 r_mat;
+
+    transformQuaternionToRotMat(r_mat, mOrientation.x, mOrientation.y, mOrientation.z, mOrientation.w);
+    static float ang = 0;
+    mVernier_effect->set_posture(effect_manager->get_effekseer_manager(), r_mat, ang);
+}
+
+void ArcherEnemy::fAttackBeginInit()
+{
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_ready);
+    mStayTimer = 0.0f;
+}
+
+void ArcherEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToTarget(elapsedTime_, mPlayerPosition, 20.0f);
+    if (mpSkinnedMesh->end_of_animation(mAnimPara))
+    {
+        fChangeState(State::AttackIdle);
+    }
+}
+
+void ArcherEnemy::fAttackPreActionInit()
+{
+    mpSkinnedMesh->play_animation(mAnimPara, AnimationName::attack_idle);
+    mStayTimer = 0.0f;
 
 }
 
-void ArcherEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void ArcherEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToTarget(elapsedTime_, mPlayerPosition, 20.0f);
+    if (mpSkinnedMesh->end_of_animation(mAnimPara))
+    {
+        fChangeState(State::AttackShot);
+    }
+}
+
+void ArcherEnemy::fAttackEndInit()
+{
+    mpSkinnedMesh->play_animation(mAnimPara,AnimationName::attack_shot);
+    mAttackingTime = 0.0f;
+    fSetAttackPower(2, 1.5f);
+}
+
+void ArcherEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 3.5f, mPlayerPosition.z };
     fTurnToTarget(elapsedTime_, tar_pos);
-    mAttackingTime += elapsedTime_;
-    if (mAttackingTime > 2.0f)
-    {
         //íeëïìU
         float bullet_speed = 1.0f * 0.2f;
         auto straightBullet = new StraightBullet(Graphics_,
@@ -310,7 +412,7 @@ void ArcherEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         //ë“ã@éûä‘ê›íË
         mStayTimer = 3.0f;
         fChangeState(State::Idle);
-    }
+    
 }
 
 void ArcherEnemy::fDamagedInit()
@@ -337,7 +439,7 @@ void ArcherEnemy::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void ArcherEnemy::fGuiMenu()
 {
 #ifdef USE_IMGUI
-    ImGui::Text("Name : Normal");
+    ImGui::Text("Name : arch");
     ImGui::DragFloat3("position", &mPosition.x);
     ImGui::DragFloat3("angle", &mOrientation.x);
     const char* state_list[] = { "IDLE","MOVE","ATTACK","DAUNTED" };
