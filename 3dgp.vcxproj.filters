@@ -444,6 +444,12 @@
     <ClCompile Include="sources\SwordEnemyAce.cpp">
       <Filter>Sources\character\enemy\01_Sword</Filter>
     </ClCompile>
+    <ClCompile Include="sources\GameCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\TitleCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">

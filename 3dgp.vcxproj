@@ -233,6 +233,7 @@
     <ClCompile Include="sources\EnemyMove.cpp" />
     <ClCompile Include="sources\enemy_hp_gauge.cpp" />
     <ClCompile Include="sources\FrontShieldEnemy.cpp" />
+    <ClCompile Include="sources\GameCamera.cpp" />
     <ClCompile Include="sources\game_icon.cpp" />
     <ClCompile Include="sources\graphics_pipeline.cpp" />
     <ClCompile Include="sources\font.cpp" />
@@ -284,6 +285,7 @@
     <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
+    <ClCompile Include="sources\TitleCamera.cpp" />
     <ClCompile Include="sources\transition_icon.cpp" />
     <ClCompile Include="sources\UserLua.cpp" />
     <ClCompile Include="sources\volume_icon.cpp" />
