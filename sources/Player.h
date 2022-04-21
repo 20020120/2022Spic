@@ -373,17 +373,30 @@ private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
     //------------------------------------------------------------------------------------------//
-
+    //関数ポインタ
+    typedef void(Player::* PlayerTutorial)(float elapsed_time, SkyDome* sky_dome);
+    //関数ポインタの変数
+    PlayerTutorial player_tutorial = &Player::TutolialFirstUpdate;
     //チュートリアルの関数ポインタを呼ぶ
     void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
-
+public:
+    //チュートリアルのステート変更
     void ChangeTutorialState(int state);
-
+private:
+    //-------------------------------------各種更新処理------------------------------------------//
+    //1番最初のチュートリアルの更新処理
+    void TutolialFirstUpdate(float elapsed_time, SkyDome* sky_dome);
+    //2番最初のチュートリアルの更新処理
+    void TutolialSecondUpdate(float elapsed_time, SkyDome* sky_dome);
+    //--------------------------------------各種遷移処理-----------------------------------------//
+    //2番目のチュートリアルのステートに遷移
+    void TransitionTutorialSecond();
+    //0が最初で大きくなっていくようにする
     enum class TutorialState
     {
-        First,
+        First = 1,
         Second,
         Third
     };
-    TutorialState tutorial_state{ TutorialState::First; }
+    TutorialState tutorial_state{ TutorialState::First };
 };
