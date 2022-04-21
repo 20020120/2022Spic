@@ -36,8 +36,14 @@
 class CameraManager
 {
 public:
-    CameraManager(){};
-    ~CameraManager(){};
+    CameraManager(){}
+    ~CameraManager(){
+        for (Camera* camera : cameras)
+        {
+            delete camera;
+        }
+        cameras.clear();
+    }
 
     void Initialize(GraphicsPipeline& graphics);
     void Update(float elapsedTime);
