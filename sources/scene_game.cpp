@@ -402,7 +402,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
 
-	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 }

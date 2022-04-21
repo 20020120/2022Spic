@@ -288,6 +288,7 @@
     <ClCompile Include="sources\texture.cpp" />
     <ClCompile Include="sources\TitleCamera.cpp" />
     <ClCompile Include="sources\transition_icon.cpp" />
+    <ClCompile Include="sources\tunnel.cpp" />
     <ClCompile Include="sources\UserLua.cpp" />
     <ClCompile Include="sources\volume_icon.cpp" />
     <ClCompile Include="sources\WaveManager.cpp" />
@@ -386,6 +387,7 @@
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\transition_icon.h" />
+    <ClInclude Include="sources\tunnel.h" />
     <ClInclude Include="sources\UserLua.h" />
     <ClInclude Include="sources\volume_icon.h" />
     <ClInclude Include="sources\WaveManager.h" />

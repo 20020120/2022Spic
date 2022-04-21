@@ -453,6 +453,9 @@
     <ClCompile Include="sources\PlayerTutorialUpdate.cpp">
       <Filter>Sources\character\player</Filter>
     </ClCompile>
+    <ClCompile Include="sources\tunnel.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -745,6 +748,9 @@
     </ClInclude>
     <ClInclude Include="sources\SwordEnemyAce.h">
       <Filter>Sources\character\enemy\01_Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\tunnel.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
