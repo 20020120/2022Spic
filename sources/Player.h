@@ -44,6 +44,7 @@ private:
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
+    //void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //“ËiŠÔ

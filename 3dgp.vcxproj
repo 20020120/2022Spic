@@ -258,6 +258,7 @@
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\PlayerAnimation.cpp" />
     <ClCompile Include="sources\PlayerMove.cpp" />
+    <ClCompile Include="sources\PlayerTutorialUpdate.cpp" />
     <ClCompile Include="sources\player_config.cpp" />
     <ClCompile Include="sources\point_light.cpp" />
     <ClCompile Include="sources\post_effect.cpp" />

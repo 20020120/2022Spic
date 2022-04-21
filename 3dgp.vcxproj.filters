@@ -450,6 +450,9 @@
     <ClCompile Include="sources\TitleCamera.cpp">
       <Filter>Sources\camera</Filter>
     </ClCompile>
+    <ClCompile Include="sources\PlayerTutorialUpdate.cpp">
+      <Filter>Sources\character\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
