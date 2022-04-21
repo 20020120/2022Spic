@@ -280,6 +280,7 @@
     <ClCompile Include="sources\sprite_dissolve.cpp" />
     <ClCompile Include="sources\StraightBullet.cpp" />
     <ClCompile Include="sources\SwordEnemy.cpp" />
+    <ClCompile Include="sources\SwordEnemyAce.cpp" />
     <ClCompile Include="sources\SwordTrail.cpp" />
     <ClCompile Include="sources\TestEnemy.cpp" />
     <ClCompile Include="sources\texture.cpp" />
@@ -377,6 +378,7 @@
     <ClInclude Include="sources\sprite_dissolve.h" />
     <ClInclude Include="sources\StraightBullet.h" />
     <ClInclude Include="sources\SwordEnemy.h" />
+    <ClInclude Include="sources\SwordEnemyAce.h" />
     <ClInclude Include="sources\SwordTrail.h" />
     <ClInclude Include="sources\TestEnemy.h" />
     <ClInclude Include="sources\texture.h" />
