@@ -324,7 +324,7 @@ void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
         velocity = {};
         TransitionOpportunity();
     }
-    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    UpdateSpecialSurgeVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::OpportunityUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -391,7 +391,9 @@ void Player::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionSpecialSurge();
     }
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    //ÉçÉbÉNÉIÉìÇµÇƒÇ¢ÇÈìGÇÃï˚Çå©ÇÈ
+    UpdateRotateToTarget(elapsed_time, position, orientation, camera_forward, camera_position);
+   //UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)

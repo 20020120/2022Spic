@@ -334,41 +334,73 @@ private:
     //自分のメンバ関数の関数ポインタを呼ぶ
     void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
 
-    void IdleUpdate(float elapsed_time, SkyDome* sky_dome);                  //待機アニメーション中の更新処理
-    void MoveUpdate(float elapsed_time, SkyDome* sky_dome);               //移動アニメーション中の更新処理
-    void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);         //回避アニメーション中の更新処理
-    void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);//後ろに回り込む回避の更新処理
-    void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);         //突進開始アニメーション中の更新処理
-    void ChargeUpdate(float elapsed_time, SkyDome* sky_dome);             //突進中の更新処理
-    void AttackType1Update(float elapsed_time, SkyDome* sky_dome);      //攻撃1撃目の更新処理
-    void AttackType2Update(float elapsed_time, SkyDome* sky_dome);      //攻撃2撃目の更新処理
-    void AttackType3Update(float elapsed_time, SkyDome* sky_dome);      //攻撃3撃目の更新処理
-    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);     //ゲージ消費する突進
-    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);     //ゲージ消費突進が終わってからの隙
-    void DamageUpdate(float elapsed_time, SkyDome* sky_dome);          //ダメージ受けたとき
-    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome) ; //人型に戻る
-    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome); //飛行機モード
-    void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);          //覚醒状態に変形するときの更新
-    void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);      //通常状態に変形するときの更新
+    //待機アニメーション中の更新処理
+    void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //移動アニメーション中の更新処理
+    void MoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //回避アニメーション中の更新処理
+    void AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
+    //後ろに回り込む回避の更新処理
+    void BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome);
+    //突進開始アニメーション中の更新処理
+    void ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome);
+    //突進中の更新処理
+    void ChargeUpdate(float elapsed_time, SkyDome* sky_dome);
+    //攻撃1撃目の更新処理
+    void AttackType1Update(float elapsed_time, SkyDome* sky_dome);
+    //攻撃2撃目の更新処理
+    void AttackType2Update(float elapsed_time, SkyDome* sky_dome);
+    //攻撃3撃目の更新処理
+    void AttackType3Update(float elapsed_time, SkyDome* sky_dome);
+    //ゲージ消費する突進
+    void SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ゲージ消費突進が終わってからの隙
+    void OpportunityUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ダメージ受けたとき
+    void DamageUpdate(float elapsed_time, SkyDome* sky_dome);
+    //人型に戻る
+    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome) ;
+    //飛行機モード
+    void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //覚醒状態に変形するときの更新
+    void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //通常状態に変形するときの更新
+    void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
-    void TransitionIdle(float blend_second = 0.3f);               //待機に遷移
-    void TransitionMove(float blend_second = 0.3f);            //移動に遷移
-    void TransitionAvoidance();                                       //回避に遷移
-    void TransitionBehindAvoidance();                              //背後に回り込む回避に遷移
-    void TransitionChargeInit();                                       //突進開始に遷移
-    void TransitionCharge(float blend_seconds = 0.3f);         //突進に遷移
-    void TransitionAttackType1(float blend_seconds = 0.3f);  //１撃目に遷移
-    void TransitionAttackType2(float blend_seconds = 0.3f);  //２撃目に遷移
-    void TransitionAttackType3(float blend_seconds = 0.3f);  //３撃目に遷移
-    void TransitionSpecialSurge();                                    //ゲージ消費の突進に遷移
-    void TransitionOpportunity();                                     //ゲージ消費の突進後の隙に遷移
-    void TransitionDamage();                                          //ダメージ受けたときに遷移
-    void TransitionTransformHum();                                 //人型に変形に遷移
-    void TransitionTransformWing();                                 //飛行機モードに遷移
-    void TransitionAwaking();                                          //覚醒状態に遷移
-    void TransitionInvAwaking();                                      //通常状態に遷移
+    //待機に遷移
+    void TransitionIdle(float blend_second = 0.3f);
+    //移動に遷移
+    void TransitionMove(float blend_second = 0.3f);
+    //回避に遷移
+    void TransitionAvoidance();
+    //背後に回り込む回避に遷移
+    void TransitionBehindAvoidance();
+    //突進開始に遷移
+    void TransitionChargeInit();
+    //突進に遷移
+    void TransitionCharge(float blend_seconds = 0.3f);
+    //１撃目に遷移
+    void TransitionAttackType1(float blend_seconds = 0.3f);
+    //２撃目に遷移
+    void TransitionAttackType2(float blend_seconds = 0.3f);
+    //３撃目に遷移
+    void TransitionAttackType3(float blend_seconds = 0.3f);
+    //ゲージ消費の突進に遷移
+    void TransitionSpecialSurge();
+    //ゲージ消費の突進後の隙に遷移
+    void TransitionOpportunity();
+    //ダメージ受けたときに遷移
+    void TransitionDamage();
+    //人型に変形に遷移
+    void TransitionTransformHum();
+    //飛行機モードに遷移
+    void TransitionTransformWing();
+    //覚醒状態に遷移
+    void TransitionAwaking();
+    //通常状態に遷移
+    void TransitionInvAwaking();
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
