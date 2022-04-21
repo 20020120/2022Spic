@@ -44,7 +44,8 @@ private:
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
-    //void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
+    //チュートリアル用のアップデート
+    void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //突進時間
@@ -368,4 +369,21 @@ private:
     void TransitionTransformWing();                                 //飛行機モードに遷移
     void TransitionAwaking();                                          //覚醒状態に遷移
     void TransitionInvAwaking();                                      //通常状態に遷移
+private:
+    //------------------------------------------------------------------------------------------//
+    //                        チュートリアルに関する関数,変数
+    //------------------------------------------------------------------------------------------//
+
+    //チュートリアルの関数ポインタを呼ぶ
+    void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+
+    void ChangeTutorialState(int state);
+
+    enum class TutorialState
+    {
+        First,
+        Second,
+        Third
+    };
+    TutorialState tutorial_state{ TutorialState::First; }
 };

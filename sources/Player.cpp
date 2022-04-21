@@ -188,6 +188,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
 }
 
+
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     glow_time += 1.0f * elapsed_time;
@@ -339,7 +340,12 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
 
     if (behind_timer < 1.0f)
     {
+        DirectX::XMFLOAT3 old_pos{ position };
         position = Math::HermiteFloat3(behind_point, behind_timer);
+        velocity.x = position.x - old_pos.x;
+        velocity.y = position.y - old_pos.y;
+        velocity.z = position.z - old_pos.z;
+
     }
     behind_point.clear();
 #endif
