@@ -285,7 +285,7 @@ void Player::BehindAvoidancePosition()
 void Player::InterpolateCatmullRomSpline(float elapsed_time)
 {
     using namespace DirectX;
-    behind_late = easing::Expo::easeInOut(behind_timer, 0, 1.0f, 2.0f);
+    behind_late = easing::Expo::easeInOut(behind_timer, 0, 1.0f, 1.5f);
 #if 0
     const float power = 1.0f; // Usually power is 0.5f
     XMVECTOR p0 = XMLoadFloat3(&position);
@@ -464,6 +464,10 @@ void Player::SwordCapsule()
 
 void Player::SetTarget(const BaseEnemy* target_enemies)
 {
+    if (target_enemies == nullptr)
+    {
+        target_enemy = nullptr;
+    }
     //ƒ^[ƒQƒbƒg‚µ‚Ä‚¢‚é“G‚ªŽ€‚ñ‚Å‚¢‚½‚çŽŸ‚Ì“G‚ð“ü‚ê‚é
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
@@ -658,9 +662,9 @@ void Player::SpecialSurgeAcceleration()
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
             float length{ Math::calc_vector_AtoB_length(position,target) };
 
-            velocity.x = v.x * length * 4.0f;
-            velocity.y = v.y * length * 4.0f;
-            velocity.z = v.z * length * 4.0f;
+            velocity.x = v.x * length * 3.0f;
+            velocity.y = v.y * length * 3.0f;
+            velocity.z = v.z * length * 3.0f;
 
             //position = Math::lerp(position, target, 5.0f * elapse_time);
         }
@@ -669,9 +673,9 @@ void Player::SpecialSurgeAcceleration()
             DirectX::XMFLOAT3 v{};
             DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
             float length{ Math::calc_vector_AtoB_length(position,charge_point) };
-            velocity.x = v.x * length * 4.0f;
-            velocity.y = v.y * length * 4.0f;
-            velocity.z = v.z * length * 4.0f;
+            velocity.x = v.x * length * 3.0f;
+            velocity.y = v.y * length * 3.0f;
+            velocity.z = v.z * length * 3.0f;
 
             //position = Math::lerp(position, charge_point, 5.0f * elapse_time);
         }
