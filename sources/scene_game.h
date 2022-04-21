@@ -46,6 +46,12 @@ private:
     // camera
     //std::unique_ptr<Camera> camera;
     std::unique_ptr<CameraManager> cameraManager;
+public:
+    enum class CameraTypes
+    {
+        Game,
+    };
+private:
     // shadowmap
     std::unique_ptr<ShadowMap> shadow_map;
     // post effect

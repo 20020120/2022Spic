@@ -36,10 +36,17 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
     player = std::make_unique<Player>(graphics);
 	// カメラ
 	//camera = std::make_unique<Camera>(graphics,player.get());
-	std::vector<int> cameraType{};
-	cameraType.push_back(CameraManager::CameraTypes::Game);
-	cameraManager = std::make_unique<CameraManager>(graphics, player.get(), cameraType);
-	cameraManager->Initialize(graphics, player.get());
+	//std::vector<int> cameraType{};
+	//cameraType.push_back(CameraManager::CameraTypes::Game);
+	//cameraManager = std::make_unique<CameraManager>(graphics, player.get(), cameraType);
+	//cameraManager->Initialize(graphics, player.get());
+	cameraManager = std::make_unique<CameraManager>();
+
+	cameraManager->RegisterCamera(new GameCamera(player.get()));
+	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
+	//cameraManager->Initialize(graphics);
+	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+
 	// enemy_hp_gauge
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
 	// reticle
@@ -110,7 +117,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
-	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
+	Camera* c = cameraManager->GetCurrentCamera();
 
 	if(player->GetIsAlive() == false)	SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
 
@@ -153,7 +160,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	// camera
     //camera->Update(elapsed_time,player.get());
-	cameraManager->Update(elapsed_time, player.get());
+	cameraManager->Update(elapsed_time);
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 	player->Update(elapsed_time, graphics,sky_dome.get());
@@ -349,7 +356,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//wave->render(graphics.get_dc().Get());
 
 
-	effect_manager->render(camera::get_keep_view(), camera::get_keep_projection());
+	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
 	debug_figure->render_all_figures(graphics.get_dc().Get());
 
@@ -399,7 +406,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
 #ifdef SHADOW_MAP
-	camera* c = cameraManager->GetCamera(CameraManager::CameraTypes::Game);
+	Camera* c = cameraManager->GetCurrentCamera();
 	//--シャドウマップの生成--//
 	shadow_map->activate_shadowmap(graphics, c->get_light_direction());
 
