@@ -196,7 +196,6 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     SkinnedMesh::mesh_tuple mesh_r = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple mesh_l = std::make_tuple("armor_L_mdl", threshold_mesh);
-    emissive_color.w = combo_count / 28.0f;
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, mesh_r, mesh_l);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
@@ -361,14 +360,7 @@ void Player::InflectionParameters(float elapsed_time)
 
 void Player::InflectionPower(float elapsed_time)
 {
-    static float timer = 0;
-    timer += 1.0f * elapsed_time;
 
-    if (timer > 0.5f)
-    {
-        player_attack_power -= 1;
-        timer = 0;
-    }
     //ŠoÁó‘Ô‚©‚Ç‚¤‚©
     if (is_awakening)
     {
