@@ -44,7 +44,7 @@ private:
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
-    void Render(GraphicsPipeline& graphics, float     elapsed_time)override;
+    void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //突進時間
     static constexpr float MAX_HEALTH = 50.0f;
@@ -160,7 +160,7 @@ private:
     float behind_late{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
-    int player_attack_power{ MIN_PLAYER_ATTACK_POWER  };
+    int player_attack_power{ MIN_PLAYER_ATTACK_POWER };
     //コンボ数
     float combo_count{ 0 };
     //ゲージ消費の突進中に当たった数
@@ -234,13 +234,14 @@ private:
     CapsuleParam charge_capsule_param{};
     CapsuleParam body_capsule_param{};
 
-    DirectX::XMFLOAT3 capsule_body_start{0,2.6f,0};
-    DirectX::XMFLOAT3 capsule_body_end{0,0.2f,0};
+    DirectX::XMFLOAT3 capsule_body_start{ 0,2.6f,0 };
+    DirectX::XMFLOAT3 capsule_body_end{ 0,0.2f,0 };
 
     void BodyCapsule();
     //剣のカプセル判定
     void SwordCapsule();
 public:
+    void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
