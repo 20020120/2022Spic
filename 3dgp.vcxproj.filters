@@ -918,6 +918,9 @@
     <FxCompile Include="HLSL\SwordTrailGs.hlsl">
       <Filter>Shaders\sword-trail</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\tunnel_ps.hlsl">
+      <Filter>Shaders\sprite</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
