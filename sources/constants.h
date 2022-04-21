@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <DirectXMath.h>
 
+#include "misc.h"
+
 enum class CB_FLAG : uint8_t
 {
     PS = 0x01,
