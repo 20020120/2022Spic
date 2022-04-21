@@ -441,6 +441,15 @@
     <ClCompile Include="sources\SpearEnemy.cpp">
       <Filter>Sources\character\enemy\02_Spear</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SwordEnemyAce.cpp">
+      <Filter>Sources\character\enemy\01_Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\GameCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\TitleCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -730,6 +739,9 @@
     </ClInclude>
     <ClInclude Include="sources\SpearEnemy.h">
       <Filter>Sources\character\enemy\02_Spear</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SwordEnemyAce.h">
+      <Filter>Sources\character\enemy\01_Sword</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

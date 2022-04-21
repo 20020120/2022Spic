@@ -18,9 +18,9 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //後ろに回り込める距離なら回り込みようのUpdate
-        if (is_lock_on && length < BEHIND_LANGE)
+        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
-            TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
+            TransitionBehindAvoidance();
         }
         //そうじゃなかったら普通の回避
         else TransitionAvoidance();
@@ -56,7 +56,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //後ろに回り込める距離なら回り込みようのUpdate
-        if (is_lock_on && length < BEHIND_LANGE)
+        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
             TransitionBehindAvoidance();
         }
@@ -368,7 +368,7 @@ void Player::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             //後ろに回り込める距離なら回り込みようのUpdate
-            if (is_lock_on && length < BEHIND_LANGE)
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
             }
@@ -495,6 +495,10 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    //覚醒状態の時の回避アニメーションの設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    //通常状態の時のアニメーションの設定
+    else model->play_animation(AnimationClips::Avoidance, false, true);
     //後ろに回り込む座標の取得
     BehindAvoidancePosition();
     //回避中かどうかの設定
