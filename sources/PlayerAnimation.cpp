@@ -7,7 +7,6 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    end_dash_effect = false;
     //移動に遷移
     if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
     {
@@ -45,7 +44,6 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    end_dash_effect = false;
     //移動入力がなくなったら待機に遷移
     if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
@@ -176,7 +174,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
-    end_dash_effect = false;
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -547,8 +544,6 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge(float blend_seconds)
 {
-    //ダッシュエフェクトの終了
-    end_dash_effect = false;
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
@@ -577,8 +572,6 @@ void Player::TransitionCharge(float blend_seconds)
 
 void Player::TransitionAttackType1(float blend_seconds)
 {
-    //ダッシュエフェクトの終了
-    end_dash_effect = true;
     //覚醒状態の時の１撃目のアニメーションに設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_seconds);
     //通常状態の時の１撃目のアニメーションに設定
@@ -706,7 +699,6 @@ void Player::TransitionDamage()
 {
     //ダッシュエフェクトの終了
     start_dash_effect = false;
-    end_dash_effect = false;
     //攻撃中かどうかの設定
     is_attack = false;
     //覚醒状態の時のダメージアニメーションに設定
