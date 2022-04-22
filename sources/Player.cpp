@@ -161,24 +161,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::TreePop();
             }
 
+            if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
+            if (ImGui::Button("TransitionIdle")) TransitionIdle();
+
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
             ImGui::DragFloat4("emissive_color", &emissive_color.x,0.1f);
-
-            ImGui::DragFloat4("attack_animation_speeds", &attack_animation_speeds.x,0.1f);
-            ImGui::DragFloat4("attack_animation_blends_speeds", &attack_animation_blends_speeds.x,0.1f);
-            float frame{ model->get_anim_para().animation_tick };
-            ImGui::DragFloat("frame", &frame);
-
-            ImGui::DragFloat("charge_length_magnification", &charge_length_magnification,0.1f);
-            ImGui::DragFloat("lerp_rate", &lerp_rate,0.1f);
-
-            ImGui::DragFloat("target_lerp_rate", &target_lerp_rate,0.1f);
-            ImGui::DragFloat3("old_target", &old_target.x);
-            ImGui::DragFloat3("end_target", &end_target.x);
-            ImGui::DragFloat3("target", &target.x);
-            ImGui::DragFloat3("camera_target", &camera_target.x);
 
 
             ImGui::End();

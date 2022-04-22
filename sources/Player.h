@@ -366,6 +366,8 @@ private:
     void AwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //通常状態に変形するときの更新
     void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ステージ移動の時の更新
+    void StageMoveUpdate(float elapsed_time, SkyDome* sky_dome);
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
@@ -401,6 +403,8 @@ private:
     void TransitionAwaking();
     //通常状態に遷移
     void TransitionInvAwaking();
+    //ステージ移動に遷移
+    void TransitionStageMove();
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数

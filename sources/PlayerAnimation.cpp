@@ -406,6 +406,11 @@ void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
     if (model->end_of_animation()) TransitionIdle();
 }
 
+void Player::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    model->update_animation(elapsed_time);
+}
+
 void Player::Awaiking()
 {
     //ボタン入力
@@ -764,5 +769,19 @@ void Player::TransitionInvAwaking()
     is_update_animation = true;
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::InvAwakingUpdate;
+
+}
+
+void Player::TransitionStageMove()
+{
+    //移動のアニメーションにする(回避)
+    model->play_animation(AnimationClips::Charge, false);
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    velocity = {};
+    //通常状態に戻ってるときの更新関数に切り替える
+    player_activity = &Player::StageMoveUpdate;
 
 }
