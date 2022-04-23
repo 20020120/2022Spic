@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <memory>
+#include <functional>
 
 #include "constants.h"
 #include "fullscreen_quad.h"
@@ -13,7 +14,7 @@ public:
     Tunnel(ID3D11Device* device);
     ~Tunnel() = default;
     //--------< ŠÖ” >--------//
-    void render(ID3D11DeviceContext* dc, float elapsed_time);
+    void render(ID3D11DeviceContext* dc, float elapsed_time, std::function<void()>draw_func);
 private:
     //--------< •Ï” >--------//
     struct TunnelConstants
