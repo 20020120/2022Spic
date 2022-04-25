@@ -81,6 +81,8 @@ protected:
 
     static DirectX::XMFLOAT4X4 keep_view;
     static DirectX::XMFLOAT4X4 keep_projection;
+    static DirectX::XMFLOAT3 keep_eye;
+    static DirectX::XMFLOAT3 keep_target;
     bool is_mouse_operation{ false };
 
 };

@@ -462,6 +462,9 @@
     <ClCompile Include="sources\LastBoss.cpp">
       <Filter>Sources\character\Boss\00_LastBoss</Filter>
     </ClCompile>
+    <ClCompile Include="sources\ClearCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">

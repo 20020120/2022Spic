@@ -219,6 +219,7 @@
     <ClCompile Include="sources\camera.cpp" />
     <ClCompile Include="sources\CameraManager.cpp" />
     <ClCompile Include="sources\camera_shake.cpp" />
+    <ClCompile Include="sources\ClearCamera.cpp" />
     <ClCompile Include="sources\codinate_convert.cpp" />
     <ClCompile Include="sources\collision.cpp" />
     <ClCompile Include="sources\constants.cpp" />

@@ -3,12 +3,16 @@
 
 DirectX::XMFLOAT4X4 BaseCamera::keep_view = {};
 DirectX::XMFLOAT4X4 BaseCamera::keep_projection = {};
+DirectX::XMFLOAT3 BaseCamera::keep_eye = {};
+DirectX::XMFLOAT3 BaseCamera::keep_target = {};
 
 void BaseCamera::UpdateViewProjection()
 {
 	DirectX::XMFLOAT3 up = { 0, 1, 0 };
 	DirectX::XMVECTOR eye_vec = XMLoadFloat3(&eye);
 	DirectX::XMVECTOR focus_vec = XMLoadFloat3(&target);
+	keep_eye = eye;
+	keep_target = target;
 	DirectX::XMMATRIX view_mat = DirectX::XMMatrixLookAtLH(eye_vec, focus_vec, DirectX::XMLoadFloat3(&up)); // V
 	DirectX::XMStoreFloat4x4(&view, view_mat);
 	//ビュー行列を逆行列かしワールド行列に戻す

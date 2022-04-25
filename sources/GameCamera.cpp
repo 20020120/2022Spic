@@ -3,6 +3,7 @@
 void GameCamera::Initialize(GraphicsPipeline& graphics)
 {
 	gameInitialize(graphics);
+	UpdateViewProjection();
 }
 
 void GameCamera::Update(float elapsedTime)
@@ -58,7 +59,7 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 
 void GameCamera::gameUpdate(float elapsedTime)
 {
-#if 0
+#if 1
 	using namespace DirectX;
 
 	DirectX::XMVECTOR Velocity = DirectX::XMLoadFloat3(&player->GetVelocity());
@@ -69,6 +70,7 @@ void GameCamera::gameUpdate(float elapsedTime)
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&player->GetUp());
 
 	DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
+	DirectX::XMVECTOR CameraForward = DirectX::XMLoadFloat3(&forward);
 
     const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
@@ -84,20 +86,37 @@ void GameCamera::gameUpdate(float elapsedTime)
 		if(horizonDegree >0.1f || horizonDegree < -0.1f || verticalDegree > 0.1f || verticalDegree < -0.1f)
 		{
 			DirectX::XMVECTOR EyeVector = CameraPosition - EyeCenter;
-			const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
-			DirectX::XMStoreFloat(&radius, Radius);
+			//const DirectX::XMVECTOR Radius = DirectX::XMVector3Length(EyeVector);
+			//DirectX::XMStoreFloat(&radius, Radius);
 			EyeVector = DirectX::XMVector3Normalize(EyeVector);
 			DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
 			UpdateEyeVector(elapsedTime, PlayerUp);
 			UpdateEye();
+			UpdateTarget(PlayerPosition, PlayerUp);
 		}
 		else
 		{
-			CameraPosition += Velocity * elapsedTime;
-			DirectX::XMStoreFloat3(&eye, CameraPosition);
+			DirectX::XMVECTOR EyeVector = EyeCenter - CameraPosition;
+			EyeVector = DirectX::XMVector3Normalize(EyeVector);
+
+			CameraForward = DirectX::XMVector3Normalize(CameraForward);
+			DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EyeVector, CameraForward);
+			float dot = DirectX::XMVectorGetX(Dot);
+
+		    if (dot < 0.95f)
+			{
+				CameraPosition += Velocity * elapsedTime;
+				DirectX::XMStoreFloat3(&eye, CameraPosition);
+			}
+			//CameraPosition += Velocity * elapsedTime;
+			//DirectX::XMStoreFloat3(&eye, CameraPosition);
+
+			DirectX::XMVECTOR Target = CameraPosition + CameraForward;
+			DirectX::XMStoreFloat3(&target, Target);
+
+
 		}
-		UpdateTarget(PlayerPosition, PlayerUp);
 	}
 #else
     using namespace DirectX;

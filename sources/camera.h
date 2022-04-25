@@ -110,4 +110,18 @@ private:
 
 };
 
+class ClearCamera : public Camera
+{
+public:
+    ClearCamera(Player * player):Camera(player){}
+    ~ClearCamera(){}
+
+    void Initialize(GraphicsPipeline& graphics);
+    void Update(float elapsedTime);
+
+private:
+    bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+
+    bool cameraReset{ true };
+};
 #endif
