@@ -9,6 +9,7 @@
 #include"MiddleBoss.h"
 #include"SwordEnemy.h"
 #include"SpearEnemy.h"
+#include"LastBoss.h"
 
 #include"imgui_include.h"
 #include "user.h"
@@ -276,6 +277,14 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBu
         mEnemyVec.emplace_back(enemy);
     }
     break;
+    case EnemyType::Boss:
+    {
+        auto enemy = new LastBoss(graphics_, mUniqueCount,
+            { 0.0f,0.0f,0.0f }, mEditor.fGetFunction(),
+            Func_);
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
     default:
         _ASSERT_EXPR(0, "Enemy Type No Setting");
         break;
@@ -477,7 +486,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 
         ImGui::Separator();
         static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","Shield","MiddleBoss","SwordEnemy","SpearEnemy"};
+        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","Shield","MiddleBoss","SwordEnemy","SpearEnemy","LastBoss"};
         const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
 
@@ -598,6 +607,11 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func
     mCashEnemyVec.emplace_back(enemy);
     enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,0.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
     mCashEnemyVec.emplace_back(enemy);
+    enemy = new LastBoss(graphics_,mUniqueCount,
+        { 0.0f,0.0f,0.0f }, mEditor.fGetFunction(),
+        Func_);
+    mCashEnemyVec.emplace_back(enemy);
+
 }
 
 void EnemyManager::fDeleteCash()

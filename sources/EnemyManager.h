@@ -4,31 +4,9 @@
 #include"EnemiesEditor.h"
 #include<map>
 #include<vector>
-#include <d3d11.h>
+
 
 #include "Common.h"
-
-//****************************************************************
-//
-// 構造体
-//
-//****************************************************************
-class Emitter
-{
-public:
-    void Initialize(DirectX::XMFLOAT3 Position_)
-    {
-        mPosition = Position_;
-    }
-
-    //--------------------<ゲッター関数>--------------------//
-    [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const
-    {
-        return mPosition;
-    }
-private:
-    DirectX::XMFLOAT3 mPosition{};
-};
 
 //****************************************************************
 //
@@ -54,6 +32,7 @@ class EnemyManager final
         MiddleBoss_, // 中ボス
         Sword,// 刀の敵 
         Spear,
+        Boss,
         // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
         Count, // 種類の総量
     };
@@ -140,7 +119,7 @@ private:
     
     //--------------------<プロト>--------------------//
     void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
-
+    
     //****************************************************************
     //
     // 変数

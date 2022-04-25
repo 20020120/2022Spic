@@ -215,7 +215,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// shadow_map
 	shadow_map->debug_imgui();
 
-	effect_manager->update(elapsed_time);
+	//\effect_manager->update(elapsed_time);
 
 	// effect demo
 #ifdef USE_IMGUI

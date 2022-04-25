@@ -2,7 +2,7 @@
 #include"BaseEnemy.h"
 #include "EnemiesEditor.h"
 #include"EventFlag.h"
-class SwordEnemy :public BaseEnemy
+class SwordEnemy final :public BaseEnemy
 {
 public:
     //****************************************************************
@@ -10,12 +10,16 @@ public:
     // 構造体
     // 
     //****************************************************************
-     struct DivedState: public StateTag
+     struct DivedState
      {
-         inline static const std::string AttackBegin = "AttackBegin"; // 振り上げ
-         inline static const std::string AttackMiddle = "AttackMiddle";  // ため
-         inline static const std::string AttackEnd = "AttackEnd"; // 振り下ろし
-         inline static const std::string Die = "Die";
+         inline static const char* Start = "Start";
+         inline static const char* Idle = "Idle";
+         inline static const char* Move = "Move";
+         inline static const char* Damaged = "Damaged";
+         inline static const char* AttackBegin = "AttackBegin"; // 振り上げ
+         inline static const char* AttackMiddle = "AttackMiddle";  // ため
+         inline static const char* AttackEnd = "AttackEnd"; // 振り下ろし
+         inline static const char* Die = "Die";
      };
      enum  AnimationName {
          idle,
@@ -31,30 +35,24 @@ public:
     // 関数
     // 
     //****************************************************************
-    SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, 
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
-        ParamGetFunction Func_);
-    ~SwordEnemy();
+    SwordEnemy(GraphicsPipeline& Graphics_, 
+              const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
+              EnemyParamPack ParamPack_);
+    SwordEnemy(GraphicsPipeline& Graphics_); 
+    ~SwordEnemy() override = default;
+
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-
     void fRegisterFunctions() override; // ステートを登録
-
     void fSetAttackCapsuleCollider();
 
-    void fSetVernierEffectPos();
-
-    void fStopEffect() override;
-    //****************************************************************
-    // 
-    // 変数
-    // 
-    //****************************************************************
+   //****************************************************************
+   // 
+   // 変数
+   // 
+   //****************************************************************
 private:
     float mWaitTimer{}; // 待ち時間
-    skeleton::bone mSwordBone{  };
-    skeleton::bone mVernierBone{  };
-    std::unique_ptr<Effect> mVernier_effect;
-
+    skeleton::bone mSwordBone{};
     //****************************************************************
     // 
     // 定数 
@@ -100,8 +98,6 @@ private:
     // やられ
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-public:
-    void fInitialize() override{}
 };
 
 
