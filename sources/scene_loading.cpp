@@ -23,7 +23,7 @@ void SceneLoading::update(GraphicsPipeline& graphics, float elapsed_time)
     if (next_scene->is_ready())
     {
         SceneManager::scene_switching(next_scene);
-        next_scene->set_ready(false);
+        //next_scene->set_ready(false);
     }
 }
 
