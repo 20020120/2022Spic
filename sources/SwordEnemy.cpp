@@ -20,7 +20,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     fBaseUpdate(elapsedTime_,Graphics_);
-    fSetAttackCapsuleCollider(); // 攻撃用のカプセル位置を更新
+    fUpdateAttackCapsule(); // 攻撃用のカプセル位置を更新
 }
 
 void SwordEnemy::fRegisterFunctions()
@@ -90,7 +90,7 @@ void SwordEnemy::fRegisterFunctions()
     fChangeState(DivedState::Start);
 }
 
-void SwordEnemy::fSetAttackCapsuleCollider()
+void SwordEnemy::fUpdateAttackCapsule()
 {
     //--------------------<剣のカプセルの位置を決定する>--------------------//
     DirectX::XMFLOAT3 position{};

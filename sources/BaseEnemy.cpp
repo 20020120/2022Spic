@@ -1,4 +1,6 @@
 #include"BaseEnemy.h"
+
+#include "collision.h"
 #include"resource_manager.h"
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const char* FileName_,
@@ -7,6 +9,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
     mCurrentHitPoint = Param_.MaxHp;
+    mAttackPower = Param_.AttackPower;
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
     mPosition = EntryPosition_;
@@ -14,6 +17,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mVernierEffect = std::make_unique<Effect>(Graphics_, 
       effect_manager->get_effekseer_manager(), mkVernierPath);
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+    mCubeHalfSize = mScale.x * 100.0f;
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -49,7 +53,7 @@ void BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
     }
-    if(mCurrentHitPoint<0)
+    if (mCurrentHitPoint <= 0)
     {
         fDie();
     }
@@ -97,6 +101,11 @@ void BaseEnemy::fUpdateVernierEffectPos()
     mVernierEffect->set_posture(effect_manager->get_effekseer_manager(), r_mat, ang);
 }
 
+void BaseEnemy::fTurnToPlayer(float elapsedTime_)
+{
+    
+}
+
 void BaseEnemy::fSetStun(bool Arg_)
 {
     mIsStun = Arg_;
@@ -116,6 +125,53 @@ bool BaseEnemy::fGetAttack() const
 {
     return mIsAttack;
 }
+
+const Capsule& BaseEnemy::fGetBodyCapsule() const
+{
+    return mBodyCapsule;
+}
+
+const Capsule& BaseEnemy::fGetAttackCapsule() const
+{
+    return mAttackCapsule;
+}
+
+const DirectX::XMFLOAT3& BaseEnemy::fGetPosition() const
+{
+    return mPosition;
+}
+
+bool BaseEnemy::fGetIsAlive() const
+{
+    return mCurrentHitPoint > 0;
+}
+
+bool BaseEnemy::fComputeAndGetIntoCamera() const
+{
+    const DirectX::XMFLOAT3 minPoint{
+        mPosition.x - mCubeHalfSize,
+        mPosition.y - mCubeHalfSize,
+        mPosition.z - mCubeHalfSize
+    };
+    const DirectX::XMFLOAT3 maxPoint{
+        mPosition.x + mCubeHalfSize,
+        mPosition.y + mCubeHalfSize,
+        mPosition.z + mCubeHalfSize
+    };
+
+    return Collision::frustum_vs_cuboid(minPoint, maxPoint);
+}
+
+int BaseEnemy::fGetAttackPower() const
+{
+    return mAttackPower;
+}
+
+float BaseEnemy::fGetAttackInvTime() const
+{
+    return mAttackInvTime;
+}
+
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {

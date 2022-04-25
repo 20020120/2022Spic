@@ -429,9 +429,6 @@
     <ClCompile Include="sources\FrontShieldEnemy.cpp">
       <Filter>Sources\character\enemy</Filter>
     </ClCompile>
-    <ClCompile Include="sources\ArcherEnemy.cpp">
-      <Filter>Sources\character\enemy</Filter>
-    </ClCompile>
     <ClCompile Include="sources\debug_2D.cpp">
       <Filter>Sources\debug\debug2D</Filter>
     </ClCompile>
@@ -467,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="sources\PlayerChain.cpp">
       <Filter>Sources\character\player</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ArcherEnemy.cpp">
+      <Filter>Sources\character\enemy\04_Archer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -743,9 +743,6 @@
     <ClInclude Include="sources\FrontShieldEnemy.h">
       <Filter>Sources\character\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="sources\ArcherEnemy.h">
-      <Filter>Sources\character\enemy</Filter>
-    </ClInclude>
     <ClInclude Include="sources\debug_2D.h">
       <Filter>Sources\debug\debug2D</Filter>
     </ClInclude>
@@ -769,6 +766,9 @@
     </ClInclude>
     <ClInclude Include="sources\EnemyStructuer.h">
       <Filter>Sources\character\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ArcherEnemy.h">
+      <Filter>Sources\character\enemy\04_Archer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

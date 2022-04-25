@@ -32,7 +32,6 @@ public:
     // 
     //****************************************************************
     SpearEnemy(GraphicsPipeline& graphics_, 
-        int UniqueId_, 
         DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
         ParamGetFunction Func_);
     ~SpearEnemy() override;

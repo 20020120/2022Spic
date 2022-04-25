@@ -1,43 +1,110 @@
 #pragma once
-#include "EnemyFileSystem.h"
-#include"BaseEnemy.h"
-#include<vector>
+#include"EnemyStructuer.h"
+#include <filesystem>
+#include <fstream>
+#include<map>
+#include<string>
+#include <cereal/archives/json.hpp>
+#include"imgui_include.h"
 //****************************************************************
 // 
-// 敵のエディター 
+// 敵の情報を作成・編集するクラス 
 // 
 //****************************************************************
 
-typedef std::function<EnemyData(std::string)> ParamGetFunction;
 class EnemyEditor final
 {
 public:
     EnemyEditor();
     ~EnemyEditor();
-    void fGuiMenu();
-    void fGui_ParamEditor();
-
-    [[nodiscard]] std::function<EnemyData(std::string)> fGetFunction()const;
-
+     const EnemyParamPack& fGetParam(EnemyType Type_);
+     void fGuiMenu();
 private:
-    //--------------------<敵のぱらめーたーの調整機能>--------------------//
-    void fControlParams();
+    void fLoad();
+    void fSave();
 
-
-    //****************************************************************
-    // 
-    // 変数
-    // 
-    //****************************************************************
-
-    // 何回もJsonを開くと重いので初回だけ開く
-    bool mFirstOpenJson{}; // Jsonを開くのは最初かどうかの変数 
-
-    //--------------------<エディタ用>--------------------//
-    ParamGetFunction mFunction{};
-    std::map<std::string, EnemyData> mKindsMap{}; //敵の種類ごとのマップ
-    std::vector<EnemySource> mEditorSourceVec;
-    bool mIsOpenEditor{};
-    bool mParamEditor{};
+    std::map<std::string, EnemyParamPack> mEnemyParamMap{};
+    const char* mFilePath = "./resources/Data/EnemiesParam.json";
 };
 
+inline EnemyEditor::EnemyEditor()
+{
+    fLoad();
+}
+
+inline EnemyEditor::~EnemyEditor()
+{
+    fSave();
+}
+
+inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
+{
+    const char* enemyName[] = {
+        "Archer","Shield","Sword","Spear",
+        "Archer_Ace","Shield_Ace","Sword_Ace","Spear_Ace",
+        "Boss"
+    };
+
+    // キーを検索してあれば取得 なければ作成
+
+    const char* key = enemyName[static_cast<int>(Type_)];
+    const auto& pair =
+        mEnemyParamMap.find(key);
+    if(pair == mEnemyParamMap.end())
+    {
+        EnemyParamPack param{};
+        param.MaxHp = 1;
+        mEnemyParamMap.insert(std::make_pair(key, param));
+        return param;
+    }
+    else
+    {
+        return pair->second;
+    }
+}
+
+inline void EnemyEditor::fGuiMenu()
+{
+    if (ImGui::TreeNode("EnemyEditor"))
+    {
+        if (ImGui::Button("Load"))
+        {
+            fLoad();
+        }
+        if(ImGui::Button("Save"))
+        {
+            fSave();
+        }
+        ImGui::TreePop();
+    }
+}
+
+inline void EnemyEditor::fLoad()
+{
+    // Jsonファイルから値を取得
+    std::filesystem::path path = mFilePath;
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
+    {
+        std::ifstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONInputArchive o_archive(ifs);
+            o_archive(mEnemyParamMap);
+        }
+    }
+}
+
+inline void EnemyEditor::fSave()
+{
+    // Jsonにかきだし
+    std::filesystem::path path = mFilePath;
+    path.replace_extension(".json");
+    std::ofstream ifs(path);
+    if (ifs)
+    {
+        cereal::JSONOutputArchive o_archive(ifs);
+        o_archive(mEnemyParamMap);
+    }
+}

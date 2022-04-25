@@ -21,15 +21,17 @@ public:
               const DirectX::XMFLOAT3& EntryPosition_);
     BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_);
     ~BaseEnemy() override;
-    void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-    virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
-    void fRender(GraphicsPipeline& Graphics_);
 
-    void fDamaged(int Damage_, float InvincibleTime_);
+    virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
+    virtual void fUpdateAttackCapsule() = 0;
     virtual void fDie();
 
+    void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fRender(GraphicsPipeline& Graphics_);
+    void fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
-    virtual void fUpdateAttackCapsule() = 0;
+    void fTurnToPlayer(float elapsedTime_);
+
 
     //--------------------<セッター関数>--------------------//
     void fSetStun(bool Arg_);
@@ -38,7 +40,13 @@ public:
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetAttack() const;
-
+    [[nodiscard]] const Capsule& fGetBodyCapsule()const;
+    [[nodiscard]] const Capsule& fGetAttackCapsule()const;
+    [[nodiscard]] const DirectX::XMFLOAT3& fGetPosition()const;
+    [[nodiscard]] bool fGetIsAlive()const;
+    [[nodiscard]] bool fComputeAndGetIntoCamera()const;
+    [[nodiscard]] int fGetAttackPower()const;
+    [[nodiscard]] float fGetAttackInvTime()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -50,13 +58,15 @@ protected:
 
     SkinnedMesh::anim_Parameters mAnimPara{};
     float mDissolve{};
-
+    
     float mAnimationSpeed{1.0f};
 private:
     bool mIsStun{}; // スタン状態かどうか
     int mCurrentHitPoint{};
+    int mAttackPower{};
+    float mAttackInvTime{};
     float mInvincibleTime{};
-
+    float mCubeHalfSize{};
     bool mIsAttack{};
 protected:
     // StateMachine
