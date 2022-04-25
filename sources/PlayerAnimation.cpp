@@ -774,6 +774,7 @@ void Player::TransitionInvAwaking()
 
 void Player::TransitionStageMove()
 {
+
     //移動のアニメーションにする(回避)
     model->play_animation(AnimationClips::Charge, false);
     //アニメーション速度の設定

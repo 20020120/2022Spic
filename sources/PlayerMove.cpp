@@ -127,6 +127,7 @@ void PlayerMove::UpdateRotateToTarget(float elapsed_time, DirectX::XMFLOAT3& pos
     PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
 }
 
+
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
 {
     float length{ sqrtf(velocity.y * velocity.y)};
@@ -330,7 +331,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
 
-        if (fabs(an) > DirectX::XMConvertToRadians(30.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(10.0f))
         {
             XMVECTOR q;
             DirectX::XMFLOAT3 a{};
