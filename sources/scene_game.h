@@ -24,6 +24,8 @@
 #include "counter.h"
 #include "scene_option.h"
 #include "BulletManager.h"
+#include "tunnel.h"
+
 class SceneGame : public Scene, public PracticalEntities
 {
 public:
@@ -92,5 +94,6 @@ private:
 
     // ƒNƒŠƒA‰‰o
     bool during_clear = false;
-    float divisions = 2000.0f;
+    float tunnel_alpha = 0.0f;
+    std::unique_ptr<Tunnel> tunnel{ nullptr };
 };

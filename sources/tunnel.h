@@ -14,12 +14,12 @@ public:
     Tunnel(ID3D11Device* device);
     ~Tunnel() = default;
     //--------< ŠÖ” >--------//
-    void render(ID3D11DeviceContext* dc, float elapsed_time, std::function<void()>draw_func);
+    void render(ID3D11DeviceContext* dc, float elapsed_time, float alpha, std::function<void()>draw_func);
 private:
     //--------< •Ï” >--------//
     struct TunnelConstants
     {
-        DirectX::XMFLOAT4 threshold{ 0.5f,0.5f,0,0 }; // xy:tunnel pos  z:timer
+        DirectX::XMFLOAT4 threshold{ 0.5f,0.5f,0,0 }; // xy:tunnel pos  z:timer  w:alpha
     };
     std::unique_ptr<Constants<TunnelConstants>> constants;
     std::unique_ptr<FullScreenQuad> tunnel;

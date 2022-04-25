@@ -17,9 +17,10 @@ Tunnel::Tunnel(ID3D11Device* device)
     load_texture_from_file(device, L".\\resources\\TexMaps\\tunnel\\tunnel.png", tunnel_map.GetAddressOf(), &texture2d_desc);
 }
 
-void Tunnel::render(ID3D11DeviceContext* dc, float elapsed_time, std::function<void()>draw_func)
+void Tunnel::render(ID3D11DeviceContext* dc, float elapsed_time, float alpha, std::function<void()>draw_func)
 {
     constants->data.threshold.z += elapsed_time;
+    constants->data.threshold.w = alpha;
     constants->bind(dc, 2);
     tunnel->blit(dc, tunnel_map.GetAddressOf(), 0, 1, pixel_shader.Get());
 

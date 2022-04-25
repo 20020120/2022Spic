@@ -55,6 +55,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	wave = std::make_unique<Counter>(graphics, L".\\resources\\Sprites\\ui\\wave.png");
 	// option
 	option = std::make_unique<Option>(graphics);
+	// tunnel
+	tunnel = std::make_unique<Tunnel>(graphics.get_device().Get());
 }
 
 void SceneGame::uninitialize()
@@ -84,9 +86,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
 	{
-		divisions -= 450 * elapsed_time;
-		divisions = (std::max)(divisions, 100.0f);
-		post_effect->stage_choice_post_effect(graphics.get_dc().Get(), divisions);
+		tunnel_alpha += elapsed_time * 0.5f;
+		tunnel_alpha = (std::min)(tunnel_alpha, 1.0f);
 
 		during_clear = true;
 
@@ -96,13 +97,11 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (during_clear)
 		{
-			divisions += 500 * elapsed_time;
-			divisions = (std::min)(divisions, 2000.0f);
-			post_effect->stage_choice_post_effect(graphics.get_dc().Get(), divisions);
-			if (Math::equal_check(divisions, 2000.0f, 0.1f))
+			tunnel_alpha -= elapsed_time;
+			tunnel_alpha = (std::max)(tunnel_alpha, 0.0f);
+			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
 			{
-				divisions = 2000.0f;
-				post_effect->clear_post_effect();
+				tunnel_alpha = 0.0f;
 				during_clear = false;
 			}
 		}
@@ -359,6 +358,15 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	// wave
 	//wave->render(graphics.get_dc().Get());
 
+
+	// クリア中のトンネル
+	if (during_clear)
+	{
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+		tunnel->render(graphics.get_dc().Get(), elapsed_time, tunnel_alpha, [&]() {
+			player->Render(graphics, elapsed_time);
+			});
+	}
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);

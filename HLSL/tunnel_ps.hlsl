@@ -46,5 +46,5 @@ float4 main(VS_OUT pin) : SV_TARGET
     float brightness = 4.0;
     last_color *= min(1.0, leng * brightness);
 
-    return float4(last_color, 1);;
+    return float4(last_color, threshold.w);
 }
