@@ -6,7 +6,7 @@
 //        InitFunc init = [=]()->void
 //        {
 //            fStartInit();
-//        };
+//        };v
 //        UpdateFunc upd = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
 //        {
 //            fStartUpdate(Graphics_, elapsedTime_);

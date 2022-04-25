@@ -169,6 +169,9 @@
     <Filter Include="Sources\EventFlag">
       <UniqueIdentifier>{fb1abd32-9354-48c7-bc9d-1c293b09190b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\Boss\00_LastBoss">
+      <UniqueIdentifier>{8f196ac0-144c-494b-9666-96ebb0189f34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -455,6 +458,9 @@
     </ClCompile>
     <ClCompile Include="sources\tunnel.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\LastBoss.cpp">
+      <Filter>Sources\character\Boss\00_LastBoss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -751,6 +757,9 @@
     </ClInclude>
     <ClInclude Include="sources\tunnel.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\LastBoss.h">
+      <Filter>Sources\character\Boss\00_LastBoss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
