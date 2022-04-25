@@ -89,9 +89,13 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		tunnel_alpha += elapsed_time * 0.5f;
 		tunnel_alpha = (std::min)(tunnel_alpha, 1.0f);
 
-		during_clear = true;
+		if (!during_clear)
+		{
+			player->TransitionStageMove();
+			during_clear = true;
+		}
 
-		return;
+		//return;
 	}
 	else
 	{
@@ -101,6 +105,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			tunnel_alpha = (std::max)(tunnel_alpha, 0.0f);
 			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
 			{
+				player->TransitionIdle();
 				tunnel_alpha = 0.0f;
 				during_clear = false;
 			}
@@ -359,6 +364,11 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//wave->render(graphics.get_dc().Get());
 
 
+	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
+	debug_figure->render_all_figures(graphics.get_dc().Get());
+
+
 	// クリア中のトンネル
 	if (during_clear)
 	{
@@ -367,10 +377,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 			player->Render(graphics, elapsed_time);
 			});
 	}
-
-	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
-	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
-	debug_figure->render_all_figures(graphics.get_dc().Get());
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 

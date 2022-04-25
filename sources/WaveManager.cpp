@@ -380,17 +380,17 @@ void WaveManager::transition_reduction()
 
     close = false;
     viewpoint = { 640.0f, 360.0f };
-    wait_timer = 1.5f;
+    wait_timer = 2.5f;
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
     arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
     arrival_scale = { 0.25f,0.22f };
     // map
-    map.threshold = 1.0f;
+    map.threshold = 10.0f;
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
     map.arg.scale = { 10, 10 };
     // player_icon
-    player_icon.threshold = 1.0f;
+    player_icon.threshold = 10.0f; // プレイヤーのアニメーションを待つ
     player_icon.arg.pos = viewpoint;
     player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
 }

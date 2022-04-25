@@ -158,7 +158,7 @@ private:
     struct Icon
     {
         std::unique_ptr<SpriteDissolve> sprite = nullptr;
-        float threshold = 1.0f;
+        float threshold = 10.0f;
         SpriteArg arg = {};
     };
     std::unique_ptr<SpriteDissolve> arrow_sprite = nullptr;

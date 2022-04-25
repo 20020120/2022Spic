@@ -52,6 +52,7 @@ public:
     enum class CameraTypes
     {
         Game,
+        Tunnel,
     };
 private:
     // shadowmap
