@@ -322,18 +322,24 @@ private:
     //カメラリセット
     void CameraReset();
 private:
+    enum class Behavior
+    {
+        //通常状態
+        Normal,
+        //スタンした敵に攻撃する状態
+        Chain
+    };
+    Behavior behavior_state{ Behavior::Normal };
+private:
     //-----------アニメーションに関係する関数,変数------------//
-
     //アニメーション遷移の関数ポインタ//
     //関数ポインタ
     typedef void(Player::* PlayerActivity)(float elapsed_time, SkyDome* sky_dome);
     //関数ポインタの変数
     PlayerActivity player_activity = &Player::IdleUpdate;
     AddDamageFunc damage_func;
-
     //自分のメンバ関数の関数ポインタを呼ぶ
     void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
-
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理

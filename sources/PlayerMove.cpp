@@ -224,6 +224,7 @@ void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
             //移動ベクトルによる加速処理
             velocity.x += move_vec_x * acceleration;
             velocity.z += move_vec_z * acceleration;
+
             float length{ sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) };
             if (length > max_move_speed)
             {
@@ -235,6 +236,8 @@ void PlayerMove::UpdateHrizontalVelocity(float elapsed_frame)
             }
         }
     }
+
+
     move_vec_x = 0.0f;
     move_vec_z = 0.0f;
 
@@ -246,8 +249,8 @@ void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& pos
     // 水平速力計算
     float velocity_length_xz = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
         //水平移動値
-    float mx{ velocity.x*100.0f * elapsed_time };
-    float mz{ velocity.z*100.0f * elapsed_time };
+    float mx{ velocity.x * elapsed_time };
+    float mz{ velocity.z * elapsed_time };
     if (velocity_length_xz > 0.0f)
     {
         // レイの開始位置と終点位置
@@ -290,8 +293,8 @@ void PlayerMove::UpdateHorizontalMove(float elapsed_time, DirectX::XMFLOAT3& pos
         }
         else
         {
-            position.x += velocity.x * elapsed_time;
-            position.z += velocity.z * elapsed_time;
+            position.x += mx;
+            position.z += mz;
         }
     }
 }

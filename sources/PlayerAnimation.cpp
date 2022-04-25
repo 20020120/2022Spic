@@ -1,8 +1,18 @@
 #include"Player.h"
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    //自分のクラスの関数ポインタを呼ぶ
-    (this->*player_activity)(elapsed_time, sky_dome);
+    switch (behavior_state)
+    {
+    case Player::Behavior::Normal:
+        //自分のクラスの関数ポインタを呼ぶ
+        (this->*player_activity)(elapsed_time, sky_dome);
+        break;
+    case Player::Behavior::Chain:
+
+        break;
+    default:
+        break;
+    }
 }
 
 void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)

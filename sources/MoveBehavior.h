@@ -11,7 +11,7 @@ public:
 protected:
     DirectX::XMFLOAT3 velocity{};
     float acceleration{1.0f};
-    float max_move_speed{100.0f};
+    float max_move_speed{10.0f};
     float move_vec_x{};
     float move_vec_y{};
     float move_vec_z{};
