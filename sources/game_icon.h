@@ -17,14 +17,14 @@ private:
         //--------< 変数 >--------//
         bool shake        = true;
         bool vibration    = true;
-        bool flush        = true;
+        bool omission = true;
         float sensitivity = 0.5f;
         //--------< 関数 >--------//
         void initialize()
         {
             shake       = true;
             vibration   = true;
-            flush       = true;
+            omission    = true;
             sensitivity = 0.5f;
         }
         // シリアライズ
@@ -34,7 +34,7 @@ private:
             archive(
                 cereal::make_nvp("shake", shake),
                 cereal::make_nvp("vibration", vibration),
-                cereal::make_nvp("flush", flush),
+                cereal::make_nvp("omission", omission),
                 cereal::make_nvp("sensitivity", sensitivity));
         }
     };
@@ -58,9 +58,9 @@ public:
     // vibration
     bool get_vibration() const { return source.vibration; }
     void set_vibration(bool v) { source.vibration = v; }
-    // flush
-    bool get_flush() const { return source.flush; }
-    void set_flush(bool f) { source.flush = f; }
+    // omission
+    bool get_omission() const { return source.omission; }
+    void set_omission(bool o) { source.omission = o; }
     // sensitivity
     float get_sensitivity() const { return source.sensitivity; }
     void set_sensitivity(float s) { source.sensitivity = s; }
@@ -83,7 +83,7 @@ private:
     {
         SHAKE,
         VIBRATION,
-        FLUSH,
+        OMISSION,
 
         SENSITIVITY, // barは一番下
     };
@@ -93,7 +93,7 @@ private:
     //--------< 変数 >--------//
     FontElement shake;
     FontElement vibration;
-    FontElement flush;
+    FontElement omission;
     FontElement sensitivity;
     //--button--//
     FontElement choices[BUTTON_COUNT][2]; // 0:ON 1:OFF

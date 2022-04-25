@@ -53,10 +53,10 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	vibration.position = { 565.0f, 380.0f };
 	vibration.scale = { 0.6f, 0.6f };
 	vibration.s = L"コントローラー振動";
-	//--flush--//
-	flush.position = { 545.0f, 465.0f };
-	flush.scale = { 0.6f, 0.6f };
-	flush.s = L"フラッシュ演出";
+	//--omission--//
+	omission.position = { 545.0f, 465.0f };
+	omission.scale = { 0.6f, 0.6f };
+	omission.s = L"UI省略";
 	//--sensitivity--//
 	sensitivity.position = { 550.0f, 550.0f };
 	sensitivity.scale = { 0.6f, 0.6f };
@@ -80,14 +80,14 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	choices[ChoicesType::VIBRATION][1].scale = { vibration.scale };
 	choices[ChoicesType::VIBRATION][1].s = L"OFF";
 	setup[ChoicesType::VIBRATION] = GameFile::get_instance().get_vibration();
-	// FLUSH
-	choices[ChoicesType::FLUSH][0].position = { on_pos_x, flush.position.y };
-	choices[ChoicesType::FLUSH][0].scale = { flush.scale };
-	choices[ChoicesType::FLUSH][0].s = L"ON";
-	choices[ChoicesType::FLUSH][1].position = { off_pos_x, flush.position.y };
-	choices[ChoicesType::FLUSH][1].scale = { flush.scale };
-	choices[ChoicesType::FLUSH][1].s = L"OFF";
-	setup[ChoicesType::FLUSH] = GameFile::get_instance().get_flush();
+	// OMISSION
+	choices[ChoicesType::OMISSION][0].position = { on_pos_x, omission.position.y };
+	choices[ChoicesType::OMISSION][0].scale = { omission.scale };
+	choices[ChoicesType::OMISSION][0].s = L"ON";
+	choices[ChoicesType::OMISSION][1].position = { off_pos_x, omission.position.y };
+	choices[ChoicesType::OMISSION][1].scale = { omission.scale };
+	choices[ChoicesType::OMISSION][1].s = L"OFF";
+	setup[ChoicesType::OMISSION] = GameFile::get_instance().get_omission();
 	// selecter
 	DirectX::XMFLOAT2 selecter_texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 	DirectX::XMFLOAT2 selecter_pivot = { selecter_texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
@@ -96,8 +96,8 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	selecter[ChoicesType::SHAKE][1].position = { selecter_posR[setup[ChoicesType::SHAKE] ? 0 : 1], shake.position.y };
 	selecter[ChoicesType::VIBRATION][0].position = { selecter_posL[setup[ChoicesType::VIBRATION] ? 0 : 1], vibration.position.y };
 	selecter[ChoicesType::VIBRATION][1].position = { selecter_posR[setup[ChoicesType::VIBRATION] ? 0 : 1], vibration.position.y };
-	selecter[ChoicesType::FLUSH][0].position = { selecter_posL[setup[ChoicesType::FLUSH] ? 0 : 1], flush.position.y };
-	selecter[ChoicesType::FLUSH][1].position = { selecter_posR[setup[ChoicesType::FLUSH] ? 0 : 1], flush.position.y };
+	selecter[ChoicesType::OMISSION][0].position = { selecter_posL[setup[ChoicesType::OMISSION] ? 0 : 1], omission.position.y };
+	selecter[ChoicesType::OMISSION][1].position = { selecter_posR[setup[ChoicesType::OMISSION] ? 0 : 1], omission.position.y };
 	for (int i = 0; i < BUTTON_COUNT; ++i)
 	{
 		for (int o = 0; o < 2; ++o)
@@ -228,14 +228,14 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
-			state = ChoicesType::FLUSH;
-			selecterL_arrival_pos = { 385.0f, flush.position.y };
-			selecterR_arrival_pos = { 705.0f, flush.position.y };
+			state = ChoicesType::OMISSION;
+			selecterL_arrival_pos = { 385.0f, omission.position.y };
+			selecterR_arrival_pos = { 705.0f, omission.position.y };
 		}
 		r_button(ChoicesType::VIBRATION);
 		break;
 
-	case ChoicesType::FLUSH:
+	case ChoicesType::OMISSION:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
 			state = ChoicesType::VIBRATION;
@@ -248,15 +248,15 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 			selecterL_arrival_pos = { 410.0f, sensitivity.position.y };
 			selecterR_arrival_pos = { 680.0f, sensitivity.position.y };
 		}
-		r_button(ChoicesType::FLUSH);
+		r_button(ChoicesType::OMISSION);
 		break;
 
 	case ChoicesType::SENSITIVITY:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
-			state = ChoicesType::FLUSH;
-			selecterL_arrival_pos = { 385.0f, flush.position.y };
-			selecterR_arrival_pos = { 705.0f, flush.position.y };
+			state = ChoicesType::OMISSION;
+			selecterL_arrival_pos = { 385.0f, omission.position.y };
+			selecterR_arrival_pos = { 705.0f, omission.position.y };
 		}
 		r_bar();
 		break;
@@ -316,7 +316,7 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 	fonts->biz_upd_gothic->Begin(dc);
 	r_font_render("shake", shake);
 	r_font_render("vibration", vibration);
-	r_font_render("flush", flush);
+	r_font_render("omission", omission);
 	r_font_render("sensitivity", sensitivity);
 	//--button--//
 	for (int i = 0; i < BUTTON_COUNT; ++i)
@@ -384,7 +384,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
-					float selecter_arrival_pos_y[BUTTON_COUNT] = { shake.position.y, vibration.position.y, flush.position.y };
+					float selecter_arrival_pos_y[BUTTON_COUNT] = { shake.position.y, vibration.position.y, omission.position.y };
 					float selecterL_arrival_pos_x[BUTTON_COUNT] = { 395.0f, 360.0f, 385.0f };
 					float selecterR_arrival_pos_x[BUTTON_COUNT] = { 705.0f, 745.0f, 705.0f };
 					state = ChoicesType(i);
@@ -456,7 +456,7 @@ void GameIcon::save_source()
 {
 	GameFile::get_instance().set_shake(setup[ChoicesType::SHAKE]);
 	GameFile::get_instance().set_vibration(setup[ChoicesType::VIBRATION]);
-	GameFile::get_instance().set_flush(setup[ChoicesType::FLUSH]);
+	GameFile::get_instance().set_omission(setup[ChoicesType::OMISSION]);
 	GameFile::get_instance().set_sensitivity((float)scales.size() / (float)MAX_SCALE_COUNT);
 
 	GameFile::get_instance().save();
