@@ -3,6 +3,21 @@
 
 void ClearCamera::Initialize(GraphicsPipeline& graphics)
 {
+	//----定数バッファ----//
+    // カメラ関連
+	scene_constants = std::make_unique<Constants<SceneConstants>>(graphics.get_device().Get());
+	// orientationの初期化
+	{
+		DirectX::XMFLOAT3 n(0, 1, 0); // 軸（正規化）
+		constexpr float angle = DirectX::XMConvertToRadians(0); //角度（ラジアン）
+		orientation = {
+			sinf(angle / 2) * n.x,
+			sinf(angle / 2) * n.y,
+			sinf(angle / 2) * n.z,
+			cosf(angle / 2)
+		};
+	}
+
     eye = keep_eye;
     target = keep_target;
 	using namespace DirectX;

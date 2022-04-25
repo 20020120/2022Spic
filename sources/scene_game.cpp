@@ -43,6 +43,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	cameraManager = std::make_unique<CameraManager>();
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
+	cameraManager->RegisterCamera(new ClearCamera(player.get()));
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
@@ -91,6 +92,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 		if (!during_clear)
 		{
+			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Tunnel));
 			player->TransitionStageMove();
 			during_clear = true;
 		}
