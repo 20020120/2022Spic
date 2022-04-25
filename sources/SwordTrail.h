@@ -68,7 +68,7 @@ public:
     void fRender(ID3D11DeviceContext* pDeviceContext_);
 
     void fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom_);
-    void fEraseTrailPoint();
+    void fEraseTrailPoint(float elapsedTime_);
 private:
     void fInterpolate(size_t steps);
 
@@ -85,7 +85,7 @@ private:
     std::vector<DirectX::XMFLOAT3> mBottomPoints;
     std::vector<DirectX::XMFLOAT3> mIinterpolatedBottomPoints;
     std::unique_ptr<Constants<TrailConstantBuffer>> mConstantBuffer{};
-    
+
     float mEraseTimer{};
 
     Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader{ nullptr };
@@ -103,5 +103,5 @@ private:
     //
     //****************************************************************
     const int mMaxTrailCount = 6030;
-    const float mEraseSeparateTime = 0.01f;
+    const float mEraseSeparateTime = 2.0f;
 };

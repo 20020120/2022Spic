@@ -64,13 +64,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         for (int i = 0; i < 2; ++i)
         {
             mSwordTrail[i].fUpdate(elapsed_time, 10);
-            mSwordTrail[i].fEraseTrailPoint();
+            mSwordTrail[i].fEraseTrailPoint(elapsed_time);
         }
     }
     else
     {
         mSwordTrail[0].fUpdate(elapsed_time, 10);
-        mSwordTrail[0].fEraseTrailPoint();
+        mSwordTrail[0].fEraseTrailPoint(elapsed_time);
     }
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics,elapsed_time);

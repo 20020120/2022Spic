@@ -176,27 +176,27 @@ void SwordTrail::fUpdate(float elapsedTime_, size_t steps)
 
         // 右下
         vertex[1].mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex[1].mTexCoord = 
+        vertex[1].mTexCoord =
         { startPoint + static_cast<float>(texXSeparate * i),1.0f };
 
         // 左下
         vertex[2].mPosition = mDataVec[i].mBottomPoint;
-        vertex[2].mTexCoord = 
+        vertex[2].mTexCoord =
         { startPoint + static_cast<float>(texXSeparate * i),1.0f };
 
         // 左上
         vertex[3].mPosition = mDataVec[i].mTopPoint;
-        vertex[3].mTexCoord = 
+        vertex[3].mTexCoord =
         { startPoint + static_cast<float>(texXSeparate * i),0.0f };
 
         //右上
         vertex[4].mPosition = mDataVec[i - 1].mTopPoint;
-        vertex[4].mTexCoord = 
+        vertex[4].mTexCoord =
         { startPoint + static_cast<float>(texXSeparate * i),0.0f };
 
         // 右下
         vertex[5].mPosition = mDataVec[i - 1].mBottomPoint;
-        vertex[5].mTexCoord = 
+        vertex[5].mTexCoord =
         { startPoint + static_cast<float>(texXSeparate * i),1.0f };
 
         // 各頂点の法線を計算
@@ -300,12 +300,12 @@ void SwordTrail::fAddTrailPoint(DirectX::XMFLOAT3 Top_, DirectX::XMFLOAT3 Bottom
     }
 }
 
-void SwordTrail::fEraseTrailPoint()
+void SwordTrail::fEraseTrailPoint(float elapsedTime_)
 {
     bool isErase = false;
 
     // 最大数になったら前を消す
-    if(mEraseTimer>=mEraseSeparateTime)
+    if(mEraseTimer>=mEraseSeparateTime*elapsedTime_)
     {
         if (mTopPoints.size() > 0)
         {
