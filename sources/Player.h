@@ -371,8 +371,10 @@ private:
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
+public:
     //待機に遷移
     void TransitionIdle(float blend_second = 0.3f);
+private:
     //移動に遷移
     void TransitionMove(float blend_second = 0.3f);
     //回避に遷移
@@ -403,6 +405,7 @@ private:
     void TransitionAwaking();
     //通常状態に遷移
     void TransitionInvAwaking();
+public:
     //ステージ移動に遷移
     void TransitionStageMove();
 private:
