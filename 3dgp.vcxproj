@@ -259,6 +259,7 @@
     <ClCompile Include="sources\perlin_noise.cpp" />
     <ClCompile Include="sources\Player.cpp" />
     <ClCompile Include="sources\PlayerAnimation.cpp" />
+    <ClCompile Include="sources\PlayerChain.cpp" />
     <ClCompile Include="sources\PlayerMove.cpp" />
     <ClCompile Include="sources\PlayerTutorialUpdate.cpp" />
     <ClCompile Include="sources\player_config.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="sources\EnemyFileSystem.h" />
     <ClInclude Include="sources\EnemyManager.h" />
     <ClInclude Include="sources\EnemyMove.h" />
+    <ClInclude Include="sources\EnemyStructuer.h" />
     <ClInclude Include="sources\enemy_hp_gauge.h" />
     <ClInclude Include="sources\EventFlag.h" />
     <ClInclude Include="sources\FrontShieldEnemy.h" />

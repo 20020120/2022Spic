@@ -465,6 +465,9 @@
     <ClCompile Include="sources\ClearCamera.cpp">
       <Filter>Sources\camera</Filter>
     </ClCompile>
+    <ClCompile Include="sources\PlayerChain.cpp">
+      <Filter>Sources\character\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -763,6 +766,9 @@
     </ClInclude>
     <ClInclude Include="sources\LastBoss.h">
       <Filter>Sources\character\Boss\00_LastBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\EnemyStructuer.h">
+      <Filter>Sources\character\enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
