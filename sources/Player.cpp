@@ -19,7 +19,7 @@ Player::Player(GraphicsPipeline& graphics)
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
     player_config = std::make_unique<PlayerConfig>(graphics);
     //ダメージを受ける関数を関数ポインタに格納
-    damage_func = [=](int damage, float invincible)->void {Damaged(damage, invincible); };
+    damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
 
 
     player_bones[0] = model->get_bone_by_name("body_joint");
@@ -48,11 +48,22 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 {
 
     ExecFuncUpdate(elapsed_time, sky_dome);
+    switch (behavior_state)
+    {
+    case Player::Behavior::Normal:
+        //ロックオン
+        LockOn();
+        //カメラリセット
+        CameraReset();
+        break;
+    case Player::Behavior::Chain:
+
+        break;
+    default:
+        break;
+    }
+
     GetPlayerDirections();
-    //ロックオン
-    LockOn();
-    //カメラリセット
-    CameraReset();
     //プレイヤーのパラメータの変更
     InflectionParameters(elapsed_time);
     //体の大きさのカプセルパラメータ設定
@@ -498,14 +509,18 @@ void Player::AddCombo(int count)
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
-void Player::Damaged(int damage, float InvincibleTime)
+void Player::DamagedCheck(int damage, float InvincibleTime)
 {
+    //ジャスト回避
+    if (is_avoidance)
+    {
+
+
+    }
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
-
     //死亡している場合は健康状態を変更しない
     if (player_health <= 0)return;
-
 
     if (invincible_timer > 0.0f)return;
     //攻撃状態ならダメージを受けない

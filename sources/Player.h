@@ -292,7 +292,7 @@ public:
     DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count);
     //--------------------<敵からダメージを受ける>--------------------//
-    void Damaged(int damage, float InvincibleTime);
+    void DamagedCheck(int damage, float InvincibleTime);
     void PlayerKnocKback(float elapsed_time);
 public:
     void FalseCameraReset() { camera_reset = false; }
@@ -319,6 +319,8 @@ private:
 private:
     //ロックオン
     void LockOn();
+    //チェイン攻撃の時のロックオン
+    void ChainLockOn();
     //カメラリセット
     void CameraReset();
 private:
