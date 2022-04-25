@@ -16,9 +16,8 @@ private:
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 scale{ 0.058f , 0.058f , 0.058f };
     DirectX::XMFLOAT3 angle{};
-    DirectX::XMFLOAT3 position_{};
-    DirectX::XMFLOAT3 scale_{ 0.001f , 0.001f , 0.001f };
-    DirectX::XMFLOAT3 angle_{};
+    DirectX::XMFLOAT4 emissive_color{ 1.0f,1.0f,1.0f,3.0f };
+
 public:
     void SetPosition(DirectX::XMFLOAT3 p) { position = p; }
     void SetScale(DirectX::XMFLOAT3 p) { scale = p; }

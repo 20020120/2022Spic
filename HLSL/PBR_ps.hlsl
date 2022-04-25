@@ -154,9 +154,13 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 ao_map = texture_maps[AO].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
     float4 emissive_map = texture_maps[Emissive].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
 
+
     // shadow map
     float depth = shadow_map.Sample(shadow_sampler_state, pin.shadow_texcoord.xy).r;
     color_map.rgb = cast_shadow(color_map.rgb, depth, pin.shadow_texcoord);
+
+    return float4(color_map.rgb, 1);
+
 
     // ñ@ê¸ÇåvéZ
     float3 N = normalize(pin.world_normal.xyz);
@@ -231,6 +235,7 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     // dissolve
     float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w * pin.color.rgb, finalColor.a * pin.color.a);
+
     float4 dst_color  = float4(0, 0, 0, 0);
     float4 mask       = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
 

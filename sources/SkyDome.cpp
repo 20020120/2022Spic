@@ -11,9 +11,15 @@ SkyDome::~SkyDome()
 
 void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
-    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::DEFAULT);
+#ifdef USE_IMGUI
+    ImGui::Begin("SkyDome");
+    ImGui::DragFloat4("emissive_color", &emissive_color.x);
+    ImGui::End();
+#endif // USE_IMGUI
 
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, angle, position), { 1,1,1,1 });
+    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, angle, position), { 1,1,1,1 }, 0, 0, emissive_color);
 }
 
 bool SkyDome::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
