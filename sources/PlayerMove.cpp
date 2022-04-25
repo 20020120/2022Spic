@@ -32,7 +32,6 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
         PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
-
     //åoâﬂÉtÉåÅ[ÉÄ
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);
@@ -357,15 +356,11 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
     }
     //right
     //{
-
     //    DirectX::XMFLOAT3 point = Math::calc_designated_point(position, front, d_length);
     //    //point.x = target.x;
     //    //point.z = target.z;
     //    DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
-
-
     //    XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
-
     //    float an;
     //    XMVECTOR a = XMVector3Dot(d2, d);
     //    XMStoreFloat(&an, a);
