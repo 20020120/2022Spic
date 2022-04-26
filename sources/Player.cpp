@@ -51,6 +51,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
+        player_attack_power = 3;
         //ロックオン
         LockOn();
         //カメラリセット
@@ -375,14 +376,14 @@ void Player::InflectionPower(float elapsed_time)
     //覚醒状態かどうか
     if (is_awakening)
     {
-        player_attack_power = (int)combo_count / 5 * 2;
-        player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
+        player_attack_power = player_attack_power * 2;
+        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
     }
     else
     {
         //5コンボで1攻撃力が上がるようにする
-        player_attack_power = (int)combo_count / 5;
-        player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
+        //player_attack_power = (int)combo_count / 5;
+        //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER);
     }
 }
 
@@ -467,9 +468,13 @@ void Player::SwordCapsule()
 
 void Player::StunSphere()
 {
+    //ジャスト回避中なら
     if (is_just_avoidance)
     {
-        sphere_radius = 2.0f;
+        //覚醒状態なら
+        if (is_awakening)sphere_radius = 17.0f;
+        //覚醒状態じゃないなら
+        else sphere_radius = 2.0f;
     }
     else sphere_radius = 0;
 }
