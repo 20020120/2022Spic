@@ -10,14 +10,14 @@ DirectX::XMFLOAT3 MoveBehavior::SetMoveVec(const DirectX::XMFLOAT3& camera_forwa
 
     //カメラ右方向ベクトルをXZ単位ベクトルに変換
 
-    float camerarightlengh = sqrtf((camera_right.x * camera_right.x) + (camera_right.y * camera_right.y) + (camera_right.z * camera_right.z));
+    float camerarightlengh = sqrtf((camera_right.x * camera_right.x) + (camera_right.z * camera_right.z));
     DirectX::XMFLOAT3 camera_right_normal{};
     if (camerarightlengh > 0.0f)
     {
         camera_right_normal = Math::Normalize(camera_right);
     }
 
-    float cameraforwardlength = sqrtf((camera_forward.x * camera_forward.x) + (camera_forward.y * camera_forward.y) + (camera_forward.z * camera_forward.z));
+    float cameraforwardlength = sqrtf((camera_forward.x * camera_forward.x) + (camera_forward.z * camera_forward.z));
     DirectX::XMFLOAT3 camera_forward_normal{};
     if (cameraforwardlength > 0.0f)
     {
@@ -26,7 +26,6 @@ DirectX::XMFLOAT3 MoveBehavior::SetMoveVec(const DirectX::XMFLOAT3& camera_forwa
 
     DirectX::XMFLOAT3 vec{};
     vec.x = (camera_forward_normal.x * ay) + (camera_right_normal.x * ax);
-    vec.y = (camera_forward_normal.y * ay) + (camera_right_normal.y * ax);
     vec.z = (camera_forward_normal.z * ay) + (camera_right_normal.z * ax);
 
     return vec;
