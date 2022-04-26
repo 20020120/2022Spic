@@ -61,10 +61,6 @@ private:
     //後ろに回り込める距離
     static constexpr float  BEHIND_LANGE_MAX = 45.0f;
     static constexpr float  BEHIND_LANGE_MIN = 20.0f;
-    //攻撃力の最低値
-    static const int MIN_PLAYER_ATTACK_POWER = 1;
-    //攻撃力の最大値
-    static const int MAX_PLAYER_ATTACK_POWER = 20;
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 100.0f;
     //回避の時のアニメーションスピード
@@ -166,7 +162,7 @@ private:
     float behind_late{};
 private:
     //プレイヤーの攻撃力(コンボによって変化していく)
-    int player_attack_power{ MIN_PLAYER_ATTACK_POWER };
+    int player_attack_power{ 3 };
     //コンボ数
     float combo_count{ 0 };
     //ゲージ消費の突進中に当たった数
