@@ -125,5 +125,7 @@ private:
     const float AT_LONGEST_DISTANCE = 40.0f;
     //移動スピード
     const float MAX_MOVE_SPEED = 3.0f;
+    //回転スピード
+    const float ROT_SPEED = 3.0f;
 };
 

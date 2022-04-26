@@ -208,7 +208,7 @@ void ArcherEnemy::fMoveInit()
 void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //ƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‰ñ“]
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     //Œü‚¢‚Ä‚¢‚é•ûŒü‚É‘Sg
     fMove(elapsedTime_);
 
@@ -236,7 +236,7 @@ void ArcherEnemy::fMoveApproachInit()
 void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     fMove(elapsedTime_);
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
 
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
@@ -270,7 +270,7 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     XMFLOAT3 target_pos = mPosition + t_vec;
 
     fMove(elapsedTime_);
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
 
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
@@ -293,7 +293,7 @@ void ArcherEnemy::fAttackBeginInit()
 
 void ArcherEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivedState::AttackIdle);
@@ -309,7 +309,7 @@ void ArcherEnemy::fAttackPreActionInit()
 
 void ArcherEnemy::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivedState::AttackShot);
@@ -325,7 +325,7 @@ void ArcherEnemy::fAttackEndInit()
 void ArcherEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 3.5f, mPlayerPosition.z };
-    fTurnToPlayer(elapsedTime_);
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     //’e‘•“U
         float bullet_speed = 1.0f * 0.2f;
         auto straightBullet = new StraightBullet(Graphics_,
