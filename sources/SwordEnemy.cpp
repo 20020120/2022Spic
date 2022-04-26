@@ -100,6 +100,18 @@ void SwordEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::AttackRun, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fEscapeInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fEscapeUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Escape, tuple));
+    }
     fChangeState(DivedState::Start);
 }
 
@@ -219,7 +231,7 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mWaitTimer += elapsedTime_;
     if(mWaitTimer>=mAttackDownSec)
     {
-        fChangeState(DivedState::Start);
+        fChangeState(DivedState::Escape);
         fSetAttack(false);
     }
 }
@@ -228,9 +240,17 @@ void SwordEnemy::fEscapeInit()
 {
     
 }
+
 void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    
+    // プレイヤーと逆に進
+    const DirectX::XMFLOAT3 vec = { mPosition - mPlayerPosition };
+    mPosition += Math::Normalize(vec) * elapsedTime_ * 30.0f;
+
+    if(Math::Length(vec)>=60.0f)
+    {
+        fChangeState(DivedState::Start);
+    }
 }
 
 
