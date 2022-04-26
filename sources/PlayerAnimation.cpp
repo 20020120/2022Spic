@@ -428,6 +428,26 @@ void Player::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
     model->update_animation(elapsed_time);
 }
 
+void Player::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::DieUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::DyingUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
 void Player::Awaiking()
 {
     //ボタン入力
@@ -793,6 +813,34 @@ void Player::TransitionInvAwaking()
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::InvAwakingUpdate;
 
+}
+
+void Player::TransitionWingDashStart()
+{
+}
+
+void Player::TransitionWingDashIdle()
+{
+}
+
+void Player::TransitionWingDashEnd()
+{
+}
+
+void Player::TransitionDie()
+{
+}
+
+void Player::TransitionDying()
+{
+}
+
+void Player::TransitionStartMothin()
+{
+}
+
+void Player::TransitionNamelessMotion()
+{
 }
 
 void Player::TransitionStageMove()

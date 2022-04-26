@@ -390,6 +390,16 @@ private:
     void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //ステージ移動の時の更新
     void StageMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進開始
+    void WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進中
+    void WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進終了
+    void WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡
+    void DieUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡中
+    void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
@@ -427,7 +437,21 @@ private:
     void TransitionAwaking();
     //通常状態に遷移
     void TransitionInvAwaking();
+    //飛行機モードの突進開始
+    void TransitionWingDashStart();
+    //飛行機モードの突進中
+    void TransitionWingDashIdle();
+    //飛行機モードの突進終了
+    void TransitionWingDashEnd();
+    //死亡
+    void TransitionDie();
+    //死亡中
+    void TransitionDying();
 public:
+    //スタートモーション
+    void TransitionStartMothin();
+    //モーション二つ目
+    void TransitionNamelessMotion();
     //ステージ移動に遷移
     void TransitionStageMove();
 
