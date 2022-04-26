@@ -133,7 +133,7 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
     return false;
 }
 
-const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
+BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 {
     auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
     {
@@ -162,7 +162,7 @@ const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
     return nullptr;
 }
 
-const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
+BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
 {
     auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
     {
