@@ -29,6 +29,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
 
 	//--------------------<弾の管理クラスを初期化>--------------------//
+	BulletManager& mBulletManager = BulletManager::Instance();
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
@@ -62,6 +63,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 void SceneGame::uninitialize()
 {
+	BulletManager& mBulletManager = BulletManager::Instance();
+
 	mWaveManager.fFinalize();
 	mBulletManager.fFinalize();
 }
@@ -83,6 +86,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			return;
 		}
 	}
+	BulletManager& mBulletManager = BulletManager::Instance();
+
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
@@ -353,6 +358,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		fonts->gothic->End(graphics.get_dc().Get());
 	}
 #endif // 0
+	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);

@@ -79,7 +79,6 @@ private:
     //****************************************************************
     //EnemyManager mEnemyManager{};
     WaveManager mWaveManager{};
-    BulletManager mBulletManager{};
     std::unique_ptr<Player> player{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
     //skydome

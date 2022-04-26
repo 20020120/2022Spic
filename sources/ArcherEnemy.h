@@ -49,9 +49,13 @@ public:
     ArcherEnemy(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& EmitterPoint_,
         EnemyParamPack ParamPack_);
+    ArcherEnemy(GraphicsPipeline& Graphics_);
+
     ~ArcherEnemy();
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fUpdateAttackCapsule() override;
+
     void fGuiMenu() ;
 
     //void fDamaged(int damage_, float InvinsibleTime_) override;

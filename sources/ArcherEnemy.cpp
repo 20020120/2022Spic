@@ -4,6 +4,7 @@
 #include "NormalEnemy.h"
 #include "StraightBullet.h"
 #include "Operators.h"
+#include "BulletManager.h"
 //****************************************************************
 //
 // ‚‚È‚µ’ÊíUŒ‚‚ÌŽG‹›“G‚Ì”h¶ƒNƒ‰ƒX
@@ -24,9 +25,14 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     //ƒpƒ‰ƒ[ƒ^[‚Ì‰Šú‰»
     fParamInitialize();
     fRegisterFunctions();
-    mVernier_effect->play(effect_manager->get_effekseer_manager(), mPosition);
-
+    mfAddFunc = BulletManager::Instance().fGetAddFunction();
 }
+
+
+ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_)
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_arrow.fbx")
+{}
+
 
 ArcherEnemy::~ArcherEnemy()
 {
@@ -39,6 +45,10 @@ void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     fBaseUpdate(elapsedTime_, Graphics_);
+}
+
+void ArcherEnemy::fUpdateAttackCapsule()
+{
 }
 
 

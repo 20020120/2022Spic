@@ -273,12 +273,16 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     {
     case EnemyType::Archer:
     {
-
+        BaseEnemy* enemy = new ArcherEnemy(graphics_,
+            Source_.mEmitterPoint, param);
+        mEnemyVec.emplace_back(enemy);
     }
     break;
     case EnemyType::Shield:
     {
-
+       /* BaseEnemy* enemy = new Shield(graphics_,
+            Source_.mEmitterPoint, param);
+        mEnemyVec.emplace_back(enemy);*/
     }
     break;
     case EnemyType::Sword:
@@ -567,6 +571,8 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
 {
     // ƒLƒƒƒbƒVƒ…‚Éƒ‚ƒfƒ‹‚ð“o˜^
     BaseEnemy* enemy = new SwordEnemy(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new ArcherEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
