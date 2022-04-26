@@ -9,12 +9,16 @@ class SpearEnemy final  : public BaseEnemy
     //  構造体
     // 
     //****************************************************************
-    struct DivedState : public StateTag
+    struct DivedState 
     {
-        inline static const std::string ThrustBegin = "ThrustBegin";    // 突進前の構え
-        inline static const std::string ThrustMiddle = "ThrustMiddle";  // 突進中
-        inline static const std::string ThrustEnd = "ThrustEnd";        // 突進後の隙
-        inline static const std::string Die = "Die";
+        inline static const char* Start = "Start";
+        inline static const char* Idle = "Idle";
+        inline static const char* Move = "Move";
+        inline static const char* Damaged = "Damaged";
+        inline static const char* ThrustBegin = "ThrustBegin";    // 突進前の構え
+        inline static const char* ThrustMiddle = "ThrustMiddle";  // 突進中
+        inline static const char* ThrustEnd = "ThrustEnd";        // 突進後の隙
+        inline static const char* Die = "Die";
     };
     enum AnimationName {
         idle,
@@ -31,28 +35,25 @@ public:
     // 関数
     // 
     //****************************************************************
-    SpearEnemy(GraphicsPipeline& graphics_, 
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
-        ParamGetFunction Func_);
-    ~SpearEnemy() override;
+    SpearEnemy(GraphicsPipeline& Graphics_,
+        const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
+        const EnemyParamPack& ParamPack_);
+    SpearEnemy(GraphicsPipeline& Graphics_);
+    ~SpearEnemy() override = default;
 
-    void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-    void fStopEffect() override;
-    void fSetEffectPosition();
 protected:
     void fRegisterFunctions() override;
-
+private:
+    void fUpdateAttackCapsule() override;;
 private:
     //****************************************************************
     // 
     //  変数
     // 
     //****************************************************************
-    float mWaitTime{}; // 待機時間
+    float mWaitTimer{}; // 待機時間
     DirectX::XMFLOAT3 mThrustTarget{}; // 突進中のターゲット
-    skeleton::bone mVernierBone{  };
-    std::unique_ptr<Effect> mVernier_effect;
 private:
     //****************************************************************
     // 

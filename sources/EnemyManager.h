@@ -21,7 +21,7 @@ class EnemyManager final
     //****************************************************************
 public:
     EnemyManager() = default;
-    ~EnemyManager() = default;
+    ~EnemyManager();
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
@@ -65,14 +65,14 @@ public:
     void fDeleteEnemies();
 
     //--------------------<キャッシュにモデルデータを登録>--------------------//
-    void fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fRegisterCash(GraphicsPipeline& graphics_);
     void fDeleteCash(); // キャッシュを削除
 
 
 private:
     //--------------------<敵と関連する処理>--------------------//
-    void fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_); // 敵の生成を管理
-    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
+    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
     void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
 
@@ -85,6 +85,8 @@ private:
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
 
+
+    void fLoad(const char* FileName_);
     //****************************************************************
     //
     // 変数
@@ -112,8 +114,6 @@ private:
 
     int mUniqueCount{};
 
-    //--------------------<プロト>--------------------//
-    bool mIsProtoSpawn{ true };
     //****************************************************************
     //
     // 定数

@@ -1,5 +1,7 @@
 #pragma once
 #include<DirectXMath.h>
+#include <cereal/cereal.hpp>
+
 struct Capsule
 {
     DirectX::XMFLOAT3 mTop{};
@@ -22,6 +24,7 @@ struct EnemyParamPack
         archive(
             cereal::make_nvp("MaxHp", MaxHp),
             cereal::make_nvp("AttackPower", AttackPower),
+            cereal::make_nvp("InvincibleTime", InvincibleTime),
             cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad));
             cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad);
     }

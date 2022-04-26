@@ -30,8 +30,8 @@ public:
     void fRender(GraphicsPipeline& Graphics_);
     void fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
-    void fTurnToPlayer(float elapsedTime_);
-
+    void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
+    void fMoveFront(float elapsedTime_, float MoveSpeed_);
 
     //--------------------<セッター関数>--------------------//
     void fSetStun(bool Arg_);
@@ -47,6 +47,8 @@ public:
     [[nodiscard]] bool fComputeAndGetIntoCamera()const;
     [[nodiscard]] int fGetAttackPower()const;
     [[nodiscard]] float fGetAttackInvTime()const;
+    [[nodiscard]] float fGetLengthFromPlayer()const;
+    [[nodiscard]] float fGetPercentHitPoint()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -63,11 +65,14 @@ protected:
 private:
     bool mIsStun{}; // スタン状態かどうか
     int mCurrentHitPoint{};
+    float mInvincibleTime{};
+    const int mMaxHp{};
+
     int mAttackPower{};
     float mAttackInvTime{};
-    float mInvincibleTime{};
-    float mCubeHalfSize{};
     bool mIsAttack{};
+
+    float mCubeHalfSize{};
 protected:
     // StateMachine
     std::map<std::string, FunctionTuple> mFunctionMap{};

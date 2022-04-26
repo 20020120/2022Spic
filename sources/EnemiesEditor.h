@@ -5,6 +5,8 @@
 #include<map>
 #include<string>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/map.hpp>
+#include <cereal/types/string.hpp>
 #include"imgui_include.h"
 //****************************************************************
 // 
@@ -19,9 +21,9 @@ public:
     ~EnemyEditor();
      const EnemyParamPack& fGetParam(EnemyType Type_);
      void fGuiMenu();
+    void fSave();
 private:
     void fLoad();
-    void fSave();
 
     std::map<std::string, EnemyParamPack> mEnemyParamMap{};
     const char* mFilePath = "./resources/Data/EnemiesParam.json";

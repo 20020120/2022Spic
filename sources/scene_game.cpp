@@ -133,13 +133,13 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (player->GetIsAwakening())
 		{
-				player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+				player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
 					player->GetSwordCapsuleParam(0).start,
 					player->GetSwordCapsuleParam(0).end,
 					player->GetSwordCapsuleParam(0).rasius,
 					player->GetPlayerPower()));
 
-				player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+				player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
 					player->GetSwordCapsuleParam(1).start,
 					player->GetSwordCapsuleParam(1).end,
 					player->GetSwordCapsuleParam(1).rasius,
@@ -147,7 +147,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		else
 		{
-			player->AddCombo(enemyManager->fCalcPlayerCapsuleVsEnemies(
+			player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
 				player->GetSwordCapsuleParam(0).start,
 				player->GetSwordCapsuleParam(0).end,
 				player->GetSwordCapsuleParam(0).rasius,

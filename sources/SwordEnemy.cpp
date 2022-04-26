@@ -2,7 +2,7 @@
 #include"Operators.h"
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_, 
     const DirectX::XMFLOAT3& EmitterPoint_,
-    EnemyParamPack ParamPack_)
+    const EnemyParamPack& ParamPack_)
         :BaseEnemy(Graphics_, 
                   "./resources/Models/Enemy/enemy_sword.fbx",
                   ParamPack_,
@@ -11,6 +11,8 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     SwordEnemy::fRegisterFunctions();
     // ボーンを初期化
     mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
+    mScale = { 0.05f,0.05f,0.05f };
+    
 }
 
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
@@ -86,7 +88,18 @@ void SwordEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::AttackEnd, tuple));
     }
-
+    {
+        InitFunc ini = [=]()->void
+        {
+            fAttackRunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fAttackRunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::AttackRun, tuple));
+    }
     fChangeState(DivedState::Start);
 }
 
@@ -134,10 +147,10 @@ void SwordEnemy::fWalkInit()
 void SwordEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<プレイヤーのいる向きに移動>--------------------//
-    const auto moveVec = mPlayerPosition - mPosition;
-    fMoveVelocity(elapsedTime_, moveVec, mMoveSpeed);
+
+    fMoveFront(elapsedTime_, 10.0f);
     //--------------------<プレイヤーの方向に回転>--------------------//
-    fTurnToTarget(elapsedTime_, mPlayerPosition);
+    fTurnToPlayer(elapsedTime_, 2.0f);
 
     // プレイヤーとの距離が一定以下になったら
     if(mAttackRange >= Math::Length(mPlayerPosition-mPosition))
@@ -154,15 +167,32 @@ void SwordEnemy::fAttackBeginInit()
 }
 void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fTurnToTarget(elapsedTime_, mPlayerPosition, 20.0f);
+    fTurnToPlayer(elapsedTime_,2.0f);
 
     // タイマーを加算
     mWaitTimer += elapsedTime_;
     if(mWaitTimer>=mAttackBeginTimeSec*mAnimationSpeed)
     {
+        fChangeState(DivedState::AttackRun);
+    }
+}
+
+void SwordEnemy::fAttackRunInit()
+{
+    
+}
+
+void SwordEnemy::fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    // プレイヤーとの距離が近くなるまで走って近づく
+    fTurnToPlayer(elapsedTime_, 3.0f);
+    fMoveFront(elapsedTime_, 60.0f);
+    if( mAttackRange*0.1f>Math::Length(mPlayerPosition-mPosition))
+    {
         fChangeState(DivedState::AttackMiddle);
     }
 }
+
 //--------------------<剣を振り下ろす予備動作>--------------------//
 void SwordEnemy::fAttackPreActionInit()
 {
@@ -192,6 +222,15 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
         fChangeState(DivedState::Start);
         fSetAttack(false);
     }
+}
+
+void SwordEnemy::fEscapeInit()
+{
+    
+}
+void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
 }
 
 

@@ -17,6 +17,7 @@ public:
          inline static const char* Move = "Move";
          inline static const char* Damaged = "Damaged";
          inline static const char* AttackBegin = "AttackBegin"; // U‚èã‚°
+         inline static const char* AttackRun = "AttackRun"; // U‚èã‚°
          inline static const char* AttackMiddle = "AttackMiddle";  // ‚½‚ß
          inline static const char* AttackEnd = "AttackEnd"; // U‚è‰º‚ë‚µ
          inline static const char* Die = "Die";
@@ -37,7 +38,7 @@ public:
     //****************************************************************
     SwordEnemy(GraphicsPipeline& Graphics_, 
               const DirectX::XMFLOAT3& EmitterPoint_/*ƒXƒ|[ƒ“ˆÊ’u*/,
-              EnemyParamPack ParamPack_);
+              const EnemyParamPack& ParamPack_);
     SwordEnemy(GraphicsPipeline& Graphics_); 
     ~SwordEnemy() override = default;
 
@@ -59,7 +60,7 @@ private:
     // 
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // ˆÚ“®‘¬“x
-    const float mAttackRange{ 5.0f };    // UŒ‚”ÍˆÍ
+    const float mAttackRange{ 60.0f };    // UŒ‚”ÍˆÍ
     const float mAttackDelaySec{ 1.0f };  // UŒ‚Œã‚ÌŒ„‚Ì’·‚³i•bj
     const float mSpawnDelaySec{ 1.0f };   // “oêŒã‚Ì’·‚³i•bj
 
@@ -87,6 +88,9 @@ private:
     void fAttackBeginInit();
     void fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fAttackRunInit();
+    void fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì
     void fAttackPreActionInit();
     void fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);;
@@ -94,6 +98,9 @@ private:
     // UŒ‚
     void fAttackEndInit();
     void fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fEscapeInit();
+    void fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // ‚â‚ç‚ê
     void fDieInit();

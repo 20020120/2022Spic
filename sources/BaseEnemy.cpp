@@ -1,23 +1,23 @@
 #include"BaseEnemy.h"
-
 #include "collision.h"
 #include"resource_manager.h"
+#include"Operators.h"
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const char* FileName_,
                      const EnemyParamPack& Param_,
                      const DirectX::XMFLOAT3& EntryPosition_)
+:mPosition(EntryPosition_),mCurrentHitPoint(Param_.MaxHp)
+,mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
-    mCurrentHitPoint = Param_.MaxHp;
-    mAttackPower = Param_.AttackPower;
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
-    mPosition = EntryPosition_;
 
     mVernierEffect = std::make_unique<Effect>(Graphics_, 
       effect_manager->get_effekseer_manager(), mkVernierPath);
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
     mCubeHalfSize = mScale.x * 100.0f;
+    mDissolve = 1.0f;
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -34,13 +34,15 @@ void BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mInvincibleTime -= elapsedTime_;
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
-
     fUpdateVernierEffectPos();
-
+    std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
+    mpModel->update_animation(mAnimPara, elapsedTime_);
 }
 
 void BaseEnemy::fRender(GraphicsPipeline& Graphics_) 
 {
+    Graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
+    mDissolve = (std::max)(0.0f, mDissolve);
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
     mpModel->render(Graphics_.get_dc().Get(), mAnimPara, world, color,mDissolve);
@@ -101,9 +103,25 @@ void BaseEnemy::fUpdateVernierEffectPos()
     mVernierEffect->set_posture(effect_manager->get_effekseer_manager(), r_mat, ang);
 }
 
-void BaseEnemy::fTurnToPlayer(float elapsedTime_)
+void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 {
-    
+    // プレイヤーの方向に回転
+    constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
+
+    // プレイヤーとのベクトル
+    const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
+    // 自分の正面ベクトル
+    const auto front = Math::Normalize(Math::GetFront(mOrientation));
+    const float dot = Math::Dot(vToPlayer, front);
+    mOrientation = Math::RotQuaternion(mOrientation, up,fabsf(acosf(dot)) * RotSpeed_ * elapsedTime_);
+
+}
+
+void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
+{
+    // 前方向に進
+    const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
+    mPosition += (velocity * elapsedTime_);
 }
 
 void BaseEnemy::fSetStun(bool Arg_)
@@ -172,8 +190,22 @@ float BaseEnemy::fGetAttackInvTime() const
     return mAttackInvTime;
 }
 
+float BaseEnemy::fGetLengthFromPlayer() const
+{
+    return Math::Length(mPlayerPosition - mPosition);
+}
+
+float BaseEnemy::fGetPercentHitPoint() const
+{
+    if (mCurrentHitPoint <= 0)
+        return 0.0f;
+    else
+        return static_cast<float>(mCurrentHitPoint) / static_cast<float>(mMaxHp);
+}
+
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {
     mCurrentTuple = mFunctionMap.at(Tag_);
+    std::get<0>(mCurrentTuple)();
 }
