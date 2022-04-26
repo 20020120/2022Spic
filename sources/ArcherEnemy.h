@@ -12,6 +12,33 @@
 //****************************************************************
 class ArcherEnemy final :public BaseEnemy
 {
+public:
+    //****************************************************************
+    // 
+    // 構造体
+    // 
+    //****************************************************************
+    struct DivedState
+    {
+        inline static const char* Start = "Start";
+        inline static const char* Idle = "Idle";
+        inline static const char* Move = "Move";
+        inline static const char* Damaged = "Damaged";
+        inline static const char* AttackReady = "AttackReady";
+        inline static const char* AttackIdle = "AttackIdle";
+        inline static const char* AttackShot = "AttackShot";
+        inline static const char* Approach = "Approach";
+        inline static const char* Leave = "Leave";
+        inline static const char* Die = "Die";
+    };
+    enum  AnimationName {
+        idle,
+        walk,
+        attack_ready,
+        attack_idle,
+        attack_shot,
+        damage,
+    };
     //****************************************************************
     // 
     // 関数
@@ -19,19 +46,16 @@ class ArcherEnemy final :public BaseEnemy
     //****************************************************************
 public:
 
-    ArcherEnemy(GraphicsPipeline& graphics_,
-        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
-        , int UniqueId_, ParamGetFunction Function_,  AddBulletFunc Func_
-    );
+    ArcherEnemy(GraphicsPipeline& Graphics_,
+        const DirectX::XMFLOAT3& EmitterPoint_,
+        EnemyParamPack ParamPack_);
     ~ArcherEnemy();
 
-    void fInitialize() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-    void fGuiMenu() override;
+    void fGuiMenu() ;
 
-    void fDamaged(int damage_, float InvinsibleTime_) override;
-
-    void fStopEffect() override;
+    //void fDamaged(int damage_, float InvinsibleTime_) override;
+    void fMove(float elapsed_time);
 private:
     // ステートマシンを追加する関数
     void fRegisterFunctions() override;
@@ -54,7 +78,6 @@ private:
     void fMoveLeaveInit(); //接近移動の初期化
     void fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //後退移動の更新処理
 
-    void fSetVernierEffectPos();
 
 
     // 弓を引く
@@ -73,29 +96,14 @@ private:
     void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
 
 
-    // ステートの名前を定義する
-    struct  State : public BaseEnemy::StateTag
-    {
-        inline static const std::string AttackReady = "AttackReady";
-        inline static const std::string AttackIdle = "AttackIdle";
-        inline static const std::string AttackShot = "AttackShot";
-        inline static const std::string Approach = "Approach";
-        inline static const std::string Leave = "Leave";
-    };
-    enum  AnimationName {
-        idle,
-        walk,
-        attack_ready,
-        attack_idle,
-        attack_shot,
-        damage,
-    };
+   
+   
     //****************************************************************
    // 　
    // 変数 
    // 
    //****************************************************************
-    State mNowState;
+    DivedState mNowState;
     float mStayTimer;
     float mAttackingTime;
     bool mAttack_flg;
@@ -115,5 +123,7 @@ private:
     const float AT_SHORTEST_DISTANCE = 30.0f;
     //プレイヤーに攻撃を開始する最長距離
     const float AT_LONGEST_DISTANCE = 40.0f;
+    //移動スピード
+    const float MAX_MOVE_SPEED = 3.0f;
 };
 
