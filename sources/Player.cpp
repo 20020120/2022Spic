@@ -529,6 +529,8 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     if (is_behind_avoidance)
     {
         is_just_avoidance = true;
+        //ジャスト回避だったらダメージを受けない
+        return;
     }
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
@@ -538,7 +540,13 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     if (invincible_timer > 0.0f)return;
     //攻撃状態ならダメージを受けない
     if (is_attack) return;
-    TransitionDamage();
+    //もし回避中じゃなかったら怯む
+    if(is_avoidance == false) TransitionDamage();
+    else
+    {
+        //回避中ならひるまずダメージが下がって受ける
+        damage = damage - 1;
+    }
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
