@@ -41,7 +41,7 @@ void Player::ChainLockOn()
 void Player::chain_search_update(float elapsed_time, BaseEnemy* stun_enemy)
 {
 	// スタンされた敵がいなければ通常行動に戻る
-	if (stun_enemy == nullptr) {}
+	if (stun_enemy == nullptr) { transition_normal_behavior(); }
 	else // ロックオンステートへ
 	{
 		stun_enemy_position = stun_enemy->fGetPosition();
@@ -103,10 +103,10 @@ void Player::transition_chain_lockon()
 	way_points.emplace_back(stun_enemy_position); // 敵の位置
 	// way_pointsを通るカーブを作成
 	CatmullRomSpline curve(way_points);
-	curve.interpolate(interpolated_way_points, 5);
+	curve.interpolate(interpolated_way_points, 2);
 
 	transit_index = 0;
-
+	//model->;
 	player_chain_activity = &Player::chain_lockon_update;
 }
 
