@@ -49,6 +49,7 @@ public:
     [[nodiscard]] float fGetAttackInvTime()const;
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] float fGetPercentHitPoint()const;
+    [[nodiscard]] bool fGetStun()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 

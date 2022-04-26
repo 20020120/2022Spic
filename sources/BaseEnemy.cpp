@@ -203,6 +203,11 @@ float BaseEnemy::fGetPercentHitPoint() const
         return static_cast<float>(mCurrentHitPoint) / static_cast<float>(mMaxHp);
 }
 
+bool BaseEnemy::fGetStun() const
+{
+    return mIsStun;
+}
+
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {

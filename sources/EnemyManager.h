@@ -45,6 +45,12 @@ public:
         float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
         AddDamageFunc Func_
     );
+    // プレイヤーの回り込み攻撃と敵の当たり判定
+    void fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_);
+
+    // スタン中の敵のうちプレイヤーにもっとも近いものを返す（いなければnull）
+    BaseEnemy* fGetNearestStunEnemy();
+
 public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]]  BaseEnemy* fGetNearestEnemyPosition();

@@ -22,6 +22,7 @@ public:
          inline static const char* AttackEnd = "AttackEnd"; // U‚è‰º‚ë‚µ
          inline static const char* Die = "Die";
          inline static const char* Escape = "Escape";
+         inline static const char* Stun = "Stun";
      };
      enum  AnimationName {
          idle,

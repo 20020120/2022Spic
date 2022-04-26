@@ -133,6 +133,44 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
     return false;
 }
 
+void EnemyManager::fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_)
+{
+    
+    if(Radius_<=0.0f)
+    {
+        return;
+    }
+    // 総当たりでプレイヤーからスタンこうげきを受ける
+    for(const auto & enemy: mEnemyVec)
+    {
+        const DirectX::XMFLOAT3 enemyPosition = enemy->fGetPosition();
+        const float enemyRad = enemy->fGetBodyCapsule().mRadius;
+        if(Math::Length(mPlayerPosition-enemyPosition) <= Radius_+enemyRad)
+        {
+            enemy->fSetStun(true);
+        }
+    }
+}
+
+BaseEnemy* EnemyManager::fGetNearestStunEnemy()
+{
+    BaseEnemy* pEnemy{ nullptr };
+    float lengthVsPlayer{ FLT_MAX };
+    for(int i=0;i<mEnemyVec.size();++i)
+    {
+        if(mEnemyVec[i]->fGetStun())
+        {
+            if(lengthVsPlayer>mEnemyVec[i]->fGetLengthFromPlayer())
+            {
+                lengthVsPlayer = mEnemyVec[i]->fGetLengthFromPlayer();
+                pEnemy = mEnemyVec[i];
+            }
+        }
+    }
+    return pEnemy;
+
+}
+
 BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 {
     auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool
