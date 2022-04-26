@@ -43,7 +43,7 @@ private:
     };
 public:
     void Initialize()override;
-    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
+    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, BaseEnemy* stun_enemy)override;
     //チュートリアル用のアップデート
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
@@ -346,7 +346,7 @@ private:
     PlayerActivity player_activity = &Player::IdleUpdate;
     AddDamageFunc damage_func;
     //自分のメンバ関数の関数ポインタを呼ぶ
-    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
+    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* stun_enemy);
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理
@@ -426,22 +426,42 @@ public:
 private:
     //--------<藤岡パート>--------//
     //関数ポインタ
-    typedef void(Player::* PlayerChainActivity)(float elapsed_time);
+    typedef void(Player::* PlayerChainActivity)(float elapsed_time, BaseEnemy* stun_enemy);
     //関数ポインタの変数
     PlayerChainActivity player_chain_activity = &Player::chain_search_update;
     // 索敵
-    void chain_search_update(float elapsed_time);
+    void chain_search_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_search();
     // ロックオン
-    void chain_lockon_update(float elapsed_time);
+    void chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_lockon();
     // 移動
-    void chain_move_update(float elapsed_time);
+    void chain_move_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_move();
     // 攻撃
-    void chain_attack_update(float elapsed_time);
+    void chain_attack_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_attack();
+    // 指定したポイント全てを通る関数
+    bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
+        float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f);
 
+    // behaviorの遷移関数
+    void transition_chain_behavior()
+    {
+        behavior_state = Behavior::Chain;
+        transition_chain_search();
+    }
+    void transition_normal_behavior()
+    {
+        behavior_state = Behavior::Normal;
+        TransitionIdle();
+    }
+
+    //--------< 変数 >--------//
+    DirectX::XMFLOAT3 stun_enemy_position{};
+    int transit_index = 0;
+    std::vector<DirectX::XMFLOAT3> way_points;
+    std::vector<DirectX::XMFLOAT3> interpolated_way_points;
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数

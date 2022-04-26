@@ -44,10 +44,10 @@ void Player::Initialize()
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
-void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome)
+void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, BaseEnemy* stun_enemy)
 {
 
-    ExecFuncUpdate(elapsed_time, sky_dome);
+    ExecFuncUpdate(elapsed_time, sky_dome, stun_enemy);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:

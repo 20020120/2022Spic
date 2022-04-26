@@ -2,7 +2,9 @@
 #include "Player.h"
 
 
-bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f)
+
+bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
+	const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
 	assert(points.empty());
 	if (index >= points.size() - 1) return true;
@@ -29,10 +31,6 @@ bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float 
 	return false;
 }
 
-DirectX::XMFLOAT3 stun_enemy_position{};
-int transit_index = 0;
-std::vector<DirectX::XMFLOAT3> way_points;
-std::vector<DirectX::XMFLOAT3> interpolated_way_points;
 
 void Player::ChainLockOn()
 {
@@ -40,10 +38,15 @@ void Player::ChainLockOn()
 
 }
 
-void Player::chain_search_update(float elapsed_time)
+void Player::chain_search_update(float elapsed_time, BaseEnemy* stun_enemy)
 {
-	//if (/*スタンされた敵がいなければ通常行動に戻る*/) {}
-	//else if (/*スタンされた敵がいれば*/) { transition_chain_lockon(); }
+	// スタンされた敵がいなければ通常行動に戻る
+	if (stun_enemy == nullptr) {}
+	else // ロックオンステートへ
+	{
+		stun_enemy_position = stun_enemy->fGetPosition();
+		transition_chain_lockon();
+	}
 }
 
 void Player::transition_chain_search()
@@ -51,7 +54,7 @@ void Player::transition_chain_search()
 	player_chain_activity = &Player::chain_search_update;
 }
 
-void Player::chain_lockon_update(float elapsed_time)
+void Player::chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy)
 {
 	static float speed = 5.0f;
 	static float play  = 0.1f;
@@ -63,6 +66,11 @@ void Player::chain_lockon_update(float elapsed_time)
 	if (ImGui::Button("restart")) { transit_index = 0; }
 	ImGui::End();
 #endif // USE_IMGUI
+
+	for (const auto& point : interpolated_way_points)
+	{
+		debug_figure->create_sphere(point, 1.0f, { 0,0,0,1 });
+	}
 
 	// 最後の点(敵の位置)についたら攻撃ステートへ
 	if (transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
@@ -102,7 +110,7 @@ void Player::transition_chain_lockon()
 	player_chain_activity = &Player::chain_lockon_update;
 }
 
-void Player::chain_move_update(float elapsed_time)
+void Player::chain_move_update(float elapsed_time, BaseEnemy* stun_enemy)
 {
 
 }
@@ -113,7 +121,7 @@ void Player::transition_chain_move()
 	player_chain_activity = &Player::chain_move_update;
 }
 
-void Player::chain_attack_update(float elapsed_time)
+void Player::chain_attack_update(float elapsed_time, BaseEnemy* stun_enemy)
 {
 
 
