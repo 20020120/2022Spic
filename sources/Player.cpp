@@ -462,7 +462,7 @@ void Player::SwordCapsule()
     //debug_figure->create_capsule(sword_capsule_param[1].start, sword_capsule_param[1].end, sword_capsule_param[1].rasius, { 1.0f,1.0f,0.0f,1.0f });
 }
 
-void Player::SetTarget(const BaseEnemy* target_enemies)
+void Player::SetTarget( BaseEnemy* target_enemies)
 {
     if (target_enemies == nullptr)
     {

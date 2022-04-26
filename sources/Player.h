@@ -143,7 +143,7 @@ private:
 
 private:
     //ターゲットの敵
-    const  BaseEnemy* target_enemy;
+    BaseEnemy* target_enemy;
     float enemy_length{ 0 };//敵とプレイヤーの距離
     int target_count{ 0 };
     int old_target_count{ 0 };
@@ -290,7 +290,7 @@ public:
         return nullptr;
     }
     //一番近い敵を持って来てその位置をセットする
-    void SetTarget(const BaseEnemy* target_enemy);
+    void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count);
     //--------------------<敵からダメージを受ける>--------------------//

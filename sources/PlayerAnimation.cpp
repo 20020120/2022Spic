@@ -539,6 +539,8 @@ void Player::TransitionBehindAvoidance()
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+    //ロックオンしている敵をスタンさせる
+    target_enemy->fSetStun(true);
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;;
 }

@@ -121,7 +121,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
-    const BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
+    BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
 
 	Camera* c = cameraManager->GetCurrentCamera();
 
