@@ -133,6 +133,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             }
             if (ImGui::TreeNode("PlayerFlags"))
             {
+                ImGui::Checkbox("is_avoidance", &is_avoidance);
+                ImGui::Checkbox("is_behind_avoidance", &is_behind_avoidance);
                 ImGui::Checkbox("camera_reset", &camera_reset);
                 ImGui::Checkbox("is_lock_on", &is_lock_on);
                 ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
@@ -512,7 +514,7 @@ void Player::AddCombo(int count)
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
     //ƒWƒƒƒXƒg‰ñ”ð
-    if (is_avoidance)
+    if (is_behind_avoidance)
     {
 
 

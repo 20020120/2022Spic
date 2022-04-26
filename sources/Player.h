@@ -59,7 +59,7 @@ private:
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
     //後ろに回り込める距離
-    static constexpr float  BEHIND_LANGE_MAX = 35.0f;
+    static constexpr float  BEHIND_LANGE_MAX = 45.0f;
     static constexpr float  BEHIND_LANGE_MIN = 20.0f;
     //攻撃力の最低値
     static const int MIN_PLAYER_ATTACK_POWER = 1;
@@ -128,6 +128,8 @@ private:
     float leverage{ 15.0f };
     //カメラ用の回避した瞬間
     bool is_avoidance{ false };
+    //回り込み回避かどうか
+    bool is_behind_avoidance{ false };
     //倒した敵の位置を保存
     DirectX::XMFLOAT3 old_target{};
     //カメラの補間のゴール地点
