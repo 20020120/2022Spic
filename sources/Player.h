@@ -258,6 +258,7 @@ public:
     bool GetCameraLockOn() { return is_camera_lock_on; }
     bool GetEnemyLockOn() { return is_lock_on; }
     bool GetAvoidance() { return is_avoidance; }
+    bool GetBehindAvoidance() { return is_behind_avoidance; }
     bool GetIsPlayerAttack() { return is_attack; }
     bool GetIsSpecialSurge() { return is_special_surge; }
     bool GetStartDashEffect() { return start_dash_effect; }
@@ -463,7 +464,7 @@ private:
     //--------------------------------------各種遷移処理-----------------------------------------//
     //2番目のチュートリアルのステートに遷移
     void TransitionTutorialSecond();
-    //0が最初で大きくなっていくようにする
+    //1が最初で大きくなっていくようにする
     enum class TutorialState
     {
         First = 1,
