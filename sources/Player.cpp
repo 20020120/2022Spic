@@ -70,6 +70,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     BodyCapsule();
     //剣の大きさのカプセルのパラメータ
     SwordCapsule();
+    //ジャスト回避の範囲スタンのパラメータ
+    StunSphere();
+
     if (is_awakening)
     {
         for (int i = 0; i < 2; ++i)
@@ -462,6 +465,15 @@ void Player::SwordCapsule()
     //debug_figure->create_capsule(sword_capsule_param[1].start, sword_capsule_param[1].end, sword_capsule_param[1].rasius, { 1.0f,1.0f,0.0f,1.0f });
 }
 
+void Player::StunSphere()
+{
+    if (is_just_avoidance)
+    {
+        sphere_radius = 2.0f;
+    }
+    else sphere_radius = 0;
+}
+
 void Player::SetTarget( BaseEnemy* target_enemies)
 {
     if (target_enemies == nullptr)
@@ -516,8 +528,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     //ジャスト回避
     if (is_behind_avoidance)
     {
-
-
+        is_just_avoidance = true;
     }
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
