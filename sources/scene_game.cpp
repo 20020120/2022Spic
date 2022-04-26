@@ -159,6 +159,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
+	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
+	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
+
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
