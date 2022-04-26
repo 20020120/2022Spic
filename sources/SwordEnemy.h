@@ -2,7 +2,7 @@
 #include"BaseEnemy.h"
 #include "EnemiesEditor.h"
 #include"EventFlag.h"
-class SwordEnemy :public BaseEnemy
+class SwordEnemy final :public BaseEnemy
 {
 public:
     //****************************************************************
@@ -10,12 +10,18 @@ public:
     // \‘¢‘Ì
     // 
     //****************************************************************
-     struct DivedState: public StateTag
+     struct DivedState
      {
-         inline static const std::string AttackBegin = "AttackBegin"; // U‚èã‚°
-         inline static const std::string AttackMiddle = "AttackMiddle";  // ‚½‚ß
-         inline static const std::string AttackEnd = "AttackEnd"; // U‚è‰º‚ë‚µ
-         inline static const std::string Die = "Die";
+         inline static const char* Start = "Start";
+         inline static const char* Idle = "Idle";
+         inline static const char* Move = "Move";
+         inline static const char* Damaged = "Damaged";
+         inline static const char* AttackBegin = "AttackBegin"; // U‚èã‚°
+         inline static const char* AttackRun = "AttackRun"; // U‚èã‚°
+         inline static const char* AttackMiddle = "AttackMiddle";  // ‚½‚ß
+         inline static const char* AttackEnd = "AttackEnd"; // U‚è‰º‚ë‚µ
+         inline static const char* Die = "Die";
+         inline static const char* Escape = "Escape";
      };
      enum  AnimationName {
          idle,
@@ -31,37 +37,31 @@ public:
     // ŠÖ”
     // 
     //****************************************************************
-    SwordEnemy(GraphicsPipeline& graphics_, int UniqueId_, 
-        DirectX::XMFLOAT3 EmitterPoint_/*ƒXƒ|[ƒ“ˆÊ’u*/,
-        ParamGetFunction Func_);
-    ~SwordEnemy();
+    SwordEnemy(GraphicsPipeline& Graphics_, 
+              const DirectX::XMFLOAT3& EmitterPoint_/*ƒXƒ|[ƒ“ˆÊ’u*/,
+              const EnemyParamPack& ParamPack_);
+    SwordEnemy(GraphicsPipeline& Graphics_); 
+    ~SwordEnemy() override = default;
+
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-
     void fRegisterFunctions() override; // ƒXƒe[ƒg‚ğ“o˜^
+    void fUpdateAttackCapsule() override;
 
-    void fSetAttackCapsuleCollider();
-
-    void fSetVernierEffectPos();
-
-    void fStopEffect() override;
-    //****************************************************************
-    // 
-    // •Ï”
-    // 
-    //****************************************************************
+   //****************************************************************
+   // 
+   // •Ï”
+   // 
+   //****************************************************************
 private:
     float mWaitTimer{}; // ‘Ò‚¿ŠÔ
-    skeleton::bone mSwordBone{  };
-    skeleton::bone mVernierBone{  };
-    std::unique_ptr<Effect> mVernier_effect;
-
+    skeleton::bone mSwordBone{};
     //****************************************************************
     // 
     // ’è” 
     // 
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // ˆÚ“®‘¬“x
-    const float mAttackRange{ 5.0f };    // UŒ‚”ÍˆÍ
+    const float mAttackRange{ 60.0f };    // UŒ‚”ÍˆÍ
     const float mAttackDelaySec{ 1.0f };  // UŒ‚Œã‚ÌŒ„‚Ì’·‚³i•bj
     const float mSpawnDelaySec{ 1.0f };   // “oêŒã‚Ì’·‚³i•bj
 
@@ -89,6 +89,9 @@ private:
     void fAttackBeginInit();
     void fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fAttackRunInit();
+    void fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì
     void fAttackPreActionInit();
     void fAttackPreActionUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);;
@@ -97,11 +100,12 @@ private:
     void fAttackEndInit();
     void fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fEscapeInit();
+    void fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     // ‚â‚ç‚ê
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-public:
-    void fInitialize() override{}
 };
 
 

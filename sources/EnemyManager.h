@@ -2,33 +2,10 @@
 #include"BaseEnemy.h"
 #include"EnemyFileSystem.h"
 #include"EnemiesEditor.h"
-#include<map>
 #include<vector>
-#include <d3d11.h>
+
 
 #include "Common.h"
-
-//****************************************************************
-//
-// 構造体
-//
-//****************************************************************
-class Emitter
-{
-public:
-    void Initialize(DirectX::XMFLOAT3 Position_)
-    {
-        mPosition = Position_;
-    }
-
-    //--------------------<ゲッター関数>--------------------//
-    [[nodiscard]] DirectX::XMFLOAT3 fGetPosition()const
-    {
-        return mPosition;
-    }
-private:
-    DirectX::XMFLOAT3 mPosition{};
-};
 
 //****************************************************************
 //
@@ -39,33 +16,12 @@ class EnemyManager final
 {
     //****************************************************************
     //
-    //  構造体
-    //
-    //****************************************************************
-    // 敵の種類
-    enum EnemyType
-    {
-        Test, // テスト用（本番では使わない）
-        // ↓↓↓↓↓↓↓↓↓ここから下に増やす↓↓↓↓↓↓↓↓↓↓↓↓↓
-        Normal,
-        Chase,  // 攻撃なし＆追跡してくる
-        Archer, //遠距離攻撃
-        Shield,//盾持ち
-        MiddleBoss_, // 中ボス
-        Sword,// 刀の敵 
-        Spear,
-        // ↑↑↑↑↑↑↑↑↑ここから上に増やす↑↑↑↑↑↑↑↑↑↑↑↑↑
-        Count, // 種類の総量
-    };
-
-    //****************************************************************
-    //
     // 関数
     //
     //****************************************************************
 public:
     EnemyManager() = default;
-    ~EnemyManager() = default;
+    ~EnemyManager();
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
@@ -76,7 +32,7 @@ public:
     //--------------------<当たり判定>--------------------//
 
     // プレイヤーの攻撃と敵の当たり判定
-    int fCalcPlayerCapsuleVsEnemies(           // 戻り値 ： 当たった敵の数
+    int fCalcPlayerAttackVsEnemies(           // 戻り値 ： 当たった敵の数
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
         DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
         float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
@@ -93,7 +49,7 @@ public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] const BaseEnemy* fGetNearestEnemyPosition();
     [[nodiscard]] const BaseEnemy* fGetSecondEnemyPosition();
-    [[nodiscard]] const bool fGetClearWave() const;
+    [[nodiscard]] bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
@@ -109,38 +65,28 @@ public:
     void fDeleteEnemies();
 
     //--------------------<キャッシュにモデルデータを登録>--------------------//
-    void fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fRegisterCash(GraphicsPipeline& graphics_);
     void fDeleteCash(); // キャッシュを削除
-        //--------------------<キャッシュデータにあるエフェクト停止>--------------------//
-    void fCashEnemysStopEffect(GraphicsPipeline& graphics_);
+
 
 private:
     //--------------------<敵と関連する処理>--------------------//
-    void fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_); // 敵の生成を管理
-    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_, AddBulletFunc Func_);
+    void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
+    void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
     void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
 
     //--------------------<敵をソートする>--------------------//
     void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);
 
-    //--------------------<敵を出す場所を作成する>--------------------//
-    void fRegisterEmitter();
-
-    //--------------------<外部ファイルに干渉する>--------------------//
-    void fLoad(const char* FileName_);
-    void fReLoadEnemyParam();
-    void fSave();
-
     //--------------------<管理クラス内で完結する処理>--------------------//
     void fAllClear(); // 敵を全削除する関数
 
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
-    
-    //--------------------<プロト>--------------------//
-    void fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_);
 
+
+    void fLoad(const char* FileName_);
     //****************************************************************
     //
     // 変数
@@ -149,9 +95,9 @@ private:
 private:
     std::vector<BaseEnemy*> mEnemyVec;  // 敵を格納するコンテナ
     std::vector<BaseEnemy*> mRemoveVec; // 敵を格納するコンテナ
-    std::map<int, Emitter> mEmitterMap{}; // 敵の出現口
     // リソースマネージャーが情報を保持できるようにキャッシュとしてモデルデーを登録する
-    std::vector<BaseEnemy*> mCashEnemyVec{}; 
+    std::vector<BaseEnemy*> mCashEnemyVec{};
+
     //--------------------<ウェーブに関する変数>--------------------//
     float mWaveTimer{}; // 各ウェーブ開始からの経過時間
     int mCurrentWave{}; // 現在のウェーブ
@@ -168,8 +114,6 @@ private:
 
     int mUniqueCount{};
 
-    //--------------------<プロト>--------------------//
-    bool mIsProtoSpawn{ true };
     //****************************************************************
     //
     // 定数

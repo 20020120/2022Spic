@@ -9,6 +9,7 @@
 #include"MiddleBoss.h"
 #include"SwordEnemy.h"
 #include"SpearEnemy.h"
+#include"LastBoss.h"
 
 #include"imgui_include.h"
 #include "user.h"
@@ -23,17 +24,18 @@
 //
 //****************************************************************
 
+EnemyManager::~EnemyManager()
+{
+}
+
 void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 {
     //--------------------<初期化>--------------------//
     fAllClear();
-    fRegisterEmitter();
     mUniqueCount = 0;
 
     // キャッシュに登録
-    fRegisterCash(graphics_,Func_);
-    //キャッシュ敵のエフェクト停止
-    fCashEnemysStopEffect(graphics_);
+    fRegisterCash(graphics_);
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -53,7 +55,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     fCollisionEnemyVsEnemy();
 
     //--------------------<敵のスポナー>--------------------//
-    fSpawn(graphics_, Func_);
+    fSpawn(graphics_);
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
 }
@@ -68,30 +70,31 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
     fDeleteCash();
+    mEditor.fSave();
 }
 
-int EnemyManager::fCalcPlayerCapsuleVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
 {
     //--------------------<プレイヤーの攻撃と敵の当たり判定>--------------------//
-    // 攻撃が何体の敵に当たったか
+      // 攻撃が何体の敵に当たったか
     int  hitCounts = 0;
 
-    for(const auto enemy: mEnemyVec)
+    for (const auto enemy : mEnemyVec)
     {
         // 当たり判定をするか確認
-        if(enemy->fGetIsFrustum())
+        if (enemy->fComputeAndGetIntoCamera())
         {
-            BaseEnemy::CapsuleCollider capsule = enemy->fGetCapsuleData();
+            Capsule capsule = enemy->fGetBodyCapsule();
 
             const bool result = Collision::capsule_vs_capsule(
                 PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
-                capsule.mPointA, capsule.mPointB, capsule.mRadius);
+                capsule.mTop, capsule.mBottom, capsule.mRadius);
 
             // 当たっていたら
-            if(result)
+            if (result)
             {
-                enemy->fDamaged(PlayerAttackPower_,0.3f);
+                enemy->fDamaged(PlayerAttackPower_, 0.3f);
                 hitCounts++;
             }
         }
@@ -108,20 +111,20 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
     for (const auto enemy : mEnemyVec)
     {
         // 当たり判定をするか確認
-        if (enemy->fGetIsFrustum())
+        if (enemy->fComputeAndGetIntoCamera())
         {
-            if (enemy->fGetAttacking())
+            if (enemy->fGetAttack())
             {
-                BaseEnemy::CapsuleCollider capsule = enemy->fGetAttackCapsuleData();
+                Capsule capsule = enemy->fGetAttackCapsule();
 
                 const bool result = Collision::capsule_vs_capsule(
                     PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
-                    capsule.mPointA, capsule.mPointB, capsule.mRadius);
+                    capsule.mTop, capsule.mBottom, capsule.mRadius);
 
                 // 当たっていたら
                 if (result)
                 {
-                    Func_(enemy->fGetAttackInfo().mDamage, enemy->fGetAttackInfo().mInvincible_time);
+                    Func_(enemy->fGetAttackPower(), enemy->fGetAttackInvTime());
                     return  true;
                 }
             }
@@ -139,16 +142,16 @@ const BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
     fSort(func);
     for(const auto enemy :mEnemyVec)
     {
-        if(enemy->fGetIsFrustum())
+        if(enemy->fComputeAndGetIntoCamera())
         {
             // この敵からの距離を計算する
             for(const auto enemy2:mEnemyVec)
             {
-                if (enemy2->fGetIsFrustum())
+                if (enemy2->fComputeAndGetIntoCamera())
                 {
                     if (enemy != enemy2)
                     {
-                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                        //enemy2->fCalcNearestEnemy(enemy->fGetPosition());
                     }
                 }
             }
@@ -168,16 +171,16 @@ const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
     fSort(func);
     for (const auto enemy : mEnemyVec)
     {
-        if (enemy->fGetIsFrustum())
+        if (enemy->fComputeAndGetIntoCamera())
         {
             // この敵からの距離を計算する
             for (const auto enemy2 : mEnemyVec)
             {
-                if (enemy2->fGetIsFrustum())
+                if (enemy2->fComputeAndGetIntoCamera())
                 {
                     if (enemy != enemy2)
                     {
-                        enemy2->fCalcNearestEnemy(enemy->fGetPosition());
+                        //enemy2->fCalcNearestEnemy(enemy->fGetPosition());
                     }
                 }
             }
@@ -188,7 +191,7 @@ const BaseEnemy* EnemyManager::fGetSecondEnemyPosition()
     return nullptr;
 }
 
-const bool EnemyManager::fGetClearWave() const
+bool EnemyManager::fGetClearWave() const
 {
     // 残りデータが０かつフィールドに敵が残っていない
     return (mCurrentWaveVec.size() <= 0 && mEnemyVec.size() <= 0);
@@ -197,9 +200,13 @@ const bool EnemyManager::fGetClearWave() const
 void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
 {
     mPlayerPosition = Position_;
+    for(const auto& enemy:mEnemyVec)
+    {
+        enemy->fSetPlayerPosition(Position_);
+    }
 }
 
-void EnemyManager::fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_)
+void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 {
     int spawnCounts = 0;
 
@@ -209,7 +216,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_)
         // 出現条件を満たしていたら出す
         if (data.mSpawnTimer <= mWaveTimer)
         {
-            fSpawn(data, graphics,Func_);
+            fSpawn(data, graphics);
             spawnCounts++;
         }
     }
@@ -220,67 +227,52 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics, AddBulletFunc Func_)
     }
 }
 
-void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_,AddBulletFunc Func_)
+void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
 {
     // 送られてきたデータをもとに敵を出現させる
-
+    auto param = mEditor.fGetParam(Source_.mType);
     switch (Source_.mType)
     {
-    case EnemyType::Test:
-    {
-        auto enemy = new TestEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
-    }
-    break;
-    case EnemyType::Normal:
-    {
-        auto enemy = new NormalEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
-    }
-    break;
-    case EnemyType::Chase:
-    {
-        auto enemy = new ChaseEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
-    }
-    break;
     case EnemyType::Archer:
     {
-        auto enemy = new ArcherEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction(), Func_);
-        mEnemyVec.emplace_back(enemy);
+
     }
+    break;
     case EnemyType::Shield:
     {
-        auto enemy = new ArcherEnemy(graphics_, Source_.mEmitterPoint, mUniqueCount, mEditor.fGetFunction(), Func_);
-        mEnemyVec.emplace_back(enemy);
-    }
-    break;
-    case EnemyType::MiddleBoss_:
-    {
-        auto enemy = new MiddleBoss(graphics_, mEditor.fGetFunction(),Func_);
-        mEnemyVec.emplace_back(enemy);
-    }
-    break;
-    case EnemyType::Sword :
-    {
-        auto enemy = new SwordEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint,
-            mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
-    }
-        break;
 
-    case EnemyType::Spear :
+    }
+    break;
+    case EnemyType::Sword:
     {
-        auto enemy = new SpearEnemy(graphics_, mUniqueCount, Source_.mEmitterPoint,
-            mEditor.fGetFunction());
+        BaseEnemy* enemy = new SwordEnemy(graphics_,
+            Source_.mEmitterPoint,param);
         mEnemyVec.emplace_back(enemy);
     }
     break;
-    default:
-        _ASSERT_EXPR(0, "Enemy Type No Setting");
-        break;
+    case EnemyType::Spear:
+    {
+        BaseEnemy* enemy = new SpearEnemy(graphics_,
+            Source_.mEmitterPoint,
+            mEditor.fGetParam(Source_.mType));
+        mEnemyVec.emplace_back(enemy);
     }
-    mUniqueCount++;
+    break;
+    case EnemyType::Archer_Ace:
+        break;
+    case EnemyType::Shield_Ace:
+        break;
+    case EnemyType::Sword_Ace:
+        break;
+    case EnemyType::Spear_Ace:
+        break;
+    case EnemyType::Boss:
+        break;
+    case EnemyType::Count: break;
+    default:;
+    }
+
+
 }
 
 void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_)
@@ -316,33 +308,6 @@ void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy
     std::sort(mEnemyVec.begin(), mEnemyVec.end(), Function_);
 }
 
-void EnemyManager::fRegisterEmitter()
-{
-    Emitter emitter{};
-    emitter.Initialize({ 0.0f,0.0f,0.0f });
-    mEmitterMap.insert(std::make_pair(0, emitter));
-}
-
-void EnemyManager::fLoad(const char* FileName_)
-{
-    EnemyFileSystem::fLoadFromJson(mCurrentWaveVec, FileName_);
-}
-
-void EnemyManager::fReLoadEnemyParam()
-{
-    for(const auto enemy: mEnemyVec)
-    {
-        enemy->fGetParam(enemy, mEditor.fGetFunction());
-    }
-}
-
-void EnemyManager::fSave()
-{
-    EnemySource source{};
-    std::vector<EnemySource> vec{};
-    vec.emplace_back(source);
-    EnemyFileSystem::fSaveToJson(vec, "Wave1.json");
-}
 
 void EnemyManager::fAllClear()
 {
@@ -370,8 +335,8 @@ void EnemyManager::fCollisionEnemyVsEnemy()
             {
                 continue;
             }
-             auto capsule1 = enemy1->fGetCapsuleData();
-             auto capsule2 = enemy2->fGetCapsuleData();
+             auto capsule1 = enemy1->fGetBodyCapsule();
+             auto capsule2 = enemy2->fGetBodyCapsule();
             // もし半径が０以下なら計算しない
             if(capsule1.mRadius<=0.0f||capsule2.mRadius<=0.0f)
             {
@@ -384,8 +349,8 @@ void EnemyManager::fCollisionEnemyVsEnemy()
 
             
             const bool result=Collision::capsule_vs_capsule(
-                capsule1.mPointA, capsule1.mPointB, capsule1.mRadius,
-                capsule2.mPointA, capsule2.mPointB, capsule2.mRadius);
+                capsule1.mTop, capsule1.mBottom, capsule1.mRadius,
+                capsule2.mTop, capsule2.mBottom, capsule2.mRadius);
 
             // もし当たったら
             if(result)
@@ -412,34 +377,29 @@ void EnemyManager::fCollisionEnemyVsEnemy()
                 // めり込み距離
                 const float raidLength = radiusAdd - length;
                 DirectX::XMFLOAT3 res = enemy2->fGetPosition() + (vec * raidLength);
-                enemy2->fSetPosition(res);
+                
             }
 
         }
     }
 }
 
-void EnemyManager::fProtoSpawn(GraphicsPipeline& graphics_, AddBulletFunc Func_)
+void EnemyManager::fLoad(const char* FileName_)
 {
-    if (!mIsProtoSpawn) return;
-    if (mEnemyVec.size() > 10) return;
-
-    static bool  IsSpawn{};
-    const int separateTime = static_cast<int>(mWaveTimer) % 4;
-    if(separateTime==1&&!IsSpawn)
+    // Jsonファイルから値を取得
+    std::filesystem::path path = FileName_;
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
     {
-        auto enemy = new FrontShieldEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy);
-        auto enemy1 = new NormalEnemy(graphics_, { 0.0f,0.0f,10.0f }, mUniqueCount, mEditor.fGetFunction());
-        mEnemyVec.emplace_back(enemy1);
-        IsSpawn = true;
-    }
-    else if(separateTime == 2)
-    {
-        IsSpawn = false;
+        std::ifstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONInputArchive o_archive(ifs);
+            o_archive(mCurrentWaveVec);
+        }
     }
 }
-
 
 void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
 {
@@ -470,28 +430,20 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         ImGui::Separator();
 
         ImGui::Separator();
-        if(ImGui::Button("ReLoadEnemies"))
-        {
-            fReLoadEnemyParam();
-        }
+        static int elem = static_cast<int>(EnemyType::Sword);
+        constexpr int count = static_cast<int>(EnemyType::Count);
+        const char* elems_names[count] = { "Archer","Shield","Sword","Spear",
+            "Archer_Ace","Shield_Ace","Sword_Ace","Spear_Ace","Boss" };
 
-        ImGui::Separator();
-        static int elem = EnemyType::Test;
-        const char* elems_names[EnemyType::Count] = { "Test","Normal","Chase","Archer","Shield","MiddleBoss","SwordEnemy","SpearEnemy"};
-        const char* elem_name = (elem >= 0 && elem < EnemyType::Count) ? elems_names[elem] : "Unknown";
-        ImGui::SliderInt("slider enum", &elem, 0, EnemyType::Count - 1, elem_name);
+        const char* elem_name = (elem >= 0 && elem < count) ? elems_names[elem] : "Unknown";
+        ImGui::SliderInt("slider enum", &elem, 0, count - 1, elem_name);
 
         if (ImGui::Button("CreateEnemy"))
         {
             EnemySource source{};
             source.mEmitterPoint = {};
-            source.mType = elem;
-            fSpawn(source,Graphics_,Func_);
-        }
-
-        if(ImGui::Button("ss"))
-        {
-            fSave();
+            source.mType = static_cast<EnemyType>(elem);
+            fSpawn(source,Graphics_);
         }
 
         ImGui::InputInt("WaveNumber", &mCurrentWave);
@@ -499,26 +451,12 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         {
             fStartWave(mCurrentWave);
         }
-
-        ImGui::Separator();
-        if (ImGui::CollapsingHeader("List"))
+        if(ImGui::Button("Save"))
         {
-            auto func = [=](const BaseEnemy* A_, const BaseEnemy* B_)->bool
-            {
-                return A_->fGetUniqueId() < B_->fGetUniqueId();
-            };
-            std::sort(mEnemyVec.begin(), mEnemyVec.end(), func);
-
-            int index = 0;
-            for (const auto enemy : mEnemyVec)
-            {
-                enemy->fGuiMenu();
-                index++;
-            }
+            mEditor.fSave();
         }
         ImGui::Separator();
 
-        ImGui::Checkbox("ProtoSpawn", &mIsProtoSpawn);
         if (ImGui::Button("AllClear"))
         {
             fAllClear();
@@ -544,7 +482,6 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
     }
 #endif
     mEditor.fGuiMenu();
-    mEditor.fGui_ParamEditor();
 }
 
 void EnemyManager::fStartWave(int WaveIndex_)
@@ -588,16 +525,26 @@ void EnemyManager::fDeleteEnemies()
     mRemoveVec.clear();
 }
 
-void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_, AddBulletFunc Func_)
+void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
 {
     // キャッシュにモデルを登録
-    BaseEnemy* enemy = 
-        new SwordEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    BaseEnemy* enemy = new SwordEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-    enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-    enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,0.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
-    mCashEnemyVec.emplace_back(enemy);
+
+    //BaseEnemy* enemy = 
+    //    new Swo\rdEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    //
+    //enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
+    //mCashEnemyVec.emplace_back(enemy);
+    //enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,0.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
+    //mCashEnemyVec.emplace_back(enemy);
+    //enemy = new LastBoss(graphics_,mUniqueCount,
+    //    { 0.0f,0.0f,0.0f }, mEditor.fGetFunction(),
+    //    Func_);
+    //mCashEnemyVec.emplace_back(enemy);
+
 }
 
 void EnemyManager::fDeleteCash()
@@ -612,13 +559,4 @@ void EnemyManager::fDeleteCash()
         }
     }
     mCashEnemyVec.clear();
-}
-
-void EnemyManager::fCashEnemysStopEffect(GraphicsPipeline& graphics_)
-{
-    for (const auto enemy : mCashEnemyVec)
-    {
-        // 存在していれば削除
-        enemy->fStopEffect();
-    }
 }

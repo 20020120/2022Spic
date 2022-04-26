@@ -281,9 +281,9 @@ public:
     int GetPlayerPower() { return player_attack_power; }
     [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() { return damage_func; }
 
-    const  BaseEnemy* GetPlayerTargetEnemy() const
+    [[nodiscard]] const  BaseEnemy* GetPlayerTargetEnemy() const
     {
-        if (target_enemy != nullptr && target_enemy->fGetIsFrustum())
+        if (target_enemy != nullptr && target_enemy->fComputeAndGetIntoCamera())
         {
             return target_enemy;
         }

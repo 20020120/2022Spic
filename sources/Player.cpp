@@ -724,7 +724,7 @@ void Player::LockOn()
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
-        if (target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
+        if (target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             //敵の位置を補完のゴールターゲットに入れる
 #if 1
