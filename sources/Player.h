@@ -40,6 +40,15 @@ private:
         AwakingAttackType2,//覚醒状態の攻撃2撃目
         AwakingAttackType3,//覚醒状態の攻撃3撃目
         AwakingDamage,//覚醒状態のダメージ
+        WingDashStart,//飛行機モードの突進開始
+        WingDashIdle,//飛行機モードの突進中
+        WingDashEnd,//飛行機モードの突進終了
+        StartMothin,//スタートモーション
+        NamelessMotion,//モーション二つ目
+        Die,//死亡
+        Dying,//死亡中
+        AwakingDie,//死亡
+        AwakingDying//死亡中
     };
 public:
     void Initialize()override;
