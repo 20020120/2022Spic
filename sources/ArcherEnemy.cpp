@@ -66,104 +66,124 @@ void ArcherEnemy::fRegisterFunctions()
     FunctionTuple tuple = std::make_tuple(Ini, Up);
     mFunctionMap.insert(std::make_pair(DivedState::Start, tuple));
 
-    //‘Ò‹@ó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fIdleInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fIdleUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Idle, tuple));
-
-    
+        //‘Ò‹@ó‘Ô‚Ì“o˜^
+        Ini = [=]()->void
+        {
+            fIdleInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fIdleUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Idle, tuple));
+    }
 
     //ˆÚ“®ó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fMoveInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fmoveUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Move, tuple));
-
+        Ini = [=]()->void
+        {
+            fMoveInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fmoveUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Move, tuple));
+    }
     //Ú‹ßˆÚ“®ó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fMoveApproachInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fMoveApproachUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Approach, tuple));
-
+        Ini = [=]()->void
+        {
+            fMoveApproachInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fMoveApproachUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Approach, tuple));
+    }
     //Œã‘ÞˆÚ“®ó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fMoveLeaveInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fMoveLeaveUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Leave, tuple));
-
+        Ini = [=]()->void
+        {
+            fMoveLeaveInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fMoveLeaveUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Leave, tuple));
+    }
     //UŒ‚€”õó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fAttackBeginInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fAttackBeginUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::AttackReady, tuple));
-
+        Ini = [=]()->void
+        {
+            fAttackBeginInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fAttackBeginUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::AttackReady, tuple));
+    }
     //UŒ‚‘Ò‹@‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fAttackPreActionInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fAttackPreActionUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::AttackIdle, tuple));
-
+        Ini = [=]()->void
+        {
+            fAttackPreActionInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fAttackPreActionUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::AttackIdle, tuple));
+    }
     //UŒ‚ó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
     {
-        fAttackEndInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        Ini = [=]()->void
+        {
+            fAttackEndInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fAttackEndUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::AttackShot, tuple));
+    }
+    //”íƒ_ƒó‘Ô‚Ì“o˜^
     {
-        fAttackEndUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::AttackShot, tuple));
-
-    //‚Ð‚é‚Ýó‘Ô‚Ì“o˜^
-    Ini = [=]()->void
+        Ini = [=]()->void
+        {
+            fDamagedInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDamagedUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Damaged, tuple));
+    }
+    //ƒXƒ^ƒ“ó‘Ô‚Ì“o˜^
     {
-        fDamagedInit();
-    };
-    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-    {
-        fDamagedUpdate(elapsedTime_, Graphics_);
-    };
-    tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Damaged, tuple));
-
+        Ini = [=]()->void
+        {
+            fStunInit();
+        };
+        Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
+    }
     //‰Šú‰»
     fChangeState(DivedState::Start);
 
@@ -368,6 +388,23 @@ void ArcherEnemy::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
    
 
     fChangeState(DivedState::Idle);
+}
+
+void ArcherEnemy::fStunInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
+
+    mStayTimer = 0;
+
+}
+
+void ArcherEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mStayTimer += elapsedTime_;
+    if (mStayTimer >= mStunTime)
+    {
+        fChangeState(DivedState::Idle);
+    }
 }
 
 void ArcherEnemy::fGuiMenu()

@@ -101,6 +101,18 @@ void SpearEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::ThrustEnd, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
+    }
     fChangeState(DivedState::Start);
 }
 
@@ -231,6 +243,22 @@ void SpearEnemy::fDamageInit()
 void SpearEnemy::fDamageUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     throw std::logic_error("Not implemented");
+}
+
+void SpearEnemy::fStunInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
+
+    mWaitTimer = 0;
+}
+
+void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    if (mWaitTimer >= mStunTimeSec)
+    {
+        fChangeState(DivedState::Idle);
+    }
 }
 
 void SpearEnemy::fDieInit()

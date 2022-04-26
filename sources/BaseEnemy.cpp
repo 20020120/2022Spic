@@ -112,8 +112,23 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
     const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
     // Ž©•ª‚Ì³–ÊƒxƒNƒgƒ‹
     const auto front = Math::Normalize(Math::GetFront(mOrientation));
-    const float dot = Math::Dot(vToPlayer, front);
-    mOrientation = Math::RotQuaternion(mOrientation, up,fabsf(acosf(dot)) * RotSpeed_ * elapsedTime_);
+     float dot = Math::Dot(vToPlayer, front);
+
+     dot = acosf(dot);
+
+    if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
+    {
+	    DirectX::XMVECTOR q;
+        float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
+        if (cross > 0)
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, up, dot * RotSpeed_ * elapsedTime_);
+        }
+        else
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, up, -dot * RotSpeed_ * elapsedTime_);
+        }
+    }
 
 }
 

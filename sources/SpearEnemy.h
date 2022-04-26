@@ -19,6 +19,7 @@ class SpearEnemy final  : public BaseEnemy
         inline static const char* ThrustMiddle = "ThrustMiddle";  // 突進中
         inline static const char* ThrustEnd = "ThrustEnd";        // 突進後の隙
         inline static const char* Die = "Die";
+        inline static const char* Stun = "Stun";
     };
     enum AnimationName {
         idle,
@@ -69,6 +70,8 @@ private:
     const float mThrustEndSec{ 3.0f };   // 突進中の長さ
     const float mThrustSpeed{ 70.0f };   // 突進の速さ
     const float mThrustDegree{ 30.0f };  // 突進の角度
+    const float mStunTimeSec{ 1.0f }; //スタンの長さ
+
 private:
     //****************************************************************
     // 
@@ -96,6 +99,9 @@ private:
     //--------------------<ダメージ>--------------------//
     void fDamageInit();
     void fDamageUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    //--------------------<スタン>--------------------//
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     //--------------------<死亡>--------------------//
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);

@@ -112,6 +112,18 @@ void SwordEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::Escape, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
+    }
     fChangeState(DivedState::Start);
 }
 
@@ -251,6 +263,23 @@ void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         fChangeState(DivedState::Start);
     }
+}
+
+void SwordEnemy::fStunInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
+
+    mWaitTimer = 0;
+}
+
+void SwordEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    if (mWaitTimer >= mStunTimeSec)
+    {
+        fChangeState(DivedState::Idle);
+    }
+
 }
 
 
