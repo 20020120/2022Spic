@@ -231,7 +231,8 @@ private:
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
-
+    //死んでるかどうか
+    void PlayerAlive();
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
@@ -254,6 +255,13 @@ private:
     void SwordCapsule();
     //範囲スタンのパラメータ設定
     void StunSphere();
+    enum class ConditionState
+    {
+        Alive,//生きている
+        Dye//死んでいる
+    };
+    //生きているかどうか
+    ConditionState condition_state{ ConditionState::Alive };
 public:
     void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
@@ -400,6 +408,11 @@ private:
     void DieUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡中
     void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //モーション
+    void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
+    //モーション
+    void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
+
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)

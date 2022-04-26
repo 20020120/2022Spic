@@ -8,7 +8,7 @@ Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_seventeenth.fbx",true,60.0f);
-    model->play_animation(AnimationClips::Idle, true);
+    TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
     mSwordTrail[0].fInitialize(graphics.get_device().Get(),
@@ -407,6 +407,14 @@ void Player::InflectionCombo(float elapsed_time)
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;
     //コンボ中タイマーが0になったらコンボは0にする
     //if (duration_combo_timer <= 0) combo_count = 0;
+}
+
+void Player::PlayerAlive()
+{
+    if (player_health <= 0 && condition_state == ConditionState::Alive)
+    {
+        TransitionDie();
+    }
 }
 
 void Player::BodyCapsule()
