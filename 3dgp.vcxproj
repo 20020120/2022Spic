@@ -207,7 +207,9 @@
     <ClCompile Include="imgui\imgui_ja_gryph_ranges.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="sources\AhieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
+    <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
     <ClCompile Include="sources\audio.cpp" />
     <ClCompile Include="sources\audio_manager.cpp" />
     <ClCompile Include="sources\BaseBullet.cpp" />
@@ -277,9 +279,11 @@
     <ClCompile Include="sources\scene_title.cpp" />
     <ClCompile Include="sources\shader.cpp" />
     <ClCompile Include="sources\shadow_map.cpp" />
+    <ClCompile Include="sources\ShieldEnemy.cpp" />
     <ClCompile Include="sources\skinned_mesh.cpp" />
     <ClCompile Include="sources\SkyDome.cpp" />
     <ClCompile Include="sources\SpearEnemy.cpp" />
+    <ClCompile Include="sources\SpearEnemy_Ace.cpp" />
     <ClCompile Include="sources\sprite.cpp" />
     <ClCompile Include="sources\sprite_batch.cpp" />
     <ClCompile Include="sources\sprite_dissolve.cpp" />
@@ -307,7 +311,9 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="sources\AhieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
+    <ClInclude Include="sources\ArcherEnemy_Ace.h" />
     <ClInclude Include="sources\audio.h" />
     <ClInclude Include="sources\audio_manager.h" />
     <ClInclude Include="sources\BaseBullet.h" />
@@ -379,9 +385,11 @@
     <ClInclude Include="sources\scene_title.h" />
     <ClInclude Include="sources\shader.h" />
     <ClInclude Include="sources\shadow_map.h" />
+    <ClInclude Include="sources\ShieldEnemy.h" />
     <ClInclude Include="sources\skinned_mesh.h" />
     <ClInclude Include="sources\SkyDome.h" />
     <ClInclude Include="sources\SpearEnemy.h" />
+    <ClInclude Include="sources\SpearEnemy_Ace.h" />
     <ClInclude Include="sources\sprite.h" />
     <ClInclude Include="sources\sprite_batch.h" />
     <ClInclude Include="sources\sprite_dissolve.h" />

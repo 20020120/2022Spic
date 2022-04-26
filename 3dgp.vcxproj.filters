@@ -468,6 +468,18 @@
     <ClCompile Include="sources\ArcherEnemy.cpp">
       <Filter>Sources\character\enemy\04_Archer</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SpearEnemy_Ace.cpp">
+      <Filter>Sources\character\enemy\02_Spear</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ArcherEnemy_Ace.cpp">
+      <Filter>Sources\character\enemy\04_Archer</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\ShieldEnemy.cpp">
+      <Filter>Sources\character\enemy\03_Shield</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\AhieldEnemy_Ace.cpp">
+      <Filter>Sources\character\enemy\03_Shield</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -769,6 +781,18 @@
     </ClInclude>
     <ClInclude Include="sources\ArcherEnemy.h">
       <Filter>Sources\character\enemy\04_Archer</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SpearEnemy_Ace.h">
+      <Filter>Sources\character\enemy\02_Spear</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ArcherEnemy_Ace.h">
+      <Filter>Sources\character\enemy\04_Archer</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\ShieldEnemy.h">
+      <Filter>Sources\character\enemy\03_Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\AhieldEnemy_Ace.h">
+      <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
