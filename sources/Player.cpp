@@ -46,6 +46,14 @@ void Player::Initialize()
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, BaseEnemy* stun_enemy)
 {
+#ifdef USE_IMGUI
+    ImGui::Begin("chain");
+    if(ImGui::Button("transition chain behavior"))
+    {
+        transition_chain_behavior();
+    }
+    ImGui::End();
+#endif // USE_IMGUI
 
     ExecFuncUpdate(elapsed_time, sky_dome, stun_enemy);
     switch (behavior_state)

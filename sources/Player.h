@@ -444,7 +444,8 @@ private:
     // 指定したポイント全てを通る関数
     bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
         float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f);
-
+    // 進んでる方向に回転する関数
+    void rotate(float elapsed_time, const DirectX::XMFLOAT3& velocity);
     // behaviorの遷移関数
     void transition_chain_behavior()
     {
