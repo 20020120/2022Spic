@@ -127,6 +127,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
+        is_just_avoidance = false;
         TransitionIdle();
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -475,6 +476,10 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
+    //回避中かどうかの設定
+    is_avoidance = true;
+    //回り込み回避かどうか
+    is_behind_avoidance = false;
     //--------------------------イージング加速の変数初期化---------------------------------//
     avoidance_boost_time = 0;
     avoidance_start = velocity;
@@ -501,10 +506,6 @@ void Player::TransitionAvoidance()
     if(is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false,true);
     //通常状態の時のアニメーションの設定
     else model->play_animation(AnimationClips::Avoidance, false,true);
-    //回避中かどうかの設定
-    is_avoidance = true;
-    //回り込み回避かどうか
-    is_behind_avoidance = false;
     //攻撃中かどうかの設定
     is_attack = false;
     //アニメーションの速度
@@ -517,16 +518,16 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    //回避中かどうかの設定
+    is_avoidance = true;
+    //回り込み回避かどうか
+    is_behind_avoidance = true;
     //覚醒状態の時の回避アニメーションの設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
     //通常状態の時のアニメーションの設定
     else model->play_animation(AnimationClips::Avoidance, false, true);
     //後ろに回り込む座標の取得
     BehindAvoidancePosition();
-    //回避中かどうかの設定
-    is_avoidance = true;
-    //回り込み回避かどうか
-    is_behind_avoidance = true;
     //回り込むときのタイマー
     behind_timer = 0;
     //回り込みの補完レート

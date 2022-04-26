@@ -130,6 +130,8 @@ private:
     bool is_avoidance{ false };
     //回り込み回避かどうか
     bool is_behind_avoidance{ false };
+    //ジャスト回避しているかどうか
+    bool is_just_avoidance{ false };
     //倒した敵の位置を保存
     DirectX::XMFLOAT3 old_target{};
     //カメラの補間のゴール地点
@@ -234,6 +236,7 @@ private:
         float rasius{ 1.2f };
     };
 
+    float sphere_radius{ 0.0f };
     CapsuleParam sword_capsule_param[2]{};
     CapsuleParam charge_capsule_param{};
     CapsuleParam body_capsule_param{};
@@ -244,6 +247,8 @@ private:
     void BodyCapsule();
     //剣のカプセル判定
     void SwordCapsule();
+    //範囲スタンのパラメータ設定
+    void StunSphere();
 public:
     void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
@@ -276,6 +281,7 @@ public:
         }
         return sword_capsule_param[0];
     }
+    float GetStunRadius() { return sphere_radius; }
     std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
