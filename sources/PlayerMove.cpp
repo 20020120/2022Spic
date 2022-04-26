@@ -13,14 +13,14 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
     MovingProcess(movevec.x, movevec.z, move_speed);
-    move_vec_y = movevec.y;//MovingProcess関数は敵でも使ってるからここに書いておく
+    //move_vec_y = movevec.y;//MovingProcess関数は敵でも使ってるからここに書いておく
     SetDirections(orientation);
     //敵にロックオンしたら敵の方向を向く
     if (is_lock_on)
     {
         RotateToTarget(elapsed_time, position,orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
-        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
+        //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
     //ロックオンしていなかったら入力方向を向く
@@ -29,10 +29,9 @@ void PlayerMove::UpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position,
         //旋回処理
         Turn(elapsed_time, movevec, turn_speed, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
-        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
+        //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
-
     //経過フレーム
     float elapsed_frame = 60.0f * elapsed_time;
     UpdateVerticalVelocity(elapsed_frame);
@@ -47,7 +46,7 @@ void PlayerMove::UpdateAvoidanceVelocity(float elapsed_time, DirectX::XMFLOAT3& 
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
-        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
+        //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
 
@@ -68,7 +67,7 @@ void PlayerMove::UpdateBehindAvoidanceVelocity(float elapsed_time, DirectX::XMFL
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
-        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
+        //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
 
@@ -91,7 +90,7 @@ void PlayerMove::UpdateAttackVelocity(float elapsed_time, DirectX::XMFLOAT3& pos
     {
         RotateToTarget(elapsed_time, position, orientation);
         const DirectX::XMFLOAT3 cameraForward = camera_forward;
-        PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
+        //PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
         RollTurn(position, orientation, elapsed_time);
     }
     else
@@ -357,15 +356,11 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
     }
     //right
     //{
-
     //    DirectX::XMFLOAT3 point = Math::calc_designated_point(position, front, d_length);
     //    //point.x = target.x;
     //    //point.z = target.z;
     //    DirectX::XMVECTOR point_vec = DirectX::XMLoadFloat3(&point);
-
-
     //    XMVECTOR d2 = XMVector3Normalize(point_vec - pos_vec);
-
     //    float an;
     //    XMVECTOR a = XMVector3Dot(d2, d);
     //    XMStoreFloat(&an, a);

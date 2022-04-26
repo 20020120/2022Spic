@@ -292,7 +292,7 @@ public:
     DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count);
     //--------------------<敵からダメージを受ける>--------------------//
-    void Damaged(int damage, float InvincibleTime);
+    void DamagedCheck(int damage, float InvincibleTime);
     void PlayerKnocKback(float elapsed_time);
 public:
     void FalseCameraReset() { camera_reset = false; }
@@ -319,6 +319,8 @@ private:
 private:
     //ロックオン
     void LockOn();
+    //チェイン攻撃の時のロックオン
+    void ChainLockOn();
     //カメラリセット
     void CameraReset();
 private:
@@ -414,6 +416,27 @@ private:
 public:
     //ステージ移動に遷移
     void TransitionStageMove();
+
+
+private:
+    //--------<藤岡パート>--------//
+    //関数ポインタ
+    typedef void(Player::* PlayerChainActivity)(float elapsed_time);
+    //関数ポインタの変数
+    PlayerChainActivity player_chain_activity = &Player::chain_search_update;
+    // 索敵
+    void chain_search_update(float elapsed_time);
+    void transition_chain_search();
+    // ロックオン
+    void chain_lockon_update(float elapsed_time);
+    void transition_chain_lockon();
+    // 移動
+    void chain_move_update(float elapsed_time);
+    void transition_chain_move();
+    // 攻撃
+    void chain_attack_update(float elapsed_time);
+    void transition_chain_attack();
+
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数

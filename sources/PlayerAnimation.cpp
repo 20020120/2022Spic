@@ -8,7 +8,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
         (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
-
+        (this->*player_chain_activity)(elapsed_time);
         break;
     default:
         break;
