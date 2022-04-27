@@ -75,12 +75,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     GetPlayerDirections();
     //プレイヤーのパラメータの変更
     InflectionParameters(elapsed_time);
-    //体の大きさのカプセルパラメータ設定
-    BodyCapsule();
-    //剣の大きさのカプセルのパラメータ
-    SwordCapsule();
-    //ジャスト回避の範囲スタンのパラメータ
-    StunSphere();
 
     if (is_awakening)
     {
@@ -98,22 +92,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics,elapsed_time);
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
-    //==================================================================//
-    //==================================================================//
-    //==================================================================//
-    //----------------------プレイヤーの死亡処理を仮で作ったから本番では使うな!!!----------------------------//
-    if (player_health <= 0)
-    {
-        threshold += 1.0f * elapsed_time;
-        threshold_mesh += 1.0f * elapsed_time;
-        if (threshold > 1.0f && threshold_mesh > 1.0f)
-        {
-            is_alive = false;
-        }
-    }
-    //==================================================================//
-    //==================================================================//
-    //==================================================================//
 
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
@@ -244,12 +222,17 @@ void Player::LerpCameraTarget(float elapsed_time)
 
 void Player::BehindAvoidancePosition()
 {
+
+    if (!behind_way_points.empty()) behind_way_points.clear();
+    if (!behind_interpolated_way_points.empty()) behind_interpolated_way_points.clear();
+
     using namespace DirectX;
     XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     float length_radius = Math::calc_vector_AtoB_length(p, target);//距離(半径)
-    float diameter = length_radius * 2.0f;//(直径)
+    float diameter = length_radius * 0.5f;//(直径)
     DirectX::XMFLOAT3 r{ right };
     //どっちのvelocityで左右判定するか
+#if 0
     if (velocity.x * velocity.x > velocity.z * velocity.z)
     {
         if (velocity.x > 0)
@@ -276,29 +259,41 @@ void Player::BehindAvoidancePosition()
             r.z = -right.z;
         }
     }
+
+#endif // 0
     //-----------------ゴール地点---------------//
     behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
     behind_point_3.y = position.y;//敵の後ろ側
     behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
     //--------------------------------------------//
-    //----------------中継１---------------------//
-    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
-    behind_point_1.y = position.y;//敵の後ろ側
-    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
-    //--------------------------------------------//
-    //----------------中継2---------------------//
+    ////----------------中継１---------------------//
+    //behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
+    //behind_point_1.y = position.y;//敵の後ろ側
+    //behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
+    ////--------------------------------------------//
+    ////----------------中継2---------------------//
     behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//敵の後ろ側
     behind_point_2.y = position.y;//敵の後ろ側
     behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//敵の後ろ側
 
-    behind_point_0 = position;
 
+    behind_way_points.emplace_back(position); // この時点でのプレイヤーの位置
+    behind_way_points.emplace_back(behind_point_2); // プレイヤーの位置とゴールの位置の中間地点
+    behind_way_points.emplace_back(behind_point_3); // ゴールの位置
+
+        // way_pointsを通るカーブを作成
+    CatmullRomSpline curve(behind_way_points);
+    curve.interpolate(behind_interpolated_way_points, 3);
+
+    behind_transit_index = 0;
     //--------------------------------------------//
 }
 
-void Player::InterpolateCatmullRomSpline(float elapsed_time)
+bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
+    const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
     using namespace DirectX;
+#if 0
     behind_late = easing::Expo::easeInOut(behind_timer, 0, 1.0f, 1.5f);
 #if 0
     const float power = 1.0f; // Usually power is 0.5f
@@ -364,16 +359,46 @@ void Player::InterpolateCatmullRomSpline(float elapsed_time)
     behind_point.clear();
 #endif
 
+#endif // 0
+    assert(!points.empty() && "ポイントのサイズが0です");
+    if (index >= points.size() - 1) return true;
+
+
+    XMVECTOR vec = XMLoadFloat3(&points.at(index + 1)) - XMLoadFloat3(&position);
+    XMVECTOR norm_vec = XMVector3Normalize(vec);
+    XMStoreFloat3(&velocity, norm_vec);
+
+    XMVECTOR length_vec = DirectX::XMVector3Length(vec);
+    float length = DirectX::XMVectorGetX(length_vec);
+    if (length <= play)
+    {
+        ++index;
+        position = points.at(index);
+    }
+
+    position.x += velocity.x * speed * elapsed_time;
+    position.y += velocity.y * speed * elapsed_time;
+    position.z += velocity.z * speed * elapsed_time;
+
+    return false;
 }
 
 void Player::InflectionParameters(float elapsed_time)
 {
+    //プレイヤーが死んでるかどうか
+    PlayerAlive();
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //攻撃力の変動
     InflectionPower(elapsed_time);
     //コンボの変動
     InflectionCombo(elapsed_time);
+    //体の大きさのカプセルパラメータ設定
+    BodyCapsule();
+    //剣の大きさのカプセルのパラメータ
+    SwordCapsule();
+    //ジャスト回避の範囲スタンのパラメータ
+    StunSphere();
     //無敵時間の減少
     invincible_timer -= 1.0f * elapsed_time;
 }
@@ -411,6 +436,7 @@ void Player::InflectionCombo(float elapsed_time)
 
 void Player::PlayerAlive()
 {
+    player_health = Math::clamp(player_health, 0, MAX_HEALTH);
     if (player_health <= 0 && condition_state == ConditionState::Alive)
     {
         TransitionDie();
@@ -523,6 +549,7 @@ void Player::AddCombo(int count)
 {
     if (count != 0)
     {
+#if 0
         //攻撃中じゃないとき
         if (!is_attack)
         {
@@ -539,6 +566,12 @@ void Player::AddCombo(int count)
             if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         }
         is_enemy_hit = true;
+
+#endif // 0
+        combo_count += static_cast<float>(count);
+        if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
+        is_enemy_hit = true;
+
     }
     else is_enemy_hit = false;
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);

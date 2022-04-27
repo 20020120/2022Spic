@@ -118,11 +118,11 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    behind_timer += 2.0f * elapsed_time;
+    //behind_timer += 2.0f * elapsed_time;
 
-    InterpolateCatmullRomSpline(elapsed_time);
+    //BehindAvoidanceMove(elapsed_time);
 
-    if (behind_timer > 1.0f)
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,200.0f, behind_interpolated_way_points,0.2f))
     {
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;
@@ -450,15 +450,12 @@ void Player::DieUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::DyingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation())
-    {
         threshold += 1.0f * elapsed_time;
         threshold_mesh += 1.0f * elapsed_time;
         if (threshold > 1.0f && threshold_mesh > 1.0f)
         {
             is_alive = false;
         }
-    }
 }
 
 void Player::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -560,6 +557,7 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    velocity = {};
     //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
     is_avoidance = true;
     //‰ñ‚è‚İ‰ñ”ğ‚©‚Ç‚¤‚©
