@@ -222,7 +222,7 @@ void Player::LerpCameraTarget(float elapsed_time)
 
 void Player::BehindAvoidancePosition()
 {
-
+    //もし配列の中に何か入っていたら削除する
     if (!behind_way_points.empty()) behind_way_points.clear();
     if (!behind_interpolated_way_points.empty()) behind_interpolated_way_points.clear();
 
@@ -361,18 +361,25 @@ bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOA
 
 #endif // 0
     assert(!points.empty() && "ポイントのサイズが0です");
+    //index(配列の中の自分の位置)がゴールの位置にきたらtrueを返す
+    //(この後の計算でindexの次の値を使うからサイズと同じ大きさでもダメ)
     if (index >= points.size() - 1) return true;
 
-
+    //自分の位置とウェイポイントのベクトルを求める
+    //+1しているのはindex番目の値が自分の位置だからその次の値を取得するため
     XMVECTOR vec = XMLoadFloat3(&points.at(index + 1)) - XMLoadFloat3(&position);
     XMVECTOR norm_vec = XMVector3Normalize(vec);
     XMStoreFloat3(&velocity, norm_vec);
-
+    //長さを求めて
     XMVECTOR length_vec = DirectX::XMVector3Length(vec);
+    //その値を取得(4dベクトルのxの値を取ってくる関数)
     float length = DirectX::XMVectorGetX(length_vec);
+    //もし長さが設定されてる値よりも小さくなったら
     if (length <= play)
     {
+        //indexを１増やして
         ++index;
+        //自分の位置に代入する(+1された値がゴールだったから)
         position = points.at(index);
     }
 
