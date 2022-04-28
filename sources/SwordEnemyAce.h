@@ -1,59 +1,66 @@
 #pragma once
-//#include"BaseEnemy.h"
-//#include "EnemiesEditor.h"
-////****************************************************************
-//// 
-//// 剣の敵の中ボス 
-//// 
-////****************************************************************
-//class SwordEnemyAce final :public BaseEnemy
-//{
-//public:
-//    struct DivideState:public StateTag
-//    {
-//        inline static const std::string CounterBegin     = "CounterBegin";      // カウンターはじめ
-//        inline static const std::string CounterMiddle    = "CounterMiddle";     // カウンター受付中
-//        inline static const std::string CounterEnd       = "CounterEnd";        // カウンター受付終了
-//        inline static const std::string CounterActivate  = "CounterActivate";   // カウンター攻撃始動
-//        inline static const std::string CounterAttack    = "CounterAttack";     // カウンター攻撃
-//        inline static const std::string CounterAttackEnd = "CounterAttackEnd";  // カウンター攻撃終了
-//    };
-//    //****************************************************************
-//    // 
-//    // 関数
-//    // 
-//    //****************************************************************
-//    SwordEnemyAce(GraphicsPipeline& graphics_, int UniqueId_,
-//        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/,
-//        ParamGetFunction Func_);
-//    ~SwordEnemyAce() override = default;
-//
-//    void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-//    void fRegisterFunctions() override; // ステートを登録
-//
-//    void fSetAttackCapsuleCollider();
-//
-//    void fSetVernierEffectPos();
-//
-//    void fStopEffect() override;
-//    //****************************************************************
-//    // 
-//    // 変数
-//    // 
-//    //****************************************************************
-//
-//    //****************************************************************
-//    // 
-//    // ステートマシン
-//    // 
-//    //****************************************************************
-//    //--------------------<登場>--------------------//
-//    void fStartInit();
-//    void fStartUpdate(GraphicsPipeline& Graphics_, float elapsedTime_);
-//    //--------------------<待機>--------------------//
-//
-//
-//    //--------------------<移動>--------------------//
-//
-//};
-//
+#include "BaseEnemy.h"
+//****************************************************************
+// 
+// 剣の中ボス 
+// 
+//****************************************************************
+class SwordEnemy_Ace final :public BaseEnemy
+{
+    struct DivideState
+    {
+        inline static char* Start = "Start";
+        inline static char* Idle = "Idle";
+        inline static char* CounterStart = "CounterStart";
+        inline static char* CounterMiddle = "CounterMiddle";
+        inline static char* CounterAttack = "CounterAttack";
+        inline static char* Move = "Move";
+        inline static char* Stun = "Stun";
+    };
+    enum AnimationName {
+        idle,
+        walk,
+        attack_ready,
+        attack_move,
+        attack_slush,
+        damage,
+        ace_attack_ready,
+        ace_attack_idle,
+        ace_attack,
+        ace_attack_end,
+        stun,
+    };
+
+public:
+    //****************************************************************
+    SwordEnemy_Ace(GraphicsPipeline& Graphics_,
+        const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
+        const EnemyParamPack& ParamPack_);
+    SwordEnemy_Ace(GraphicsPipeline& Graphics_);
+    ~SwordEnemy_Ace() override;
+    void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fUpdateAttackCapsule() override;
+    void fDie() override;
+private:
+    void fRegisterFunctions() override;
+    float mWaitTimer{};
+
+private:
+    void fStartInit();
+    void fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fIdleInit();
+    void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fCounterStartInit();
+    void fCounterStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fCounterMiddleInit();
+    void fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fCounterEndInit();
+    void fCounterEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fMoveInit();
+    void fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+};

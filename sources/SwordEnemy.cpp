@@ -4,7 +4,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
         :BaseEnemy(Graphics_, 
-                  "./resources/Models/Enemy/enemy_sword.fbx",
+                  "./resources/Models/Enemy/SwordEnemy.fbx",
                   ParamPack_,
                   EmitterPoint_)
 {
@@ -16,7 +16,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
 }
 
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_sword.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemy.fbx")
 {}
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -244,7 +244,8 @@ void SwordEnemy::fEscapeInit()
 void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // プレイヤーと逆に進
-    const DirectX::XMFLOAT3 vec = { mPosition - mPlayerPosition };
+    DirectX::XMFLOAT3 vec = { mPosition - mPlayerPosition };
+    vec.y = 0.0f;
     mPosition += Math::Normalize(vec) * elapsedTime_ * 30.0f;
 
     if(Math::Length(vec)>=60.0f)

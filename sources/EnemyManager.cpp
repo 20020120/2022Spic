@@ -45,7 +45,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     // ウェーブ開始からの時間を更新
     if (!mDebugMode)
     {
-        mWaveTimer += elapsedTime_;
+        //mWaveTimer += elapsedTime_;
     }
 
     //--------------------<敵の更新処理>--------------------//
@@ -268,7 +268,7 @@ void EnemyManager::fSpawn(GraphicsPipeline& graphics)
 void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
 {
     // 送られてきたデータをもとに敵を出現させる
-    auto param = mEditor.fGetParam(Source_.mType);
+    const auto param = mEditor.fGetParam(Source_.mType);
     switch (Source_.mType)
     {
     case EnemyType::Archer:
@@ -561,6 +561,11 @@ void EnemyManager::fDeleteEnemies()
         }
     }
     mRemoveVec.clear();
+}
+
+std::vector<BaseEnemy*> EnemyManager::fGetEnemies() const
+{
+    return mEnemyVec;
 }
 
 void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)

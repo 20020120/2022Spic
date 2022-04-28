@@ -70,6 +70,8 @@ public:
     //--------------------<敵の実体を削除する関数>--------------------//
     void fDeleteEnemies();
 
+    std::vector<BaseEnemy*> fGetEnemies() const;
+
     //--------------------<キャッシュにモデルデータを登録>--------------------//
     void fRegisterCash(GraphicsPipeline& graphics_);
     void fDeleteCash(); // キャッシュを削除
