@@ -1,0 +1,24 @@
+{
+    "value0": [
+        {
+            "key": "Spear",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 10,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0
+            }
+        },
+        {
+            "key": "Sword",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 10,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0
+            }
+        }
+    ]
+}
