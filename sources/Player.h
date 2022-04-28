@@ -40,16 +40,25 @@ private:
         AwakingAttackType2,//覚醒状態の攻撃2撃目
         AwakingAttackType3,//覚醒状態の攻撃3撃目
         AwakingDamage,//覚醒状態のダメージ
+        WingDashStart,//飛行機モードの突進開始
+        WingDashIdle,//飛行機モードの突進中
+        WingDashEnd,//飛行機モードの突進終了
+        StartMothin,//スタートモーション
+        NamelessMotion,//モーション二つ目
+        Die,//死亡
+        Dying,//死亡中
+        AwakingDie,//死亡
+        AwakingDying//死亡中
     };
 public:
     void Initialize()override;
-    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)override;
+    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, BaseEnemy* stun_enemy)override;
     //チュートリアル用のアップデート
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
-    //突進時間
-    static constexpr float MAX_HEALTH = 50.0f;
+    //プレイヤーの最大体力
+    static constexpr int MAX_HEALTH = 50.0f;
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
@@ -81,8 +90,6 @@ private:
     static constexpr float TRANSFORM_HUM_ANIMATION_SPEED = 2.0f;
     //飛行機モードになるときのアニメーションスピード
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
-
-
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -153,9 +160,15 @@ private:
     DirectX::XMFLOAT3 behind_point_1{};//中継地点
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
+
+    int behind_transit_index = 0;
+    std::vector<DirectX::XMFLOAT3> behind_way_points;
+    std::vector<DirectX::XMFLOAT3> behind_interpolated_way_points;
+
     //背後に回り込む点
     std::vector<DirectX::XMFLOAT3> behind_point{};
-    void InterpolateCatmullRomSpline(float elapsed_time);
+    bool BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
+        const std::vector<DirectX::XMFLOAT3>& points, float play);
     //背後に回り込むときに進むタイマー
     float behind_timer{};
     //背後に回り込むときのレート
@@ -176,7 +189,7 @@ private:
     float special_surge_timer{ 0 };
     float opportunity_timer{ 0 };
     //プレイヤーの体力
-    int player_health = 50;
+    int player_health = MAX_HEALTH;
     //プレイヤー死んだかどうか
     bool is_alive{ true };
     //無敵時間
@@ -222,7 +235,8 @@ private:
     void InflectionPower(float elapsed_time);
     //コンボの変化
     void InflectionCombo(float elapsed_time);
-
+    //死んでるかどうか
+    void PlayerAlive();
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
@@ -245,6 +259,13 @@ private:
     void SwordCapsule();
     //範囲スタンのパラメータ設定
     void StunSphere();
+    enum class ConditionState
+    {
+        Alive,//生きている
+        Dye//死んでいる
+    };
+    //生きているかどうか
+    ConditionState condition_state{ ConditionState::Alive };
 public:
     void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
@@ -258,6 +279,7 @@ public:
     bool GetCameraLockOn() { return is_camera_lock_on; }
     bool GetEnemyLockOn() { return is_lock_on; }
     bool GetAvoidance() { return is_avoidance; }
+    bool GetBehindAvoidance() { return is_behind_avoidance; }
     bool GetIsPlayerAttack() { return is_attack; }
     bool GetIsSpecialSurge() { return is_special_surge; }
     bool GetStartDashEffect() { return start_dash_effect; }
@@ -345,7 +367,7 @@ private:
     PlayerActivity player_activity = &Player::IdleUpdate;
     AddDamageFunc damage_func;
     //自分のメンバ関数の関数ポインタを呼ぶ
-    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome);
+    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* stun_enemy);
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理
@@ -380,6 +402,21 @@ private:
     void InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome);
     //ステージ移動の時の更新
     void StageMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進開始
+    void WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進中
+    void WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //飛行機モードの突進終了
+    void WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡
+    void DieUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡中
+    void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //モーション
+    void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
+    //モーション
+    void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
+
 
     void Awaiking();//覚醒状態のON,OFF
     //アニメーション遷移(1frameだけしか呼ばないもの)
@@ -417,7 +454,21 @@ private:
     void TransitionAwaking();
     //通常状態に遷移
     void TransitionInvAwaking();
+    //飛行機モードの突進開始
+    void TransitionWingDashStart();
+    //飛行機モードの突進中
+    void TransitionWingDashIdle();
+    //飛行機モードの突進終了
+    void TransitionWingDashEnd();
+    //死亡
+    void TransitionDie();
+    //死亡中
+    void TransitionDying();
 public:
+    //スタートモーション
+    void TransitionStartMothin();
+    //モーション二つ目
+    void TransitionNamelessMotion();
     //ステージ移動に遷移
     void TransitionStageMove();
 
@@ -425,22 +476,43 @@ public:
 private:
     //--------<藤岡パート>--------//
     //関数ポインタ
-    typedef void(Player::* PlayerChainActivity)(float elapsed_time);
+    typedef void(Player::* PlayerChainActivity)(float elapsed_time, BaseEnemy* stun_enemy);
     //関数ポインタの変数
     PlayerChainActivity player_chain_activity = &Player::chain_search_update;
     // 索敵
-    void chain_search_update(float elapsed_time);
+    void chain_search_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_search();
     // ロックオン
-    void chain_lockon_update(float elapsed_time);
+    void chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_lockon();
     // 移動
-    void chain_move_update(float elapsed_time);
+    void chain_move_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_move();
     // 攻撃
-    void chain_attack_update(float elapsed_time);
+    void chain_attack_update(float elapsed_time, BaseEnemy* stun_enemy);
     void transition_chain_attack();
+    // 指定したポイント全てを通る関数
+    bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
+        float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f);
+    // 進んでる方向に回転する関数
+    void rotate(float elapsed_time, int index, const std::vector<DirectX::XMFLOAT3>& points);
+    // behaviorの遷移関数
+    void transition_chain_behavior()
+    {
+        behavior_state = Behavior::Chain;
+        transition_chain_search();
+    }
+    void transition_normal_behavior()
+    {
+        behavior_state = Behavior::Normal;
+        TransitionIdle();
+    }
 
+    //--------< 変数 >--------//
+    DirectX::XMFLOAT3 stun_enemy_position{};
+    int transit_index = 0;
+    std::vector<DirectX::XMFLOAT3> way_points;
+    std::vector<DirectX::XMFLOAT3> interpolated_way_points;
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
@@ -463,7 +535,7 @@ private:
     //--------------------------------------各種遷移処理-----------------------------------------//
     //2番目のチュートリアルのステートに遷移
     void TransitionTutorialSecond();
-    //0が最初で大きくなっていくようにする
+    //1が最初で大きくなっていくようにする
     enum class TutorialState
     {
         First = 1,

@@ -29,14 +29,14 @@ void ClearCamera::Initialize(GraphicsPipeline& graphics)
 	const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 
-	const DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
+	//const DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
 
-	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
-	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
+	//const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+	//DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
-	DirectX::XMVECTOR EyeVector = EyeCenter - CameraPosition;
-	EyeVector = DirectX::XMVector3Normalize(EyeVector);
-	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+	//DirectX::XMVECTOR EyeVector = EyeCenter - CameraPosition;
+	//EyeVector = DirectX::XMVector3Normalize(EyeVector);
+	//DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
     UpdateViewProjection();
 }
@@ -45,18 +45,31 @@ void ClearCamera::Update(float elapsedTime)
 {
 	if(cameraReset)
 	{
+		using namespace DirectX;
+
+		const DirectX::XMFLOAT3 playerPosition = player->GetPosition();
 		const DirectX::XMFLOAT3 playerForward = player->GetForward();
 		const DirectX::XMFLOAT3 playerUp = player->GetUp();
 
+		const DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 		const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 		const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
+
+		const DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
+
+		const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+		DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
+
+		DirectX::XMVECTOR EyeVector =  CameraPosition - EyeCenter;
+		EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
 		if(CameraReset(elapsedTime, PlayerForward, PlayerUp))
 		{
 			cameraReset = false;
 		}
 	}
-
+	UpdateEye();
 	AttitudeControl(elapsedTime);
 	DebugGUI();
 	UpdateViewProjection();
@@ -97,4 +110,15 @@ bool ClearCamera::CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward
 		return true;
 	}
 	return false;
+}
+
+void ClearCamera::UpdateEye()
+{
+	using namespace DirectX;
+
+	radius = 20;
+	const DirectX::XMVECTOR EyeCenter = DirectX::XMLoadFloat3(&eyeCenter);
+	const DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+	const DirectX::XMVECTOR Eye = EyeCenter + EyeVector * radius;
+	DirectX::XMStoreFloat3(&eye, Eye);
 }

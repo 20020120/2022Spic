@@ -12,10 +12,15 @@
 
 class BulletManager final
 {
-public:
+private:
     BulletManager() = default;
     ~BulletManager() = default;
-
+public:
+    static BulletManager& Instance()
+    {
+        static BulletManager instance;
+        return instance;
+    }
     void fInitialize();
     void fUpdate(float elapsedTime_);
     void fRender(GraphicsPipeline& Graphics_);

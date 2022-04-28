@@ -121,6 +121,7 @@ public:
 
 private:
     bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
+    void UpdateEye();
 
     bool cameraReset{ true };
 };

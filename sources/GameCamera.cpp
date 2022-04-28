@@ -44,8 +44,8 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
     const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
-    DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp;
-	radius = 15;
+    DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 2;
+	radius = 20;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
@@ -55,11 +55,13 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
 	DirectX::XMStoreFloat3(&eye, Eye);
 
+	up = 9;
+	up1 = 9;
 }
 
 void GameCamera::gameUpdate(float elapsedTime)
 {
-#if 1
+#if 0
 	using namespace DirectX;
 
 	DirectX::XMVECTOR Velocity = DirectX::XMLoadFloat3(&player->GetVelocity());
@@ -129,31 +131,21 @@ void GameCamera::gameUpdate(float elapsedTime)
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 	const DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
 
-	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+	DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&player->GetTarget());
+
+	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * up1;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
 	if (player->GetEnemyLockOn())
 	{
-		if (player->GetCameraReset())
-		{
-			const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
-			const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
-			RockOnCalculateEyeVector(PlayerPosition, PlayerTarget,PlayerUp);
-			if (RockOnCameraReset(elapsedTime, PlayerForward, PlayerUp))
-			{
-				player->FalseCameraReset();
-			}
-		}
-		SetAngle(elapsedTime);
-		const DirectX::XMFLOAT3 playerTarget = player->GetTarget();
-		const DirectX::XMVECTOR PlayerTarget = DirectX::XMLoadFloat3(&playerTarget);
-		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget,PlayerUp);
-		if(RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn()))
-		{
-		    player->FalseCameraLockOn();
-		}
-		//UpdateEyeVector(elapsedTime, PlayerUp);
-		UpdateRockOnTarget(PlayerTarget);
+		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget, PlayerUp);
+		RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn());
+		UpdateTarget(PlayerPosition, PlayerUp);
+		UpdateEye();
+	}
+	else if(attack)
+	{
+	    
 	}
 	else
 	{
@@ -166,10 +158,9 @@ void GameCamera::gameUpdate(float elapsedTime)
 		}
 		SetAngle(elapsedTime);
 		UpdateEyeVector(elapsedTime, PlayerUp);
-   	    UpdateTarget(PlayerPosition, PlayerUp);
+		UpdateTarget(PlayerPosition, PlayerUp);
+		UpdateEye();
 	}
-	UpdateEye();
-
 #endif
 
 }
@@ -183,10 +174,10 @@ void GameCamera::SetAngle(float elapsedTime)
 	{
 		horizonDegree = 180 * ax * elapsedTime;
 	}
-	if (ay > 0.1f || ay < 0.1f)
-	{
-		verticalDegree = 180 * -ay * elapsedTime;
-	}
+	//if (ay > 0.1f || ay < 0.1f)
+	//{
+	//	verticalDegree = 180 * -ay * elapsedTime;
+	//}
 }
 
 void GameCamera::UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
@@ -201,44 +192,44 @@ void GameCamera::UpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp)
 
 	DirectX::XMVECTOR Right = DirectX::XMVector3Cross(Up, DirectX::XMVectorScale(EyeVector, -1));
 
-	//プレイヤーに対して縦方向の回転
-	//プレイヤーの真上と真下に近いときは回転しない
-	if (verticalDegree > 0.1f || verticalDegree < -0.1f)
-	{
-		DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVector3Normalize(Up), DirectX::XMVector3Normalize(EyeVector));
-		float dot{};
-		DirectX::XMStoreFloat(&dot, Dot);
-		//真上に近い時
-		if (dot > 0.9f)
-		{
-			if (verticalDegree < 0.1f)
-			{
-				DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
-				DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
-				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
-			}
-			verticalDegree = 0;
-		}
-		//真下に近い時
-		else if (dot < -0.9f)
-		{
-			if (verticalDegree > 0.1f)
-			{
-				DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
-				DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
-				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
-			}
-			verticalDegree = 0;
-		}
-		//通常時
-		else
-		{
-			DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
-			DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
-			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
-			verticalDegree = 0;
-		}
-	}
+	////プレイヤーに対して縦方向の回転
+	////プレイヤーの真上と真下に近いときは回転しない
+	//if (verticalDegree > 0.1f || verticalDegree < -0.1f)
+	//{
+	//	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVector3Normalize(Up), DirectX::XMVector3Normalize(EyeVector));
+	//	float dot{};
+	//	DirectX::XMStoreFloat(&dot, Dot);
+	//	//真上に近い時
+	//	if (dot > 0.9f)
+	//	{
+	//		if (verticalDegree < 0.1f)
+	//		{
+	//			DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+	//			DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+	//			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+	//		}
+	//		verticalDegree = 0;
+	//	}
+	//	//真下に近い時
+	//	else if (dot < -0.9f)
+	//	{
+	//		if (verticalDegree > 0.1f)
+	//		{
+	//			DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+	//			DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+	//			EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+	//		}
+	//		verticalDegree = 0;
+	//	}
+	//	//通常時
+	//	else
+	//	{
+	//		DirectX::XMVECTOR Axis = DirectX::XMVector3Normalize(Right);
+	//		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, DirectX::XMConvertToRadians(verticalDegree));
+	//		EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
+	//		verticalDegree = 0;
+	//	}
+	//}
 	//プレイヤーに対して横の回転
 	if (horizonDegree > 0.1f || horizonDegree < -0.1f)
 	{
@@ -300,7 +291,7 @@ void GameCamera::UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTO
 {
 	using namespace DirectX;
 
-	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 6;
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * up;
 	DirectX::XMStoreFloat3(&target, Target);
 
 	//DirectX::XMVECTOR CameraForward = DirectX::XMLoadFloat3(&forward);
@@ -405,7 +396,8 @@ bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR Play
 			DirectX::XMStoreFloat(&dot, Dot);
 			const float angle = acosf(dot);
 
-			const DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(EyeVector, RotateEyeVector);
+			const DirectX::XMFLOAT3 worldUp{ 0.0f,1.0f,0.0f };
+			const DirectX::XMVECTOR Axis = DirectX::XMLoadFloat3(&worldUp);
 			//if(DirectX::XMVector3Equal(DirectX::XMVectorZero(), Axis))
 			//{
 			//	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
@@ -433,15 +425,15 @@ bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR Play
 		//左右のずれ修正
 		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 
-		const DirectX::XMVECTOR PlayerToRockOn = DirectX::XMLoadFloat3(&playerToRockOn);
-		DirectX::XMVECTOR Cross = DirectX::XMVector3Cross(PlayerUp, PlayerToRockOn);
-		Cross = DirectX::XMVector3Normalize(Cross);
-		const DirectX::XMVECTOR ProjectionLength = DirectX::XMVector3Dot(Cross, EyeVector);
-		float projectionLength{};
-		DirectX::XMStoreFloat(&projectionLength, ProjectionLength);
+		//const DirectX::XMVECTOR PlayerToRockOn = DirectX::XMLoadFloat3(&playerToRockOn);
+		//DirectX::XMVECTOR Cross = DirectX::XMVector3Cross(PlayerUp, PlayerToRockOn);
+		//Cross = DirectX::XMVector3Normalize(Cross);
+		//const DirectX::XMVECTOR ProjectionLength = DirectX::XMVector3Dot(Cross, EyeVector);
+		//float projectionLength{};
+		//DirectX::XMStoreFloat(&projectionLength, ProjectionLength);
 
-		EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
-		EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		//EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
+		//EyeVector = DirectX::XMVector3Normalize(EyeVector);
 
 #if 0
 		//変化が無ければスルー
@@ -506,12 +498,7 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 {
 	using namespace DirectX;
 
-	DirectX::XMFLOAT3 up{ 0,1,0 };
-	DirectX::XMVECTOR Up = DirectX::XMLoadFloat3(&up);
-
 #if 1
-	DirectX::XMVECTOR Target = DirectX::XMLoadFloat3(&target);
-	Target -= PlayerPosition;
 	DirectX::XMVECTOR PlayerToRockOn = RockOnPosition - PlayerPosition;
 	const DirectX::XMVECTOR Distance = DirectX::XMVector3Length(PlayerToRockOn);
 	float distance{};
@@ -523,9 +510,7 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 
 
 	//DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp;
-	DirectX::XMVECTOR RockOnEyeVector = RockOnPosition - DirectX::XMLoadFloat3(&eyeCenter);
-
-	RockOnEyeVector *= -1;
+	DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp * up;
 	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 
 #else
@@ -538,28 +523,28 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 #endif
 
-	//真上、真下に近いとき修正
-	DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(RockOnEyeVector, DirectX::XMVector3Normalize(Up));
-	float dot{};
-	DirectX::XMStoreFloat(&dot, Dot);
-	if (dot > 0.8f)
-	{
-		dot = 0.8f;
-		float radius = acosf(dot);
-		DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
-		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
-		RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
-		RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
-	}
-	else if (dot < -0.8f)
-	{
-		dot = -0.8f;
-		float radius = acosf(dot);
-		DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
-		DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
-		RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
-		RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
-	}
+	////真上、真下に近いとき修正
+	//DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(RockOnEyeVector, DirectX::XMVector3Normalize(Up));
+	//float dot{};
+	//DirectX::XMStoreFloat(&dot, Dot);
+	//if (dot > 0.8f)
+	//{
+	//	dot = 0.8f;
+	//	float radius = acosf(dot);
+	//	DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
+	//	DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
+	//	RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
+	//	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
+	//}
+	//else if (dot < -0.8f)
+	//{
+	//	dot = -0.8f;
+	//	float radius = acosf(dot);
+	//	DirectX::XMVECTOR Axis = DirectX::XMVector3Cross(DirectX::XMVector3Normalize(Up), RockOnEyeVector);
+	//	DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, radius);
+	//	RockOnEyeVector = DirectX::XMVector3Rotate(Up, Quaternion);
+	//	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
+	//}
 
 
 	DirectX::XMStoreFloat3(&playerToRockOn, PlayerToRockOn);

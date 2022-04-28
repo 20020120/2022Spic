@@ -70,7 +70,7 @@ private:
     const float mAttackBeginTimeSec{ 0.85f };    // Œ•‚ğU‚è‚ ‚°‚é‚Ü‚Å‚ÌŠÔ
     const float mAttackPreActionTimeSec{0.1f};   // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì @@
     const float mAttackDownSec{ 1.0f };          // Œ•‚ğU‚è‰º‚ë‚·
-
+    const float mStunTimeSec{ 1.0f };
 private:
     //****************************************************************
     // 
@@ -103,6 +103,10 @@ private:
 
     void fEscapeInit();
     void fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // ‚â‚ç‚ê
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // ‚â‚ç‚ê
     void fDieInit();

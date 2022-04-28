@@ -77,7 +77,11 @@ void BaseCamera::DebugGUI()
 
 	ImGui::InputFloat3("forward", &forward.x);
 
-	ImGui::SliderFloat("range", &radius, 3.0f, 15.0f);
+	ImGui::Checkbox("PlayerAttacking", &attack);
+
+	ImGui::SliderFloat("range", &radius, 3.0f, 30.0f);
+	ImGui::SliderFloat("up", &up, 3.0f, 30.0f);
+	ImGui::SliderFloat("up1", &up1, 1.0f, 30.0f);
 	ImGui::End();
 #endif
 }

@@ -85,4 +85,8 @@ protected:
     static DirectX::XMFLOAT3 keep_target;
     bool is_mouse_operation{ false };
 
+    float up{};
+    float up1{};
+
+    bool attack{ false };
 };

@@ -30,6 +30,7 @@ public:
         inline static const char* Approach = "Approach";
         inline static const char* Leave = "Leave";
         inline static const char* Die = "Die";
+        inline static const char* Stun = "Stun";
     };
     enum  AnimationName {
         idle,
@@ -49,9 +50,13 @@ public:
     ArcherEnemy(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& EmitterPoint_,
         EnemyParamPack ParamPack_);
+    ArcherEnemy(GraphicsPipeline& Graphics_);
+
     ~ArcherEnemy();
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fUpdateAttackCapsule() override;
+
     void fGuiMenu() ;
 
     //void fDamaged(int damage_, float InvinsibleTime_) override;
@@ -92,10 +97,12 @@ private:
     void fAttackEndInit();
     void fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    void fDamagedInit(); //移動の初期化
-    void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
+    void fDamagedInit(); //被ダメの初期化
+    void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //被ダメの更新処理
 
-
+    //スタン
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
    
    
     //****************************************************************
@@ -126,6 +133,9 @@ private:
     //移動スピード
     const float MAX_MOVE_SPEED = 3.0f;
     //回転スピード
-    const float ROT_SPEED = 3.0f;
+    const float ROT_SPEED = 10.0f;
+    //スタンの長さ
+    const float mStunTime = 1.0f;
+
 };
 

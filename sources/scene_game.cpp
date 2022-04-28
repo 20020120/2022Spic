@@ -29,6 +29,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
 
 	//--------------------<弾の管理クラスを初期化>--------------------//
+	BulletManager& mBulletManager = BulletManager::Instance();
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
@@ -62,6 +63,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 void SceneGame::uninitialize()
 {
+	BulletManager& mBulletManager = BulletManager::Instance();
+
 	mWaveManager.fFinalize();
 	mBulletManager.fFinalize();
 }
@@ -83,6 +86,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			return;
 		}
 	}
+	BulletManager& mBulletManager = BulletManager::Instance();
+
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
@@ -107,6 +112,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			tunnel_alpha = (std::max)(tunnel_alpha, 0.0f);
 			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
 			{
+				cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
 				player->TransitionIdle();
 				tunnel_alpha = 0.0f;
 				during_clear = false;
@@ -159,6 +165,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
+	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
+	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
+
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
@@ -169,7 +178,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	cameraManager->Update(elapsed_time);
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
-	player->Update(elapsed_time, graphics,sky_dome.get());
+	player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetNearestStunEnemy());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
@@ -350,6 +359,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		fonts->gothic->End(graphics.get_dc().Get());
 	}
 #endif // 0
+	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);

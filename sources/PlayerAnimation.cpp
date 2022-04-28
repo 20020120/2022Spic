@@ -1,5 +1,5 @@
 #include"Player.h"
-void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
+void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* stun_enemy)
 {
     switch (behavior_state)
     {
@@ -8,7 +8,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome)
         (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
-        (this->*player_chain_activity)(elapsed_time);
+        (this->*player_chain_activity)(elapsed_time, stun_enemy);
         break;
     default:
         break;
@@ -118,11 +118,11 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    behind_timer += 2.0f * elapsed_time;
+    //behind_timer += 2.0f * elapsed_time;
 
-    InterpolateCatmullRomSpline(elapsed_time);
+    //BehindAvoidanceMove(elapsed_time);
 
-    if (behind_timer > 1.0f)
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,200.0f, behind_interpolated_way_points,0.2f))
     {
         //回避中かどうかの設定
         is_avoidance = false;
@@ -428,6 +428,44 @@ void Player::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
     model->update_animation(elapsed_time);
 }
 
+void Player::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::DieUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (model->end_of_animation())
+    {
+        TransitionDying();
+    }
+}
+
+void Player::DyingUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+        threshold += 1.0f * elapsed_time;
+        threshold_mesh += 1.0f * elapsed_time;
+        if (threshold > 1.0f && threshold_mesh > 1.0f)
+        {
+            is_alive = false;
+        }
+}
+
+void Player::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
+void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+}
+
 void Player::Awaiking()
 {
     //ボタン入力
@@ -440,6 +478,7 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
+    condition_state = ConditionState::Alive;
     //ダッシュエフェクトの終了
     end_dash_effect = true;
     //覚醒状態の時の待機アニメーションにセット
@@ -518,6 +557,7 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -793,6 +833,86 @@ void Player::TransitionInvAwaking()
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::InvAwakingUpdate;
 
+}
+
+void Player::TransitionWingDashStart()
+{
+}
+
+void Player::TransitionWingDashIdle()
+{
+}
+
+void Player::TransitionWingDashEnd()
+{
+}
+
+void Player::TransitionDie()
+{
+    condition_state = ConditionState::Dye;
+    //攻撃中かどうかの設定
+    is_attack = false;
+    velocity = {};
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //覚醒状態の時のダメージアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingDie, false, true);
+    //通常状態の時のアニメーションに設定
+    else model->play_animation(AnimationClips::Die, false, true);
+    //更新関数に切り替え
+    player_activity = &Player::DieUpdate;
+
+}
+
+void Player::TransitionDying()
+{
+    //攻撃中かどうかの設定
+    is_attack = false;
+    velocity = {};
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //覚醒状態の時のダメージアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingDying, true, true);
+    //通常状態の時のアニメーションに設定
+    else model->play_animation(AnimationClips::Dying, true, true);
+    //更新関数に切り替え
+    player_activity = &Player::DyingUpdate;
+
+}
+
+void Player::TransitionStartMothin()
+{
+    //攻撃中かどうかの設定
+    is_attack = false;
+    velocity = {};
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションに設定
+     model->play_animation(AnimationClips::StartMothin, false, true);
+    //更新関数に切り替え
+    player_activity = &Player::StartMothinUpdate;
+
+}
+
+void Player::TransitionNamelessMotion()
+{
+    //攻撃中かどうかの設定
+    is_attack = false;
+    velocity = {};
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションに設定
+    model->play_animation(AnimationClips::NamelessMotion, false, true);
+    //更新関数に切り替え
+    player_activity = &Player::NamelessMotionUpdate;
 }
 
 void Player::TransitionStageMove()
