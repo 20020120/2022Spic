@@ -44,7 +44,7 @@ void Player::Initialize()
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
-void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, BaseEnemy* stun_enemy)
+void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
 #ifdef USE_IMGUI
     ImGui::Begin("chain");
@@ -55,7 +55,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     ImGui::End();
 #endif // USE_IMGUI
 
-    ExecFuncUpdate(elapsed_time, sky_dome, stun_enemy);
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
@@ -155,8 +155,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             {
                 if (ImGui::TreeNode("BodyCapsuleParam"))
                 {
-                    ImGui::DragFloat3("capsule_parm.start", &capsule_body_start.x, 0.1f);
-                    ImGui::DragFloat3("capsule_parm.end", &capsule_body_end.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.start", &body_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &body_capsule_param.end.x, 0.1f);
                     ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
                     ImGui::TreePop();
                 }
@@ -224,17 +224,17 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 void Player::LerpCameraTarget(float elapsed_time)
 {
-    target_lerp_rate += 0.5f * elapsed_time;
-    if (target_lerp_rate < 1.0f)
-    {
-        //float length{ Math::calc_vector_AtoB_length(end_target,target) };
-        //if (length < 2.0f)target_lerp_rate = 1.0f;
-        target = Math::lerp(old_target, end_target, target_lerp_rate);
-    }
-    else
-    {
-        target = end_target;
-    }
+    //target_lerp_rate += 0.5f * elapsed_time;
+    //if (target_lerp_rate < 1.0f)
+    //{
+    //    //float length{ Math::calc_vector_AtoB_length(end_target,target) };
+    //    //if (length < 2.0f)target_lerp_rate = 1.0f;
+    //    target = Math::lerp(old_target, end_target, target_lerp_rate);
+    //}
+    //else
+    //{
+    //    target = end_target;
+    //}
 }
 
 void Player::BehindAvoidancePosition()
@@ -561,7 +561,7 @@ void Player::SetTarget( BaseEnemy* target_enemies)
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         //倒した敵の位置を保存
-        if (target_lerp_rate > 1.0f)old_target = target;
+        //if (target_lerp_rate > 1.0f)old_target = target;
         //補間率の初期化
         target_lerp_rate = 0;
         //一番近い敵を保存する
@@ -830,13 +830,13 @@ void Player::LockOn()
         if (target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             //敵の位置を補完のゴールターゲットに入れる
-#if 1
+#if 0
             end_target = target_enemy->fGetPosition();
 #else
             target = target_enemy->fGetPosition();
 #endif // 0
             //敵と自分の距離を求める
-#if 1
+#if 0
             float length{ Math::calc_vector_AtoB_length(position,end_target) };
 #else
             float length{ Math::calc_vector_AtoB_length(position,target) };
@@ -851,7 +851,7 @@ void Player::LockOn()
                     if (is_lock_on == false)
                     {
                         //ターゲットに入れる(最初の一回だけ)
-                        old_target = end_target;
+                        //old_target = end_target;
                         target_lerp_rate = 0;
                         is_camera_lock_on = true;
                     }

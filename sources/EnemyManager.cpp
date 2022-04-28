@@ -10,7 +10,7 @@
 #include"SwordEnemy.h"
 #include"SpearEnemy.h"
 #include"LastBoss.h"
-
+#include"SwordEnemyAce.h"
 #include"imgui_include.h"
 #include "user.h"
 #include"collision.h"
@@ -280,15 +280,15 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     break;
     case EnemyType::Shield:
     {
-       /* BaseEnemy* enemy = new Shield(graphics_,
-            Source_.mEmitterPoint, param);
-        mEnemyVec.emplace_back(enemy);*/
+        /* BaseEnemy* enemy = new Shield(graphics_,
+             Source_.mEmitterPoint, param);
+         mEnemyVec.emplace_back(enemy);*/
     }
     break;
     case EnemyType::Sword:
     {
         BaseEnemy* enemy = new SwordEnemy(graphics_,
-            Source_.mEmitterPoint,param);
+            Source_.mEmitterPoint, param);
         mEnemyVec.emplace_back(enemy);
     }
     break;
@@ -305,7 +305,13 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     case EnemyType::Shield_Ace:
         break;
     case EnemyType::Sword_Ace:
-        break;
+    {
+        BaseEnemy* enemy = new SwordEnemy_Ace(graphics_,
+            Source_.mEmitterPoint,
+            mEditor.fGetParam(Source_.mType));
+        mEnemyVec.emplace_back(enemy);
+    }
+    break;
     case EnemyType::Spear_Ace:
         break;
     case EnemyType::Boss:
@@ -581,7 +587,8 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-
+    enemy = new SwordEnemy_Ace(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
     //BaseEnemy* enemy = 
     //    new Swo\rdEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
     //

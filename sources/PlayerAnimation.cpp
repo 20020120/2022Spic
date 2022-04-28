@@ -1,5 +1,5 @@
 #include"Player.h"
-void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* stun_enemy)
+void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     switch (behavior_state)
     {
@@ -8,7 +8,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* st
         (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
-        (this->*player_chain_activity)(elapsed_time, stun_enemy);
+        (this->*player_chain_activity)(elapsed_time, enemies);
         break;
     default:
         break;
@@ -39,14 +39,6 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
-    //ゲージ消費の突進
-    if (is_lock_on && game_pad->get_button_down() & GamePad::BTN_Y)
-    {
-        if (combo_count >= 10.0f)
-        {
-            TransitionTransformWing();
-        }
-    }
 
     Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -76,14 +68,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
-    //ゲージ消費の突進
-    if (is_lock_on && game_pad->get_button_down() & GamePad::BTN_Y)
-    {
-        if (combo_count >= 10.0f)
-        {
-            TransitionTransformWing();
-        }
-    }
+
     Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
