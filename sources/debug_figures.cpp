@@ -120,16 +120,16 @@ void DebugFigures::render_all_figures(ID3D11DeviceContext* context)
 		XMVECTOR d_length_vec    = XMVector3Length(XMLoadFloat3(&d));
 		float d_length;
 		XMStoreFloat(&d_length, d_length_vec);
-		if (d_length <= 0) continue;
-		XMFLOAT3 d2 = { 0, capsule.end.y - capsule.start.y + FLT_EPSILON, 0 };
+		if (d_length <= capsule.radius * 2) continue;
+		XMFLOAT3 d2 = { FLT_EPSILON, capsule.end.y - capsule.start.y + FLT_EPSILON, FLT_EPSILON };
 		XMVECTOR d2_norm = XMVector3Normalize(XMLoadFloat3(&d2));
 		XMVECTOR dot = XMVector3Dot(d2_norm, d_norm);
 		float angle;
 		XMStoreFloat(&angle, dot);
 		angle = acosf(angle);
-		XMVECTOR axis = XMVector3Cross(d2_norm, d_norm);
-		if (fabsf(angle) > 1e-8f)
+		if (fabsf(angle + FLT_EPSILON) > DirectX::XMConvertToRadians(0.1f))
 		{
+		    XMVECTOR axis = XMVector3Cross(d2_norm, d_norm);
 			XMVECTOR q = XMQuaternionRotationAxis(axis, angle);
 			orientation_vec = XMQuaternionMultiply(orientation_vec, q);
 		}

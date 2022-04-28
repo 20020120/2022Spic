@@ -333,7 +333,7 @@ void PlayerMove::RotateToTarget(float elapsed_time, DirectX::XMFLOAT3& position,
         an = acosf(an);
         float de = DirectX::XMConvertToDegrees(an);
 
-        if (fabs(an) > DirectX::XMConvertToRadians(10.0f))
+        if (fabs(an) > DirectX::XMConvertToRadians(30.0f))
         {
             XMVECTOR q;
             DirectX::XMFLOAT3 a{};

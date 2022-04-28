@@ -155,8 +155,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             {
                 if (ImGui::TreeNode("BodyCapsuleParam"))
                 {
-                    ImGui::DragFloat3("capsule_parm.start", &capsule_body_start.x, 0.1f);
-                    ImGui::DragFloat3("capsule_parm.end", &capsule_body_end.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.start", &body_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &body_capsule_param.end.x, 0.1f);
                     ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
                     ImGui::TreePop();
                 }

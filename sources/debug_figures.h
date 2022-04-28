@@ -61,8 +61,8 @@ private:
 	struct Capsule
 	{
 		DirectX::XMFLOAT4	color;
-		DirectX::XMFLOAT3	start;	// 円柱の中心線の始端
-		DirectX::XMFLOAT3	end;	// 円柱の中心線の終端
+		DirectX::XMFLOAT3	start{0,0,0};	// 円柱の中心線の始端
+		DirectX::XMFLOAT3	end{ 0,1,0 };	// 円柱の中心線の終端
 		float				radius;	// 半径
 	};
 
