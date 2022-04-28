@@ -86,33 +86,57 @@ void Player::ChainLockOn()
 
 }
 
-void Player::chain_search_update(float elapsed_time, BaseEnemy* stun_enemy)
+std::vector<DirectX::XMFLOAT3> debug_way_points;
+int num = 0;
+bool lockon = false;
+void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
 {
-	static bool lockon = false;
-#ifdef USE_IMGUI
-	ImGui::Begin("chain");
-	ImGui::Text("search");
-	if (ImGui::Button("lockon")) { lockon = true; }
-	if (ImGui::Button("reset"))
-	{
-		stun_enemy_position = {};
-		position = {};
-	}
-	ImGui::DragFloat3("stun_enemy_position", &stun_enemy_position.x, 0.1f);
-	ImGui::End();
-#endif // USE_IMGUI
-
-	debug_figure->create_sphere(stun_enemy_position, 1.5f, { 1,0,0,1 });
-
-	// スタンされた敵がいなければ通常行動に戻る
-	//if (stun_enemy == nullptr) { transition_normal_behavior(); }
-	//else // ロックオンステートへ
-	//{
-	//	stun_enemy_position = stun_enemy->fGetPosition();
-	//	transition_chain_lockon();
-	//}
-
-	if (lockon) { transition_chain_lockon(); lockon = false; }
+//#ifdef USE_IMGUI
+//	ImGui::Begin("chain");
+//	ImGui::Text("search");
+//	if (ImGui::Button("lockon")) { lockon = true; }
+//	if (ImGui::Button("points clear"))
+//	{
+//		debug_way_points.clear();
+//	}
+//	if (ImGui::Button("reset"))
+//	{
+//		num = 0;
+//
+//		stun_enemy_position = {};
+//		position = {};
+//	}
+//	ImGui::DragFloat3("stun_enemy_position", &stun_enemy_position.x, 0.1f);
+//	if (ImGui::Button("create"))
+//	{
+//		debug_way_points.emplace_back(stun_enemy_position);
+//	}
+//	ImGui::End();
+//#endif // USE_IMGUI
+//
+//	for (auto pos : debug_way_points)
+//	{
+//		debug_figure->create_sphere(pos, 1.5f, { 0,1,0,1 });
+//	}
+//	debug_figure->create_sphere(stun_enemy_position, 1.5f, { 1,0,0,1 });
+//
+//	// スタンされた敵がいなければ通常行動に戻る
+//	//if (stun_enemy == nullptr) { transition_normal_behavior(); }
+//	//else // ロックオンステートへ
+//	//{
+//	//	stun_enemy_position = stun_enemy->fGetPosition();
+//	//	transition_chain_lockon();
+//	//}
+//
+//	if (debug_way_points.size() <= num)
+//	{
+//		lockon = false;
+//	}
+//	else if (lockon)
+//	{
+//		stun_enemy_position = debug_way_points.at(num);
+//		transition_chain_lockon(); lockon = false;
+//	}
 }
 
 void Player::transition_chain_search()
@@ -120,7 +144,7 @@ void Player::transition_chain_search()
 	player_chain_activity = &Player::chain_search_update;
 }
 
-void Player::chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy)
+void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("lockon"); ImGui::End();
@@ -151,8 +175,16 @@ void Player::chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy)
 	// 最後の点(敵の位置)についたら攻撃ステートへ
 	if (start && transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
 	{
-		start = false;
 		//transition_chain_attack();
+
+
+		lockon = true;
+		++num;
+		if (num >= debug_way_points.size())
+		{
+			start = false;
+		}
+
 		transition_chain_search();
 	}
 	//else if (/*キャンセルがあれがここへ*/)
@@ -163,37 +195,37 @@ void Player::chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy)
 
 void Player::transition_chain_lockon()
 {
-	if (!way_points.empty()) way_points.clear();
-	if (!interpolated_way_points.empty()) interpolated_way_points.clear();
+	//if (!way_points.empty()) way_points.clear();
+	//if (!interpolated_way_points.empty()) interpolated_way_points.clear();
 
-	// 右方向ベクトルとターゲットへのベクトルの角度を算出
-	DirectX::XMVECTOR norm_vec = Math::calc_vector_AtoB_normalize(position, stun_enemy_position);
-	DirectX::XMFLOAT3 right = { 1,0,0 };
-	DirectX::XMVECTOR right_vec = DirectX::XMLoadFloat3(&right);
-	DirectX::XMVECTOR dot = DirectX::XMVector3Dot(norm_vec, right_vec);
-	float cos_theta = DirectX::XMVectorGetX(dot);
-	// 右方向ベクトルとターゲットへのベクトルの角度と任意の角度を足したものが中間地点のθ
-	const float theta = acosf(cos_theta) + DirectX::XMConvertToRadians(30.0f);
-	// ターゲットへのベクトルの長さを算出
-	float length_vec = Math::calc_vector_AtoB_length(position, stun_enemy_position);
-	// 中間地点の算出
-	DirectX::XMFLOAT3 midpoint;
-	if (position.z <= stun_enemy_position.z){ midpoint = { position.x + cosf(theta) * length_vec * 0.5f, position.y, position.z + sinf(theta) * length_vec * 0.5f }; }
-	else { midpoint = { position.x + cosf(theta) * length_vec * 0.5f, position.y, position.z + -sinf(theta) * length_vec * 0.5f }; }
-	// way_pointsの生成
-	way_points.emplace_back(position); // この時点でのプレイヤーの位置
-	way_points.emplace_back(midpoint); // プレイヤーの位置と敵の位置の中間地点
-	way_points.emplace_back(stun_enemy_position); // 敵の位置
-	// way_pointsを通るカーブを作成
-	CatmullRomSpline curve(way_points);
-	curve.interpolate(interpolated_way_points, 3);
+	//// 右方向ベクトルとターゲットへのベクトルの角度を算出
+	//DirectX::XMVECTOR norm_vec = Math::calc_vector_AtoB_normalize(position, stun_enemy_position);
+	//DirectX::XMFLOAT3 right = { 1,0,0 };
+	//DirectX::XMVECTOR right_vec = DirectX::XMLoadFloat3(&right);
+	//DirectX::XMVECTOR dot = DirectX::XMVector3Dot(norm_vec, right_vec);
+	//float cos_theta = DirectX::XMVectorGetX(dot);
+	//// 右方向ベクトルとターゲットへのベクトルの角度と任意の角度を足したものが中間地点のθ
+	//const float theta = acosf(cos_theta) + DirectX::XMConvertToRadians(30.0f);
+	//// ターゲットへのベクトルの長さを算出
+	//float length_vec = Math::calc_vector_AtoB_length(position, stun_enemy_position);
+	//// 中間地点の算出
+	//DirectX::XMFLOAT3 midpoint;
+	//if (position.z <= stun_enemy_position.z){ midpoint = { position.x + cosf(theta) * length_vec * 0.5f, position.y, position.z + sinf(theta) * length_vec * 0.5f }; }
+	//else { midpoint = { position.x + cosf(theta) * length_vec * 0.5f, position.y, position.z + -sinf(theta) * length_vec * 0.5f }; }
+	//// way_pointsの生成
+	//way_points.emplace_back(position); // この時点でのプレイヤーの位置
+	//way_points.emplace_back(midpoint); // プレイヤーの位置と敵の位置の中間地点
+	//way_points.emplace_back(stun_enemy_position); // 敵の位置
+	//// way_pointsを通るカーブを作成
+	//CatmullRomSpline curve(way_points);
+	//curve.interpolate(interpolated_way_points, 3);
 
- 	transit_index = 0;
-	//model->;
-	player_chain_activity = &Player::chain_lockon_update;
+ //	transit_index = 0;
+	////model->;
+	//player_chain_activity = &Player::chain_lockon_update;
 }
 
-void Player::chain_move_update(float elapsed_time, BaseEnemy* stun_enemy)
+void Player::chain_move_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("move"); ImGui::End();
@@ -207,7 +239,7 @@ void Player::transition_chain_move()
 	player_chain_activity = &Player::chain_move_update;
 }
 
-void Player::chain_attack_update(float elapsed_time, BaseEnemy* stun_enemy)
+void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("attack"); ImGui::End();
