@@ -224,17 +224,17 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 
 void Player::LerpCameraTarget(float elapsed_time)
 {
-    target_lerp_rate += 0.5f * elapsed_time;
-    if (target_lerp_rate < 1.0f)
-    {
-        //float length{ Math::calc_vector_AtoB_length(end_target,target) };
-        //if (length < 2.0f)target_lerp_rate = 1.0f;
-        target = Math::lerp(old_target, end_target, target_lerp_rate);
-    }
-    else
-    {
-        target = end_target;
-    }
+    //target_lerp_rate += 0.5f * elapsed_time;
+    //if (target_lerp_rate < 1.0f)
+    //{
+    //    //float length{ Math::calc_vector_AtoB_length(end_target,target) };
+    //    //if (length < 2.0f)target_lerp_rate = 1.0f;
+    //    target = Math::lerp(old_target, end_target, target_lerp_rate);
+    //}
+    //else
+    //{
+    //    target = end_target;
+    //}
 }
 
 void Player::BehindAvoidancePosition()
@@ -561,7 +561,7 @@ void Player::SetTarget( BaseEnemy* target_enemies)
     if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
     {
         //“|‚µ‚½“G‚ÌˆÊ’u‚ğ•Û‘¶
-        if (target_lerp_rate > 1.0f)old_target = target;
+        //if (target_lerp_rate > 1.0f)old_target = target;
         //•âŠÔ—¦‚Ì‰Šú‰»
         target_lerp_rate = 0;
         //ˆê”Ô‹ß‚¢“G‚ğ•Û‘¶‚·‚é
@@ -830,13 +830,13 @@ void Player::LockOn()
         if (target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             //“G‚ÌˆÊ’u‚ğ•âŠ®‚ÌƒS[ƒ‹ƒ^[ƒQƒbƒg‚É“ü‚ê‚é
-#if 1
+#if 0
             end_target = target_enemy->fGetPosition();
 #else
             target = target_enemy->fGetPosition();
 #endif // 0
             //“G‚Æ©•ª‚Ì‹——£‚ğ‹‚ß‚é
-#if 1
+#if 0
             float length{ Math::calc_vector_AtoB_length(position,end_target) };
 #else
             float length{ Math::calc_vector_AtoB_length(position,target) };
@@ -851,7 +851,7 @@ void Player::LockOn()
                     if (is_lock_on == false)
                     {
                         //ƒ^[ƒQƒbƒg‚É“ü‚ê‚é(Å‰‚Ìˆê‰ñ‚¾‚¯)
-                        old_target = end_target;
+                        //old_target = end_target;
                         target_lerp_rate = 0;
                         is_camera_lock_on = true;
                     }

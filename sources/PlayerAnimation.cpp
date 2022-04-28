@@ -39,14 +39,6 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
-    //ゲージ消費の突進
-    if (is_lock_on && game_pad->get_button_down() & GamePad::BTN_Y)
-    {
-        if (combo_count >= 10.0f)
-        {
-            TransitionTransformWing();
-        }
-    }
 
     Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -76,14 +68,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionChargeInit();
     }
-    //ゲージ消費の突進
-    if (is_lock_on && game_pad->get_button_down() & GamePad::BTN_Y)
-    {
-        if (combo_count >= 10.0f)
-        {
-            TransitionTransformWing();
-        }
-    }
+
     Awaiking();
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
