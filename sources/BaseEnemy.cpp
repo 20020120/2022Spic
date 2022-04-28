@@ -27,7 +27,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
 
 BaseEnemy::~BaseEnemy()
 {
-    mVernierEffect->stop(effect_manager->get_effekseer_manager());
+  //  mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

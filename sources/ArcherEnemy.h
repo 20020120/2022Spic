@@ -52,7 +52,7 @@ public:
         EnemyParamPack ParamPack_);
     ArcherEnemy(GraphicsPipeline& Graphics_);
 
-    ~ArcherEnemy();
+    ~ArcherEnemy() override = default;
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
@@ -117,7 +117,6 @@ private:
     AddBulletFunc mfAddFunc;
     skeleton::bone mVernierBone{  };
 
-    std::unique_ptr<Effect> mVernier_effect;
 
     //****************************************************************
    // Å@

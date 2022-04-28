@@ -34,13 +34,6 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_)
 {}
 
 
-ArcherEnemy::~ArcherEnemy()
-{
-    mVernier_effect->stop(effect_manager->get_effekseer_manager());
-
-}
-
-
 void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
@@ -285,22 +278,39 @@ void ArcherEnemy::fMoveLeaveInit()
 {
 }
 
+
 void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    using namespace DirectX;
-    //エネミーからプレイヤーへの逆方向を算出
-    XMVECTOR pos_vec = XMLoadFloat3(&mPosition);//自分の位置
-    DirectX::XMFLOAT3 t = mPlayerPosition;
-    XMVECTOR target_vec = XMLoadFloat3(&t);
-    //自分のポジションからプレイヤーのポジションを引くことでプレイヤーと反対方向のベクトルを出す
-    XMVECTOR tar = XMVector3Normalize(pos_vec - target_vec);
-    XMVectorScale(tar, 3.0f);
-    XMFLOAT3 t_vec{};
-    XMStoreFloat3(&t_vec, tar);
-    XMFLOAT3 target_pos = mPosition + t_vec;
+  //プレイヤーから遠ざかるためにプレイヤーから反対方向へ向く処理
+    auto turn_opposite_player = [&](float elapsed_time, float rot_speed)
+    {
+        // プレイヤーの反対方向に回転
+        constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
 
+        // プレイヤーとの逆ベクトル
+        const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPosition - mPlayerPosition);
+        // 自分の正面ベクトル
+        const auto front = Math::Normalize(Math::GetFront(mOrientation));
+        float dot = Math::Dot(vToPlayer, front);
+
+        dot = acosf(dot);
+
+        if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
+        {
+            DirectX::XMVECTOR q;
+            float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
+            if (cross > 0)
+            {
+                mOrientation = Math::RotQuaternion(mOrientation, up, dot * rot_speed * elapsed_time);
+            }
+            else
+            {
+                mOrientation = Math::RotQuaternion(mOrientation, up, -dot * rot_speed * elapsed_time);
+            }
+        }
+    };
+    turn_opposite_player(elapsedTime_, ROT_SPEED);
     fMove(elapsedTime_);
-    fTurnToPlayer(elapsedTime_, ROT_SPEED);
 
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
