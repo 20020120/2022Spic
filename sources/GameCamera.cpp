@@ -415,25 +415,26 @@ bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR Play
 		{
 			eyeVector = rockOnEyeVector;
 			rockOnTimer = 0;
+			rockOnStart = false;
 			return true;
 		}
 	}
 	else
 	{
-		eyeVector = rockOnEyeVector;
+		//eyeVector = rockOnEyeVector;
 
 		//¶‰E‚Ì‚¸‚êC³
 		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 
-		//const DirectX::XMVECTOR PlayerToRockOn = DirectX::XMLoadFloat3(&playerToRockOn);
-		//DirectX::XMVECTOR Cross = DirectX::XMVector3Cross(PlayerUp, PlayerToRockOn);
-		//Cross = DirectX::XMVector3Normalize(Cross);
-		//const DirectX::XMVECTOR ProjectionLength = DirectX::XMVector3Dot(Cross, EyeVector);
-		//float projectionLength{};
-		//DirectX::XMStoreFloat(&projectionLength, ProjectionLength);
+		const DirectX::XMVECTOR PlayerToRockOn = DirectX::XMLoadFloat3(&playerToRockOn);
+		DirectX::XMVECTOR Cross = DirectX::XMVector3Cross(PlayerUp, PlayerToRockOn);
+		Cross = DirectX::XMVector3Normalize(Cross);
+		const DirectX::XMVECTOR ProjectionLength = DirectX::XMVector3Dot(Cross, EyeVector);
+		float projectionLength{};
+		DirectX::XMStoreFloat(&projectionLength, ProjectionLength);
 
-		//EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
-		//EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
+		EyeVector = DirectX::XMVector3Normalize(EyeVector);
 
 #if 0
 		//•Ï‰»‚ª–³‚¯‚ê‚ÎƒXƒ‹[
@@ -507,10 +508,12 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 	const DirectX::XMVECTOR CameraRockOnPosition = PlayerToRockOn * 1.0f;
 
 	PlayerToRockOn = DirectX::XMVector3Normalize(PlayerToRockOn);
+	//const DirectX::XMFLOAT3 playerForward = player->GetForward();
+	//const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 
 
 	//DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp;
-	DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp * up;
+	DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp * 2;
 	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 
 #else
@@ -547,7 +550,7 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 	//}
 
 
-	DirectX::XMStoreFloat3(&playerToRockOn, PlayerToRockOn);
+	//DirectX::XMStoreFloat3(&playerToRockOn, PlayerToRockOn);
 	DirectX::XMStoreFloat3(&rockOnEyeVector, RockOnEyeVector);
 }
 
