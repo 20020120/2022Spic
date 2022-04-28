@@ -98,7 +98,7 @@ private:
     void AttitudeControl(float elapsedTime);
 
     void UpdateEye();
-    void UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp, DirectX::XMVECTOR PlayerForward);
+    void UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp);
     void UpdateRockOnTarget(DirectX::XMVECTOR PlayerTarget);
 
     bool CameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);

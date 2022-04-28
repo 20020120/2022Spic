@@ -88,4 +88,5 @@ protected:
     float up{};
     float up1{};
 
+    bool attack{ false };
 };
