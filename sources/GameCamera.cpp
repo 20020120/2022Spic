@@ -136,19 +136,18 @@ void GameCamera::gameUpdate(float elapsedTime)
 	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * up1;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
-	if (player->GetEnemyLockOn())
-	{
-		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget, PlayerUp);
-		RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn());
-		UpdateTarget(PlayerPosition, PlayerUp);
-		UpdateEye();
-	}
-	else if(attack)
-	{
-	    
-	}
-	else
-	{
+    switch (state)
+    {
+	case CameraState::Free:
+		if(player->GetEnemyLockOn())
+		{
+			state = RockOn;
+			break;
+		}
+		if(attack)
+		{
+			state = AttackStart;
+		}
 		if (player->GetCameraReset())
 		{
 			if (CameraReset(elapsedTime, PlayerForward, PlayerUp))
@@ -160,7 +159,66 @@ void GameCamera::gameUpdate(float elapsedTime)
 		UpdateEyeVector(elapsedTime, PlayerUp);
 		UpdateTarget(PlayerPosition, PlayerUp);
 		UpdateEye();
-	}
+		break;
+	case CameraState::RockOn:
+		if(!player->GetEnemyLockOn())
+		{
+			state = Free;
+			break;
+		}
+		if (attack)
+		{
+			state = AttackStart;
+		}
+		if(player->GetBehindAvoidance())
+		{
+			state = Avoiding;
+		}
+		RockOnCalculateEyeVector(PlayerPosition, PlayerTarget, PlayerUp);
+		RockOnUpdateEyeVector(elapsedTime, PlayerUp, player->GetCameraLockOn());
+		UpdateTarget(PlayerPosition, PlayerUp);
+		UpdateEye();
+		break;
+	case CameraState::AttackStart:
+		if (attack)
+		{
+			SetAngle(elapsedTime);
+			UpdateEyeVector(elapsedTime, PlayerUp);
+			UpdateTarget(PlayerPosition, PlayerUp);
+			UpdateEye();
+		}
+		if(attacking)
+		{
+			attack = false;
+			state = Attacking;
+			break;
+		}
+		break;
+	case CameraState::Attacking:
+		if(!attacking)
+		{
+			state = CameraStopEnd;
+			break;
+		}
+		break;
+	case CameraState::Avoiding:
+		if (!player->GetBehindAvoidance())
+		{
+			state = CameraStopEnd;
+		}
+		break;
+	case CameraState::CameraStopEnd:
+		if(cameraAvoidEnd)
+		{
+			cameraAvoidEnd = false;
+			state = Free;
+			break;
+		}
+		UpdateStopEndTarget();
+		UpdateStopEndEye(PlayerTarget, elapsedTime);
+		break;
+    }
+
 #endif
 
 }
@@ -378,6 +436,38 @@ bool GameCamera::RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerFo
 	}
 	return false;
 
+}
+
+void GameCamera::UpdateStopEndTarget()
+{
+	DirectX::XMFLOAT3 t = player->GetTarget();
+	t.y = target.y;
+
+	target = t;
+}
+
+void GameCamera::UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget,float elapsedTime)
+{
+	using namespace DirectX;
+	DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
+	DirectX::XMVECTOR PlayerToTarget = PlayerTarget - DirectX::XMLoadFloat3(&player->GetPosition());
+	PlayerToTarget = DirectX::XMVector3Normalize(PlayerToTarget);
+	const DirectX::XMVECTOR CameraGoalPositionVec = -PlayerToTarget * 10 + DirectX::XMLoadFloat3(&player->GetUp()) * 2;
+	const DirectX::XMVECTOR CameraGoalPosition = DirectX::XMLoadFloat3(&eyeCenter) + CameraGoalPositionVec;
+
+	DirectX::XMVECTOR CameraToGoal = CameraGoalPosition - CameraPosition;
+	CameraToGoal = DirectX::XMVector3Length(CameraToGoal);
+	const float cameraToGoalLength = DirectX::XMVectorGetX(CameraToGoal);
+
+	if (cameraToGoalLength > 1.0f)
+	{
+		CameraPosition = DirectX::XMVectorLerp(CameraPosition, CameraGoalPosition, lerpLate * elapsedTime);
+		DirectX::XMStoreFloat3(&eye, CameraPosition);
+	}
+	else
+	{
+		cameraAvoidEnd = true;
+	}
 }
 
 bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR PlayerUp, bool rockOnStart)

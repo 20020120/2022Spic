@@ -89,4 +89,7 @@ protected:
     float up1{};
 
     bool attack{ false };
+    bool attacking{ false };
+    bool cameraAvoidEnd{ false };
+    float lerpLate{ 100.0f };
 };
