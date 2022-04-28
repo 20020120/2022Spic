@@ -415,26 +415,32 @@ bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR Play
 		{
 			eyeVector = rockOnEyeVector;
 			rockOnTimer = 0;
-			rockOnStart = false;
+			player->FalseCameraLockOn();
 			return true;
 		}
 	}
 	else
 	{
-		//eyeVector = rockOnEyeVector;
+		eyeVector = rockOnEyeVector;
+		//using namespace DirectX;
 
-		//左右のずれ修正
+		////左右のずれ修正
 		DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
+		//DirectX::XMVECTOR RockOnEyeVector = DirectX::XMLoadFloat3(&rockOnEyeVector);
 
-		const DirectX::XMVECTOR PlayerToRockOn = DirectX::XMLoadFloat3(&playerToRockOn);
-		DirectX::XMVECTOR Cross = DirectX::XMVector3Cross(PlayerUp, PlayerToRockOn);
-		Cross = DirectX::XMVector3Normalize(Cross);
-		const DirectX::XMVECTOR ProjectionLength = DirectX::XMVector3Dot(Cross, EyeVector);
-		float projectionLength{};
-		DirectX::XMStoreFloat(&projectionLength, ProjectionLength);
+		//DirectX::XMFLOAT3 worldUp{ 0.0f,1.0f,0.0f };
+		//DirectX::XMVECTOR WorldUp = DirectX::XMLoadFloat3(&worldUp);
 
-		EyeVector = DirectX::XMVectorSubtract(EyeVector, DirectX::XMVectorScale(Cross, projectionLength));
-		EyeVector = DirectX::XMVector3Normalize(EyeVector);
+		//DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EyeVector, RockOnEyeVector);
+		//float dot{};
+		//dot = DirectX::XMVectorGetX(Dot);
+		//float radian = acosf(dot);
+
+		//if(fabsf(radian) > 1e-8)
+		//{
+		//	DirectX::XMVECTOR Q = DirectX::XMQuaternionRotationAxis(WorldUp, DirectX::XMConvertToDegrees(radian));
+		//	EyeVector = DirectX::XMVector3Rotate(EyeVector, Q);
+		//}
 
 #if 0
 		//変化が無ければスルー
