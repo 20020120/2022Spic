@@ -116,7 +116,7 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 
      dot = acosf(dot);
 
-    if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
+    if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
 	    DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };

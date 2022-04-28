@@ -1,219 +1,5 @@
-//#include"FrontShieldEnemy.h"
-//#include"EnemyFileSystem.h"
-//#include"imgui_include.h"
-//#include "user.h"
-////****************************************************************
-////
-////  盾なし通常攻撃の雑魚敵の派生クラス
-////
-////****************************************************************
-//FrontShieldEnemy::FrontShieldEnemy(GraphicsPipeline& graphics_, DirectX::XMFLOAT3 EmitterPoint_, int UniqueId_,
-//    ParamGetFunction Function_)
-//    :BaseEnemy(graphics_, UniqueId_, "./resources/Models/Enemy/enemy_shield.fbx")
-//{
-//    // 位置を初期化
-//    mPosition = EmitterPoint_;
-//    mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-//    mScale = { 0.03f,0.03f,0.03f };
-//    //パラメーターの初期化
-//    fParamInitialize();
-//    fGetParam(this, Function_);
-//    fRegisterFunctions();
-//
-//    mpSkinnedMesh->play_animation(mAnimPara, 0, true);
-//}
-//
-////初期化
-//void FrontShieldEnemy::fInitialize()
-//{
-//
-//}
-//
-////更新処理
-//void FrontShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
-//{
-//    //--------------------<更新処理>--------------------//
-//    fUpdateBase(elapsedTime_, Graphics_);
-//}
-//
-////関数の登録
-//void FrontShieldEnemy::fRegisterFunctions()
-//{
-//    InitFunc Ini = [=]()->void
-//    {
-//        fIdleInit();
-//    };
-//    UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-//    {
-//        fIdleUpdate(elapsedTime_, Graphics_);
-//    };
-//    FunctionTuple tuple = std::make_tuple(Ini, Up);
-//    mFunctionMap.insert(std::make_pair(State::Idle, tuple));
-//
-//    Ini = [=]()->void
-//    {
-//        fMoveInit();
-//    };
-//    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-//    {
-//        fmoveUpdate(elapsedTime_, Graphics_);
-//    };
-//    tuple = std::make_tuple(Ini, Up);
-//    mFunctionMap.insert(std::make_pair(State::Move, tuple));
-//
-//    Ini = [=]()->void
-//    {
-//        fAttackInit();
-//    };
-//    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-//    {
-//        fAttackUpdate(elapsedTime_, Graphics_);
-//    };
-//    tuple = std::make_tuple(Ini, Up);
-//    mFunctionMap.insert(std::make_pair(State::Attack, tuple));
-//
-//    Ini = [=]()->void
-//    {
-//        fDamagedInit();
-//    };
-//    Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
-//    {
-//        fDamagedUpdate(elapsedTime_, Graphics_);
-//    };
-//    tuple = std::make_tuple(Ini, Up);
-//    mFunctionMap.insert(std::make_pair(State::Damaged, tuple));
-//
-//    fChangeState(State::Idle);
-//
-//}
-//
-//void FrontShieldEnemy::fParamInitialize()
-//{
-//    //mParam.mHitPoint = 10;      // 体力
-//    //mParam.mAttackPower = 10;   // 攻撃力
-//    //mParam.mMoveSpeed = 10;   // 移動速度
-//    //mParam.mAttackSpeed = 2; // 攻撃間隔
-//    mStayTimer = 1.0f;
-//    mAttack_flg = false;
-//}
-//
-//void FrontShieldEnemy::fDamaged(int Damage_, float InvinsibleTime_)
-//{
-//    //正面からの攻撃ならダメージを減少させる
-//    Damage_ = fJudge_Front_Attacked(Damage_);
-//    //ダメージが0の場合は健康状態を変更する必要がない
-//    if (Damage_ == 0)return;
-//
-//    //死亡している場合は健康状態を変更しない
-//    if (mParam.mHitPoint <= 0)return;
-//
-//
-//    if (mInvinsibleTimer > 0.0f)return;
-//
-//    //無敵時間設定
-//    mInvinsibleTimer = InvinsibleTime_;
-//    //ダメージ処理
-//    mParam.mHitPoint -= Damage_;
-//    fChangeState(State::Damaged);
-//
-//    // 死亡したら爆発エフェクトを出す
-//    if (mParam.mHitPoint <= 0)
-//    {
-//        fDieEffect();
-//    }
-//}
-//
-//void FrontShieldEnemy::fStopEffect()
-//{
-//}
-//
-//
-//void FrontShieldEnemy::fIdleInit()
-//{
-//    //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
-//
-//}
-//
-//void FrontShieldEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-//{
-//    mStayTimer -= elapsedTime_;
-//    if (mStayTimer > 0.0f) return;
-//    if (mAttack_flg)
-//    {
-//        fChangeState(State::Attack);
-//        mAttack_flg = false;
-//        return;
-//    }
-//
-//    fChangeState(State::Move);
-//
-//}
-//
-//void FrontShieldEnemy::fMoveInit()
-//{
-//    max_move_speed = mParam.mMoveSpeed;
-//    // mpSkinnedMesh->play_animation(MOVE, true, 0.1f);
-//    mAttackingTime = 0.0f;
-//}
-//
-//void FrontShieldEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-//{
-//    MovingProcess(forward, max_move_speed);
-//    fTurnToTarget(elapsedTime_, mPlayerPosition,4.0f);
-//    if (mLengthFromPlayer < 4.0f)
-//    {
-//        mAttack_flg = true;
-//        mStayTimer = 1.0f;
-//        fChangeState(State::Idle);
-//    }
-//}
-//
-//void FrontShieldEnemy::fAttackInit()
-//{
-//    // mpSkinnedMesh->play_animation(ATTACK, true, 0.1f);
-//    mAttackingTime = 0.0f;
-//    fSetAttackPower(2, 1.5f);
-//}
-//
-//void FrontShieldEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-//{
-//    fAttackStart();
-//    DirectX::XMVECTOR Forward = DirectX::XMLoadFloat3(&forward);
-//    DirectX::XMFLOAT3 attack_pos;
-//    DirectX::XMStoreFloat3(&attack_pos, DirectX::XMVectorScale(Forward, 2.0f));
-//    fSetAttackRange(attack_pos, up, 1.5f, 1.5f);
-//
-//    mAttackingTime += elapsedTime_;
-//    if (mAttackingTime > 2.0f)
-//    {
-//        fAttackEnd();
-//
-//        fChangeState(State::Idle);
-//    }
-//}
-//
-//void FrontShieldEnemy::fDamagedInit()
-//{
-//
-//}
-//
-//
-//void FrontShieldEnemy::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-//{
-//    using namespace DirectX;
-//    XMVECTOR P_Pos = XMLoadFloat3(&mPlayerPosition);
-//    XMVECTOR E_Pos = XMLoadFloat3(&mPosition);
-//    XMVECTOR Vec = E_Pos - P_Pos;
-//    Vec = XMVector3Normalize(Vec);
-//    XMFLOAT3 v;
-//    XMStoreFloat3(&v, Vec);
-//    velocity.x = 20.0f * v.x;
-//    velocity.y = 20.0f * v.y;
-//    velocity.z = 20.0f * v.z;
-//
-//    fChangeState(State::Idle);
-//}
-//
+#include "FrontShieldEnemy.h"
+#include "Operators.h"
 //    //ダメージを受けたときに正面からの攻撃なら,シールドが防いでダメージを減少させる
 // int FrontShieldEnemy::fJudge_Front_Attacked(int damage_) const
 //{
@@ -235,21 +21,227 @@
 //
 //}
 //
-//void FrontShieldEnemy::fGuiMenu()
-//{
-//#ifdef USE_IMGUI
-//    ImGui::Text("Name : Normal");
-//    ImGui::DragFloat3("position", &mPosition.x);
-//    ImGui::DragFloat3("angle", &mOrientation.x);
-//    const char* state_list[] = { "IDLE","MOVE","ATTACK","DAUNTED" };
-//    /* std::string state =  state_list[static_cast<int>(mNowState)];
-//     ImGui::Text("State"); ImGui::SameLine();
-//     ImGui::Text(state.c_str());*/
-//    ImGui::Checkbox("Attack", &mAttack_flg);
-//    if (ImGui::Button("dameged", { 70.0f,30.0f }))
-//    {
-//        fDamaged(1, 0.6f);
-//    }
-//#endif
+ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
+    const DirectX::XMFLOAT3& EmitterPoint_,
+    const EnemyParamPack& ParamPack_)
+    :BaseEnemy(Graphics_,
+        "./resources/Models/Enemy/SwordEnemy.fbx",
+        ParamPack_,
+        EmitterPoint_)
+{
+    ShieldEnemy::fRegisterFunctions();
+    // ボーンを初期化
+    mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
+    mScale = { 0.05f,0.05f,0.05f };
+
+}
+
+ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemy.fbx")
+{}
+
+void ShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
+{
+    fBaseUpdate(elapsedTime_, Graphics_);
+    fUpdateAttackCapsule(); // 攻撃用のカプセル位置を更新
+}
+
+void ShieldEnemy::fRegisterFunctions()
+{
+    // 関数をステートマシンに登録
+    {
+        InitFunc ini = [=]()->void
+        {
+            fSpawnInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fSpawnUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Start, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fWalkInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fWalkUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Move, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fShieldReadyInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fShieldReadyUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::ShieldReady, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fShieldAttackInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fShieldAttackUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::ShieldAttack, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fShieldInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fShieldUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Shield, tuple));
+    }
+    
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
+    }
+    fChangeState(DivedState::Start);
+}
+
+
+void ShieldEnemy::fUpdateAttackCapsule()
+{
+}
 //
+//void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
+//{
+//
+//
+//    if (mInvincibleTime <= 0.0f)
+//    {
+//        mCurrentHitPoint -= Damage_;
+//        mInvincibleTime = InvincibleTime_;
+//    }
+//    if (mCurrentHitPoint <= 0)
+//    {
+//        fDie();
+//    }
 //}
+
+void ShieldEnemy::fSpawnInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::idle, true);
+    // 汎用タイマーを初期化
+    mWaitTimer = 0.0f;
+}
+
+void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    mDissolve -= elapsedTime_;
+    // 一定時間経過で移動に遷移
+    if (mWaitTimer >= mSpawnDelaySec)
+    {
+        fChangeState(DivedState::Move);
+    }
+}
+
+void ShieldEnemy::fWalkInit()
+{
+    // アニメーションを再生
+    mpModel->play_animation(mAnimPara, AnimationName::walk, true);
+    mWaitTimer = 0.0f;
+}
+
+void ShieldEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    //--------------------<プレイヤーのいる向きに移動>--------------------//
+
+    fMoveFront(elapsedTime_, 10.0f);
+    //--------------------<プレイヤーの方向に回転>--------------------//
+    fTurnToPlayer(elapsedTime_, 2.0f);
+
+    // プレイヤーとの距離が一定以下になったら
+    if (mAttackRange >= Math::Length(mPlayerPosition - mPosition))
+    {
+        fChangeState(DivedState::ShieldReady);
+    }
+}
+
+void ShieldEnemy::fShieldReadyInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::shield_ready);
+    mWaitTimer = 0.0f;
+}
+
+void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+
+    // タイマーを加算
+    mWaitTimer += elapsedTime_;
+    //シールド構え時間が一定時間たったら
+    if (mWaitTimer >= mShieldReadySec * mAnimationSpeed)
+    {
+        fChangeState(DivedState::Idle);
+    }
+    //構え中に正面から攻撃されたら
+
+    //構え中に後ろから攻撃されたら
+}
+
+void ShieldEnemy::fShieldAttackInit()
+{
+}
+
+void ShieldEnemy::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
+
+void ShieldEnemy::fShieldInit()
+{
+}
+
+void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
+
+void ShieldEnemy::fEscapeInit()
+{
+}
+
+void ShieldEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
+
+void ShieldEnemy::fStunInit()
+{
+}
+
+void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
+
+void ShieldEnemy::fDieInit()
+{
+}
+
+void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
