@@ -28,7 +28,7 @@ public:
 
     void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fRender(GraphicsPipeline& Graphics_);
-    void fDamaged(int Damage_, float InvincibleTime_);
+    virtual void fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
@@ -40,7 +40,7 @@ public:
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetAttack() const;
-    [[nodiscard]] const Capsule& fGetBodyCapsule()const;
+    [[nodiscard]] const Capsule& fGetBodyCapsule();
     [[nodiscard]] const Capsule& fGetAttackCapsule()const;
     [[nodiscard]] const DirectX::XMFLOAT3& fGetPosition()const;
     [[nodiscard]] bool fGetIsAlive()const;
@@ -61,14 +61,14 @@ protected:
 
     SkinnedMesh::anim_Parameters mAnimPara{};
     float mDissolve{};
-    
+protected:
     float mAnimationSpeed{1.0f};
-private:
     bool mIsStun{}; // スタン状態かどうか
     int mCurrentHitPoint{};
     float mInvincibleTime{};
     const int mMaxHp{};
 
+private:
     int mAttackPower{};
     float mAttackInvTime{};
     bool mIsAttack{};
@@ -89,7 +89,7 @@ protected:
     // ダメージを食らう当たり判定
     Capsule mBodyCapsule{};
 private:
-    skeleton::bone mVernierBone{};
+    skeleton::bone mVenierBone{};
 
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };

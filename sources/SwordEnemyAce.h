@@ -14,6 +14,7 @@ class SwordEnemy_Ace final :public BaseEnemy
         inline static char* CounterStart = "CounterStart";
         inline static char* CounterMiddle = "CounterMiddle";
         inline static char* CounterAttack = "CounterAttack";
+        inline static char* CounterEnd = "CounterEnd";
         inline static char* Move = "Move";
         inline static char* Stun = "Stun";
     };
@@ -58,9 +59,17 @@ private:
     void fCounterMiddleInit();
     void fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fCounterAttackInit();
+    void fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     void fCounterEndInit();
     void fCounterEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     void fMoveInit();
     void fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+public:
+    void fDamaged(int Damage_, float InvincibleTime_) override;
+private:
+    bool mIsHit{};
+    bool mIsWaitCounter{};
 };

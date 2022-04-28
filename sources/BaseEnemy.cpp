@@ -77,7 +77,7 @@ void BaseEnemy::fUpdateVernierEffectPos()
     // ボーンの名前から位置と上ベクトルを取得
     mpModel->fech_by_bone(mAnimPara,
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
-        mVernierBone, position, up, q);
+        mVenierBone, position, up, q);
 
     mVernierEffect->set_position(effect_manager->get_effekseer_manager(), position);
     DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP);
@@ -159,8 +159,11 @@ bool BaseEnemy::fGetAttack() const
     return mIsAttack;
 }
 
-const Capsule& BaseEnemy::fGetBodyCapsule() const
+const Capsule& BaseEnemy::fGetBodyCapsule() 
 {
+    mBodyCapsule.mBottom = mPosition;
+    DirectX::XMFLOAT3 up = { 0.01f,1.0f,0.0f };
+    mBodyCapsule.mTop = mPosition * up * 5.0f;
     return mBodyCapsule;
 }
 
