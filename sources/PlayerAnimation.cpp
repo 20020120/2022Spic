@@ -122,7 +122,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
     //BehindAvoidanceMove(elapsed_time);
 
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,200.0f, behind_interpolated_way_points,0.2f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,0.2f))
     {
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;

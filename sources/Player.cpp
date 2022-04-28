@@ -93,6 +93,23 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     player_config->update(graphics,elapsed_time);
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
+
+#if 0
+    if (is_lock_on)
+    {
+        BehindAvoidancePosition();
+        for (const auto& point : behind_interpolated_way_points)
+        {
+            debug_figure->create_sphere(point, 1.0f, { 1,1,1,1 });
+        }
+        for (const auto& point : behind_way_points)
+        {
+            debug_figure->create_sphere(point, 1.5f, { 1,0,0,1 });
+        }
+    }
+
+#endif // 0
+
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -229,7 +246,7 @@ void Player::BehindAvoidancePosition()
     using namespace DirectX;
     XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     float length_radius = Math::calc_vector_AtoB_length(p, target);//距離(半径)
-    float diameter = length_radius * 0.5f;//(直径)
+    float diameter = length_radius * 0.1f;//(直径)
     DirectX::XMFLOAT3 r{ right };
     //どっちのvelocityで左右判定するか
 #if 0
@@ -261,29 +278,34 @@ void Player::BehindAvoidancePosition()
     }
 
 #endif // 0
-    //-----------------ゴール地点---------------//
-    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
-    behind_point_3.y = position.y;//敵の後ろ側
-    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
-    //--------------------------------------------//
+    DirectX::XMFLOAT3 behind_point_4{};
     ////----------------中継１---------------------//
-    //behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
-    //behind_point_1.y = position.y;//敵の後ろ側
-    //behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(290.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(290.0f)))) * length_radius);//敵の後ろ側
+    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(300.0f)))) * length_radius);//敵の後ろ側
+    behind_point_1.y = position.y;//敵の後ろ側
+    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(300.0f)))) * length_radius);//敵の後ろ側
     ////--------------------------------------------//
     ////----------------中継2---------------------//
-    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//敵の後ろ側
+    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(340.0f)))) * length_radius);//敵の後ろ側
     behind_point_2.y = position.y;//敵の後ろ側
-    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(320.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(320.0f)))) * length_radius);//敵の後ろ側
-
+    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(340.0f)))) * length_radius);//敵の後ろ側
+    //--------------------------------------------//
+    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(20.0f)))) * length_radius);//敵の後ろ側
+    behind_point_3.y = position.y;//敵の後ろ側
+    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(20.0f)))) * length_radius);//敵の後ろ側
+    //-----------------ゴール地点---------------//
+    behind_point_4.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
+    behind_point_4.y = position.y;//敵の後ろ側
+    behind_point_4.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * length_radius);//敵の後ろ側
 
     behind_way_points.emplace_back(position); // この時点でのプレイヤーの位置
+    behind_way_points.emplace_back(behind_point_1); // この時点でのプレイヤーの位置
     behind_way_points.emplace_back(behind_point_2); // プレイヤーの位置とゴールの位置の中間地点
-    behind_way_points.emplace_back(behind_point_3); // ゴールの位置
+    behind_way_points.emplace_back(behind_point_3); // 中継地点
+    behind_way_points.emplace_back(behind_point_4); //ゴールの位置
 
         // way_pointsを通るカーブを作成
     CatmullRomSpline curve(behind_way_points);
-    curve.interpolate(behind_interpolated_way_points, 3);
+    curve.interpolate(behind_interpolated_way_points,8);
 
     behind_transit_index = 0;
     //--------------------------------------------//
@@ -365,11 +387,12 @@ bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOA
     //(この後の計算でindexの次の値を使うからサイズと同じ大きさでもダメ)
     if (index >= points.size() - 1) return true;
 
+    XMFLOAT3 velo{};
     //自分の位置とウェイポイントのベクトルを求める
     //+1しているのはindex番目の値が自分の位置だからその次の値を取得するため
     XMVECTOR vec = XMLoadFloat3(&points.at(index + 1)) - XMLoadFloat3(&position);
     XMVECTOR norm_vec = XMVector3Normalize(vec);
-    XMStoreFloat3(&velocity, norm_vec);
+    XMStoreFloat3(&velo, norm_vec);
     //長さを求めて
     XMVECTOR length_vec = DirectX::XMVector3Length(vec);
     //その値を取得(4dベクトルのxの値を取ってくる関数)
@@ -383,9 +406,9 @@ bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOA
         position = points.at(index);
     }
 
-    position.x += velocity.x * speed * elapsed_time;
-    position.y += velocity.y * speed * elapsed_time;
-    position.z += velocity.z * speed * elapsed_time;
+    position.x += velo.x * speed * elapsed_time;
+    position.y += velo.y * speed * elapsed_time;
+    position.z += velo.z * speed * elapsed_time;
 
     return false;
 }
