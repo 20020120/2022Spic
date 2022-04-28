@@ -44,7 +44,7 @@ void Player::Initialize()
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
-void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, BaseEnemy* stun_enemy)
+void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
 #ifdef USE_IMGUI
     ImGui::Begin("chain");
@@ -55,7 +55,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     ImGui::End();
 #endif // USE_IMGUI
 
-    ExecFuncUpdate(elapsed_time, sky_dome, stun_enemy);
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
