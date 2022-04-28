@@ -108,6 +108,20 @@ private:
 
     bool RockOnCameraReset(float elapsedTime, DirectX::XMVECTOR PlayerForward, DirectX::XMVECTOR PlayerUp);
 
+    void UpdateStopEndTarget();
+    void UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget, float elapsedTime);
+
+    enum CameraState
+    {
+        Free,
+        RockOn,
+        AttackStart,
+        Attacking,
+        Avoiding,
+        CameraStopEnd,
+    };
+
+    int state{ CameraState::Free };
 };
 
 class ClearCamera : public Camera

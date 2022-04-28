@@ -1,8 +1,8 @@
 #include"SwordEnemyAce.h"
 #include"Operators.h"
-inline SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
+SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemyAce.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemyAce.fbx",ParamPack_,EmitterPoint_)
 {
     SwordEnemy_Ace::fRegisterFunctions();
     // ボーンを初期化
@@ -19,6 +19,7 @@ SwordEnemy_Ace::~SwordEnemy_Ace()
 void SwordEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     fBaseUpdate(elapsedTime_,Graphics_);
+    mIsHit = false;
 }
 
 void SwordEnemy_Ace::fUpdateAttackCapsule()
@@ -105,6 +106,7 @@ void SwordEnemy_Ace::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::CounterAttack, tuple));
     }
+    fChangeState(DivideState::Start);
 }
 
 void SwordEnemy_Ace::fStartInit()
@@ -139,11 +141,13 @@ void SwordEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void SwordEnemy_Ace::fCounterStartInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_ready);
+    mWaitTimer = 0.0f;
 }
 
 void SwordEnemy_Ace::fCounterStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-  if(mpModel->end_of_animation())
+    mWaitTimer += elapsedTime_;
+  if(mWaitTimer>3.0f)
   {
       fChangeState(DivideState::CounterMiddle);
   }
@@ -153,25 +157,56 @@ void SwordEnemy_Ace::fCounterMiddleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ace_attack_idle, true);
     mWaitTimer = 0.0f;
+    mIsWaitCounter = true;
 }
 
 void SwordEnemy_Ace::fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 10.0f);
+    mWaitTimer += elapsedTime_;
     if(mWaitTimer>=3.0f)
     {
         fChangeState(DivideState::Idle);
+        mIsWaitCounter = false;
+    }
+
+    // ダメージを受けたら
+    if(mIsHit)
+    {
+        fChangeState(DivideState::CounterAttack);
+        mIsWaitCounter = false;
     }
     
 }
 
+void SwordEnemy_Ace::fCounterAttackInit()
+{
+    mpModel->play_animation(AnimationName::ace_attack);
+    mWaitTimer = 0.0f;
+    mAnimationSpeed = 2.0f;
+}
+
+void SwordEnemy_Ace::fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer += elapsedTime_;
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::CounterEnd);
+        mAnimationSpeed = 1.0f;
+    }
+}
+
 void SwordEnemy_Ace::fCounterEndInit()
 {
-   
+    mpModel->play_animation(mAnimPara, AnimationName::ace_attack_end);
 }
 
 void SwordEnemy_Ace::fCounterEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    
+   if(mpModel->end_of_animation(mAnimPara))
+   {
+       fChangeState(DivideState::Idle);
+   }
 }
 
 void SwordEnemy_Ace::fMoveInit()
@@ -189,6 +224,23 @@ void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     if(fGetLengthFromPlayer()<=10.0f)
     {
         fChangeState(DivideState::CounterStart);
+    }
+}
+
+void SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
+{
+    if (mInvincibleTime <= 0.0f)
+    {
+        mIsHit = true;
+        if (!mIsWaitCounter)
+        {
+            mCurrentHitPoint -= damage;
+            mInvincibleTime = invincible_time;
+        }
+    }
+    if (mCurrentHitPoint <= 0)
+    {
+        fDie();
     }
 }
 

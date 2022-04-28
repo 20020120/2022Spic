@@ -52,7 +52,7 @@ private:
     };
 public:
     void Initialize()override;
-    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, BaseEnemy* stun_enemy)override;
+    void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override;
     //チュートリアル用のアップデート
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
@@ -367,7 +367,7 @@ private:
     PlayerActivity player_activity = &Player::IdleUpdate;
     AddDamageFunc damage_func;
     //自分のメンバ関数の関数ポインタを呼ぶ
-    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, BaseEnemy* stun_enemy);
+    void ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //待機アニメーション中の更新処理
     void IdleUpdate(float elapsed_time, SkyDome* sky_dome);
     //移動アニメーション中の更新処理
@@ -476,20 +476,20 @@ public:
 private:
     //--------<藤岡パート>--------//
     //関数ポインタ
-    typedef void(Player::* PlayerChainActivity)(float elapsed_time, BaseEnemy* stun_enemy);
+    typedef void(Player::* PlayerChainActivity)(float elapsed_time, std::vector<BaseEnemy*> enemies);
     //関数ポインタの変数
     PlayerChainActivity player_chain_activity = &Player::chain_search_update;
     // 索敵
-    void chain_search_update(float elapsed_time, BaseEnemy* stun_enemy);
+    void chain_search_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_search();
     // ロックオン
-    void chain_lockon_update(float elapsed_time, BaseEnemy* stun_enemy);
+    void chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_lockon();
     // 移動
-    void chain_move_update(float elapsed_time, BaseEnemy* stun_enemy);
+    void chain_move_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_move();
     // 攻撃
-    void chain_attack_update(float elapsed_time, BaseEnemy* stun_enemy);
+    void chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_attack();
     // 指定したポイント全てを通る関数
     bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
@@ -507,12 +507,18 @@ private:
         behavior_state = Behavior::Normal;
         TransitionIdle();
     }
-
     //--------< 変数 >--------//
-    DirectX::XMFLOAT3 stun_enemy_position{};
+    struct LockOnSuggest
+    {
+        DirectX::XMFLOAT3 position{};
+        bool detection = false;
+    };
     int transit_index = 0;
-    std::vector<DirectX::XMFLOAT3> way_points;
-    std::vector<DirectX::XMFLOAT3> interpolated_way_points;
+    std::vector<int> chain_lockon_enemy_indexes; // ロックオンされたの敵のインデックス
+    std::vector<LockOnSuggest> lockon_suggests;  // プレイヤーとロックオンされた敵の情報を持つソートするための情報
+    std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
+    std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
+    std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数

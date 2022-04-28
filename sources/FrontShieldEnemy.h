@@ -1,73 +1,115 @@
 #pragma once
-//
-//#pragma once
-//#include"BaseEnemy.h"
-//#include<functional>
-//#include<tuple>
-//#include<map>
-//
-//#include "EnemiesEditor.h"
-//****************************************************************
-// 
-// 盾通常攻撃の雑魚敵の派生クラス 
-// 
-//****************************************************************
-//class FrontShieldEnemy final :public BaseEnemy
-//{
-//    ****************************************************************
-//     
-//     関数
-//     
-//    ****************************************************************
-//public:
-//
-//    FrontShieldEnemy(GraphicsPipeline& graphics_,
-//        DirectX::XMFLOAT3 EmitterPoint_/*スポーン位置*/
-//        , int UniqueId_, ParamGetFunction Function_
-//    );
-//
-//    void fInitialize() override;
-//    void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
-//    void fGuiMenu() override;
-//
-//    void fDamaged(int damage_, float InvinsibleTime_) override;
-//
-//    void fStopEffect() override;
-//private:
-//     ステートマシンを追加する関数
-//    void fRegisterFunctions() override;
-//    パラメータ初期化関数
-//    void fParamInitialize();
-//
-//    --------------------<各ステートの関数>--------------------//
-//    void fIdleInit();   // 待機の初期化
-//    void fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); // 待機の更新処理
-//
-//    void fMoveInit(); //移動の初期化
-//    void fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //移動の更新処理
-//
-//    void fAttackInit(); //攻撃の初期化
-//    void fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //攻撃の更新処理
-//
-//    void fDamagedInit(); //ひるみの初期化
-//    void fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_); //ひるみの更新処理
-//
-//    ダメージを受けたときに正面からの攻撃ならシールドが防いでダメージを減少させる
-//     int fJudge_Front_Attacked(int damage_) const;
-//
-//     ステートの名前を定義する
-//    struct  State : public BaseEnemy::StateTag
-//    {
-//        inline static const std::string Attack = "Attack";
-//    };
-//    ****************************************************************
-//    
-//    変数 
-//    
-//   ****************************************************************
-//    State mNowState;
-//    float mStayTimer;
-//    float mAttackingTime;
-//    bool mAttack_flg;
-//};
-//
+
+#pragma once
+#include"BaseEnemy.h"
+#include "EnemiesEditor.h"
+#include"EventFlag.h"
+class ShieldEnemy final :public BaseEnemy
+{
+public:
+    //****************************************************************
+    // 
+    // 構造体
+    // 
+    //****************************************************************
+    struct DivedState
+    {
+        inline static const char* Start = "Start";
+        inline static const char* Idle = "Idle";
+        inline static const char* Move = "Move";
+        inline static const char* ShieldReady = "ShieldReady"; //シールドを構える
+        inline static const char* ShieldAttack = "ShieldAttack"; // 振り上げ
+        inline static const char* Shield = "Shield";  // ため
+        inline static const char* Damaged = "Damaged";
+        inline static const char* Die = "Die";
+        inline static const char* Stun = "Stun";
+    };
+    enum  AnimationName {
+        idle,
+        walk,
+        shield_ready,
+        shield_Attack,
+        shield,
+        damage,
+        die
+    };
+public:
+    //****************************************************************
+    // 
+    // 関数
+    // 
+    //****************************************************************
+    ShieldEnemy(GraphicsPipeline& Graphics_,
+        const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
+        const EnemyParamPack& ParamPack_);
+    ShieldEnemy(GraphicsPipeline& Graphics_);
+    ~ShieldEnemy() override = default;
+
+    void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fRegisterFunctions() override; // ステートを登録
+    void fUpdateAttackCapsule() override;
+
+   // void fDamaged(int Damage_, float InvincibleTime_) ;
+
+
+    //****************************************************************
+    // 
+    // 変数
+    // 
+    //****************************************************************
+private:
+    float mWaitTimer{}; // 待ち時間
+    skeleton::bone mSwordBone{};
+    //****************************************************************
+    // 
+    // 定数 
+    // 
+    //****************************************************************
+    const float mMoveSpeed{ 10.0f };      // 移動速度
+    const float mAttackRange{ 60.0f };    // 攻撃範囲
+    const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
+    const float mSpawnDelaySec{ 1.0f };   // 登場後の長さ（秒）
+
+    //--------------------<各ステートの待ち時間>--------------------//
+    const float mShieldReadySec{ 3.0f };          // 盾を構える
+    const float mStunTimeSec{ 1.0f };
+private:
+    //****************************************************************
+    // 
+    // ステートマシン
+    // 
+    //****************************************************************
+    //--------------------<剣の敵の共通の動き>--------------------//
+    // スポーン
+    void fSpawnInit();
+    void fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // 歩き
+    void fWalkInit();
+    void fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // 盾を構える
+    void fShieldReadyInit();
+    void fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //盾攻撃
+    void fShieldAttackInit();
+    void fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // 盾防ぎ
+    void fShieldInit();
+    void fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    
+    void fEscapeInit();
+    void fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // スタン
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    // しぬ
+    void fDieInit();
+    void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+};
+
