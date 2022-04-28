@@ -17,6 +17,8 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 	XMVECTOR norm_vec = XMVector3Normalize(vec);
 	XMStoreFloat3(&velocity, norm_vec);
 
+	rotate(elapsed_time, index, points);
+
 	XMVECTOR length_vec = DirectX::XMVector3Length(vec);
 	float length = DirectX::XMVectorGetX(length_vec);
 	if (length <= play)
@@ -29,12 +31,11 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 	position.y += velocity.y * speed * elapsed_time;
 	position.z += velocity.z * speed * elapsed_time;
 
-	rotate(elapsed_time, velocity);
 
 	return false;
 }
 
-void Player::rotate(float elapsed_time, const DirectX::XMFLOAT3& velocity)
+void Player::rotate(float elapsed_time, int index, const std::vector<DirectX::XMFLOAT3>& points)
 {
 	using namespace DirectX;
 	//ターゲットに向かって回転
@@ -48,14 +49,17 @@ void Player::rotate(float elapsed_time, const DirectX::XMFLOAT3& velocity)
 	DirectX::XMFLOAT3 front{};
 	DirectX::XMStoreFloat3(&front, forward);
 
+	XMFLOAT3 d{};
+	XMVECTOR d_vec = XMLoadFloat3(&points.at(index + 1)) - XMLoadFloat3(&points.at(index));
+	XMVECTOR norm_vec = XMVector3Normalize(d_vec);
+	XMStoreFloat3(&d, norm_vec);
 	{
-		XMVECTOR velocity_vec = XMVector3Normalize(DirectX::XMLoadFloat3(&velocity));
-		XMVECTOR dot = XMVector3Dot(forward, velocity_vec);
+		XMVECTOR dot = XMVector3Dot(forward, norm_vec);
 		float angle = acosf(DirectX::XMVectorGetX(dot));
-		if (fabs(angle + FLT_EPSILON) > DirectX::XMConvertToRadians(0.1f))
+		if (fabs(angle + FLT_EPSILON) > FLT_EPSILON)
 		{
 			XMVECTOR q;
-			float cross{ (velocity.x * front.z) - (velocity.z * front.x) };
+			float cross{ (d.x * front.z) - (d.z * front.x) };
 			if (cross > 0)
 			{
 				q = XMQuaternionRotationAxis(up, angle);//正の方向に動くクオータニオン

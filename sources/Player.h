@@ -495,7 +495,7 @@ private:
     bool transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position,
         float speed, const std::vector<DirectX::XMFLOAT3>& points, float play = 0.01f);
     // i‚ñ‚Å‚é•ûŒü‚É‰ñ“]‚·‚éŠÖ”
-    void rotate(float elapsed_time, const DirectX::XMFLOAT3& velocity);
+    void rotate(float elapsed_time, int index, const std::vector<DirectX::XMFLOAT3>& points);
     // behavior‚Ì‘JˆÚŠÖ”
     void transition_chain_behavior()
     {
