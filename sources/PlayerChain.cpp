@@ -88,12 +88,15 @@ void Player::ChainLockOn()
 }
 
 
-//#define CHAIN_DEBUG
+#define CHAIN_DEBUG
 
 #ifdef CHAIN_DEBUG
 std::vector<DirectX::XMFLOAT3> debug_way_points;
-int num = 0;
-bool lockon = false;
+DirectX::XMFLOAT3 debug_point;
+bool debug_lockon = false;
+bool debug_transition_chain_lockon_flg = false;
+bool attack_start = false;
+
 #endif // CHAIN_DEBUG
 
 
@@ -103,21 +106,18 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	ImGui::Begin("chain");
 	ImGui::Text("search");
 #ifdef CHAIN_DEBUG
-	if (ImGui::Button("lockon")) { lockon = true; }
-	if (ImGui::Button("points clear"))
-	{
-		debug_way_points.clear();
-	}
+	ImGui::Text("search_time:%f", search_time);
+	if (ImGui::Button("lockon start")) { debug_lockon = true; }
+	if (ImGui::Button("transition lockon")) { debug_transition_chain_lockon_flg = true; }
+	if (ImGui::Button("points clear")) { debug_way_points.clear(); }
 	if (ImGui::Button("reset"))
 	{
-		num = 0;
 		position = {};
+		if (!lockon_suggests.empty()) lockon_suggests.clear();
+		search_time = SEARCH_TIME;
 	}
-	ImGui::DragFloat3("stun_enemy_position", &stun_enemy_position.x, 0.1f);
-	if (ImGui::Button("create"))
-	{
-		debug_way_points.emplace_back(stun_enemy_position);
-	}
+	ImGui::DragFloat3("debug_point", &debug_point.x, 0.1f);
+	if (ImGui::Button("create")) { debug_way_points.emplace_back(debug_point); }
 #endif // CHAIN_DEBUG
 	ImGui::End();
 #endif // USE_IMGUI
@@ -127,9 +127,60 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	{
 		debug_figure->create_sphere(pos, 1.5f, { 0,1,0,1 });
 	}
-	debug_figure->create_sphere(stun_enemy_position, 1.5f, { 1,0,0,1 });
+	//for (auto index : chain_lockon_enemy_indexes)
+	//{
+	//	debug_figure->create_sphere(enemies.at(index)->fGetPosition(), 2.0f, { 1,1,0,1 });
+	//}
+	debug_figure->create_sphere(debug_point, 1.5f, { 1,0,0,1 });
 #endif // CHAIN_DEBUG
 
+
+#ifdef CHAIN_DEBUG
+
+	if(debug_lockon) // 決められた時間内に敵を索敵しロックオンステートへ
+	{
+		if (search_time > 0)
+		{
+			search_time -= elapsed_time;
+			if (!lockon_suggests.empty())
+			{
+				lockon_suggests.clear();
+				// 初めの要素にはプレイヤーを入れる
+				LockOnSuggest player_suggest;
+				player_suggest.position = position;
+				player_suggest.detection = true; // プレイヤーは検索には入れないので初めからtrue
+				lockon_suggests.emplace_back(player_suggest);
+			}
+			for (auto point : debug_way_points)
+			{
+				const DirectX::XMFLOAT3 minPoint{
+					point.x - 1.5f * 0.5f,
+					point.y - 1.5f * 0.5f,
+					point.z - 1.5f * 0.5f
+				};
+				const DirectX::XMFLOAT3 maxPoint{
+					point.x + 1.5f * 0.5f,
+					point.y + 1.5f * 0.5f,
+					point.z + 1.5f * 0.5f
+				};
+
+				if (Collision::frustum_vs_cuboid(minPoint, maxPoint)) // 索敵時間内に一度でも視錐台に映ればロックオン
+				{
+					debug_figure->create_sphere(point, 2.0f, { 0,0,1,1 });
+
+
+					LockOnSuggest enemy_suggest; // サジェスト登録
+					enemy_suggest.position = point;
+					lockon_suggests.emplace_back(enemy_suggest);
+				}
+			}
+		}
+		else
+		{
+			if (debug_transition_chain_lockon_flg) { transition_chain_lockon(); }
+		}
+	}
+#else
 	bool is_stun = false;
 	// スタンされた敵がいなければ通常行動に戻る
 	for (const auto& enemy : enemies)
@@ -147,7 +198,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		search_time -= elapsed_time;
 		if (search_time > 0)
 		{
-            /*キャンセルがあれがここへ*/
+			/*キャンセルがあれがここへ*/
 
 
 
@@ -177,15 +228,10 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			transition_chain_lockon();
 		}
 	}
-
-#ifdef CHAIN_DEBUG
-	if (debug_way_points.size() <= num) { lockon = false; }
-	else if (lockon)
-	{
-		stun_enemy_position = debug_way_points.at(num);
-		transition_chain_lockon(); lockon = false;
-	}
 #endif // CHAIN_DEBUG
+
+	//旋回処理
+	RollTurn(position, orientation, elapsed_time);
 }
 
 void Player::transition_chain_search()
@@ -199,6 +245,14 @@ void Player::transition_chain_search()
 	player_suggest.detection = true; // プレイヤーは検索には入れないので初めからtrue
 	lockon_suggests.emplace_back(player_suggest);
 
+	search_time = SEARCH_TIME;
+
+#ifdef CHAIN_DEBUG
+	debug_lockon = false;
+	debug_transition_chain_lockon_flg = false;
+	attack_start = false;
+#endif // CHAIN_DEBUG
+
 	player_chain_activity = &Player::chain_search_update;
 }
 
@@ -211,37 +265,57 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	static float speed = 200.0f;
 	static float play  = 0.2f;
 #ifdef CHAIN_DEBUG
-	static bool start = false;
 #ifdef USE_IMGUI
 	ImGui::Begin("transit");
-	ImGui::DragFloat3("position", &position.x, 0.1f);
+	ImGui::Text("position x : %.1f  y : %.1f  z : %.1f", position.x, position.y, position.z);
 	ImGui::DragFloat("speed", &speed, 0.1f);
 	ImGui::DragFloat("play", &play, 0.01f);
-	if (ImGui::Button("start")) { start = true; }
+	if (ImGui::Button("start")) { attack_start = true; }
 	if (ImGui::Button("restart")) { transit_index = 0; }
+	ImGui::Separator();
+	static int elem = 0;
+	constexpr int count = 4;
+	const char* elems_names[count] = { "suggests","sort_points","way_points","interpolated" };
+
+	const char* elem_name = (elem >= 0 && elem < count) ? elems_names[elem] : "Unknown";
+	ImGui::SliderInt("sphere type", &elem, 0, count - 1, elem_name);
+
 	ImGui::End();
 #endif // USE_IMGUI
-	for (const auto& point : interpolated_way_points)
+	switch (elem)
 	{
-		debug_figure->create_sphere(point, 1.0f, { 1,1,1,1 });
-	}
-	for (const auto& point : way_points)
-	{
-		debug_figure->create_sphere(point, 1.5f, { 1,0,0,1 });
+	case 0: // lockon_suggestsデバッグ表示
+		for (int i = 0; i < lockon_suggests.size(); ++i)
+		{
+			debug_figure->create_sphere(lockon_suggests.at(i).position, 1.5f, { 1,0,0,1 });
+		}
+		break;
+	case 1: // sort_pointsデバッグ表示
+		for (const auto& point : sort_points)
+		{
+			debug_figure->create_sphere(point, 1.5f, { 0,1,0,1 });
+		}
+		break;
+	case 2: // way_pointsデバッグ表示
+		for (const auto& point : way_points)
+		{
+			debug_figure->create_sphere(point, 1.5f, { 0,0,1,1 });
+		}
+		break;
+	case 3: // interpolated_way_pointsデバッグ表示
+		for (const auto& point : interpolated_way_points)
+		{
+			debug_figure->create_sphere(point, 1.0f, { 1,1,1,1 });
+		}
+		break;
 	}
 #endif // CHAIN_DEBUG
 
 #ifdef CHAIN_DEBUG
-	if (start && transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
+	if (attack_start && transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
 	{
-		lockon = true;
-		++num;
-		if (num >= debug_way_points.size())
-		{
-			start = false;
-		}
-
-		transition_chain_search();
+		assert(transit_index != 0 && "意図していない挙動になっています");
+		transition_chain_attack(); // 攻撃ステートへ
 	}
 #else
 	// ポイントについた時攻撃ステートへ
@@ -396,7 +470,10 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	//if (攻撃が終われば)
 	{
 		// 分割したポイントの最後なら通常行動へ
-		if (transit_index >= interpolated_way_points.size()) { transition_normal_behavior(); }
+		if (transit_index >= interpolated_way_points.size() - 1)
+		{
+			transition_normal_behavior();
+		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{
 			player_chain_activity = &Player::chain_lockon_update;
