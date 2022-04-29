@@ -92,6 +92,7 @@ void Player::ChainLockOn()
 
 #ifdef CHAIN_DEBUG
 std::vector<DirectX::XMFLOAT3> debug_way_points;
+std::vector<bool> debug_hit;
 DirectX::XMFLOAT3 debug_point;
 bool debug_lockon = false;
 bool debug_transition_chain_lockon_flg = false;
@@ -109,7 +110,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	ImGui::Text("search_time:%f", search_time);
 	if (ImGui::Button("lockon start")) { debug_lockon = true; }
 	if (ImGui::Button("transition lockon")) { debug_transition_chain_lockon_flg = true; }
-	if (ImGui::Button("points clear")) { debug_way_points.clear(); }
+	if (ImGui::Button("points clear")) { debug_way_points.clear();	debug_hit.clear(); }
 	if (ImGui::Button("reset"))
 	{
 		position = {};
@@ -117,7 +118,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		search_time = SEARCH_TIME;
 	}
 	ImGui::DragFloat3("debug_point", &debug_point.x, 0.1f);
-	if (ImGui::Button("create")) { debug_way_points.emplace_back(debug_point); }
+	if (ImGui::Button("create")) { debug_way_points.emplace_back(debug_point); debug_hit.emplace_back(); }
 #endif // CHAIN_DEBUG
 	ImGui::End();
 #endif // USE_IMGUI
@@ -291,9 +292,17 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		}
 		break;
 	case 1: // sort_pointsデバッグ表示
-		for (const auto& point : sort_points)
+		for (int i = 0; i < sort_points.size(); ++i)
 		{
-			debug_figure->create_sphere(point, 1.5f, { 0,1,0,1 });
+			if (i >= sort_points.size() - 1)
+			{
+				debug_figure->create_sphere(sort_points.at(i), 1.5f, { 0,0,1,1 });
+			}
+			else
+			{
+				if (debug_hit.at(i)) debug_figure->create_sphere(sort_points.at(i), 1.5f, { 0,1,0,1 });
+				else debug_figure->create_sphere(sort_points.at(i), 1.5f, { 0,0,1,1 });
+			}
 		}
 		break;
 	case 2: // way_pointsデバッグ表示
@@ -316,6 +325,12 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	{
 		assert(transit_index != 0 && "意図していない挙動になっています");
 		transition_chain_attack(); // 攻撃ステートへ
+
+		for (int i = 0; i < sort_points.size() - 1; ++i)
+		{
+			float leng = Math::calc_vector_AtoB_length(position, sort_points.at(i));
+			if (leng <= play) { debug_hit.at(i) = true; }
+		}
 	}
 #else
 	// ポイントについた時攻撃ステートへ
@@ -378,7 +393,7 @@ void Player::transition_chain_lockon()
 				}
 			}
 			// パターン1
-			if (!all_searching) // 基準距離を0より大きくして再検索  検索条件：未検索かつ距離が0以上
+			if (!all_searching) // 基準距離を0より大きくして再検索  検索条件：未検索かつ距離が0より大きい
 			{
 				// リセット
 				champion_length = { FLT_MAX };
@@ -387,7 +402,7 @@ void Player::transition_chain_lockon()
 				for (int end = 0; end < lockon_suggests.size(); ++end) // 終点側
 				{
 					float length = Math::calc_vector_AtoB_length(lockon_suggests.at(start).position, lockon_suggests.at(end).position);
-					if (start != end && !lockon_suggests.at(end).detection && length > 0) // 検索条件：未検索かつ距離が0以上
+					if (start != end && !lockon_suggests.at(end).detection && length > 0) // 検索条件：未検索かつ距離が0より大きい
 					{
 						if (champion_length > length)
 						{
@@ -395,6 +410,12 @@ void Player::transition_chain_lockon()
 							champion_pos    = lockon_suggests.at(end).position;
 							champion_index  = end;
 						}
+					}
+					//--------<!! ここで距離が0以下ならまったく同じ位置にポイントがある !!>--------//
+					else if (start != end && !lockon_suggests.at(end).detection && length <= 0)
+					{
+						champion_pos   = lockon_suggests.at(end).position;
+						champion_index = end;
 					}
 				}
 				assert(champion_index != -1 && "パターン1のchampion_indexが見つかっていません");
@@ -409,8 +430,8 @@ void Player::transition_chain_lockon()
 
 	assert(lockon_suggests.size() == sort_points.size() && "ソート前とソート後の要素数が異なっています");
 
-
 	// ソートされたポイントからそれぞれの中間点を算出、そのすべてを通るように任意の分割数で分割したポイントを算出
+	way_points.emplace_back(sort_points.at(0)); // プレイヤーの位置
 	for (int index = 0; index < sort_points.size() - 1; ++index)
 	{
 		DirectX::XMFLOAT3 start = sort_points.at(index);
@@ -430,7 +451,6 @@ void Player::transition_chain_lockon()
 		if (start.z <= end.z) { midpoint = { start.x + cosf(theta) * length_vec * 0.5f, start.y, start.z + sinf(theta) * length_vec * 0.5f }; }
 		else { midpoint = { start.x + cosf(theta) * length_vec * 0.5f, start.y, start.z + -sinf(theta) * length_vec * 0.5f }; }
 		// way_pointsの生成
-		way_points.emplace_back(start); // この時点でのプレイヤーの位置
 		way_points.emplace_back(midpoint); // プレイヤーの位置と敵の位置の中間地点
 		way_points.emplace_back(end); // 敵の位置
 	}

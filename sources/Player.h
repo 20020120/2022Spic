@@ -507,6 +507,8 @@ private:
         behavior_state = Behavior::Normal;
         TransitionIdle();
     }
+
+    bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     //--------< •Ï” >--------//
     struct LockOnSuggest
     {
