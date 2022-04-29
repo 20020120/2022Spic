@@ -513,6 +513,7 @@ private:
         DirectX::XMFLOAT3 position{};
         bool detection = false;
     };
+    float search_time = 3.0f;
     int transit_index = 0;
     std::vector<int> chain_lockon_enemy_indexes; // ロックオンされたの敵のインデックス
     std::vector<LockOnSuggest> lockon_suggests;  // プレイヤーとロックオンされた敵の情報を持つソートするための情報
