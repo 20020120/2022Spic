@@ -1,31 +1,12 @@
 #include "FrontShieldEnemy.h"
 #include "Operators.h"
-//    //ダメージを受けたときに正面からの攻撃なら,シールドが防いでダメージを減少させる
-// int FrontShieldEnemy::fJudge_Front_Attacked(int damage_) const
-//{
-//    //プレイヤーとの位置関係を判定し、攻撃されたときに自分の視界45度いないなら正面と判定する
-//    DirectX::XMVECTOR EtoP_vec = Math::calc_vector_AtoB_normalize(mPosition, mPlayerPosition);
-//    DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
-//    DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EtoP_vec, Forward);
-//    float dot;
-//    DirectX::XMStoreFloat(&dot, Dot);
-//    dot = acosf(dot);
-//    if (DirectX::XMConvertToDegrees(dot) < 45.0f)
-//    {
-//        //正面からの攻撃ならダメージを3分の1にする
-//        return damage_ /= 3;
-//    }
-//
-//	//そうでないなら、受けたダメージをそのままにする
-//    return damage_;
-//
-//}
-//
+
+
 ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/SwordEnemy.fbx",
+        "./resources/Models/Enemy/ShieldEnemy.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -33,11 +14,11 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
     // ボーンを初期化
     mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
     mScale = { 0.05f,0.05f,0.05f };
-
+    is_shield = false;
 }
 
 ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemy.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ShieldEnemy.fbx")
 {}
 
 void ShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -64,11 +45,11 @@ void ShieldEnemy::fRegisterFunctions()
     {
         InitFunc ini = [=]()->void
         {
-            fWalkInit();
+            fMoveInit();
         };
         UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
         {
-            fWalkUpdate(elapsedTime_, Graphics_);
+            fMoveUpdate(elapsedTime_, Graphics_);
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::Move, tuple));
@@ -122,6 +103,18 @@ void ShieldEnemy::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDieInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDieUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivedState::Die, tuple));
+    }
     fChangeState(DivedState::Start);
 }
 
@@ -129,21 +122,30 @@ void ShieldEnemy::fRegisterFunctions()
 void ShieldEnemy::fUpdateAttackCapsule()
 {
 }
-//
-//void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
-//{
-//
-//
-//    if (mInvincibleTime <= 0.0f)
-//    {
-//        mCurrentHitPoint -= Damage_;
-//        mInvincibleTime = InvincibleTime_;
-//    }
-//    if (mCurrentHitPoint <= 0)
-//    {
-//        fDie();
-//    }
-//}
+
+void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
+{
+    //シールド効果がON状態且つ、正面から攻撃された場合は攻撃をはじくアニメーションへ遷移
+    if( is_shield  &&fJudge_Front_Attacked() )
+    {
+        fChangeState(DivedState::Shield);
+        return;
+    }
+
+    //無敵時間が存在していないときにダメージを食らったら
+    if (mInvincibleTime <= 0.0f)
+    {
+        mCurrentHitPoint -= Damage_;
+        mInvincibleTime = InvincibleTime_;
+     //   fChangeState(DivedState::Damaged);
+    }
+    //HPがゼロになってしまったら
+    if (mCurrentHitPoint <= 0)
+    {
+        //fChangeState(DivedState::Die);
+        fDie();
+    }
+}
 
 void ShieldEnemy::fSpawnInit()
 {
@@ -163,14 +165,14 @@ void ShieldEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     }
 }
 
-void ShieldEnemy::fWalkInit()
+void ShieldEnemy::fMoveInit()
 {
     // アニメーションを再生
-    mpModel->play_animation(mAnimPara, AnimationName::walk, true);
+    mpModel->play_animation(mAnimPara, AnimationName::move, true);
     mWaitTimer = 0.0f;
 }
 
-void ShieldEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void ShieldEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     //--------------------<プレイヤーのいる向きに移動>--------------------//
 
@@ -179,7 +181,7 @@ void ShieldEnemy::fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     fTurnToPlayer(elapsedTime_, 2.0f);
 
     // プレイヤーとの距離が一定以下になったら
-    if (mAttackRange >= Math::Length(mPlayerPosition - mPosition))
+    if (mDifenceRange >= Math::Length(mPlayerPosition - mPosition))
     {
         fChangeState(DivedState::ShieldReady);
     }
@@ -189,6 +191,7 @@ void ShieldEnemy::fShieldReadyInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::shield_ready);
     mWaitTimer = 0.0f;
+    is_shield = true; //シールド効果ON
 }
 
 void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -199,49 +202,84 @@ void ShieldEnemy::fShieldReadyUpdate(float elapsedTime_, GraphicsPipeline& Graph
     //シールド構え時間が一定時間たったら
     if (mWaitTimer >= mShieldReadySec * mAnimationSpeed)
     {
-        fChangeState(DivedState::Idle);
+        is_shield = false; //シールド効果OFF
+        fChangeState(DivedState::Move);
     }
-    //構え中に正面から攻撃されたら
-
-    //構え中に後ろから攻撃されたら
+   
 }
 
 void ShieldEnemy::fShieldAttackInit()
 {
+    mpModel->play_animation(mAnimPara, AnimationName::shield_Attack);
 }
 
 void ShieldEnemy::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivedState::Move);
+    }
 }
 
 void ShieldEnemy::fShieldInit()
 {
+    mpModel->play_animation(mAnimPara, AnimationName::shield);
 }
 
 void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivedState::Move);
+    }
 }
 
-void ShieldEnemy::fEscapeInit()
-{
-}
-
-void ShieldEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-{
-}
 
 void ShieldEnemy::fStunInit()
 {
+    mpModel->play_animation(mAnimPara, AnimationName::stun);
+    mWaitTimer = 0.0f;
 }
 
 void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mIsStun = true;
+    // タイマーを加算
+    mWaitTimer += elapsedTime_;
+    //シールド構え時間が一定時間たったら
+    if (mWaitTimer >= mStunSec * mAnimationSpeed)
+    {
+        fChangeState(DivedState::Move);
+        is_shield = false; //シールド効果OFF
+    }
+
 }
 
 void ShieldEnemy::fDieInit()
 {
+    mpModel->play_animation(mAnimPara, AnimationName::die);
 }
 
 void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+}
+// //ダメージを受けたときに正面からの攻撃かどうかを判定する
+bool ShieldEnemy::fJudge_Front_Attacked() const
+{
+    //プレイヤーとの位置関係を判定し、攻撃されたときに自分の視界45度いないなら正面と判定する
+    const DirectX::XMVECTOR EtoP_vec = Math::calc_vector_AtoB_normalize(mPosition, mPlayerPosition);
+    const DirectX::XMFLOAT3 forward = Math::GetFront(mOrientation);
+    const DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
+    const DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(EtoP_vec, Forward);
+    float dot;
+    DirectX::XMStoreFloat(&dot, Dot);
+    dot = acosf(dot);
+    if (DirectX::XMConvertToDegrees(dot) < 45.0f)
+    {
+        //正面からの攻撃ならtrueを返す
+        return true;
+    }
+
+    return false;
+
 }

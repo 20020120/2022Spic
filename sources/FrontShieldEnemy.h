@@ -15,7 +15,6 @@ public:
     struct DivedState
     {
         inline static const char* Start = "Start";
-        inline static const char* Idle = "Idle";
         inline static const char* Move = "Move";
         inline static const char* ShieldReady = "ShieldReady"; //シールドを構える
         inline static const char* ShieldAttack = "ShieldAttack"; // 振り上げ
@@ -26,10 +25,11 @@ public:
     };
     enum  AnimationName {
         idle,
-        walk,
+        move,
         shield_ready,
         shield_Attack,
         shield,
+        stun,
         damage,
         die
     };
@@ -49,8 +49,10 @@ public:
     void fRegisterFunctions() override; // ステートを登録
     void fUpdateAttackCapsule() override;
 
-   // void fDamaged(int Damage_, float InvincibleTime_) ;
+    void fDamaged(int Damage_, float InvincibleTime_) ;
 
+private:
+    bool fJudge_Front_Attacked() const;
 
     //****************************************************************
     // 
@@ -60,14 +62,16 @@ public:
 private:
     float mWaitTimer{}; // 待ち時間
     skeleton::bone mSwordBone{};
+    bool is_shield;
     //****************************************************************
     // 
     // 定数 
     // 
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // 移動速度
-    const float mAttackRange{ 60.0f };    // 攻撃範囲
+    const float mDifenceRange{ 40.0f };    // 攻撃範囲
     const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
+    const float mStunSec{ 2.0f };  // スタン時間（秒）
     const float mSpawnDelaySec{ 1.0f };   // 登場後の長さ（秒）
 
     //--------------------<各ステートの待ち時間>--------------------//
@@ -85,8 +89,8 @@ private:
     void fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // 歩き
-    void fWalkInit();
-    void fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fMoveInit();
+    void fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // 盾を構える
     void fShieldReadyInit();
