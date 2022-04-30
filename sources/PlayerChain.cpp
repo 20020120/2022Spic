@@ -263,13 +263,13 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	ImGui::Begin("chain"); ImGui::Text("lockon"); ImGui::End();
 #endif // USE_IMGUI
 
-	static float speed = 200.0f;
+	static float base_speed = 100.0f;
 	static float play  = 0.2f;
 #ifdef CHAIN_DEBUG
 #ifdef USE_IMGUI
 	ImGui::Begin("transit");
 	ImGui::Text("position x : %.1f  y : %.1f  z : %.1f", position.x, position.y, position.z);
-	ImGui::DragFloat("speed", &speed, 0.1f);
+	ImGui::DragFloat("base_speed", &base_speed, 0.1f);
 	ImGui::DragFloat("play", &play, 0.01f);
 	if (ImGui::Button("start")) { attack_start = true; }
 	if (ImGui::Button("restart")) { transit_index = 0; }
@@ -319,6 +319,20 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		break;
 	}
 #endif // CHAIN_DEBUG
+
+	// speedëùå∏
+	float camera_to_player_length = Math::calc_vector_AtoB_length(camera_position, position);
+	camera_to_player_length       = (std::min)(camera_to_player_length, 100.0f);
+	float magnification           = camera_to_player_length / 100.0f * 10.0f;
+	float speed = magnification * magnification + base_speed;
+
+#ifdef USE_IMGUI
+	ImGui::Begin("magnification");
+	ImGui::Text("length:%f", camera_to_player_length);
+	ImGui::Text("magnification:%f", magnification * magnification);
+	ImGui::Text("speed:%f", speed);
+	ImGui::End();
+#endif // USE_IMGUI
 
 #ifdef CHAIN_DEBUG
 	if (attack_start && transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
