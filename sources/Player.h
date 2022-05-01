@@ -482,6 +482,9 @@ private:
     // 索敵
     void chain_search_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_search();
+    // ロックオン準備
+    void chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
+    void transition_chain_lockon_begin();
     // ロックオン
     void chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> enemies);
     void transition_chain_lockon();
@@ -515,6 +518,7 @@ private:
         DirectX::XMFLOAT3 position{};
         bool detection = false;
     };
+    static constexpr int STEPS         = 3;
     static constexpr float SEARCH_TIME = 3.0f;
     float search_time = SEARCH_TIME;
     int transit_index = 0;
@@ -523,6 +527,13 @@ private:
     std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
     std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
     std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
+    enum class ATTACK_TYPE
+    {
+        FIRST,
+        SECOND,
+        THIRD,
+    };
+    ATTACK_TYPE attack_type = ATTACK_TYPE::FIRST;
 private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
