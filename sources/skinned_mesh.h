@@ -248,6 +248,7 @@ public:
         float animation_blend_time    = 0.0f;    // アニメーション間の補完時間
         float animation_blend_seconds = 0.0f;    // アニメーション間の補完割合
         bool interpolation            = true;    // 補完するか
+        float playback_speed          = 1.0f;    // 再生速度
 
         animation animation{};
         animation::keyframe current_keyframe{};
@@ -383,8 +384,8 @@ public:
 
 
     // アニメーション
-    void play_animation(int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f);
-    void play_animation(anim_Parameters& para, int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f);
+    void play_animation(int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f, float playback_speed = 1.0f);
+    void play_animation(anim_Parameters& para, int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f, float playback_speed = 1.0f);
     void pause_animation() { anim_para.stop_animation = true; }
     void pause_animation(anim_Parameters& para) { para.stop_animation = true; }
     void progress_animation() { anim_para.stop_animation = false; }

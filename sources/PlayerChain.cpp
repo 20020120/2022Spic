@@ -509,17 +509,17 @@ void Player::transition_chain_attack()
 	switch (attack_type)
 	{
 	case ATTACK_TYPE::FIRST:
-		model->play_animation(AttackType1);
+		model->play_animation(AttackType1, false, true, 0.3f, 2.0f);
 		attack_type = ATTACK_TYPE::SECOND;
 		break;
 
 	case ATTACK_TYPE::SECOND:
-		model->play_animation(AttackType2);
+		model->play_animation(AttackType2, false, true, 0.3f, 2.0f);
 		attack_type = ATTACK_TYPE::THIRD;
 		break;
 
 	case ATTACK_TYPE::THIRD:
-		model->play_animation(AttackType3);
+		model->play_animation(AttackType3, false, true, 0.3f, 2.0f);
 		attack_type = ATTACK_TYPE::FIRST;
 		break;
 	}

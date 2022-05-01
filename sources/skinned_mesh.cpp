@@ -240,7 +240,7 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4&
         XMVECTOR Rot = XMLoadFloat4(&bone_node.rotation);
         //DirectX::XMStoreFloat4(&quaternion, XMVector4Transform(Rot, XMLoadFloat4x4(&world)));
         //quaternion = bone_node.rotation;
-        
+
         DirectX::XMVECTOR right_vec = { r._11, r._12, r._13 };
         XMStoreFloat3(&up, right_vec);
 
@@ -1032,7 +1032,7 @@ void SkinnedMesh::update_blend_animation(animation::keyframe& keyframe)
     }
 }
 
-void SkinnedMesh::play_animation(int animation_index, bool is_loop, bool interpolation, float blend_seconds)
+void SkinnedMesh::play_animation(int animation_index, bool is_loop, bool interpolation, float blend_seconds, float playback_speed)
 {
     assert("!!アニメーションが無いのにplay_animation関数を呼び出しています!!"
         && animation_clips.size() > 0);
@@ -1048,11 +1048,12 @@ void SkinnedMesh::play_animation(int animation_index, bool is_loop, bool interpo
     anim_para.stop_animation          = false;
     anim_para.end_of_animation        = false;
     anim_para.interpolation           = interpolation;
+    anim_para.playback_speed          = playback_speed;
 
     anim_para.old_keyframe = anim_para.current_keyframe;
 }
 
-void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, bool is_loop, bool interpolation, float blend_seconds)
+void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, bool is_loop, bool interpolation, float blend_seconds, float playback_speed)
 {
     assert("!!アニメーションが無いのにplay_animation関数を呼び出しています!!"
         && animation_clips.size() > 0);
@@ -1068,6 +1069,7 @@ void SkinnedMesh::play_animation(anim_Parameters& para, int animation_index, boo
     para.stop_animation          = false;
     para.end_of_animation        = false;
     para.interpolation           = interpolation;
+    para.playback_speed          = playback_speed;
 
     para.old_keyframe = para.current_keyframe;
 }
@@ -1081,7 +1083,7 @@ void SkinnedMesh::update_animation(float elapsed_time)
 
     // アニメーション＆アニメーションのフレーム算出
     anim_para.animation   = animation_clips.at(anim_para.current_anim_index);
-    anim_para.frame_index = static_cast<int>(anim_para.animation_tick * anim_para.animation.sampling_rate);
+    anim_para.frame_index = static_cast<int>(anim_para.animation_tick * anim_para.animation.sampling_rate * anim_para.playback_speed);
     // アニメーション間の補完割合算出
     float blendRate = 1.0f;
     if (anim_para.interpolation && anim_para.animation_blend_time < anim_para.animation_blend_seconds)
@@ -1142,7 +1144,7 @@ void SkinnedMesh::update_animation(anim_Parameters& para, float elapsed_time)
 
     // アニメーション＆アニメーションのフレーム算出
     para.animation = animation_clips.at(para.current_anim_index);
-    para.frame_index = static_cast<int>(para.animation_tick * para.animation.sampling_rate);
+    para.frame_index = static_cast<int>(para.animation_tick * para.animation.sampling_rate * para.playback_speed);
     // アニメーション間の補完割合算出
     float blendRate = 1.0f;
     if (para.interpolation && para.animation_blend_time < para.animation_blend_seconds)
