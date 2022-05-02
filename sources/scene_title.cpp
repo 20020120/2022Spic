@@ -1,7 +1,14 @@
+#include <thread>
+#include <wbemidl.h>
+#pragma comment(lib, "wbemuuid.lib")
+
 #include "scene_title.h"
 #include "scene_game.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
+
+
+bool SceneTitle::is_ready = false;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
@@ -32,6 +39,11 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	arrival_pos1 = { 250.0f, 515.0f };
 	arrival_pos2 = { 950.0f, 515.0f };
+
+	//スレッド開始
+	std::thread thread(loading_thread, graphics.get_device().Get());
+	//スレッドの管理を放棄
+	thread.detach();
 }
 
 void SceneTitle::uninitialize() {}
@@ -49,7 +61,11 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
-			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+			if (is_ready)
+			{
+				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+				is_ready = false;
+			}
 			return;
 		}
 		break;
@@ -70,6 +86,9 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
+
+
+
 }
 
 void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
@@ -111,4 +130,12 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	sprite_selecter->render(graphics.get_dc().Get(), selecter2.position, selecter2.scale,
 		selecter2.pivot, selecter2.color, selecter2.angle, selecter2.texpos, selecter2.texsize);
 	sprite_selecter->end(graphics.get_dc().Get());
+}
+
+void SceneTitle::loading_thread(ID3D11Device* device)
+{
+	//--タイトル裏ロード--//
+
+
+	is_ready = true;
 }

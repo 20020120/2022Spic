@@ -18,16 +18,18 @@ private:
     //--------< •Ï” >--------//
     std::unique_ptr<SpriteBatch> hp_frame{ nullptr };
     std::unique_ptr<SpriteBatch> hp_back{ nullptr };
-    std::unique_ptr<SpriteBatch> hp_body{ nullptr };
+    std::unique_ptr<SpriteBatch> hp_body_sprite{ nullptr };
     std::unique_ptr<SpriteBatch> mp_frame{ nullptr };
     std::unique_ptr<SpriteBatch> mp_back{ nullptr };
-    std::unique_ptr<SpriteBatch> mp_body{ nullptr };
+    std::unique_ptr<SpriteBatch> mp_body_sprite{ nullptr };
     std::unique_ptr<SpriteBatch> base_sprite{ nullptr };
     std::unique_ptr<SpriteBatch> base2_sprite{ nullptr };
 
     Element base;
     Element hp_gauge;
+    Element hp_body;
     Element mp_gauge;
+    Element mp_body;
     float hp_percent = 1.0f;
     float mp_percent = 1.0f;
 };

@@ -44,4 +44,7 @@ private:
     DirectX::XMFLOAT2 arrival_pos2{};
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
     int state = 0;
+    //--------< マルチスレッド >--------//
+    static void loading_thread(ID3D11Device* device);
+    static bool is_ready;
 };
