@@ -67,6 +67,7 @@ inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
 
 inline void EnemyEditor::fGuiMenu()
 {
+#ifdef USE_IMGUI
     if (ImGui::TreeNode("EnemyEditor"))
     {
         if (ImGui::Button("Load"))
@@ -79,6 +80,7 @@ inline void EnemyEditor::fGuiMenu()
         }
         ImGui::TreePop();
     }
+#endif
 }
 
 inline void EnemyEditor::fLoad()

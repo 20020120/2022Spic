@@ -1,8 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
 #include<functional>
-#include<tuple>
-#include<map>
 #include "Common.h"
 #include "EnemiesEditor.h"
 //****************************************************************

@@ -19,7 +19,9 @@ public:
               const char* FileName_,
               const EnemyParamPack& Param_,
               const DirectX::XMFLOAT3& EntryPosition_);
+protected:
     BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_);
+public:
     ~BaseEnemy() override;
 
     virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
@@ -72,6 +74,7 @@ private:
     int mAttackPower{};
     float mAttackInvTime{};
 protected:
+    const float mStunTime{}; // ステートの初期化でこの値をTimerに代入する
     bool mIsAttack{};
 private:
     float mCubeHalfSize{};

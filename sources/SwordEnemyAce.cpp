@@ -242,13 +242,13 @@ void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void SwordEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(AnimationName::stun, true);
-    mWaitTimer = mkStunTimer;
+    mWaitTimer = mStunTime;
 }
 
 void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mWaitTimer -= elapsedTime_;
-    if(mkStunTimer<=0.0f)
+    if(mWaitTimer<=0.0f)
     {
         fChangeState(DivideState::Idle);
     }

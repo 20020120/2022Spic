@@ -249,13 +249,13 @@ void SpearEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
 
-    mWaitTimer = 0;
+    mWaitTimer = mStunTime;
 }
 
 void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mWaitTimer += elapsedTime_;
-    if (mWaitTimer >= mStunTimeSec)
+    mWaitTimer -= elapsedTime_;
+    if (mWaitTimer <= 0.0f)
     {
         fChangeState(DivedState::Idle);
     }

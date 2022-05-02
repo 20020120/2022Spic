@@ -76,5 +76,4 @@ public:
 private:
     bool mIsHit{};
     bool mIsWaitCounter{};
-    const float mkStunTimer = 3.0f;
 };
