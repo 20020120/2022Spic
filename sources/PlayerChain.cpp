@@ -88,7 +88,7 @@ void Player::ChainLockOn()
 }
 
 
-#define CHAIN_DEBUG
+//#define CHAIN_DEBUG
 
 #ifdef CHAIN_DEBUG
 std::vector<DirectX::XMFLOAT3> debug_way_points;
@@ -207,40 +207,43 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	{
 		// 敵がいなければ通常行動に戻る
 		if (enemies.size() == 0) { transition_normal_behavior(); }
-
 		// スタンしてなくてもロックオン
-	    // 決められた時間内に敵を索敵しロックオンステートへ
-		search_time -= elapsed_time;
-		if (search_time > 0)
-		{
-			/*キャンセルがあれがここへ*/
-
-
-
-
-			for (int i = 0; i < enemies.size(); ++i)
-			{
-				bool registered = false;
-				for (auto index : chain_lockon_enemy_indexes)
-				{
-					if (index == i) // 一度登録したインデックスは登録しない
-					{
-						registered = true;
-						break;
-					}
-				}
-				if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
-				{
-					chain_lockon_enemy_indexes.emplace_back(i); // 登録
-					LockOnSuggest enemy_suggest; // サジェスト登録
-					enemy_suggest.position = enemies.at(i)->fGetPosition();
-					lockon_suggests.emplace_back(enemy_suggest);
-				}
-			}
-		}
+		// 決められた時間内に敵を索敵しロックオンステートへ
 		else
 		{
-			transition_chain_lockon_begin();
+			search_time -= elapsed_time;
+			if (search_time > 0)
+			{
+				/*キャンセルがあれがここへ*/
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
+				{
+					transition_normal_behavior();
+				}
+
+				for (int i = 0; i < enemies.size(); ++i)
+				{
+					bool registered = false;
+					for (auto index : chain_lockon_enemy_indexes)
+					{
+						if (index == i) // 一度登録したインデックスは登録しない
+						{
+							registered = true;
+							break;
+						}
+					}
+					if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
+					{
+						chain_lockon_enemy_indexes.emplace_back(i); // 登録
+						LockOnSuggest enemy_suggest; // サジェスト登録
+						enemy_suggest.position = enemies.at(i)->fGetPosition();
+						lockon_suggests.emplace_back(enemy_suggest);
+					}
+				}
+			}
+			else
+			{
+				transition_chain_lockon_begin();
+			}
 		}
 	}
 	else // 非覚醒状態
@@ -263,9 +266,10 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			if (search_time > 0)
 			{
 				/*キャンセルがあれがここへ*/
-
-
-
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
+				{
+					transition_normal_behavior();
+				}
 
 				for (int i = 0; i < enemies.size(); ++i)
 				{
