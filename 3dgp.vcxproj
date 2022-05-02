@@ -253,6 +253,7 @@
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\MiddleBoss.cpp" />
     <ClCompile Include="sources\MiddleBossStateMachines.cpp" />
+    <ClCompile Include="sources\mini_map.cpp" />
     <ClCompile Include="sources\mouse.cpp" />
     <ClCompile Include="sources\MoveBehavior.cpp" />
     <ClCompile Include="sources\ChaseEnemy.cpp" />
@@ -360,6 +361,7 @@
     <ClInclude Include="sources\JsonFileManager.h" />
     <ClInclude Include="sources\LastBoss.h" />
     <ClInclude Include="sources\MiddleBoss.h" />
+    <ClInclude Include="sources\mini_map.h" />
     <ClInclude Include="sources\misc.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />
