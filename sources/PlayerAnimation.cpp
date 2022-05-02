@@ -137,6 +137,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     if (charge_time > CHARGE_MAX_TIME)
     {
         velocity = {};
+        end_dash_effect = true;
 
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -158,6 +159,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         if (is_enemy_hit)
         {
+            end_dash_effect = true;
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity = {};
@@ -465,7 +467,7 @@ void Player::TransitionIdle(float blend_second)
 {
     condition_state = ConditionState::Alive;
     //ダッシュエフェクトの終了
-    end_dash_effect = true;
+    //end_dash_effect = true;
     //覚醒状態の時の待機アニメーションにセット
     if(is_awakening)model->play_animation(AnimationClips::AwakingIdle, true,true,blend_second);
     //通常状態の待機アニメーションにセット
@@ -483,7 +485,7 @@ void Player::TransitionIdle(float blend_second)
 void Player::TransitionMove(float blend_second)
 {
     //ダッシュエフェクトの終了
-    end_dash_effect = true;
+    //end_dash_effect = true;
     //覚醒状態の時の移動アニメーションの設定
     if(is_awakening)model->play_animation(AnimationClips::AwakingMove, true,true, blend_second);
     //通常状態の時に移動アニメーションの設定

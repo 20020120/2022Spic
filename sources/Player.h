@@ -54,11 +54,11 @@ public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override;
     //チュートリアル用のアップデート
-    void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome);
+    void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //プレイヤーの最大体力
-    static constexpr int MAX_HEALTH = 50.0f;
+    static constexpr int MAX_HEALTH = 50;
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //攻撃1撃目の猶予時間
@@ -79,7 +79,7 @@ private:
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 1.0f;
     //攻撃1の時のアニメーションスピード
-    static constexpr float ATTACK1_ANIMATION_SPEED = 2.0f;
+    static constexpr float ATTACK1_ANIMATION_SPEED = 3.0f;
     //攻撃2の時のアニメーションスピード
     static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
     //攻撃3の時のアニメーションスピード
@@ -543,30 +543,30 @@ private:
     //                        チュートリアルに関する関数,変数
     //------------------------------------------------------------------------------------------//
     //関数ポインタ
-    typedef void(Player::* PlayerTutorial)(float elapsed_time, SkyDome* sky_dome);
+    typedef void(Player::* PlayerTutorial)(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //関数ポインタの変数
     PlayerTutorial player_tutorial = &Player::MoveTutorialUpdate;
     //チュートリアルの関数ポインタを呼ぶ
-    void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
 private:
     //-------------------------------------各種更新処理------------------------------------------//
     //1番最初(移動)のチュートリアルの更新処理
-    void MoveTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void MoveTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //2番目(回避)のチュートリアルの更新処理
-    void AvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void AvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //ロックオンのチュートリアルの更新処理
-    void LockOnTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void LockOnTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //攻撃のチュートリアル
-    void AttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void AttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //回り込み回避のチュートリアル
-    void BehindAvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void BehindAvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //チェイン攻撃のチュートリアル
-    void ChainAttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void ChainAttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //覚醒状態のチュートリアル
-    void AwaikingTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    void AwaikingTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //--------------------------------------各種遷移処理-----------------------------------------//
     //回避のチュートリアルに遷移
     void TransitionAvoidanceTutorial();
@@ -599,6 +599,19 @@ private:
         AwaikingTutorial
     };
     TutorialState tutorial_state{ TutorialState::MoveTutorial };
+private:
+    //チュートリアルの時のアニメーション更新処理
+    typedef void(Player::* PlayerTutorialActivity)(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    //関数ポインタの変数
+    PlayerTutorialActivity player_tutorial_activity = &Player::TutorialIdleUpdate;
+    //待機アニメーションの更新処理
+    void TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    //移動アニメーションの更新処理
+    void TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+
+    //各遷移関数
+    void TransitionTutoriaIdle(float blend_second = 0.3f);
+    void TransitionTutorialMove(float blend_second = 0.3f);
 public:
     int GetTutorialState() { return static_cast<int>(tutorial_state); }
 };

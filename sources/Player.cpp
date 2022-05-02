@@ -21,7 +21,6 @@ Player::Player(GraphicsPipeline& graphics)
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
 
-
     player_bones[0] = model->get_bone_by_name("body_joint");
     player_bones[1] = model->get_bone_by_name("face_joint");
     player_bones[2] = model->get_bone_by_name("largeblade_L_joint");
@@ -60,6 +59,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     {
     case Player::Behavior::Normal:
         player_attack_power = 3;
+        if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+        {
+            transition_chain_behavior();
+        }
         //ロックオン
         LockOn();
         //カメラリセット
@@ -183,8 +186,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
-
-            if (ImGui::Button("AvoidanceTutorial"))TransitionAvoidanceTutorial();
 
 
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
@@ -558,19 +559,22 @@ void Player::StunSphere()
 
 void Player::SetTarget( BaseEnemy* target_enemies)
 {
-    if (target_enemies == nullptr)
+    //if (target_enemies == nullptr)
+    //{
+    //    target_enemy = nullptr;
+    //}
+    if (target_enemy != nullptr)
     {
-        target_enemy = nullptr;
-    }
-    //ターゲットしている敵が死んでいたら次の敵を入れる
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() == false)
-    {
-        //倒した敵の位置を保存
-        //if (target_lerp_rate > 1.0f)old_target = target;
-        //補間率の初期化
-        target_lerp_rate = 0;
-        //一番近い敵を保存する
-        target_enemy = target_enemies;
+        //ターゲットしている敵が死んでいるかスタンしていたら
+        if (target_enemy->fGetIsAlive() == false || target_enemy->fGetStun() == true)
+        {
+            //倒した敵の位置を保存
+            //if (target_lerp_rate > 1.0f)old_target = target;
+            //補間率の初期化
+            target_lerp_rate = 0;
+            //一番近い敵を保存する
+            target_enemy = target_enemies;
+        }
     }
     //ターゲットを設定するのはロックオンした瞬間だけ
     if (is_lock_on == false && target_enemies != nullptr)
@@ -850,7 +854,7 @@ void Player::LockOn()
             if (length < LOCK_ON_LANGE)
             {
                 //ロックオンするボタンを押したら
-                if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
+                if (game_pad->get_trigger_L())
                 {
                     //まだロックオンしていなかったらカメラに渡す用の変数にtrueを入れる
                     if (is_lock_on == false)
