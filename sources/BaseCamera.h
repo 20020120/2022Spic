@@ -26,7 +26,7 @@ public:
 
     void debug_gui();
     //--------<getter/setter>--------//
-// range
+    // range
     void set_range(float r) { range = r; }
     // target
     void set_target(const DirectX::XMFLOAT3& t) { target = t; }
@@ -91,5 +91,5 @@ protected:
     bool attack{ false };
     bool attacking{ false };
     bool cameraAvoidEnd{ false };
-    float lerpLate{ 100.0f };
+    float lerpLate{ 50.0f };
 };
