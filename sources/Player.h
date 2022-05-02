@@ -583,6 +583,7 @@ private:
     void TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialChargeinitUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
@@ -592,6 +593,7 @@ private:
     void TransitionTutoriaIdle(float blend_second = 0.3f);
     void TransitionTutorialMove(float blend_second = 0.3f);
     void TransitionTutorialAvoidance(float blend_second = 0.3f);
+    void TransitionTutorialBehindAvoidance();
     void TransitionTutorialChargeInit();
     void TransitionTutorialCharge(float blend_second = 0.3f);
     void TransitionTutorialAttack1(float blend_second = 0.3f);
