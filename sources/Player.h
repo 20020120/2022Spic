@@ -511,7 +511,10 @@ private:
         TransitionIdle();
     }
 
+public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
+    bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
+private:
     //--------< 変数 >--------//
     struct LockOnSuggest
     {
@@ -527,6 +530,7 @@ private:
     std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
     std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
     std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
+    bool is_chain_attack = false; // ロックオン完了から攻撃終了までtrue
     enum class ATTACK_TYPE
     {
         FIRST,
@@ -541,7 +545,7 @@ private:
     //関数ポインタ
     typedef void(Player::* PlayerTutorial)(float elapsed_time, SkyDome* sky_dome);
     //関数ポインタの変数
-    PlayerTutorial player_tutorial = &Player::TutolialFirstUpdate;
+    PlayerTutorial player_tutorial = &Player::MoveTutorialUpdate;
     //チュートリアルの関数ポインタを呼ぶ
     void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
 public:
@@ -549,19 +553,52 @@ public:
     void ChangeTutorialState(int state);
 private:
     //-------------------------------------各種更新処理------------------------------------------//
-    //1番最初のチュートリアルの更新処理
-    void TutolialFirstUpdate(float elapsed_time, SkyDome* sky_dome);
-    //2番最初のチュートリアルの更新処理
-    void TutolialSecondUpdate(float elapsed_time, SkyDome* sky_dome);
+    //1番最初(移動)のチュートリアルの更新処理
+    void MoveTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //2番目(回避)のチュートリアルの更新処理
+    void AvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //ロックオンのチュートリアルの更新処理
+    void LockOnTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //攻撃のチュートリアル
+    void AttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //回り込み回避のチュートリアル
+    void BehindAvoidanceTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //チェイン攻撃のチュートリアル
+    void ChainAttackTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
+    //覚醒状態のチュートリアル
+    void AwaikingTutorialUpdate(float elapsed_time, SkyDome* sky_dome);
     //--------------------------------------各種遷移処理-----------------------------------------//
-    //2番目のチュートリアルのステートに遷移
-    void TransitionTutorialSecond();
+    //回避のチュートリアルに遷移
+    void TransitionAvoidanceTutorial();
+    //ロックオンのチュートリアルに遷移
+    void TransitionLockOnTutorial();
+    //攻撃のチュートリアルに遷移
+    void TransitionAttackTutorial();
+    //回り込み回避のチュートリアルに遷移
+    void TransitionBehindAvoidanceTutorial();
+    //チェイン攻撃のチュートリアルに遷移
+    void TransitionChainAttackTutorial();
+    //覚醒状態のチュートリアルに遷移
+    void TransitionAwaikingTutorial();
     //1が最初で大きくなっていくようにする
     enum class TutorialState
     {
-        First = 1,
-        Second,
-        Third
+        //移動
+        MoveTutorial = 1,
+        //回避(通常)
+        AvoidanceTutorial,
+        //ロックオン
+        LockOnTutorial,
+        //攻撃
+        AttackTutorial,
+        //回り込み回避
+        BehindAvoidanceTutorial,
+        //チェイン攻撃
+        ChainAttackTutorial,
+        //覚醒
+        AwaikingTutorial
     };
-    TutorialState tutorial_state{ TutorialState::First };
+    TutorialState tutorial_state{ TutorialState::MoveTutorial };
+public:
+    int GetTutorialState() { return static_cast<int>(tutorial_state); }
 };

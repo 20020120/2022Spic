@@ -202,20 +202,14 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		}
 	}
 #else
-	bool is_stun = false;
-	// スタンされた敵がいなければ通常行動に戻る
-	for (const auto& enemy : enemies)
-	{
-		if (enemy->fGetStun())
-		{
-			is_stun = true;
-			break;
-		}
-	}
 
-	if (!is_stun) { transition_normal_behavior(); }
-	else // 決められた時間内に敵を索敵しロックオンステートへ
+	if (is_awakening) // 覚醒状態
 	{
+		// 敵がいなければ通常行動に戻る
+		if (enemies.size() == 0) { transition_normal_behavior(); }
+
+		// スタンしてなくてもロックオン
+	    // 決められた時間内に敵を索敵しロックオンステートへ
 		search_time -= elapsed_time;
 		if (search_time > 0)
 		{
@@ -235,7 +229,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						break;
 					}
 				}
-				if (!registered && enemies.at(i)->fGetStun() && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+				if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
 				{
 					chain_lockon_enemy_indexes.emplace_back(i); // 登録
 					LockOnSuggest enemy_suggest; // サジェスト登録
@@ -249,6 +243,56 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			transition_chain_lockon_begin();
 		}
 	}
+	else // 非覚醒状態
+	{
+		bool is_stun = false;
+		// スタンされた敵がいなければ通常行動に戻る
+		for (const auto& enemy : enemies)
+		{
+			if (enemy->fGetStun())
+			{
+				is_stun = true;
+				break;
+			}
+		}
+
+		if (!is_stun) { transition_normal_behavior(); }
+		else // 決められた時間内に敵を索敵しロックオンステートへ
+		{
+			search_time -= elapsed_time;
+			if (search_time > 0)
+			{
+				/*キャンセルがあれがここへ*/
+
+
+
+
+				for (int i = 0; i < enemies.size(); ++i)
+				{
+					bool registered = false;
+					for (auto index : chain_lockon_enemy_indexes)
+					{
+						if (index == i) // 一度登録したインデックスは登録しない
+						{
+							registered = true;
+							break;
+						}
+					}
+					if (!registered && enemies.at(i)->fGetStun() && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+					{
+						chain_lockon_enemy_indexes.emplace_back(i); // 登録
+						LockOnSuggest enemy_suggest; // サジェスト登録
+						enemy_suggest.position = enemies.at(i)->fGetPosition();
+						lockon_suggests.emplace_back(enemy_suggest);
+					}
+				}
+			}
+			else
+			{
+				transition_chain_lockon_begin();
+			}
+		}
+	}
 #endif // CHAIN_DEBUG
 
 	//旋回処理
@@ -257,7 +301,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 void Player::transition_chain_lockon_begin()
 {
-	model->play_animation(ChargeInit);
+	if (is_awakening) { model->play_animation(AwakingChargeInit); }
+	else { model->play_animation(ChargeInit); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
 }
 
@@ -271,6 +316,8 @@ void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy
 
 void Player::transition_chain_lockon()
 {
+	is_chain_attack = true;
+
 	if (!sort_points.empty()) sort_points.clear();
 	if (!way_points.empty()) way_points.clear();
 	if (!interpolated_way_points.empty()) interpolated_way_points.clear();
@@ -387,7 +434,8 @@ void Player::transition_chain_lockon()
 	curve.interpolate(interpolated_way_points, STEPS);
 
  	transit_index = 0;
-	model->play_animation(Charge, true);
+	if (is_awakening) { model->play_animation(AwakingCharge, true); }
+	else { model->play_animation(Charge, true); }
 	player_chain_activity = &Player::chain_lockon_update;
 }
 
@@ -509,17 +557,20 @@ void Player::transition_chain_attack()
 	switch (attack_type)
 	{
 	case ATTACK_TYPE::FIRST:
-		model->play_animation(AttackType1, false, true, 0.3f, 2.0f);
+		if (is_awakening) { model->play_animation(AwakingAttackType1, false, true, 0.3f, 2.0f); }
+		else { model->play_animation(AttackType1, false, true, 0.3f, 2.0f); }
 		attack_type = ATTACK_TYPE::SECOND;
 		break;
 
 	case ATTACK_TYPE::SECOND:
-		model->play_animation(AttackType2, false, true, 0.3f, 2.0f);
+		if (is_awakening) { model->play_animation(AwakingAttackType2, false, true, 0.3f, 2.0f); }
+		else { model->play_animation(AttackType2, false, true, 0.3f, 2.0f); }
 		attack_type = ATTACK_TYPE::THIRD;
 		break;
 
 	case ATTACK_TYPE::THIRD:
-		model->play_animation(AttackType3, false, true, 0.3f, 2.0f);
+		if (is_awakening) { model->play_animation(AwakingAttackType3, false, true, 0.3f, 2.0f); }
+		else { model->play_animation(AttackType3, false, true, 0.3f, 2.0f); }
 		attack_type = ATTACK_TYPE::FIRST;
 		break;
 	}
@@ -541,12 +592,15 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		// 分割したポイントの最後なら通常行動へ
 		if (transit_index >= interpolated_way_points.size() - 1)
 		{
+			is_chain_attack = false;
 			transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{
 			player_chain_activity = &Player::chain_lockon_update;
-			model->play_animation(Charge, true); // 初期化通らないのでここでもアニメーション再生
+			// 初期化通らないのでここでもアニメーション再生
+			if (is_awakening) { model->play_animation(AwakingCharge, true); }
+			else { model->play_animation(Charge, true); }
 		}
 	}
 }
