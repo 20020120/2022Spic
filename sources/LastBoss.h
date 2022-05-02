@@ -8,6 +8,15 @@
 
 class LastBoss final : public BaseEnemy
 {
+    struct DivideState
+    {
+        inline static const char* ShipStart  = "ShipStart";
+        inline static const char* ShipIdle   = "ShipIdle";
+        inline static const char* ShipAttack = "ShipAttack";
+        inline static const char* ShipBeam   = "ShipBeam";
+
+
+    };
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
              const DirectX::XMFLOAT3& EmitterPoint_,

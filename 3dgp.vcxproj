@@ -364,6 +364,7 @@
     <ClInclude Include="sources\MiddleBoss.h" />
     <ClInclude Include="sources\mini_map.h" />
     <ClInclude Include="sources\misc.h" />
+    <ClInclude Include="sources\ModelCashe.h" />
     <ClInclude Include="sources\mouse.h" />
     <ClInclude Include="sources\MoveBehavior.h" />
     <ClInclude Include="sources\ChaseEnemy.h" />

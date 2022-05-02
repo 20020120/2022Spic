@@ -803,6 +803,9 @@
     <ClInclude Include="sources\mini_map.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
+    <ClInclude Include="sources\ModelCashe.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
