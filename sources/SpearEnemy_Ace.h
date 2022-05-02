@@ -73,4 +73,6 @@ private:
 
     void fStunInit();
     void fStunUpdate(float elapsedTime_);
+public:
+    void fSetStun(bool Arg_) override;
 };
