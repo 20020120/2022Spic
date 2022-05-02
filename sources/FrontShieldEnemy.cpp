@@ -126,7 +126,7 @@ void ShieldEnemy::fUpdateAttackCapsule()
 void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
 {
     //シールド効果がON状態且つ、正面から攻撃された場合は攻撃をはじくアニメーションへ遷移
-    if( is_shield  &&fJudge_Front_Attacked() )
+    if( is_shield  &&fJudge_in_view() )
     {
         fChangeState(DivedState::Shield);
         return;
@@ -180,8 +180,8 @@ void ShieldEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     //--------------------<プレイヤーの方向に回転>--------------------//
     fTurnToPlayer(elapsedTime_, 2.0f);
 
-    // プレイヤーとの距離が一定以下になったら
-    if (mDifenceRange >= Math::Length(mPlayerPosition - mPosition))
+    // プレイヤーとの距離が一定以下で自分の視界内にいたら
+    if (mDifenceRange >= Math::Length(mPlayerPosition - mPosition) && fJudge_in_view())
     {
         fChangeState(DivedState::ShieldReady);
     }
@@ -263,8 +263,8 @@ void ShieldEnemy::fDieInit()
 void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 }
-// //ダメージを受けたときに正面からの攻撃かどうかを判定する
-bool ShieldEnemy::fJudge_Front_Attacked() const
+//プレイヤーが自分の視界内にいるか判別
+bool ShieldEnemy::fJudge_in_view() const
 {
     //プレイヤーとの位置関係を判定し、攻撃されたときに自分の視界45度いないなら正面と判定する
     const DirectX::XMVECTOR EtoP_vec = Math::calc_vector_AtoB_normalize(mPosition, mPlayerPosition);
@@ -274,7 +274,7 @@ bool ShieldEnemy::fJudge_Front_Attacked() const
     float dot;
     DirectX::XMStoreFloat(&dot, Dot);
     dot = acosf(dot);
-    if (DirectX::XMConvertToDegrees(dot) < 45.0f)
+    if (DirectX::XMConvertToDegrees(dot) < mViewingAngle)
     {
         //正面からの攻撃ならtrueを返す
         return true;

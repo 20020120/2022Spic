@@ -52,7 +52,7 @@ public:
     void fDamaged(int Damage_, float InvincibleTime_) ;
 
 private:
-    bool fJudge_Front_Attacked() const;
+    bool fJudge_in_view() const;
 
     //****************************************************************
     // 
@@ -73,6 +73,7 @@ private:
     const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
     const float mStunSec{ 2.0f };  // スタン時間（秒）
     const float mSpawnDelaySec{ 1.0f };   // 登場後の長さ（秒）
+    const float mViewingAngle{ 45.0f };   // 視野角
 
     //--------------------<各ステートの待ち時間>--------------------//
     const float mShieldReadySec{ 3.0f };          // 盾を構える
@@ -103,10 +104,6 @@ private:
     // 盾防ぎ
     void fShieldInit();
     void fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
-    
-    void fEscapeInit();
-    void fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     // スタン
     void fStunInit();

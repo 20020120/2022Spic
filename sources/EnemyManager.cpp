@@ -280,9 +280,9 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     break;
     case EnemyType::Shield:
     {
-        /* BaseEnemy* enemy = new Shield(graphics_,
-             Source_.mEmitterPoint, param);
-         mEnemyVec.emplace_back(enemy);*/
+        BaseEnemy* enemy = new ShieldEnemy(graphics_,
+            Source_.mEmitterPoint, param);
+        mEnemyVec.emplace_back(enemy);
     }
     break;
     case EnemyType::Sword:
