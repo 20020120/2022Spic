@@ -60,7 +60,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON"};
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL"};
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -329,6 +329,28 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 12);
 			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::LOCKON_CENTRAL))
+			{
+				effect_constants->data.lockon_scope = 0.3f;
+#ifdef USE_IMGUI
+				std::string ss = "lockon central " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat("scope", &effect_constants->data.lockon_scope, 0.001f);
+						ImGui::DragFloat("thickness", &effect_constants->data.lockon_thickness, 0.001f);
+						ImGui::ColorEdit3("color", &effect_constants->data.lockon_color.x);
+						ImGui::DragFloat("alpha", &effect_constants->data.lockon_alpha, 0.01f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 12);
+			}
 		}
 	}
 }
@@ -385,4 +407,13 @@ void PostEffect::stage_choice_post_effect(ID3D11DeviceContext* dc, float divisio
 	effect_constants->data.low_resolution_number_of_divisions = divisions;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOW_RESOLUTION);
+}
+
+void PostEffect::lockon_post_effect(ID3D11DeviceContext* dc, float scope, float alpha)
+{
+	effect_constants->data.lockon_scope = scope;
+	effect_constants->data.lockon_alpha = alpha;
+	post_effect_count = 2;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOCKON);
+	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::LOCKON_CENTRAL);
 }
