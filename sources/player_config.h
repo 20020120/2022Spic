@@ -23,6 +23,7 @@ private:
     std::unique_ptr<SpriteBatch> mp_back{ nullptr };
     std::unique_ptr<SpriteBatch> mp_body{ nullptr };
     std::unique_ptr<SpriteBatch> base_sprite{ nullptr };
+    std::unique_ptr<SpriteBatch> base2_sprite{ nullptr };
 
     Element base;
     Element hp_gauge;

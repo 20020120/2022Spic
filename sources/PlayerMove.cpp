@@ -126,6 +126,41 @@ void PlayerMove::UpdateRotateToTarget(float elapsed_time, DirectX::XMFLOAT3& pos
     PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
 }
 
+void PlayerMove::UpdateTutorialVelocity(int tutorial_state, float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
+{
+    DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+    MovingProcess(movevec.x, movevec.z, move_speed);
+    SetDirections(orientation);
+    //åoâﬂÉtÉåÅ[ÉÄ
+    float elapsed_frame = 60.0f * elapsed_time;
+
+    switch (static_cast<TutorialState>(tutorial_state))
+    {
+    case TutorialState::MoveTutorial:
+
+        break;
+    case TutorialState::AvoidanceTutorial:
+        break;
+    case TutorialState::LockOnTutorial:
+        break;
+    case TutorialState::AttackTutorial:
+        break;
+    case TutorialState::BehindAvoidanceTutorial:
+        break;
+    case TutorialState::ChainAttackTutorial:
+        break;
+    case TutorialState::AwaikingTutorial:
+        break;
+    default:
+        break;
+    }
+    UpdateVerticalVelocity(elapsed_frame);
+    UpdateVerticalMove(elapsed_time, position, sky_dome);
+    UpdateHrizontalVelocity(elapsed_frame);
+    UpdateHorizontalMove(elapsed_time, position, sky_dome);
+
+}
+
 
 void PlayerMove::UpdateVerticalVelocity(float elapsed_frame)
 {
