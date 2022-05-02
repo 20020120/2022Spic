@@ -293,3 +293,12 @@ void SwordEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     throw std::logic_error("Not implemented");
 }
+
+void SwordEnemy::fSetStun(bool arg)
+{
+    mIsStun = arg;
+    if (mIsStun)
+    {
+        fChangeState(DivedState::Stun);
+    }
+}

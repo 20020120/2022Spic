@@ -270,3 +270,12 @@ void SpearEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     throw std::logic_error("Not implemented");
 }
+
+void SpearEnemy::fSetStun(bool arg)
+{
+    mIsStun = arg;
+    if (mIsStun)
+    {
+        fChangeState(DivedState::Stun);
+    }
+}

@@ -106,6 +106,18 @@ void SwordEnemy_Ace::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::CounterAttack, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun, tuple));
+    }
     fChangeState(DivideState::Start);
 }
 
@@ -227,6 +239,21 @@ void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     }
 }
 
+void SwordEnemy_Ace::fStunInit()
+{
+    mpModel->play_animation(AnimationName::stun, true);
+    mWaitTimer = mkStunTimer;
+}
+
+void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mWaitTimer -= elapsedTime_;
+    if(mkStunTimer<=0.0f)
+    {
+        fChangeState(DivideState::Idle);
+    }
+}
+
 void SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
 {
     if (mInvincibleTime <= 0.0f)
@@ -241,6 +268,15 @@ void SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
     if (mCurrentHitPoint <= 0)
     {
         fDie();
+    }
+}
+
+void SwordEnemy_Ace::fSetStun(bool arg)
+{
+    mIsStun = arg;
+    if (mIsStun)
+    {
+        fChangeState(DivideState::Stun);
     }
 }
 
