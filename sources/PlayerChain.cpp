@@ -316,6 +316,8 @@ void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy
 
 void Player::transition_chain_lockon()
 {
+	is_chain_attack = true;
+
 	if (!sort_points.empty()) sort_points.clear();
 	if (!way_points.empty()) way_points.clear();
 	if (!interpolated_way_points.empty()) interpolated_way_points.clear();
@@ -590,6 +592,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		// 分割したポイントの最後なら通常行動へ
 		if (transit_index >= interpolated_way_points.size() - 1)
 		{
+			is_chain_attack = false;
 			transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
