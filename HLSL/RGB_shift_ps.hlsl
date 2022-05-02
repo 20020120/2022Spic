@@ -14,8 +14,15 @@ float4 main(VS_OUT pin) : SV_TARGET
     float alpha = tex.a;
     // r’l‚ð‰¡•ûŒü‚É‚¸‚ç‚·
     float2 sample_point = pin.texcoord;
-    sample_point.x += 0.005;
-    tex.r = texture_maps[0].Sample(sampler_states[ANISOTROPIC], sample_point).r;
+    if (pin.texcoord.y > 0.5f)
+    {
+        sample_point.x += 0.05;
+    }
+    else
+    {
+        sample_point.x -= 0.05;
+    }
+    tex = texture_maps[0].Sample(sampler_states[ANISOTROPIC], sample_point);
 
     return float4(tex.rgb, alpha);
 }
