@@ -9,7 +9,9 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& Emitter
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
     : BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_animation_second.fbx")
-{}
+{
+    mScale = { 0.05f,0.05f,0.05f };
+}
 
 LastBoss::~LastBoss()
 {
@@ -17,7 +19,8 @@ LastBoss::~LastBoss()
 
 void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    throw std::logic_error("Not implemented");
+    fBaseUpdate(elapsedTime_, Graphics_);
+    fGuiMenu();
 }
 
 void LastBoss::fUpdateAttackCapsule()
@@ -43,4 +46,15 @@ void LastBoss::fSetStun(bool arg)
 void LastBoss::fRegisterFunctions()
 {
     throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fGuiMenu()
+{
+#ifdef USE_IMGUI
+    ImGui::Begin("LastBoss");
+    ImGui::DragFloat3("Position", &mPosition.x);
+    ImGui::DragFloat3("Scale", &mScale.x);
+    
+    ImGui::End();
+#endif
 }

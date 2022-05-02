@@ -22,7 +22,24 @@ public:
     void fSetStun(bool Arg_) override;
 protected:
     void fRegisterFunctions() override;
+
+private:
+    void fGuiMenu();
+
 public:
 
 
+private:
+    // 戦艦の最初の動き（演出）
+    void fShipStartInit();
+    void fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // 戦艦の待機状態
+    void fShipIdleInit();
+    void fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // 戦艦の攻撃
+    void fShipAttackInit();
+    void fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    // 戦艦の最後の攻撃（これを耐えれば次へ）
+    void fShipBeamInit();
+    void fShipBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 };

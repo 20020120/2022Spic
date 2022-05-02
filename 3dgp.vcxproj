@@ -250,6 +250,7 @@
     <ClCompile Include="sources\icon_base.cpp" />
     <ClCompile Include="sources\JsonFileManager.cpp" />
     <ClCompile Include="sources\LastBoss.cpp" />
+    <ClCompile Include="sources\LastBossBehavior.cpp" />
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\MiddleBoss.cpp" />
     <ClCompile Include="sources\MiddleBossStateMachines.cpp" />

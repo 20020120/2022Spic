@@ -483,6 +483,9 @@
     <ClCompile Include="sources\mini_map.cpp">
       <Filter>Sources\UI</Filter>
     </ClCompile>
+    <ClCompile Include="sources\LastBossBehavior.cpp">
+      <Filter>Sources\character\Boss\00_LastBoss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
