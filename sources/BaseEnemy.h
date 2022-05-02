@@ -65,7 +65,7 @@ protected:
     SkinnedMesh::anim_Parameters mAnimPara{};
     float mDissolve{};
 public:
-    std::unique_ptr<Sprite> mpIcon;//ミニマップで使う用のアイコン
+    std::unique_ptr<SpriteBatch> mpIcon;//ミニマップで使う用のアイコン
 protected:
     float mAnimationSpeed{1.0f};
     bool mIsStun{}; // スタン状態かどうか
