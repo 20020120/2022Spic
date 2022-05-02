@@ -6,12 +6,16 @@
 #include "scene_game.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
-
+#include "ModelCashe.h"
 
 bool SceneTitle::is_ready = false;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
+	//--タイトル前ロード--//
+	ModelCashes::Load_PreTitle(graphics.get_device().Get());
+
+
 	//--back--//
 	sprite_back  = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\back.png", 1);
 	back.texsize = { static_cast<float>(sprite_back->get_texture2d_desc().Width), static_cast<float>(sprite_back->get_texture2d_desc().Height) };
@@ -135,7 +139,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 void SceneTitle::loading_thread(ID3D11Device* device)
 {
 	//--タイトル裏ロード--//
-
+	ModelCashes::Load_IntoTitle(device);
 
 	is_ready = true;
 }
