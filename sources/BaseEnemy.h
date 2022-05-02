@@ -34,7 +34,7 @@ public:
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
 
     //--------------------<セッター関数>--------------------//
-    void fSetStun(bool Arg_);
+    virtual void fSetStun(bool Arg_);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
 
@@ -71,8 +71,9 @@ protected:
 private:
     int mAttackPower{};
     float mAttackInvTime{};
+protected:
     bool mIsAttack{};
-
+private:
     float mCubeHalfSize{};
 protected:
     // StateMachine

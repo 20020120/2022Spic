@@ -67,9 +67,13 @@ private:
 
     void fMoveInit();
     void fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fDamaged(int Damage_, float InvincibleTime_) override;
 private:
     bool mIsHit{};
     bool mIsWaitCounter{};
+    const float mkStunTimer = 3.0f;
 };
