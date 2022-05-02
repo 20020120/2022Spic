@@ -25,8 +25,12 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     }
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics, elapsed_time);
+    //カメラリセット
+    CameraReset();
+    //チュートリアルがロックオンの時よりも大きければ出来る
+    if(tutorial_state >= TutorialState::LockOnTutorial)     LockOn();
 
-    if (is_update_animation)model->update_animation(elapsed_time);
+    if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -66,6 +70,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                 ImGui::Checkbox("is_awakening", &is_awakening);
                 ImGui::Checkbox("start_dash_effect", &start_dash_effect);
                 ImGui::Checkbox("end_dash_effect", &end_dash_effect);
+                ImGui::Checkbox("is_attack", &is_attack);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
@@ -147,21 +152,46 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     case Player::TutorialState::MoveTutorial:
         break;
     case Player::TutorialState::AvoidanceTutorial:
+    {
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             TransitionTutorialAvoidance();
         }
         break;
+    }
     case Player::TutorialState::LockOnTutorial:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            TransitionTutorialAvoidance();
+        }
         break;
+    }
     case Player::TutorialState::AttackTutorial:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            TransitionTutorialAvoidance();
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
         break;
+    }
     case Player::TutorialState::BehindAvoidanceTutorial:
+    {
         break;
+    }
     case Player::TutorialState::ChainAttackTutorial:
+    {
         break;
+    }
     case Player::TutorialState::AwaikingTutorial:
+    {
         break;
+    }
     default:
         break;
     }
@@ -186,15 +216,38 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         break;
     case Player::TutorialState::LockOnTutorial:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            TransitionTutorialAvoidance();
+        }
+    }
         break;
     case Player::TutorialState::AttackTutorial:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            TransitionTutorialAvoidance();
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
         break;
+    }
     case Player::TutorialState::BehindAvoidanceTutorial:
+    {
         break;
+    }
     case Player::TutorialState::ChainAttackTutorial:
+    {
         break;
+    }
     case Player::TutorialState::AwaikingTutorial:
+    {
         break;
+    }
     default:
         break;
     }
@@ -206,12 +259,6 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     AvoidanceAcceleration(elapsed_time);
     if (avoidance_boost_time > avoidance_easing_time&& model->end_of_animation())
     {
-        switch (tutorial_state)
-        {
-        case Player::TutorialState::MoveTutorial:
-            break;
-        case Player::TutorialState::AvoidanceTutorial:
-        {
             //回避中かどうかの設定
             is_avoidance = false;
             is_behind_avoidance = false;
@@ -225,37 +272,192 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
             {
                 TransitionTutoriaIdle();
             }
-            break;
-        }
-        case Player::TutorialState::LockOnTutorial:
-        {
-            break;
-        }
-        case Player::TutorialState::AttackTutorial:
-        {
-            break;
-        }
-        case Player::TutorialState::BehindAvoidanceTutorial:
-        {
-            break;
-        }
-        case Player::TutorialState::ChainAttackTutorial:
-        {
-            break;
-        }
-        case Player::TutorialState::AwaikingTutorial:
-        {
-            break;
-        }
-        default:
-            break;
-        }
-        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+         UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
     else
     {
         UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
+}
+
+void Player::TutorialChargeinitUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (model->end_of_animation())
+    {
+        TransitionTutorialCharge(attack_animation_blends_speeds.x);
+    }
+    ChargeAcceleration(elapsed_time);
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+}
+
+void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    start_dash_effect = false;
+    charge_time += charge_add_time * elapsed_time;
+    ChargeAcceleration(elapsed_time);
+    //突進時間を超えたらそれぞれの遷移にとぶ
+    if (charge_time > CHARGE_MAX_TIME)
+    {
+        velocity = {};
+        end_dash_effect = true;
+
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            charge_time = 0;
+            is_charge = false;
+            TransitionTutorialMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            charge_time = 0;
+            is_charge = false;
+            TransitionTutoriaIdle();
+        }
+    }
+    else
+    {
+        if (is_enemy_hit)
+        {
+            end_dash_effect = true;
+            //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
+            is_charge = false;
+            velocity = {};
+            TransitionTutorialAttack1(attack_animation_blends_speeds.y);
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+}
+
+void Player::TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+
+    if (model->end_of_animation())
+    {
+        attack_time += attack_add_time * elapsed_time;
+        //猶予時間を超えたら待機に遷移
+        if (attack_time > ATTACK_TYPE1_MAX_TIME)
+        {
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
+        //猶予時間よりも早く押したら攻撃2撃目に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            attack_time = 0;
+            TransitionTutorialAttack2(attack_animation_blends_speeds.z);
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
+}
+
+void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+
+    attack_time += attack_add_time * elapsed_time;
+    //敵に当たったか時間が2秒たったら加速を終わる
+    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    {
+        is_charge = false;
+        attack_time = 0;
+        is_update_animation = true;
+    }
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        if (length > 5.0f)ChargeAcceleration(elapsed_time);
+    }
+    if (model->end_of_animation())
+    {
+        velocity = {};
+        //猶予時間を超えたら待機に遷移
+        if (attack_time > ATTACK_TYPE2_MAX_TIME)
+        {
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
+        //猶予時間よりも早く押したら攻撃3撃目に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            attack_time = 0;
+            TransitionTutorialAttack3(attack_animation_blends_speeds.w);
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
+}
+
+void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+
+    attack_time += attack_add_time * elapsed_time;
+    //敵に当たったか時間が2秒たったら加速を終わる
+
+    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    {
+        is_charge = false;
+        attack_time = 0;
+        is_update_animation = true;
+    }
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+        if (length > 5.0f) ChargeAcceleration(elapsed_time);
+    }
+
+    if (model->end_of_animation())
+    {
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            attack_time = 0;
+            TransitionTutorialCharge(attack_animation_blends_speeds.x);
+        }
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            charge_time = 0;
+            TransitionTutorialMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            charge_time = 0;
+            TransitionTutoriaIdle();
+        }
+    }
+    if (is_awakening)
+    {
+        mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+        mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+    }
+    else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
 }
 
 void Player::TransitionTutoriaIdle(float blend_second)
@@ -268,6 +470,8 @@ void Player::TransitionTutoriaIdle(float blend_second)
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+    //攻撃中かどうかの設定
+    is_attack = false;
     player_tutorial_activity = &Player::TutorialIdleUpdate;
 }
 
@@ -281,6 +485,9 @@ void Player::TransitionTutorialMove(float blend_second)
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
+    //攻撃中かどうかの設定
+    is_attack = false;
+
     player_tutorial_activity = &Player::TutorialMoveUpdate;
 }
 
@@ -324,5 +531,139 @@ void Player::TransitionTutorialAvoidance(float blend_second)
     is_update_animation = true;
     //回避状態の時の更新関数に切り替える
     player_tutorial_activity = &Player::TutorialAvoidanvceUpdate;
+
+}
+
+void Player::TransitionTutorialChargeInit()
+{
+    //覚醒状態の時の突進の始まりのアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false, true);
+    //通常状態の時の突進の始まりのアニメーションに設定
+    else model->play_animation(AnimationClips::ChargeInit, false, true);
+    //攻撃中かどうかの設定
+    is_attack = true;
+    //突進中かどうかの設定
+    is_charge = true;
+    //アニメーション速度の設定
+    animation_speed = CHARGEINIT_ANIMATION_SPEED;
+    //ロックオンしてない場合のターゲットの設定
+    charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    //攻撃の加速の設定
+    SetAccelerationVelocity();
+    //加速のレート
+    lerp_rate = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //突進の始まりの時の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialChargeinitUpdate;
+
+}
+
+void Player::TransitionTutorialCharge(float blend_second)
+{
+    //ダッシュポストエフェクトをかける
+    start_dash_effect = true;
+    //覚醒状態の時の突進アニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingCharge, false, true, blend_second);
+    //通常状態の時の突進アニメーションに設定
+    else model->play_animation(AnimationClips::Charge, false, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = true;
+    //突進中かどうかの設定
+    is_charge = true;
+    //アニメーションスピードの設定
+#if 1
+    animation_speed = CHARGE_ANIMATION_SPEED;
+#else
+    //デバッグ用
+    animation_speed = attack_animation_speeds.x;
+#endif // 0
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //加速のレート
+    lerp_rate = 4.0f;
+    //突進中の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialChargeUpdate;
+}
+
+void Player::TransitionTutorialAttack1(float blend_second)
+{
+    //覚醒状態の時の１撃目のアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_second);
+    //通常状態の時の１撃目のアニメーションに設定
+    else model->play_animation(AnimationClips::AttackType1, false, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = true;
+    //アニメーションスピードの設定
+#if 1
+    animation_speed = ATTACK1_ANIMATION_SPEED;
+#else
+    //デバッグ用
+    animation_speed = attack_animation_speeds.y;
+#endif // 0
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //加速のレート
+    lerp_rate = 4.0f;
+    //１撃目の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAttack1Update;
+}
+
+void Player::TransitionTutorialAttack2(float blend_second)
+{
+    //覚醒状態の時の２撃目のアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_second);
+    //通常状態の時の２撃目のアニメーションに設定
+    else model->play_animation(AnimationClips::AttackType2, false, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = true;
+    //アニメーション速度の設定
+#if 1
+    animation_speed = ATTACK2_ANIMATION_SPEED;
+#else
+    //デバッグ用
+    animation_speed = attack_animation_speeds.z;
+#endif // 0
+    //攻撃の加速の設定
+    SetAccelerationVelocity();
+    //加速のレート
+    lerp_rate = 2.0f;
+    //攻撃の時間
+    attack_time = 0;
+    //アニメーションをしていいかどうか
+    is_update_animation = false;
+    //突進中かどうかの設定
+    is_charge = true;
+    //２撃目の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAttack2Update;
+}
+
+void Player::TransitionTutorialAttack3(float blend_second)
+{
+    //覚醒状態の時の３撃目のアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_second);
+    //通常状態の時の３撃目ののアニメーションに設定
+    else model->play_animation(AnimationClips::AttackType3, false, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = true;
+    //アニメーション速度の設定
+#if 1
+    animation_speed = ATTACK3_ANIMATION_SPEED;
+#else
+    //デバッグ用
+    animation_speed = attack_animation_speeds.w;
+#endif // 0
+    //攻撃の加速の設定
+    SetAccelerationVelocity();
+    //加速のレート
+    lerp_rate = 2.0f;
+    //攻撃の時間
+    attack_time = 0;
+    //アニメーションをしていいかどうか
+    is_update_animation = false;
+    //突進中かどうかの設定
+    is_charge = true;
+    //３撃目の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAttack3Update;
 
 }

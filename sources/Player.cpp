@@ -287,22 +287,22 @@ void Player::BehindAvoidancePosition()
 #endif // 0
     DirectX::XMFLOAT3 behind_point_4{};
     ////----------------’†Œp‚P---------------------//
-    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6));//“G‚ÌŒã‚ë‘¤
+    behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6f));//“G‚ÌŒã‚ë‘¤
     behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6));//“G‚ÌŒã‚ë‘¤
+    behind_point_1.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6f));//“G‚ÌŒã‚ë‘¤
     ////--------------------------------------------//
     ////----------------’†Œp2---------------------//
-    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4));//“G‚ÌŒã‚ë‘¤
+    behind_point_2.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4f));//“G‚ÌŒã‚ë‘¤
     behind_point_2.y = position.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4));//“G‚ÌŒã‚ë‘¤
+    behind_point_2.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(340.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(340.0f)))) * (length_radius * 0.4f));//“G‚ÌŒã‚ë‘¤
     //--------------------------------------------//
-    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4));//“G‚ÌŒã‚ë‘¤
+    behind_point_3.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4f));//“G‚ÌŒã‚ë‘¤
     behind_point_3.y = position.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4));//“G‚ÌŒã‚ë‘¤
+    behind_point_3.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(20.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(20.0f)))) * (length_radius * 0.4f));//“G‚ÌŒã‚ë‘¤
     //-----------------ƒS[ƒ‹’n“_---------------//
-    behind_point_4.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0));//“G‚ÌŒã‚ë‘¤
+    behind_point_4.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0f));//“G‚ÌŒã‚ë‘¤
     behind_point_4.y = position.y;//“G‚ÌŒã‚ë‘¤
-    behind_point_4.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0));//“G‚ÌŒã‚ë‘¤
+    behind_point_4.z = target.z + (((r.z * cosf(DirectX::XMConvertToRadians(90.0f))) + (forward.z * sinf(DirectX::XMConvertToRadians(90.0f)))) * (length_radius * 1.0f));//“G‚ÌŒã‚ë‘¤
 
     behind_way_points.emplace_back(position); // ‚±‚Ì“_‚Å‚ÌƒvƒŒƒCƒ„[‚ÌˆÊ’u
     behind_way_points.emplace_back(behind_point_1); // ‚±‚Ì“_‚Å‚ÌƒvƒŒƒCƒ„[‚ÌˆÊ’u
@@ -609,7 +609,7 @@ void Player::AddCombo(int count)
 
 #endif // 0
         combo_count += static_cast<float>(count);
-        if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ƒQ[ƒWÁ”ï‚Ì“Ëi’†‚É“–‚½‚Á‚½”‚ğ•Û‘¶
+        //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ƒQ[ƒWÁ”ï‚Ì“Ëi’†‚É“–‚½‚Á‚½”‚ğ•Û‘¶
         is_enemy_hit = true;
 
     }

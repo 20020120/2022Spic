@@ -282,6 +282,7 @@ public:
     bool GetAvoidance() { return is_avoidance; }
     bool GetBehindAvoidance() { return is_behind_avoidance; }
     bool GetIsPlayerAttack() { return is_attack; }
+    bool GetIsCharge() { return is_charge; }
     bool GetIsSpecialSurge() { return is_special_surge; }
     bool GetStartDashEffect() { return start_dash_effect; }
     bool GetEndDashEffect() { return end_dash_effect; }
@@ -577,11 +578,20 @@ private:
     void TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
-
+    void TutorialChargeinitUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //äeëJà⁄ä÷êî
     void TransitionTutoriaIdle(float blend_second = 0.3f);
     void TransitionTutorialMove(float blend_second = 0.3f);
     void TransitionTutorialAvoidance(float blend_second = 0.3f);
+    void TransitionTutorialChargeInit();
+    void TransitionTutorialCharge(float blend_second = 0.3f);
+    void TransitionTutorialAttack1(float blend_second = 0.3f);
+    void TransitionTutorialAttack2(float blend_second = 0.3f);
+    void TransitionTutorialAttack3(float blend_second = 0.3f);
 public:
     int GetTutorialState() { return static_cast<int>(tutorial_state); }
 };
