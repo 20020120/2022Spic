@@ -182,6 +182,24 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::BehindAvoidanceTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
         break;
     }
     case Player::TutorialState::ChainAttackTutorial:
@@ -238,6 +256,24 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::BehindAvoidanceTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
         break;
     }
     case Player::TutorialState::ChainAttackTutorial:
@@ -278,6 +314,19 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     {
         UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
+}
+
+void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 0.2f))
+    {
+        //回避中かどうかの設定
+        is_avoidance = false;
+        is_behind_avoidance = false;
+        is_just_avoidance = false;
+        TransitionTutoriaIdle();
+    }
+    UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::TutorialChargeinitUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
@@ -532,6 +581,37 @@ void Player::TransitionTutorialAvoidance(float blend_second)
     //回避状態の時の更新関数に切り替える
     player_tutorial_activity = &Player::TutorialAvoidanvceUpdate;
 
+}
+
+void Player::TransitionTutorialBehindAvoidance()
+{
+    velocity = {};
+    //回避中かどうかの設定
+    is_avoidance = true;
+    //回り込み回避かどうか
+    is_behind_avoidance = true;
+    //覚醒状態の時の回避アニメーションの設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    //通常状態の時のアニメーションの設定
+    else model->play_animation(AnimationClips::Avoidance, false, true);
+    //後ろに回り込む座標の取得
+    BehindAvoidancePosition();
+    //回り込むときのタイマー
+    behind_timer = 0;
+    //回り込みの補完レート
+    behind_late = 0;
+    //移動速度の初期化
+    velocity = {};
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //アニメーションの速度
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //ロックオンしている敵をスタンさせる
+    target_enemy->fSetStun(true);
+    //背後に回り込むときの関数に切り替える
+    player_tutorial_activity = &Player::TutorialBehindAvoidanceUpdate;;
 }
 
 void Player::TransitionTutorialChargeInit()

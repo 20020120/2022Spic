@@ -5,13 +5,13 @@
 MiniMap::MiniMap(GraphicsPipeline& graphics)
 {
 	//スプライトの実体生成
-	mini_map_icon = std::make_unique<Sprite>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap.png");
-	player_icon = std::make_unique<Sprite>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap_player.png");
+	mini_map_icon = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap.png",1);
+	player_icon = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap_player.png",1);
 
 	//パラメーター初期値設定
 	//ミニマップ下地
 	minimap_icon_param =
-	{ {128,128},{1,1} };
+	{ {1000,28},{1,1} };
 	//プレイヤー
 	player_icon_param =
 	{ {128,128},{1,1} };
@@ -29,13 +29,23 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
 {
 	//レーダーあいこん　
-	DirectX::XMFLOAT2 center_pos = { 1080.0f,128.0f };//アイコンの基準位置
-	mini_map_icon->render(graphics.get_dc().Get(), { center_pos.x - 36.0f,center_pos.y -36.0f }, { minimap_icon_param.scale });
 
-	player_icon_param.position = center_pos;
+	DirectX::XMFLOAT2 center_pos = { 1113,142.0f };//アイコンの基準位置
+	mini_map_icon->begin(graphics.get_dc().Get());
+	mini_map_icon->render(graphics.get_dc().Get(), {  minimap_icon_param.position.x, minimap_icon_param.position.y }, { minimap_icon_param.scale });
+	mini_map_icon->end(graphics.get_dc().Get());
+	const float add_pl_icon_pos = 16.0f;
+	player_icon_param.position = { center_pos.x,center_pos.y + add_pl_icon_pos };
+#if USE_IMGUI
+	ImGui::Begin("minimapp");
+	ImGui::DragFloat2("minimap", &player_icon_param.position.x);
+	ImGui::End();
+#endif
+
 	//プレイヤーアイコン
+	player_icon->begin(graphics.get_dc().Get());
 	player_icon->render(graphics.get_dc().Get(), { player_icon_param.position },{player_icon_param.scale});
-
+	player_icon->end(graphics.get_dc().Get());
 	DirectX::XMVECTOR P_Normal = DirectX::XMVector2Normalize(DirectX::XMLoadFloat2(&camera_forward));
 	//エネミーアイコン
 	for(auto& enemy : enemy_list)
@@ -56,12 +66,15 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 		dot = cross < 0 ? -dot : dot;
 
 		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(player_pos, e_pos);
-		enemy_icon_pos.x =  center_pos.x + length_p_to_e_vec * 0.7f * sinf(dot);
-		enemy_icon_pos.y =  center_pos.y - length_p_to_e_vec * 0.7f * cosf(dot);
+		enemy_icon_pos.x =  center_pos.x + length_p_to_e_vec * sinf(dot);
+		enemy_icon_pos.y =  center_pos.y - length_p_to_e_vec * cosf(dot);
 		enemy_icon_param.position = enemy_icon_pos;
-		if(length_p_to_e_vec < 50.0f)
+		if(length_p_to_e_vec < 100.0f)
 		{
+			enemy->mpIcon->begin(graphics.get_dc().Get());
 			enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });
+			enemy->mpIcon->end(graphics.get_dc().Get());
+
 		}
 	}
 }
