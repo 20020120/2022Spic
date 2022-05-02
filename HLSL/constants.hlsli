@@ -80,6 +80,13 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     float zoom_power;
     int focus_detail;
     float2 post_effect_pad8;
+    // lockon
+    float lockon_scope;
+    float lockon_thickness;
+    float lockon_alpha;
+    float post_effect_pad9;
+    float3 lockon_color;
+    float post_effect_pad10;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)

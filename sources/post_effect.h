@@ -43,6 +43,7 @@ private:
 		GLITCH,                     // グリッチ
 		VIGNETTING,                 // ビネット
 		DASH_BLUR,                  // ダッシュブラー
+		LOCKON,                     // ロックオン
 
 		PST_EFC_COUNT               //この定数が最後に
 	};
@@ -89,6 +90,13 @@ private:
 		float zoom_power{ 0.74f };
 		int focus_detail{ 50 };
 		DirectX::XMFLOAT2 pad8;
+		// lockon
+		float lockon_scope{ 0.2f };
+		float lockon_thickness{0.005f};
+		float lockon_alpha{0.5f};
+		float pad9;
+		DirectX::XMFLOAT3 lockon_color{ 1,1,1 };
+		float pad10;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
     //--------< 関数 >--------//

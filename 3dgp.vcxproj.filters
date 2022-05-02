@@ -963,6 +963,9 @@
     <FxCompile Include="HLSL\tunnel_ps.hlsl">
       <Filter>Shaders\sprite</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\lockon_ps.hlsl">
+      <Filter>Shaders\post_effect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">

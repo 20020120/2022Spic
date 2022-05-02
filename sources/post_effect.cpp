@@ -26,6 +26,7 @@ PostEffect::PostEffect(ID3D11Device* device)
 		create_ps_from_cso(device, "shaders/glitch_ps.cso", pixel_shaders[9].GetAddressOf());
 		create_ps_from_cso(device, "shaders/vignetting_ps.cso", pixel_shaders[10].GetAddressOf());
 		create_ps_from_cso(device, "shaders/dash_blur_ps.cso", pixel_shaders[11].GetAddressOf());
+		create_ps_from_cso(device, "shaders/lockon_ps.cso", pixel_shaders[12].GetAddressOf());
 	}
 	// 定数バッファ
 	effect_constants = std::make_unique<Constants<PostEffectConstants>>(device);
@@ -59,7 +60,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR"};
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON"};
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -306,6 +307,27 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 #endif
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 11);
+			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::LOCKON))
+			{
+#ifdef USE_IMGUI
+				std::string ss = "lockon " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat("scope", &effect_constants->data.lockon_scope, 0.001f);
+						ImGui::DragFloat("thickness", &effect_constants->data.lockon_thickness, 0.001f);
+						ImGui::ColorEdit3("color", &effect_constants->data.lockon_color.x);
+						ImGui::DragFloat("alpha", &effect_constants->data.lockon_alpha, 0.01f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 12);
 			}
 		}
 	}
