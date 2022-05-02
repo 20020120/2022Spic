@@ -516,6 +516,7 @@ private:
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
+    void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func);
 private:
     //--------< 変数 >--------//
     struct LockOnSuggest
@@ -533,6 +534,10 @@ private:
     std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
     std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
     bool is_chain_attack = false; // ロックオン完了から攻撃終了までtrue
+    static constexpr float ROCKON_FRAME = 0.3f;
+    float frame_time  = 0.0f;
+    float frame_scope = 0.5f;
+    float frame_alpha = 0.0f;
     enum class ATTACK_TYPE
     {
         FIRST,
