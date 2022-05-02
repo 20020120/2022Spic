@@ -59,6 +59,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	option = std::make_unique<Option>(graphics);
 	// tunnel
 	tunnel = std::make_unique<Tunnel>(graphics.get_device().Get());
+	//mini_map
+	minimap = std::make_unique<MiniMap>(graphics);
 }
 
 void SceneGame::uninitialize()
@@ -377,7 +379,10 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	reticle->render(graphics.get_dc().Get());
 	// wave
 	//wave->render(graphics.get_dc().Get());
-
+	Camera* c = cameraManager->GetCurrentCamera();
+	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
+	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
+	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
