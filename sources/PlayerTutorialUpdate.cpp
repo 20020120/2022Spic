@@ -6,6 +6,10 @@
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome)
 {
     ExecFuncTutorialUpdate(elapsed_time, sky_dome);
+    //velocity更新処理
+    UpdateTutorialVelocity(static_cast<int>(tutorial_state), elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+    //アニメーション更新処理
+    if (is_update_animation)model->update_animation(elapsed_time);
 }
 
 
