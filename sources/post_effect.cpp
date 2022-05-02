@@ -409,7 +409,7 @@ void PostEffect::stage_choice_post_effect(ID3D11DeviceContext* dc, float divisio
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOW_RESOLUTION);
 }
 
-void PostEffect::lockon_post_effect(ID3D11DeviceContext* dc, float scope, float alpha)
+void PostEffect::lockon_post_effect(float scope, float alpha)
 {
 	effect_constants->data.lockon_scope = scope;
 	effect_constants->data.lockon_alpha = alpha;

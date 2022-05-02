@@ -178,8 +178,10 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	cameraManager->Update(elapsed_time);
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
-	//player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+	player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+	//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
+		[=]() { post_effect->clear_post_effect(); });
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());

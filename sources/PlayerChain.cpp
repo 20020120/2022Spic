@@ -81,6 +81,33 @@ void Player::rotate(float elapsed_time, int index, const std::vector<DirectX::XM
 	DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
 
+void Player::lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func)
+{
+	if (during_search_time())
+	{
+		float rate = 1.0f;
+		if (frame_time <= SEARCH_TIME)
+		{
+			frame_time += elapsed_time;
+			if (frame_time >= SEARCH_TIME) { frame_time = SEARCH_TIME; }
+			rate = frame_time / SEARCH_TIME;
+			rate *= rate;
+		}
+
+		if (rate < 1.0f)
+		{
+			frame_scope = 0.5f - rate * (0.5f - ROCKON_FRAME);
+			frame_alpha += elapsed_time * 0.5f;
+			frame_alpha = (std::max)(frame_alpha, 0.5f);
+			effect_func(frame_scope, frame_alpha);
+			if (rate > 0.9f)
+			{
+				effect_clear_func();
+			}
+		}
+	}
+}
+
 void Player::ChainLockOn()
 {
 
@@ -117,6 +144,10 @@ void Player::transition_chain_search()
 	debug_transition_chain_lockon_flg = false;
 	attack_start = false;
 #endif // CHAIN_DEBUG
+
+	frame_time  = 0.0f;
+	frame_scope = 0.5f;
+	frame_alpha = 0.0f;
 
 	player_chain_activity = &Player::chain_search_update;
 }
@@ -206,7 +237,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	if (is_awakening) // 覚醒状態
 	{
 		// 敵がいなければ通常行動に戻る
-		if (enemies.size() == 0) { transition_normal_behavior(); }
+		if (enemies.size() == 0) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }
 		// スタンしてなくてもロックオン
 		// 決められた時間内に敵を索敵しロックオンステートへ
 		else
@@ -217,6 +248,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
 
@@ -259,7 +291,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 		}
 
-		if (!is_stun) { transition_normal_behavior(); }
+		if (!is_stun) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }
 		else // 決められた時間内に敵を索敵しロックオンステートへ
 		{
 			search_time -= elapsed_time;
@@ -268,6 +300,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
 
