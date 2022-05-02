@@ -18,7 +18,8 @@ public:
     BaseEnemy(GraphicsPipeline& Graphics_, 
               const char* FileName_,
               const EnemyParamPack& Param_,
-              const DirectX::XMFLOAT3& EntryPosition_);
+              const DirectX::XMFLOAT3& EntryPosition_,
+              const wchar_t* IconFileName = L"./resources/Sprites/ui/minimap/minimap_enemy.png");
 protected:
     BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_);
 public:
@@ -63,6 +64,8 @@ protected:
 
     SkinnedMesh::anim_Parameters mAnimPara{};
     float mDissolve{};
+public:
+    std::unique_ptr<Sprite> mpIcon;//ミニマップで使う用のアイコン
 protected:
     float mAnimationSpeed{1.0f};
     bool mIsStun{}; // スタン状態かどうか

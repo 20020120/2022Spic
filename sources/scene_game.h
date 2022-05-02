@@ -15,7 +15,7 @@
 #include "constants.h"
 #include "imgui_include.h"
 #include"WaveManager.h"
-
+#include "mini_map.h"
 #include"EnemyManager.h"
 #include"Player.h"
 #include"SkyDome.h"
@@ -91,6 +91,7 @@ private:
     std::unique_ptr<Counter> wave{ nullptr };
     // option
     std::unique_ptr<Option> option{ nullptr };
+    std::unique_ptr<MiniMap> minimap{ nullptr };
 
     // ƒNƒŠƒA‰‰o
     bool during_clear = false;

@@ -4,74 +4,64 @@
 
 MiniMap::MiniMap(GraphicsPipeline& graphics)
 {
-	icon = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\icon.png", 256);
-	 player_icon = 
-		 {
-		{128,128},{0.5f,0.5f},{0,0},
-		{1,1,1,1},{0},{128,128},
-	 	{128,128}
-		 };
-	 enemy_icon =
-	 {
-	{128,128},{0.3f,0.3f},{0,0},
-	{1,1,1,1},{0},{384,128},
-	{128,128}
-	 };;
-	 radar_icon =
-	 {
-	{128,128},{1,1},{0,0},
-	{1,1,1,1},{0},{0,128},
-	{128,128}
-	 };;
+	//スプライトの実体生成
+	mini_map_icon = std::make_unique<Sprite>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap.png");
+	player_icon = std::make_unique<Sprite>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\minimap\\minimap_player.png");
+
+	//パラメーター初期値設定
+	//ミニマップ下地
+	minimap_icon_param =
+	{ {128,128},{1,1} };
+	//プレイヤー
+	player_icon_param =
+	{ {128,128},{1,1} };
+	//雑魚敵
+	enemy_icon_param =
+	{ {128,128},{1,1} };
+	//ボス
+	boss_icon_param =
+	{ {128,128},{1,1} };
+	//ラスボス
+	last_boss_icon_param =
+	{ {128,128},{1,1} };
+	
 }
-void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& player_forward, std::vector<BaseEnemy*> enemy_list)
+void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
 {
 	//レーダーあいこん　
 	DirectX::XMFLOAT2 center_pos = { 1080.0f,128.0f };//アイコンの基準位置
-	icon->begin(graphics.get_dc().Get());
-	icon->render(graphics.get_dc().Get(), { center_pos.x - 36.0f,center_pos.y -36.0f }, { radar_icon.scale },
-		{ radar_icon.pivot }, { radar_icon.color },
-		{ radar_icon.angle }, { radar_icon.texpos }, { radar_icon.texsize });
-	icon->end(graphics.get_dc().Get());
+	mini_map_icon->render(graphics.get_dc().Get(), { center_pos.x - 36.0f,center_pos.y -36.0f }, { minimap_icon_param.scale });
 
-	player_icon.position = center_pos;
+	player_icon_param.position = center_pos;
 	//プレイヤーアイコン
-	icon->begin(graphics.get_dc().Get());
-	icon->render(graphics.get_dc().Get(), { player_icon.position },{player_icon.scale},
-		{player_icon.pivot},{player_icon.color},
-		{player_icon.angle},{player_icon.texpos},{player_icon.texsize});
-	icon->end(graphics.get_dc().Get());
+	player_icon->render(graphics.get_dc().Get(), { player_icon_param.position },{player_icon_param.scale});
 
-	DirectX::XMVECTOR P_Normal = DirectX::XMVector2Normalize(DirectX::XMLoadFloat2(&player_forward));
+	DirectX::XMVECTOR P_Normal = DirectX::XMVector2Normalize(DirectX::XMLoadFloat2(&camera_forward));
 	//エネミーアイコン
 	for(auto& enemy : enemy_list)
 	{
-		const DirectX::XMFLOAT2 p_pos = player_pos;
 		const DirectX::XMFLOAT2 e_pos = { enemy->fGetPosition().x,enemy->fGetPosition().z };
 		//プレイヤーから敵へのベクトル
-		const DirectX::XMVECTOR Normal_P_To_E_Vec = Math::calc_vector_AtoB_normalize(p_pos, e_pos);
+		const DirectX::XMVECTOR Normal_P_To_E_Vec = Math::calc_vector_AtoB_normalize(player_pos, e_pos);
 		//プレイヤーの正面ベクトルと敵までのベクトルとの内積で間の角を出す
 		const DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(P_Normal, Normal_P_To_E_Vec);
 		float dot = DirectX::XMVectorGetX(Dot);
 		dot = acosf(dot);
+		//正規化
 		DirectX::XMFLOAT2 normal_p_to_e_vec{};
 		DirectX::XMStoreFloat2(&normal_p_to_e_vec, Normal_P_To_E_Vec);
-		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(p_pos, e_pos);
-		//DirectX::XMFLOAT2 enemy_icon_pos = center_pos + (normal_p_to_e_vec * (length_p_to_e_vec * 0.7f));
 		DirectX::XMFLOAT2 enemy_icon_pos;
-		float cross{ (normal_p_to_e_vec.x * player_forward.y) - (normal_p_to_e_vec.y * player_forward.x) };
-
+		float cross{ (normal_p_to_e_vec.x * camera_forward.y) - (normal_p_to_e_vec.y * camera_forward.x) };
+		//回転方向を指定
 		dot = cross < 0 ? -dot : dot;
+
+		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(player_pos, e_pos);
 		enemy_icon_pos.x =  center_pos.x + length_p_to_e_vec * 0.7f * sinf(dot);
 		enemy_icon_pos.y =  center_pos.y - length_p_to_e_vec * 0.7f * cosf(dot);
-		enemy_icon.position = enemy_icon_pos;
+		enemy_icon_param.position = enemy_icon_pos;
 		if(length_p_to_e_vec < 50.0f)
 		{
-			icon->begin(graphics.get_dc().Get());
-			icon->render(graphics.get_dc().Get(), { enemy_icon.position }, { enemy_icon.scale },
-				{ enemy_icon.pivot }, { enemy_icon.color },
-				{ enemy_icon.angle }, { enemy_icon.texpos }, { enemy_icon.texsize });
-			icon->end(graphics.get_dc().Get());
+			enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });
 		}
 	}
 }

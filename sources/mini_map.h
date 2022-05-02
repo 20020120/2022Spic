@@ -1,25 +1,22 @@
 #pragma once
 #include "EnemyManager.h"
-#include "sprite_batch.h"
-class MiniMap 
+class MiniMap
 {
 	struct Element
 	{
 		DirectX::XMFLOAT2 position{};
 		DirectX::XMFLOAT2 scale{ 1, 1 };
-		DirectX::XMFLOAT2 pivot{};
-		DirectX::XMFLOAT4 color{ 1,1,1,1 };
-		float angle{};
-		DirectX::XMFLOAT2 texpos{};
-		DirectX::XMFLOAT2 texsize{};
 	};
-	public:
+public:
 	MiniMap(GraphicsPipeline& graphics);
-	~MiniMap(){}
+	~MiniMap() {}
 
-	void render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& player_forward, std::vector<BaseEnemy*> enemy_list);
-	std::unique_ptr<SpriteBatch> icon;
-	Element player_icon;
-	Element enemy_icon;
-	Element radar_icon;
+	void render(GraphicsPipeline& graphics, const DirectX::XMFLOAT2& player_pos, const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list);
+	std::unique_ptr<Sprite> mini_map_icon;
+	std::unique_ptr<Sprite> player_icon;
+	Element minimap_icon_param;
+	Element player_icon_param;
+	Element enemy_icon_param;
+	Element boss_icon_param;
+	Element last_boss_icon_param;
 };

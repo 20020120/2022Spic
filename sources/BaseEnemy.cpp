@@ -5,11 +5,14 @@
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const char* FileName_,
                      const EnemyParamPack& Param_,
-                     const DirectX::XMFLOAT3& EntryPosition_)
+                     const DirectX::XMFLOAT3& EntryPosition_,
+					const wchar_t* IconFileName)
 :mPosition(EntryPosition_),mCurrentHitPoint(Param_.MaxHp)
 ,mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower),mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
+    //ミニマップ用アイコン
+    mpIcon = std::make_unique<Sprite>(Graphics_.get_device().Get(), IconFileName);
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
 
