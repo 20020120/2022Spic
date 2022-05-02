@@ -70,7 +70,7 @@ private:
     const float mThrustEndSec{ 3.0f };   // 突進中の長さ
     const float mThrustSpeed{ 70.0f };   // 突進の速さ
     const float mThrustDegree{ 30.0f };  // 突進の角度
-    const float mStunTimeSec{ 1.0f }; //スタンの長さ
+
 
 private:
     //****************************************************************

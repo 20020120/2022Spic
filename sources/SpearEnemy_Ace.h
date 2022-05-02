@@ -51,7 +51,6 @@ protected:
 
 private:
     float mWaitTimer{}; // ‘Ò‹@ŽžŠÔ
-    const float mkStunTimer{ 3.0f };
     skeleton::bone mpSpearBoneBottom{};
     skeleton::bone mpSpearBoneTop{};
 

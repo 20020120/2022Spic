@@ -9,6 +9,7 @@
 #include"MiddleBoss.h"
 #include"SwordEnemy.h"
 #include"SpearEnemy.h"
+#include"SpearEnemy_Ace.h"
 #include"LastBoss.h"
 #include"SwordEnemyAce.h"
 #include"imgui_include.h"
@@ -587,19 +588,15 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+    enemy = new SpearEnemy(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new SpearEnemy_Ace(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
     enemy = new SwordEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-    //BaseEnemy* enemy = 
-    //    new Swo\rdEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
-    //
-    //enemy = new SpearEnemy(graphics_, mUniqueCount, { 0.0f,0.0f,0.0f }, mEditor.fGetFunction());
-    //mCashEnemyVec.emplace_back(enemy);
-    //enemy = new ArcherEnemy(graphics_, { 0.0f,0.0f,0.0f }, mUniqueCount, mEditor.fGetFunction(), Func_);
-    //mCashEnemyVec.emplace_back(enemy);
-    //enemy = new LastBoss(graphics_,mUniqueCount,
-    //    { 0.0f,0.0f,0.0f }, mEditor.fGetFunction(),
-    //    Func_);
-    //mCashEnemyVec.emplace_back(enemy);
+    enemy = new LastBoss(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
+
 
 }
 

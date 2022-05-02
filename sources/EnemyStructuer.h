@@ -17,20 +17,33 @@ struct EnemyParamPack
     float InvincibleTime{}; // UŒ‚‚µ‚½‘Šè‚Ì–³“GŠÔ
     float BodyCapsuleRad{};
     float AttackCapsuleRad{};
-
+    float StunTime{}; // ƒXƒ^ƒ“‚Ì‚È‚ª‚³
     template<class Archive>
-    void serialize(Archive& archive)
+    void serialize(Archive& archive, std::uint32_t const version)
     {
-        archive(
+        if(version<=1)
+        {
+            archive(
             cereal::make_nvp("MaxHp", MaxHp),
             cereal::make_nvp("AttackPower", AttackPower),
             cereal::make_nvp("InvincibleTime", InvincibleTime),
             cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
             cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad));
+        }
+        else
+        {
+            archive(
+                cereal::make_nvp("MaxHp", MaxHp),
+                cereal::make_nvp("AttackPower", AttackPower),
+                cereal::make_nvp("InvincibleTime", InvincibleTime),
+                cereal::make_nvp("BodyCapsuleRad", BodyCapsuleRad),
+                cereal::make_nvp("AttackCapsuleRad", AttackCapsuleRad),
+                cereal::make_nvp("StunTime",StunTime));
+        }
     }
 };
 
-
+CEREAL_CLASS_VERSION(EnemyParamPack, 2);
 
 // “G‚Ìí—Ş
 enum class EnemyType

@@ -7,7 +7,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const EnemyParamPack& Param_,
                      const DirectX::XMFLOAT3& EntryPosition_)
 :mPosition(EntryPosition_),mCurrentHitPoint(Param_.MaxHp)
-,mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower)
+,mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower),mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;

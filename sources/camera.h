@@ -111,6 +111,13 @@ private:
     void UpdateStopEndTarget();
     void UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget, float elapsedTime);
 
+    void UpdateAttackEndTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTOR PlayerUp, float elapsedTime);
+    void UpdateStopAttackEndEye(float elapsedTime);
+
+    void UpdateAttackingCamera(float elapsedTime);
+
+    void AttackingUpdateTarget(float angle, DirectX::XMVECTOR CameraToPlayer);
+
     enum CameraState
     {
         Free,
@@ -119,9 +126,12 @@ private:
         Attacking,
         Avoiding,
         CameraStopEnd,
+        CameraStopAttackEnd,
     };
 
     int state{ CameraState::Free };
+
+    DirectX::XMFLOAT3 avoidTargetPos{};
 };
 
 class ClearCamera : public Camera

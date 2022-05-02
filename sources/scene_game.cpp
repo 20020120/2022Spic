@@ -178,7 +178,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	cameraManager->Update(elapsed_time);
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
-	player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+	//player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+	player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 	player->SetCameraPosition(c->get_eye());
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());

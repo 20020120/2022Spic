@@ -480,6 +480,12 @@
     <ClCompile Include="sources\AhieldEnemy_Ace.cpp">
       <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClCompile>
+    <ClCompile Include="sources\mini_map.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\LastBossBehavior.cpp">
+      <Filter>Sources\character\Boss\00_LastBoss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -793,6 +799,9 @@
     </ClInclude>
     <ClInclude Include="sources\AhieldEnemy_Ace.h">
       <Filter>Sources\character\enemy\03_Shield</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\mini_map.h">
+      <Filter>Sources\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

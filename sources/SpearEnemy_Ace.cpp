@@ -185,7 +185,7 @@ void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Gra
 void SpearEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
-    mWaitTimer = mkStunTimer;
+    mWaitTimer = mStunTime;
 }
 void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
 {

@@ -452,6 +452,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	static float base_speed = 100.0f;
 	static float play  = 0.2f;
 #ifdef CHAIN_DEBUG
+	static int elem = 0;
 #ifdef USE_IMGUI
 	ImGui::Begin("transit");
 	ImGui::Text("position x : %.1f  y : %.1f  z : %.1f", position.x, position.y, position.z);
@@ -460,7 +461,6 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	if (ImGui::Button("start")) { attack_start = true; }
 	if (ImGui::Button("restart")) { transit_index = 0; }
 	ImGui::Separator();
-	static int elem = 0;
 	constexpr int count = 4;
 	const char* elems_names[count] = { "suggests","sort_points","way_points","interpolated" };
 
@@ -468,7 +468,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	ImGui::SliderInt("sphere type", &elem, 0, count - 1, elem_name);
 
 	ImGui::End();
-#endif // USE_IMGUI
+#endif  USE_IMGUI
 	switch (elem)
 	{
 	case 0: // lockon_suggestsデバッグ表示

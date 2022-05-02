@@ -70,7 +70,7 @@ private:
     const float mAttackBeginTimeSec{ 0.85f };    // Œ•‚ğU‚è‚ ‚°‚é‚Ü‚Å‚ÌŠÔ
     const float mAttackPreActionTimeSec{0.1f};   // Œ•‚ğU‚è‰º‚ë‚·—\”õ“®ì @@
     const float mAttackDownSec{ 1.0f };          // Œ•‚ğU‚è‰º‚ë‚·
-    const float mStunTimeSec{ 3.0f };
+    
 private:
     //****************************************************************
     // 
