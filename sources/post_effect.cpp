@@ -411,9 +411,11 @@ void PostEffect::stage_choice_post_effect(ID3D11DeviceContext* dc, float divisio
 
 void PostEffect::lockon_post_effect(float scope, float alpha)
 {
-	effect_constants->data.lockon_scope = scope;
-	effect_constants->data.lockon_alpha = alpha;
-	post_effect_count = 2;
+	effect_constants->data.lockon_scope     = scope;
+	effect_constants->data.vignetting_scope = scope;
+	effect_constants->data.lockon_alpha     = alpha;
+	post_effect_count                       = 3;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOCKON);
 	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::LOCKON_CENTRAL);
+	effect_type[2] = static_cast<int>(POST_EFFECT_TYPE::VIGNETTING);
 }

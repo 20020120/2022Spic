@@ -5,6 +5,18 @@
 #include "scene.h"
 #include "sprite_batch.h"
 #include "practical_entities.h"
+#include "camera.h"
+#include "CameraManager.h"
+#include "post_effect.h"
+#include "bloom.h"
+#include "practical_entities.h"
+#include "skinned_mesh.h"
+#include "effect.h"
+#include "point_light.h"
+#include "constants.h"
+#include "Player.h"
+#include "SkyDome.h"
+#include "shadow_map.h"
 
 class SceneTitle : public Scene , public PracticalEntities
 {
@@ -21,7 +33,37 @@ public:
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
     //描画処理
     void render(GraphicsPipeline& graphics, float elapsed_time) override;
+    //シャドウマップ登録
+    void register_shadowmap(GraphicsPipeline& graphics, float elapsed_time) override;
 private:
+    //----<3D関連>----//
+    std::unique_ptr<CameraManager> cameraManager;
+public:
+    enum class CameraTypes
+    {
+        Game,
+    };
+private:
+    // shadowmap
+    std::unique_ptr<ShadowMap> shadow_map;
+    // post effect
+    std::unique_ptr<PostEffect> post_effect;
+    // bloom
+    std::unique_ptr<Bloom> bloom_effect;
+    struct BloomConstants
+    {
+        float bloom_extraction_threshold = 0.800f;
+        float blur_convolution_intensity = 0.500f;
+
+        float bloom_options[2];
+    };
+    std::unique_ptr<Constants<BloomConstants>> bloom_constants;
+    std::unique_ptr<Player> player{ nullptr };
+    std::unique_ptr<SkyDome> sky_dome{ nullptr };
+
+
+
+
     //--------< 変数 >--------//
     struct Element
     {

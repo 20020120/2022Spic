@@ -538,6 +538,7 @@ private:
     float frame_time  = 0.0f;
     float frame_scope = 0.5f;
     float frame_alpha = 0.0f;
+    bool chain_cancel = false;
     enum class ATTACK_TYPE
     {
         FIRST,

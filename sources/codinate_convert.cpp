@@ -1,7 +1,7 @@
 #include "codinate_convert.h"
 #include "camera.h"
 
-const DirectX::XMFLOAT2& conversion_2D(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& coordinate)
+const DirectX::XMFLOAT2 conversion_2D(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& coordinate)
 {
 	using namespace DirectX;
 	// ビューポート

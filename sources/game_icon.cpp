@@ -316,10 +316,11 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 	fonts->biz_upd_gothic->Begin(dc);
 	r_font_render("shake", shake);
 	r_font_render("vibration", vibration);
-	r_font_render("omission", omission);
-	r_font_render("sensitivity", sensitivity);
+	//r_font_render("omission", omission);
+	//r_font_render("sensitivity", sensitivity);
 	//--button--//
-	for (int i = 0; i < BUTTON_COUNT; ++i)
+	//for (int i = 0; i < BUTTON_COUNT; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		for (int o = 0; o < 2; ++o)
 		{
@@ -330,7 +331,8 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 	fonts->biz_upd_gothic->End(dc);
 
 	sprite_selecter->begin(dc);
-	for (int i = 0; i < BUTTON_COUNT; ++i)
+	//for (int i = 0; i < BUTTON_COUNT; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		for (int o = 0; o < 2; ++o)
 		{
@@ -341,18 +343,18 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 	sprite_selecter->end(dc);
 
 	//--bar--//
-	sprite_scale->begin(dc);
-	for (int o = 0; o < shell_scales.size(); ++o)
-	{
-		std::string s = "shell_scale " + std::to_string(o);
-		r_sprite_render(s, shell_scales.at(o), sprite_scale.get());
-	}
-	for (int o = 0; o < scales.size(); ++o)
-	{
-		std::string s = "scale " + std::to_string(o);
-		r_sprite_render(s, scales.at(o), sprite_scale.get());
-	}
-	sprite_scale->end(dc);
+	//sprite_scale->begin(dc);
+	//for (int o = 0; o < shell_scales.size(); ++o)
+	//{
+	//	std::string s = "shell_scale " + std::to_string(o);
+	//	r_sprite_render(s, shell_scales.at(o), sprite_scale.get());
+	//}
+	//for (int o = 0; o < scales.size(); ++o)
+	//{
+	//	std::string s = "scale " + std::to_string(o);
+	//	r_sprite_render(s, scales.at(o), sprite_scale.get());
+	//}
+	//sprite_scale->end(dc);
 
 #ifdef USE_IMGUI
 	ImGui::Begin("option");
@@ -369,7 +371,7 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 	ImGui::End();
 #endif // USE_IMGUI
 
-	sensitivity_number->render(dc, add_pos);
+	//sensitivity_number->render(dc, add_pos);
 }
 
 void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)

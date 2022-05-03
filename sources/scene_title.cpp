@@ -2,6 +2,7 @@
 #include <wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
 
+#include "framework.h"
 #include "scene_title.h"
 #include "scene_game.h"
 #include "scene_loading.h"
@@ -14,6 +15,24 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
 	//--タイトル前ロード--//
 	ModelCashes::Load_PreTitle(graphics.get_device().Get());
+
+	//----<3D関連>----//
+	// player
+	player = std::make_unique<Player>(graphics);
+	// cameraManager
+	cameraManager = std::make_unique<CameraManager>();
+	cameraManager->RegisterCamera(new GameCamera(player.get()));
+	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+	// shadow_map
+	shadow_map = std::make_unique<ShadowMap>(graphics);
+	// post_effect
+	post_effect = std::make_unique<PostEffect>(graphics.get_device().Get());
+	// bloom_effect
+	bloom_effect = std::make_unique<Bloom>(graphics.get_device().Get(), SCREEN_WIDTH, SCREEN_HEIGHT);
+	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
+	// sky_dome
+	sky_dome = std::make_unique<SkyDome>(graphics);
+
 
 
 	//--back--//
@@ -54,6 +73,15 @@ void SceneTitle::uninitialize() {}
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	//----<3D関連>----//
+	// cameraManager
+	Camera* c = cameraManager->GetCurrentCamera();
+	cameraManager->Update(elapsed_time);
+	// shadow_map
+	shadow_map->debug_imgui();
+	// player
+
+
 	switch (state)
 	{
 	case 0: // start
@@ -97,6 +125,25 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 {
+	// post_effect
+	post_effect->begin(graphics.get_dc().Get());
+
+	// シャドウマップのセット
+	shadow_map->set_shadowmap(graphics);
+
+	// カメラのビュー行列計算
+	cameraManager->CalcViewProjection(graphics);
+
+
+	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
+	// sky_dome
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+	sky_dome->Render(graphics, elapsed_time);
+	// player
+	player->Render(graphics, elapsed_time);
+
+
+
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	//--sprite_back--//
 	sprite_back->begin(graphics.get_dc().Get());
@@ -134,6 +181,57 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	sprite_selecter->render(graphics.get_dc().Get(), selecter2.position, selecter2.scale,
 		selecter2.pivot, selecter2.color, selecter2.angle, selecter2.texpos, selecter2.texsize);
 	sprite_selecter->end(graphics.get_dc().Get());
+
+
+	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
+
+	// シャドウマップの破棄
+	shadow_map->clear_shadowmap(graphics);
+	// post_effect
+	post_effect->end(graphics.get_dc().Get());
+	// 描画ステート設定
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
+	// エフェクトをかける
+	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
+	post_effect->blit(graphics.get_dc().Get());
+	post_effect->scene_preview();
+	// bloom
+	{
+		// 定数バッファにフェッチする
+		static bool display_bloom_imgui = false;
+#ifdef USE_IMGUI
+		imgui_menu_bar("contents", "bloom", display_bloom_imgui);
+		if (display_bloom_imgui)
+		{
+			ImGui::Begin("bloom");
+			ImGui::DragFloat("extraction_threshold", &bloom_constants->data.bloom_extraction_threshold, 0.1f);
+			ImGui::DragFloat("convolution_intensity", &bloom_constants->data.blur_convolution_intensity, 0.1f);
+			ImGui::End();
+		}
+#endif // USE_IMGUI
+		bloom_constants->bind(graphics.get_dc().Get(), 8);
+
+		graphics.set_pipeline_preset(BLEND_STATE::NO_PROCESS, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
+		bloom_effect->make(graphics.get_dc().Get(), post_effect->get_color_map().Get());
+		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
+		bloom_effect->blit(graphics.get_dc().Get());
+	}
+}
+
+void SceneTitle::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
+{
+	Camera* c = cameraManager->GetCurrentCamera();
+	//--シャドウマップの生成--//
+	shadow_map->activate_shadowmap(graphics, c->get_light_direction());
+
+
+
+
+
+
+
+	//--元のビューポートに戻す--//
+	shadow_map->deactivate_shadowmap(graphics);
 }
 
 void SceneTitle::loading_thread(ID3D11Device* device)

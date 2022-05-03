@@ -85,7 +85,7 @@ namespace Math
     {
         RHS_YUP, LHS_YUP, RHS_ZUP, LHS_ZUP,
     };
-    inline const DirectX::XMFLOAT4X4& conversion_coordinate_system(
+    inline const DirectX::XMFLOAT4X4 conversion_coordinate_system(
         COORDINATE_SYSTEM coordinate_system, float scale_factor = 1.0f)
     {
         const DirectX::XMFLOAT4X4 coordinate_system_transforms[]{
@@ -220,7 +220,7 @@ namespace Math
     //-------------------------------------------------------
     //  戻り値：補完された値
     //-------------------------------------------------------
-    inline const DirectX::XMFLOAT3& lerp(const DirectX::XMFLOAT3& start,
+    inline const DirectX::XMFLOAT3 lerp(const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& end, float lerp_rate)
     {
         using namespace DirectX;
@@ -235,7 +235,7 @@ namespace Math
     //-------------------------------------------------------
     //  戻り値：補完された値
     //-------------------------------------------------------
-    inline const DirectX::XMFLOAT2& lerp(const DirectX::XMFLOAT2& start,
+    inline const DirectX::XMFLOAT2 lerp(const DirectX::XMFLOAT2& start,
         const DirectX::XMFLOAT2& end, float lerp_rate)
     {
         using namespace DirectX;
@@ -264,7 +264,7 @@ namespace Math
     //-------------------------------------------------------
     //  戻り値：aからbに向かうベクトル
     //-------------------------------------------------------
-    inline const DirectX::XMVECTOR& calc_vector_AtoB(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+    inline const DirectX::XMVECTOR calc_vector_AtoB(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
     {
         using namespace DirectX;
         XMVECTOR a_vec = DirectX::XMLoadFloat3(&a);
@@ -277,7 +277,7 @@ namespace Math
     //-------------------------------------------------------
     //  戻り値：aからbに向かうベクトル
     //-------------------------------------------------------
-    inline const DirectX::XMVECTOR& calc_vector_AtoB(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b)
+    inline const DirectX::XMVECTOR calc_vector_AtoB(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b)
     {
         using namespace DirectX;
         XMVECTOR a_vec = DirectX::XMLoadFloat2(&a);
@@ -290,7 +290,7 @@ namespace Math
     //--------------------------------------------------------------
     //  戻り値：aからbに向かう正規化されたベクトル
     //--------------------------------------------------------------
-    inline const DirectX::XMVECTOR& calc_vector_AtoB_normalize(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+    inline const DirectX::XMVECTOR calc_vector_AtoB_normalize(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
     {
         return DirectX::XMVector3Normalize(calc_vector_AtoB(a, b));
     }
@@ -299,7 +299,7 @@ namespace Math
     //--------------------------------------------------------------
     //  戻り値：aからbに向かう正規化されたベクトル
     //--------------------------------------------------------------
-    inline const DirectX::XMVECTOR& calc_vector_AtoB_normalize(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b)
+    inline const DirectX::XMVECTOR calc_vector_AtoB_normalize(const DirectX::XMFLOAT2& a, const DirectX::XMFLOAT2& b)
     {
         return DirectX::XMVector2Normalize(calc_vector_AtoB(a, b));
     }
@@ -360,7 +360,7 @@ namespace Math
     //--------------------------------------------------------------
     //  戻り値：startからdirection方向にlength分進んだ地点
     //--------------------------------------------------------------
-    inline const DirectX::XMFLOAT3& calc_designated_point(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& direction, float length)
+    inline const DirectX::XMFLOAT3 calc_designated_point(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& direction, float length)
     {
         return { start.x + direction.x * length, start.y + direction.y * length, start.z + direction.z * length };
     }

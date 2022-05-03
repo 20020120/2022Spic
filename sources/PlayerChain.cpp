@@ -94,17 +94,19 @@ void Player::lockon_post_effect(float elapsed_time, std::function<void(float, fl
 			rate *= rate;
 		}
 
-		if (rate < 1.0f)
+		if (rate <= 1.0f)
 		{
 			frame_scope = 0.5f - rate * (0.5f - ROCKON_FRAME);
-			frame_alpha += elapsed_time * 0.5f;
-			frame_alpha = (std::max)(frame_alpha, 0.5f);
+			frame_alpha += elapsed_time * 0.1f;
+			frame_alpha = (std::min)(frame_alpha, 0.3f);
 			effect_func(frame_scope, frame_alpha);
-			if (rate > 0.9f)
-			{
-				effect_clear_func();
-			}
+			if (rate > 0.98f) { effect_clear_func(); }
 		}
+	}
+	if (chain_cancel)
+	{
+		effect_clear_func();
+		chain_cancel = false;
 	}
 }
 
@@ -248,6 +250,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
@@ -300,6 +303,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
