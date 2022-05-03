@@ -66,8 +66,9 @@ private:
 	float				triggerR = 0.0f;
 	int					slot = 0;
 
-	float stack_stop_vib_sec;
+	float vib_time;
 	float vib_stack_sec;
+	bool is_vibration = false;
 
 	bool operable = true;
 };

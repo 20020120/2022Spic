@@ -325,7 +325,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
     // 矢印の位置
     {
-        DirectX::XMFLOAT2 offset = arrows.at(StageDetails::ROUTE::LEFT).arg.texsize * arrows.at(StageDetails::ROUTE::LEFT).arg.scale * 1.2f;
+        DirectX::XMFLOAT2 offset = player_icon.arg.texsize * player_icon.arg.scale * 1.2f;
         if (arrows.count(StageDetails::ROUTE::LEFT)) { arrows.at(StageDetails::ROUTE::LEFT).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(-offset.x, 0); }
         if (arrows.count(StageDetails::ROUTE::RIGHT)) { arrows.at(StageDetails::ROUTE::RIGHT).arg.pos = player_icon.arg.pos + DirectX::XMFLOAT2(offset.x, 0); }
         if (arrows.count(StageDetails::ROUTE::UP)) { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
@@ -384,15 +384,15 @@ void WaveManager::transition_reduction()
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
     arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
-    arrival_scale = { 0.25f,0.22f };
+    arrival_scale = { 0.5f,0.5f };
     // map
     map.threshold = 10.0f;
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
-    map.arg.scale = { 10, 10 };
+    map.arg.scale = { 6.0f, 6.0f };
     // player_icon
     player_icon.threshold = 10.0f; // プレイヤーのアニメーションを待つ
     player_icon.arg.pos = viewpoint;
-    player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
+    player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
 }
 
 void WaveManager::update_reduction(float elapsed_time)
@@ -408,7 +408,7 @@ void WaveManager::update_reduction(float elapsed_time)
     player_icon.arg.pos = viewpoint;
     // scaleの変更
     map.arg.scale = Math::lerp(map.arg.scale, arrival_scale, lerp_rate * elapsed_time);
-    player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
+    player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
 
     // 選択状態に遷移
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
@@ -511,8 +511,8 @@ void WaveManager::update_selection(float elapsed_time)
     {
         arrow.second.threshold = Math::lerp(arrow.second.threshold, -0.5f, 2.0f * elapsed_time);
 
-        if (arrow.first == route_state) { arrow.second.arg.scale = player_icon.arg.scale * 1.5f; }
-        else { arrow.second.arg.scale = player_icon.arg.scale; }
+        if (arrow.first == route_state) { arrow.second.arg.scale = player_icon.arg.scale * 1.3f; }
+        else { arrow.second.arg.scale = player_icon.arg.scale * 0.8f; }
     }
     // next_stageのセット
     if (game_pad->get_button_down() & GamePad::BTN_B)
@@ -520,7 +520,15 @@ void WaveManager::update_selection(float elapsed_time)
         next_stage = stage_details[current_stage].journeys.at(route_state);
         transition_enlargement();
     }
+    // 右スティックでマップ移動
+    viewpoint.x += game_pad->get_axis_RX() * 400.0f * elapsed_time;
+    viewpoint.y -= game_pad->get_axis_RY() * 400.0f * elapsed_time;
+    // 移動
+    map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
+    player_icon.arg.pos = viewpoint;
 
+    viewpoint.x = Math::clamp(viewpoint.x, 0.0f, 1280.0f);
+    viewpoint.y = Math::clamp(viewpoint.y, 360.0f, 360.0f + map.arg.texsize.y * map.arg.scale.y);
 
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
@@ -542,7 +550,7 @@ void WaveManager::transition_enlargement()
 
     wait_timer = 3.0f;
     arrival_viewpoint = { 640.0f, 360.0f };
-    arrival_scale     = { 10.0f,10.0f };
+    arrival_scale     = { 6.0f, 6.0f };
 }
 
 void WaveManager::update_enlargement(float elapsed_time)
@@ -562,7 +570,7 @@ void WaveManager::update_enlargement(float elapsed_time)
     if (wait_timer > 0.0f) return;
     // scaleの変更
     map.arg.scale = Math::lerp(map.arg.scale, arrival_scale, lerp_rate * elapsed_time);
-    player_icon.arg.scale = DirectX::XMFLOAT2(0.2f, 0.2f) * map.arg.scale;
+    player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
 
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f)) { close = true; }
 }

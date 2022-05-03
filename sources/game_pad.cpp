@@ -6,14 +6,18 @@
 
 void GamePad::update(float elapsed_time)
 {
-	//stack_stop_vib_sec += elapsed_time;
-	//if (vib_stack_sec <= stack_stop_vib_sec)
-	//{
-	//	XINPUT_VIBRATION vib;
-	//	vib.wLeftMotorSpeed  = (SHORT)0.0f;
-	//	vib.wRightMotorSpeed = (SHORT)0.0f;
-	//	XInputSetState(slot, &vib);
-	//}
+	if (is_vibration)
+	{
+		vib_time += elapsed_time;
+		if (vib_time > vib_stack_sec)
+		{
+			XINPUT_VIBRATION vib;
+			vib.wLeftMotorSpeed = (SHORT)0.0f;
+			vib.wRightMotorSpeed = (SHORT)0.0f;
+			XInputSetState(slot, &vib);
+			is_vibration = false;
+		}
+	}
 
 	axisLx = axisLy = 0.0f;
 	axisRx = axisRy = 0.0f;
@@ -214,7 +218,9 @@ float GamePad::get_trigger_R() { return DebugFlags::get_perspective_switching() 
 
 bool GamePad::set_vibration(float R, float L, float StopTime)
 {
-	stack_stop_vib_sec = 0.0f;
+	is_vibration = true;
+
+	vib_time = 0.0f;
 	vib_stack_sec = StopTime;
 
 	static const long MotorSpeedMax = 65535;
