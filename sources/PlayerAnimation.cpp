@@ -401,13 +401,34 @@ void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
-        TransitionIdle();
+        //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionMove();
+        }
+        //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
+        else
+        {
+            TransitionIdle();
+        }
     }
 }
 
 void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (model->end_of_animation()) TransitionIdle();
+    if (model->end_of_animation())
+    {
+        //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionMove();
+        }
+        //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
+        else
+        {
+            TransitionIdle();
+        }
+    }
 }
 
 void Player::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)

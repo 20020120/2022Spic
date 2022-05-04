@@ -5,7 +5,31 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
+    switch (behavior_state)
+    {
+    case Player::Behavior::Normal:
+        ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
+        player_attack_power = 3;
+        //回り込み回避よりも進んでいたら切り替えれる
+        if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+            {
+                transition_chain_behavior();
+            }
+        }
+        //チュートリアルがロックオンの時よりも大きければ出来る
+        if (tutorial_state >= TutorialState::LockOnTutorial)     LockOn();
+        //カメラリセット
+        CameraReset();
+        break;
+    case Player::Behavior::Chain:
+
+        break;
+    default:
+        break;
+    }
+
     //アニメーション更新処理
     GetPlayerDirections();
     //プレイヤーのパラメータの変更
@@ -25,10 +49,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     }
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics, elapsed_time);
-    //カメラリセット
-    CameraReset();
-    //チュートリアルがロックオンの時よりも大きければ出来る
-    if(tutorial_state >= TutorialState::LockOnTutorial)     LockOn();
 
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 #ifdef USE_IMGUI
@@ -208,6 +228,25 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::AwaikingTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
         break;
     }
     default:
@@ -278,10 +317,48 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::ChainAttackTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+
         break;
     }
     case Player::TutorialState::AwaikingTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
         break;
     }
     default:
@@ -308,6 +385,7 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
             {
                 TransitionTutoriaIdle();
             }
+            if(tutorial_state >= TutorialState::AwaikingTutorial)   TutorialAwaiking();
          UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
     else
@@ -364,6 +442,8 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             is_charge = false;
             TransitionTutoriaIdle();
         }
+        if (tutorial_state >= TutorialState::AwaikingTutorial)   TutorialAwaiking();
+
     }
     else
     {
@@ -507,6 +587,40 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
+}
+
+void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (model->end_of_animation())
+    {
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionTutorialMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionTutoriaIdle();
+        }
+    }
+}
+
+void Player::TutorialInvAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (model->end_of_animation())
+    {
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionTutorialMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionTutoriaIdle();
+        }
+    }
 }
 
 void Player::TransitionTutoriaIdle(float blend_second)
@@ -746,4 +860,42 @@ void Player::TransitionTutorialAttack3(float blend_second)
     //３撃目の更新関数に切り替える
     player_tutorial_activity = &Player::TutorialAttack3Update;
 
+}
+
+void Player::TransitionTutorialAwaiking()
+{
+    //覚醒状態になるアニメーションに設定
+    model->play_animation(AnimationClips::Awaking, false, true);
+    //覚醒状態かどうかの設定
+    is_awakening = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //覚醒状態になる途中の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAwaikingUpdate;
+}
+
+void Player::TransitionTutorialInvAwaiking()
+{
+    //通常状態に戻るアニメーションに設定
+    model->play_animation(AnimationClips::InvAwaking, false, true);
+    //覚醒状態かどうかの設定
+    is_awakening = false;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //通常状態に戻ってるときの更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialInvAwaikingUpdate;
+}
+
+void Player::TutorialAwaiking()
+{
+    //ボタン入力
+    if (game_pad->get_button() & GamePad::BTN_A)
+    {
+        if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
+    }
+    if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
 }
