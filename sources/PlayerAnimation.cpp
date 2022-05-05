@@ -1,4 +1,53 @@
 #include"Player.h"
+void Player::ExecFuncUpdate(float elapsed_time)
+{
+    (this->*player_title_activity)(elapsed_time);
+}
+void Player::UpdateTitleAnimationReadyIdle(float elaosed_time)
+{
+    if (start_title_animation)
+    {
+        model->play_animation(AnimationClips::TitleAnimationStart);
+        player_title_activity = &Player::UpdateTitleAnimationStart;
+    }
+}
+void Player::UpdateTitleAnimationStart(float elaosed_time)
+{
+    if (model->end_of_animation())
+    {
+        model->play_animation(AnimationClips::TitleAnimationStartIdle);
+        player_title_activity = &Player::UpdateTitleAnimationStartIdle;
+    }
+}
+void Player::UpdateTitleAnimationStartIdle(float elaosed_time)
+{
+    title_timer += 1.0f * elaosed_time;
+    //モデルのアニメーションが終わった時かつ1秒たったら
+    if (model->end_of_animation() && title_timer > 0.5f)
+    {
+        model->play_animation(AnimationClips::TitleAnimationEnd);
+        player_title_activity = &Player::UpdateTitleAnimationEnd;
+    }
+}
+void Player::UpdateTitleAnimationEnd(float elaosed_time)
+{
+    if (model->end_of_animation())
+    {
+        model->play_animation(AnimationClips::TitleAnimationEndIdle);
+        player_title_activity = &Player::UpdateTitleAnimationEndIdle;
+    }
+}
+void Player::UpdateTitleAnimationEndIdle(float elaosed_time)
+{
+    if (model->end_of_animation())
+    {
+        end_title_animation = true;
+    }
+}
+void Player::TransitionTitleAnimationReadyIdle()
+{
+    model->play_animation(AnimationClips::TitleAnimationReadyIdle,true);
+}
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     switch (behavior_state)
@@ -902,7 +951,7 @@ void Player::TransitionStartMothin()
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションに設定
-     model->play_animation(AnimationClips::StartMothin, false, true);
+    //model->play_animation(AnimationClips::StartMothin, false, true);
     //更新関数に切り替え
     player_activity = &Player::StartMothinUpdate;
 

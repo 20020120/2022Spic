@@ -14,6 +14,7 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 #ifdef USE_IMGUI
     ImGui::Begin("SkyDome");
     ImGui::DragFloat4("emissive_color", &emissive_color.x);
+    ImGui::DragFloat3("angle", &angle.x);
     ImGui::End();
 #endif // USE_IMGUI
 

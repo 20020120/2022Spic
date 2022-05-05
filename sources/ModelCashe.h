@@ -32,5 +32,9 @@ inline void ModelCashes::Load_IntoTitle(ID3D11Device* pDevice_)
 
 inline void ModelCashes::Load_PreTitle(ID3D11Device* pDevice_)
 {
+    auto model1 = resource_manager->load_model_resource(pDevice_, ".\\resources\\Models\\Player\\player_nineteenth.fbx");
+    mpModelCashVec.emplace_back(std::move(model1));
+    auto model2 = resource_manager->load_model_resource(pDevice_, ".\\resources\\Models\\stage\\title_stage.fbx");
+    mpModelCashVec.emplace_back(std::move(model2));
 
 }

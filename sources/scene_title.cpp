@@ -17,12 +17,15 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	ModelCashes::Load_PreTitle(graphics.get_device().Get());
 
 	//----<3D関連>----//
+	//ステージオブジェクト
+	title_stage_model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\title_stage.fbx", false, 60.0f);
 	// player
 	player = std::make_unique<Player>(graphics);
+	player->TransitionTitleAnimationReadyIdle();
 	// cameraManager
 	cameraManager = std::make_unique<CameraManager>();
-	cameraManager->RegisterCamera(new GameCamera(player.get()));
-	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+	cameraManager->RegisterCamera(new TitleCamera(player.get()));
+	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Title));
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
 	// post_effect
@@ -80,40 +83,46 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	// shadow_map
 	shadow_map->debug_imgui();
 	// player
+	player->SetCameraDirection(c->GetForward(), c->GetRight());
+	player->SetCameraPosition(c->get_eye());
+	player->UpdateTitle(elapsed_time);
 
-
-	switch (state)
+	if (player->GetStartTitleAnimation() == false)
 	{
-	case 0: // start
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
+		switch (state)
 		{
-			state = 1;
-			arrival_pos1 = { 315.0f, 630.0f };
-			arrival_pos2 = { 870.0f, 630.0f };
-		}
-		if (game_pad->get_button_down() & GamePad::BTN_B)
-		{
-			if (is_ready)
+		case 0: // start
+			if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
 			{
-				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
-				is_ready = false;
+				state = 1;
+				arrival_pos1 = { 315.0f, 630.0f };
+				arrival_pos2 = { 870.0f, 630.0f };
 			}
-			return;
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				player->StartTitleAnimation();
+				return;
+			}
+			break;
+		case 1: // exit
+			if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
+			{
+				state = 0;
+				arrival_pos1 = { 250.0f, 515.0f };
+				arrival_pos2 = { 950.0f, 515.0f };
+			}
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				PostQuitMessage(0);
+				return;
+			}
+			break;
 		}
-		break;
-	case 1: // exit
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
-		{
-			state = 0;
-			arrival_pos1 = { 250.0f, 515.0f };
-			arrival_pos2 = { 950.0f, 515.0f };
-		}
-		if (game_pad->get_button_down() & GamePad::BTN_B)
-		{
-			PostQuitMessage(0);
-			return;
-		}
-		break;
+	}
+	if (player->GetEndTitleAnimation())
+	{
+		SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+		is_ready = false;
 	}
 
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
@@ -139,16 +148,19 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	// sky_dome
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
 	sky_dome->Render(graphics, elapsed_time);
+	//タイトルオブジェクト
+	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+	title_stage_model->render(graphics.get_dc().Get(), Math::calc_world_matrix(title_stage_parm.scale, title_stage_parm.angle, title_stage_parm.pos), {1.0f,1.0f,1.0f,1.0f});
 	// player
-	player->Render(graphics, elapsed_time);
+	player->TitleRender(graphics, elapsed_time);
 
 
 
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	//--sprite_back--//
-	sprite_back->begin(graphics.get_dc().Get());
-	sprite_back->render(graphics.get_dc().Get(), back.position, back.scale, back.pivot, back.color, back.angle, back.texpos, back.texsize);
-	sprite_back->end(graphics.get_dc().Get());
+	//sprite_back->begin(graphics.get_dc().Get());
+	//sprite_back->render(graphics.get_dc().Get(), back.position, back.scale, back.pivot, back.color, back.angle, back.texpos, back.texsize);
+	//sprite_back->end(graphics.get_dc().Get());
 	//--sprite_string--//
 #ifdef USE_IMGUI
 	ImGui::Begin("start");
