@@ -69,7 +69,7 @@ protected:
 class TitleCamera : public Camera
 {
 public:
-    TitleCamera(){};
+    TitleCamera(Player* player) : Camera(player) {};
     ~TitleCamera(){};
 
     void Initialize(GraphicsPipeline& graphics);

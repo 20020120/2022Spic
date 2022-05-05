@@ -24,8 +24,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	player->TransitionTitleAnimationReadyIdle();
 	// cameraManager
 	cameraManager = std::make_unique<CameraManager>();
-	cameraManager->RegisterCamera(new GameCamera(player.get()));
-	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+	cameraManager->RegisterCamera(new TitleCamera(player.get()));
+	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Title));
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
 	// post_effect

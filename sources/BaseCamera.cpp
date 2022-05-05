@@ -72,7 +72,7 @@ void BaseCamera::DebugGUI()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera", false);
-	ImGui::SliderFloat3("Position", &eye.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Position", &eye.x, -20.0f, 10.0f);
 	ImGui::InputFloat3("target", &target.x);
 
 	ImGui::InputFloat3("forward", &forward.x);

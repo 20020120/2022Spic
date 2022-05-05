@@ -41,7 +41,7 @@ private:
 public:
     enum class CameraTypes
     {
-        Game,
+        Title,
     };
 private:
     // shadowmap
