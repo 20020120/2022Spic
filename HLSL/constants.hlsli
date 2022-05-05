@@ -87,6 +87,9 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     float post_effect_pad9;
     float3 lockon_color;
     float post_effect_pad10;
+    // slashing attack
+    float slashing_power;
+    float3 post_effect_pad11;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)

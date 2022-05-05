@@ -147,6 +147,20 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 			}
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::RGB_SHIFT))
 			{
+#ifdef USE_IMGUI
+				std::string ss = "slashing attack " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat("slashing_power", &effect_constants->data.slashing_power, 0.001f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 2);
 			}
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::WHITE_NOISE))
@@ -418,4 +432,12 @@ void PostEffect::lockon_post_effect(float scope, float alpha)
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOCKON);
 	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::LOCKON_CENTRAL);
 	effect_type[2] = static_cast<int>(POST_EFFECT_TYPE::VIGNETTING);
+}
+
+
+void PostEffect::title_post_effect(float power)
+{
+	effect_constants->data.slashing_power = power;
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::RGB_SHIFT);
 }

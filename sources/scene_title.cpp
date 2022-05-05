@@ -98,7 +98,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				arrival_pos1 = { 315.0f, 630.0f };
 				arrival_pos2 = { 870.0f, 630.0f };
 			}
-			if (game_pad->get_button_down() & GamePad::BTN_B)
+			if (is_ready && game_pad->get_button_down() & GamePad::BTN_B)
 			{
 				player->StartTitleAnimation();
 				return;
@@ -129,7 +129,14 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
 
+#ifdef USE_IMGUI
+	static float slashing_power = 0.0f;
+	ImGui::Begin("slashing_power");
+	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
+	ImGui::End();
+#endif // USE_IMGUI
 
+	post_effect->title_post_effect(slashing_power);
 }
 
 void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)

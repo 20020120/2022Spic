@@ -25,6 +25,7 @@ public:
 	void dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos);
 	void stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions);
 	void lockon_post_effect(float scope, float alpha);
+	void title_post_effect(float power);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }
@@ -99,6 +100,9 @@ private:
 		float pad9;
 		DirectX::XMFLOAT3 lockon_color{ 1,1,1 };
 		float pad10;
+		// slashing attack
+		float slashing_power = 0.0;
+		DirectX::XMFLOAT3 post_effect_pad11;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
     //--------< ŠÖ” >--------//

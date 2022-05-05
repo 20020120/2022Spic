@@ -10,19 +10,18 @@ Texture2D texture_maps[4] : register(t0);
 float4 main(VS_OUT pin) : SV_TARGET
 {
     //--------<RGB‚¸‚ç‚µ>--------//
-    float4 tex = texture_maps[0].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
-    float alpha = tex.a;
     // r’l‚ð‰¡•ûŒü‚É‚¸‚ç‚·
     float2 sample_point = pin.texcoord;
     if (pin.texcoord.y > 0.5f)
     {
-        sample_point.x += 0.05;
+        sample_point.x += slashing_power;
     }
     else
     {
-        sample_point.x -= 0.05;
+        sample_point.x -= slashing_power;
     }
-    tex = texture_maps[0].Sample(sampler_states[ANISOTROPIC], sample_point);
+    float4 tex = texture_maps[0].Sample(sampler_states[POINT], sample_point);
+    float alpha = tex.a;
 
     return float4(tex.rgb, alpha);
 }
