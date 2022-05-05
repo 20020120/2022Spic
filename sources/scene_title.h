@@ -60,9 +60,15 @@ private:
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
     std::unique_ptr<Player> player{ nullptr };
     std::unique_ptr<SkyDome> sky_dome{ nullptr };
+    std::shared_ptr<SkinnedMesh> title_stage_model{ nullptr };
 
-
-
+    struct TitleStageParm
+    {
+        DirectX::XMFLOAT3 pos{};
+        DirectX::XMFLOAT3 angle{0,-3.14f,0};
+        DirectX::XMFLOAT3 scale{0.06f,0.06f,0.06f};
+    };
+    TitleStageParm title_stage_parm;
 
     //--------< •Ï” >--------//
     struct Element

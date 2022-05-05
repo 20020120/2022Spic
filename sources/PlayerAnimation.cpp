@@ -23,7 +23,7 @@ void Player::UpdateTitleAnimationStartIdle(float elaosed_time)
 {
     title_timer += 1.0f * elaosed_time;
     //モデルのアニメーションが終わった時かつ1秒たったら
-    if (model->end_of_animation() && title_timer > 1.0f)
+    if (model->end_of_animation() && title_timer > 0.5f)
     {
         model->play_animation(AnimationClips::TitleAnimationEnd);
         player_title_activity = &Player::UpdateTitleAnimationEnd;
@@ -39,7 +39,10 @@ void Player::UpdateTitleAnimationEnd(float elaosed_time)
 }
 void Player::UpdateTitleAnimationEndIdle(float elaosed_time)
 {
-    if (model->end_of_animation()) end_title_animation = true;
+    if (model->end_of_animation())
+    {
+        end_title_animation = true;
+    }
 }
 void Player::TransitionTitleAnimationReadyIdle()
 {

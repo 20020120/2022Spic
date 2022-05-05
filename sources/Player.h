@@ -64,6 +64,7 @@ public:
     void UpdateTitle(float elapsed_time);
 
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
+    void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 50;
@@ -386,6 +387,7 @@ private:
 public:
     void TransitionTitleAnimationReadyIdle();
     void StartTitleAnimation() { start_title_animation = true; }
+    bool GetStartTitleAnimation() { return start_title_animation; }
     bool GetEndTitleAnimation() { return end_title_animation; }
 private:
     //-----------アニメーションに関係する関数,変数------------//

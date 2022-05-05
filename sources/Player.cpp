@@ -42,13 +42,99 @@ void Player::Initialize()
 
 void Player::UpdateTitle(float elapsed_time)
 {
+    orientation = { 0.0f,1.0f,0.0f,0.002f };
     ExecFuncUpdate(elapsed_time);
+    GetPlayerDirections();
     model->update_animation(elapsed_time);
 #ifdef USE_IMGUI
-    ImGui::Begin("title_animtatiom");
-    ImGui::Checkbox("start", &start_title_animation);
-    ImGui::End();
+    static bool display_scape_imgui;
+    imgui_menu_bar("Player", "Player", display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        if (ImGui::Begin("Player"))
+        {
+            if (ImGui::TreeNode("transform"))
+            {
+                ImGui::DragFloat3("position", &position.x);
+                ImGui::DragFloat3("scale", &scale.x, 0.001f);
+                ImGui::DragFloat4("orientation", &orientation.x);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerDirection"))
+            {
+                ImGui::DragFloat3("forward", &forward.x);
+                ImGui::DragFloat3("right", &right.x);
+                ImGui::DragFloat3("up", &up.x);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("speed"))
+            {
+                ImGui::DragFloat3("velocity", &velocity.x);
+                ImGui::DragFloat3("acceleration_velocity", &acceleration_velocity.x);
+                ImGui::DragFloat("max_speed", &move_speed);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerFlags"))
+            {
+                ImGui::Checkbox("is_avoidance", &is_avoidance);
+                ImGui::Checkbox("is_behind_avoidance", &is_behind_avoidance);
+                ImGui::Checkbox("camera_reset", &camera_reset);
+                ImGui::Checkbox("is_lock_on", &is_lock_on);
+                ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
+                ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::Checkbox("is_awakening", &is_awakening);
+                ImGui::Checkbox("start_dash_effect", &start_dash_effect);
+                ImGui::Checkbox("end_dash_effect", &end_dash_effect);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("CapsuleParam"))
+            {
+                if (ImGui::TreeNode("BodyCapsuleParam"))
+                {
+                    ImGui::DragFloat3("capsule_parm.start", &body_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &body_capsule_param.end.x, 0.1f);
+                    ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
+                    ImGui::TreePop();
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("easing"))
+            {
+                ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time, 0.1f);
+                ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time, 0.1f);
+                ImGui::DragFloat("leverage", &leverage, 0.1f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerGameParm"))
+            {
+                ImGui::DragInt("player_health", &player_health);
+                ImGui::DragFloat("combo", &combo_count);
+                ImGui::DragFloat("attack_time", &attack_time);
+
+                ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
+                ImGui::DragInt("player_attack_power", &player_attack_power);
+                ImGui::DragFloat("invincible_timer", &invincible_timer);
+                ImGui::TreePop();
+            }
+
+            if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
+            if (ImGui::Button("TransitionIdle")) TransitionIdle();
+
+            ImGui::Checkbox("start", &start_title_animation);
+            ImGui::Checkbox("end", &end_title_animation);
+
+            ImGui::DragFloat("threshold", &threshold, 0.01f, 0, 1.0f);
+            ImGui::DragFloat("threshold_mesh", &threshold_mesh, 0.01f, 0, 1.0f);
+            ImGui::DragFloat("glow_time", &glow_time);
+            ImGui::DragFloat4("emissive_color", &emissive_color.x, 0.1f);
+            DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
+            float length_radius = Math::calc_vector_AtoB_length(p, target);//‹——£(”¼Œa)
+            ImGui::DragFloat("l", &length_radius);
+            ImGui::End();
+        }
+    }
 #endif // USE_IMGUI
+    //TurnTitle(elapsed_time, orientation, position, camera_position);
 
 }
 
@@ -237,6 +323,17 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     }
 
     player_config->render(graphics.get_dc().Get());
+}
+
+void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
+{
+    glow_time += 1.0f * elapsed_time;
+    if (glow_time >= 3.0f) glow_time = 0;
+    graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
+
+    SkinnedMesh::mesh_tuple mesh_r = std::make_tuple("armor_R_mdl", threshold_mesh);
+    SkinnedMesh::mesh_tuple mesh_l = std::make_tuple("armor_L_mdl", threshold_mesh);
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, mesh_r, mesh_l);
 }
 
 void Player::LerpCameraTarget(float elapsed_time)
