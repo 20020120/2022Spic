@@ -44,18 +44,25 @@ private:
         WingDashStart,//飛行機モードの突進開始
         WingDashIdle,//飛行機モードの突進中
         WingDashEnd,//飛行機モードの突進終了
-        StartMothin,//スタートモーション
-        NamelessMotion,//モーション二つ目
         Die,//死亡
         Dying,//死亡中
         AwakingDie,//死亡
-        AwakingDying//死亡中
+        AwakingDying,//死亡中
+        NamelessMotion,//モーション
+        TitleAnimationReadyIdle,//タイトルモーション1
+        TitleAnimationStart,//タイトルモーション2
+        TitleAnimationStartIdle,//タイトルモーション3
+        TitleAnimationEnd,//タイトルモーション4
+        TitleAnimationEndIdle,//タイトルモーション5
     };
 public:
     void Initialize()override;
     void Update(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)override;
     //チュートリアル用のアップデート
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    //タイトル用のアップデート
+    void UpdateTitle(float elapsed_time);
+
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
 private:
     //プレイヤーの最大体力
@@ -302,7 +309,7 @@ public:
         return sword_capsule_param[0];
     }
     float GetStunRadius() { return sphere_radius; }
-    std::vector<DirectX::XMFLOAT3> GetBehindPoint() {return behind_point;}
+    std::vector<DirectX::XMFLOAT3> GetBehindPoint() { return behind_point; }
     void SetRaycast(bool r) { raycast = r; }
     int GetPlayerPower() { return player_attack_power; }
     [[nodiscard("Not used")]] const AddDamageFunc GetDamagedFunc() { return damage_func; }
@@ -329,7 +336,7 @@ public:
 private:
     void GetPlayerDirections();
 public:
-    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward,  const DirectX::XMFLOAT3& c_right)
+    void SetCameraDirection(const DirectX::XMFLOAT3& c_forward, const DirectX::XMFLOAT3& c_right)
     {
         camera_forward = c_forward;
         camera_right = c_right;
@@ -360,6 +367,26 @@ private:
         Chain
     };
     Behavior behavior_state{ Behavior::Normal };
+private:
+    typedef void(Player::* PlayerTitleActivity)(float elapsed_time);
+    PlayerTitleActivity player_title_activity = &Player::UpdateTitleAnimationReadyIdle;
+    void ExecFuncUpdate(float elapsed_time);
+    //タイトル用アニメーションを再生
+    bool start_title_animation{ false };
+    //タイトル用アニメーションが終わった時
+    bool end_title_animation{ false };
+    //タイトル用タイマー
+    float title_timer{ 0 };
+    //タイトル用待機
+    void UpdateTitleAnimationReadyIdle(float elaosed_time);
+    void UpdateTitleAnimationStart(float elaosed_time);
+    void UpdateTitleAnimationStartIdle(float elaosed_time);
+    void UpdateTitleAnimationEnd(float elaosed_time);
+    void UpdateTitleAnimationEndIdle(float elaosed_time);
+public:
+    void TransitionTitleAnimationReadyIdle();
+    void StartTitleAnimation() { start_title_animation = true; }
+    bool GetEndTitleAnimation() { return end_title_animation; }
 private:
     //-----------アニメーションに関係する関数,変数------------//
     //アニメーション遷移の関数ポインタ//

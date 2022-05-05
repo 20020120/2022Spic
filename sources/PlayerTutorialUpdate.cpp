@@ -148,7 +148,19 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
 
 void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    (this->*player_tutorial_activity)(elapsed_time, sky_dome,enemies);
+    switch (behavior_state)
+    {
+    case Player::Behavior::Normal:
+        //自分のクラスの関数ポインタを呼ぶ
+        (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
+        break;
+    case Player::Behavior::Chain:
+        (this->*player_chain_activity)(elapsed_time, enemies);
+        break;
+    default:
+        break;
+    }
+
 }
 
 void Player::ChangeTutorialState(int state)

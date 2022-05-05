@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_eighteenth.fbx",false,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_nineteenth.fbx",false,60.0f);
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -38,6 +38,18 @@ Player::~Player()
 
 void Player::Initialize()
 {
+}
+
+void Player::UpdateTitle(float elapsed_time)
+{
+    ExecFuncUpdate(elapsed_time);
+    model->update_animation(elapsed_time);
+#ifdef USE_IMGUI
+    ImGui::Begin("title_animtatiom");
+    ImGui::Checkbox("start", &start_title_animation);
+    ImGui::End();
+#endif // USE_IMGUI
+
 }
 
 //このアップデートの中に書いていたらExecFuncUpdate関数で
