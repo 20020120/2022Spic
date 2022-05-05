@@ -316,6 +316,12 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     case EnemyType::Spear_Ace:
         break;
     case EnemyType::Boss:
+        {
+        BaseEnemy* enemy = new LastBoss(graphics_,
+            Source_.mEmitterPoint,
+            mEditor.fGetParam(Source_.mType));
+        mEnemyVec.emplace_back(enemy);
+        }
         break;
     case EnemyType::Count: break;
     default:;

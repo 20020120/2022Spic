@@ -132,7 +132,7 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
             mOrientation = Math::RotQuaternion(mOrientation, up, -dot * RotSpeed_ * elapsedTime_);
         }
     }
-
+    
 }
 
 void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
