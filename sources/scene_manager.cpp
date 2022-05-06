@@ -2,7 +2,7 @@
 #include "user.h"
 
 Scene* SceneManager::storage_scene = nullptr;
-DISSOLVE_TYPE SceneManager::dissolve_type = DISSOLVE_TYPE::TYPE1;
+DISSOLVE_TYPE SceneManager::dissolve_type = DISSOLVE_TYPE::DOT;
 float SceneManager::dissolve_speed = 1.0f;
 
 SceneManager::SceneManager(GraphicsPipeline& graphics)

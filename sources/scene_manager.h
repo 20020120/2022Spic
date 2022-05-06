@@ -28,7 +28,7 @@ public:
     void render(GraphicsPipeline& graphics, float elapsedTime);
     void register_shadowmap(GraphicsPipeline& graphics, float elapsedTime);
     void clear();
-    static void scene_switching(Scene* next, DISSOLVE_TYPE dissolve = DISSOLVE_TYPE::TYPE1, float d_speed = 1.5f)
+    static void scene_switching(Scene* next, DISSOLVE_TYPE dissolve = DISSOLVE_TYPE::DOT, float d_speed = 1.5f)
     {
         storage_scene = next;
         dissolve_type = dissolve;

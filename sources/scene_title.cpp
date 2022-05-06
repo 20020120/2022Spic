@@ -129,8 +129,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
 
-#ifdef USE_IMGUI
 	static float slashing_power = 0.0f;
+#ifdef USE_IMGUI
 	ImGui::Begin("slashing_power");
 	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
 	ImGui::End();
