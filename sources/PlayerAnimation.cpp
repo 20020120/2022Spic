@@ -47,6 +47,8 @@ void Player::UpdateTitleAnimationEndIdle(float elaosed_time)
 void Player::TransitionTitleAnimationReadyIdle()
 {
     model->play_animation(AnimationClips::TitleAnimationReadyIdle,true);
+    //ここでupdateしておかないと1フレームだけ初期のアニメーションが映ってしまうから
+    model->update_animation(1.0f);
 }
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
