@@ -296,7 +296,7 @@ public:
     // meshŒŸõ
     template<class... A> void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
-        const DirectX::XMFLOAT4& emissive_color, A... mesh_tuples)
+        const DirectX::XMFLOAT4& emissive_color, float glow_thickness, A... mesh_tuples)
     {
         for (const mesh& mesh : meshes)
         {
@@ -319,6 +319,7 @@ public:
             }
             geometry_constants->data.dissolve_threshold.y = glow_time;
             geometry_constants->data.emissive_color = emissive_color;
+            geometry_constants->data.glow_thickness = glow_thickness;
 
             uint32_t stride{ sizeof(vertex) };
             uint32_t offset{ 0 };
