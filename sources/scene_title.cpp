@@ -66,6 +66,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	arrival_pos1 = { 250.0f, 515.0f };
 	arrival_pos2 = { 950.0f, 515.0f };
 
+	slashing_power = 0;
+	slashing_wait_timer = 0;
+
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//スレッドの管理を放棄
@@ -121,6 +124,23 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	if (player->GetEndTitleAnimation())
 	{
+		if (slashing_power <= 0)
+		{
+			slashing_power = 0.015f;
+		}
+		else
+		{
+			slashing_wait_timer += elapsed_time;
+		}
+		if (slashing_wait_timer > 1.0f)
+		{
+			slashing_power += elapsed_time * 0.05f;
+			slashing_power = (std::min)(slashing_power, SLASHING_MAX);
+		}
+	}
+
+	if (Math::equal_check(slashing_power, SLASHING_MAX))
+	{
 		SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 		is_ready = false;
 	}
@@ -128,8 +148,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
-
-	static float slashing_power = 0.0f;
 #ifdef USE_IMGUI
 	ImGui::Begin("slashing_power");
 	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);

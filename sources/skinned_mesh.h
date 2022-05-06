@@ -265,6 +265,8 @@ private:
         };
         DirectX::XMFLOAT4 emissive_color{ 1,1,1,1 }; // xyz:emissive_color w:emissive_strength
         DirectX::XMFLOAT4 dissolve_threshold{ 0,0,0,0 };
+        float glow_thickness = 0.8f; // glowÇÃïù
+        DirectX::XMFLOAT3 pad1;
     };
     struct material
     {
@@ -287,10 +289,10 @@ public:
     typedef std::tuple<std::string, float> mesh_tuple;
     void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), float glow_thickness = 0.8f);
     void render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), float glow_thickness = 0.8f);
     // meshåüçı
     template<class... A> void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
