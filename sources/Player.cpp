@@ -46,6 +46,8 @@ void Player::UpdateTitle(float elapsed_time)
     ExecFuncUpdate(elapsed_time);
     GetPlayerDirections();
     model->update_animation(elapsed_time);
+    //”–‚­‚µ‚Ä‚¨‚­
+    emissive_color.w = 0.7f;
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
