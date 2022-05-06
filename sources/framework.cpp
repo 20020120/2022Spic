@@ -3,6 +3,7 @@
 #include "scene_Game.h"
 #include "volume_icon.h"
 #include "game_icon.h"
+#include "scene_loading.h"
 
 framework::framework(HWND hwnd)
 	: hwnd(hwnd) {}
@@ -16,7 +17,9 @@ bool framework::initialize()
 	entities_initialize(*graphics);
 	// ƒV[ƒ“‚Ì‰Šú‰»
 	scene_manager = std::make_unique<SceneManager>(*graphics);
-	scene_manager->set_next_scene(new SceneTitle());
+	//scene_manager->set_next_scene(new SceneTitle());
+	scene_manager->set_next_scene(new SceneLoading(new SceneTitle()));
+
 	// debug_flags
 	debug_flags = std::make_unique<DebugFlags>();
 
