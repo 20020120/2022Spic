@@ -36,6 +36,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	// sky_dome
 	sky_dome = std::make_unique<SkyDome>(graphics);
 
+	// pointlight
+	point_lights = std::make_unique<PointLights>(graphics);
 
 
 	//--back--//
@@ -179,6 +181,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	// player
 	player->TitleRender(graphics, elapsed_time);
 
+	// point_lights
+	point_lights->render(graphics, elapsed_time);
 
 
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);

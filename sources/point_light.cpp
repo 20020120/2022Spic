@@ -12,10 +12,10 @@ PointLights::PointLights(GraphicsPipeline& graphics)
         light_sources[i] = std::make_unique<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\point_light\\point_light.fbx");
     }
 	// パラメータ設定
-	set_all_parameters(0, { 8,1,25,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(1, { 6,1,25,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(2, { 4,1,25,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(3, { 2,1,25,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
+	set_all_parameters(0, { -4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5);
+	set_all_parameters(1, { -4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5);
+	set_all_parameters(2, { 4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5);
+	set_all_parameters(3, { 4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5);
 	set_all_parameters(4, { 1,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
 	set_all_parameters(5, { 3,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
 	set_all_parameters(6, { 5,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
@@ -28,7 +28,12 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	// モデルの描画
 	static DirectX::XMFLOAT3  angle = { 0,0,0 };
-	static DirectX::XMFLOAT3  scale = { 0.1f,0.1f,0.1f };
+#ifdef _DEBUG
+	static DirectX::XMFLOAT3  scale = { 0.01f,0.01f,0.01f };
+#else
+	static DirectX::XMFLOAT3  scale = { 0.0f,0.0f,0.0f };
+#endif // _DEBUG
+
 #ifdef USE_IMGUI
 	ImGui::Begin("point light");
 	if (ImGui::TreeNode("transform"))

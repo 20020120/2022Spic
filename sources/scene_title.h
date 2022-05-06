@@ -17,6 +17,7 @@
 #include "Player.h"
 #include "SkyDome.h"
 #include "shadow_map.h"
+#include "point_light.h"
 
 class SceneTitle : public Scene , public PracticalEntities
 {
@@ -96,6 +97,8 @@ private:
     static constexpr float SLASHING_MAX = 0.06f;
     float slashing_power = 0.0f;
     float slashing_wait_timer = 0.0f;
+
+    std::unique_ptr<PointLights> point_lights;
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_ready;
