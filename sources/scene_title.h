@@ -92,6 +92,10 @@ private:
     DirectX::XMFLOAT2 arrival_pos2{};
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
     int state = 0;
+
+    static constexpr float SLASHING_MAX = 0.06f;
+    float slashing_power = 0.0f;
+    float slashing_wait_timer = 0.0f;
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_ready;

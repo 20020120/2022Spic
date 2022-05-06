@@ -6,6 +6,8 @@ cbuffer OBJECT_CONSTANTS : register(b0)
     row_major float4x4 bone_transforms[MAX_BONES];
     float4 emissive_color; // xyz:emissive_color w:emissive_strength
     float4 dissolve_threshold; // x:縁が近るディゾルブ y:光の筋ディゾルブ
+    float glow_thickness; // glowの幅
+    float3 object_pad1;
 };
 
 cbuffer SCENE_CONSTANTS : register(b1)

@@ -249,11 +249,12 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4&
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
     const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
-    const DirectX::XMFLOAT4& emissive_color)
+    const DirectX::XMFLOAT4& emissive_color, float glow_thickness)
 {
     geometry_constants->data.dissolve_threshold.x = threshold;
     geometry_constants->data.dissolve_threshold.y = glow_time;
     geometry_constants->data.emissive_color = emissive_color;
+    geometry_constants->data.glow_thickness = glow_thickness;
     for (const mesh& mesh : meshes)
     {
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
@@ -326,11 +327,12 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
 }
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
-    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time, const DirectX::XMFLOAT4& emissive_color)
+    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time, const DirectX::XMFLOAT4& emissive_color, float glow_thickness)
 {
     geometry_constants->data.dissolve_threshold.x = threshold;
     geometry_constants->data.dissolve_threshold.y = glow_time;
     geometry_constants->data.emissive_color = emissive_color;
+    geometry_constants->data.glow_thickness = glow_thickness;
     for (const mesh& mesh : meshes)
     {
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))

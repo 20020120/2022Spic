@@ -220,7 +220,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     // glow
     float3 glow = glow_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord).rgb;
-    float glow_thickness = 0.8f;
     float glow_interval  = -1.0f;
     float sin_v = sin(pin.texcoord.y * glow_thickness + dissolve_threshold.y * glow_interval);
     float steped = smoothstep(1, sin_v * sin_v, 0.99);
