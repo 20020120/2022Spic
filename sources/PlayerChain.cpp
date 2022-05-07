@@ -577,6 +577,14 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		transition_chain_attack(); // 攻撃ステートへ
 	}
 #endif // CHAIN_DEBUG
+
+	// 軌跡
+	if (is_awakening)
+	{
+		mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
+		mSwordTrail[1].fAddTrailPoint(sword_capsule_param[1].start, sword_capsule_param[1].end);
+	}
+	else mSwordTrail[0].fAddTrailPoint(sword_capsule_param[0].start, sword_capsule_param[0].end);
 }
 
 void Player::transition_chain_move()

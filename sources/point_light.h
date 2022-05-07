@@ -9,16 +9,18 @@ class PointLights
 public:
 	//--------< コンストラクタ/関数等 >--------//
 	PointLights(GraphicsPipeline& graphics);
-    ~PointLights();
+	~PointLights();
 
 	void render(GraphicsPipeline& graphics, float elapsed_time);
+	void finalize(GraphicsPipeline& graphics);
 	//--------<getter/setter>--------//
-	void set_all_parameters(int index, const DirectX::XMFLOAT4& pos, const DirectX::XMFLOAT4& color, float range)
+	void set_all_parameters(int index, const DirectX::XMFLOAT4& pos, const DirectX::XMFLOAT4& color, float range, float luminous)
 	{
 		assert(index < POINT_LIGHT_COUNT && "ポイントライトのインデックスがポイントライトの最大数を上回っています");
-		plig_constants->data.point_lights[index].position = pos;
-		plig_constants->data.point_lights[index].color = color;
-		plig_constants->data.point_lights[index].range = range;
+		plig_constants->data.point_lights[index].position           = pos;
+		plig_constants->data.point_lights[index].color              = color;
+		plig_constants->data.point_lights[index].range              = range;
+		plig_constants->data.point_lights[index].luminous_intensity = luminous;
 	}
 	void set_position(int index, const DirectX::XMFLOAT4& pos)
 	{

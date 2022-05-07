@@ -12,14 +12,14 @@ PointLights::PointLights(GraphicsPipeline& graphics)
         light_sources[i] = std::make_unique<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\point_light\\point_light.fbx");
     }
 	// パラメータ設定
-	set_all_parameters(0, { -4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5);
-	set_all_parameters(1, { -4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5);
-	set_all_parameters(2, { 4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5);
-	set_all_parameters(3, { 4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5);
-	set_all_parameters(4, { 1,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(5, { 3,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(6, { 5,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
-	set_all_parameters(7, { 7,1,30,0 },  { (float)rand() / RAND_MAX, (float)rand() / RAND_MAX,(float)rand() / RAND_MAX,1 }, 5);
+	set_all_parameters(0, { -4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(1, { -4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(2, { 4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(3, { 4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(4, { 22.2f,21.9f,37.4f,0 },  { 1,1,1,1 }, 3.6f, 6.6f);
+	set_all_parameters(5, { 3,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
+	set_all_parameters(6, { 5,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
+	set_all_parameters(7, { 7,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
 }
 
 PointLights::~PointLights() {}
@@ -28,18 +28,14 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	// モデルの描画
 	static DirectX::XMFLOAT3  angle = { 0,0,0 };
-#ifdef _DEBUG
-	static DirectX::XMFLOAT3  scale = { 0.01f,0.01f,0.01f };
-#else
-	static DirectX::XMFLOAT3  scale = { 0.0f,0.0f,0.0f };
-#endif // _DEBUG
+	static DirectX::XMFLOAT3  scale = { 0.004f,0.0f,0.001f };
 
 #ifdef USE_IMGUI
 	ImGui::Begin("point light");
 	if (ImGui::TreeNode("transform"))
 	{
-		ImGui::DragFloat3("angle", &angle.x, 0.1f);
-		ImGui::DragFloat3("scale", &scale.x, 0.1f, -10, 10);
+		ImGui::DragFloat3("angle", &angle.x, 0.001f);
+		ImGui::DragFloat3("scale", &scale.x, 0.001f, -10, 10);
 		ImGui::TreePop();
 	}
 	ImGui::End();
@@ -52,7 +48,7 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 		if (ImGui::TreeNode(s_transform.c_str()))
 		{
 			std::string s = "pos" + std::to_string(i);
-			ImGui::DragFloat3(s.c_str(), &plig_constants->data.point_lights[i].position.x, 0.1f);
+			ImGui::DragFloat3(s.c_str(), &plig_constants->data.point_lights[i].position.x, 0.001f);
 			std::string s2 = "range" + std::to_string(i);
 			ImGui::DragFloat(s2.c_str(), &plig_constants->data.point_lights[i].range, 0.1f);
 			std::string s3 = "luminous_intensity" + std::to_string(i);
@@ -72,4 +68,15 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 		DirectX::XMFLOAT3 position = { plig_constants->data.point_lights[i].position.x, plig_constants->data.point_lights[i].position.y, plig_constants->data.point_lights[i].position.z };
 		light_sources[i]->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, angle, position), plig_constants->data.point_lights[i].color);
 	}
+}
+
+void PointLights::finalize(GraphicsPipeline& graphics)
+{
+	// 次のシーンへいった時の終了処理
+	for (int i = 0; i < POINT_LIGHT_COUNT; ++i)
+	{
+		plig_constants->data.point_lights[i].luminous_intensity = 0;
+		plig_constants->data.point_lights[i].range = 0;
+	}
+	plig_constants->bind(graphics.get_dc().Get(), 3);
 }
