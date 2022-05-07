@@ -225,6 +225,34 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	sprite_selecter->end(graphics.get_dc().Get());
 
 
+	static float speed = 2.0f;
+#ifdef USE_IMGUI
+	ImGui::Begin("step string");
+	ImGui::DragFloat("speed", &speed, 0.1f);
+	ImGui::End();
+#endif // USE_IMGUI
+
+
+	step_string(elapsed_time, L"UI省略コントローラー振動\nカメラシェイク", test, speed, true);
+	auto r_font_render = [&](std::string name, StepFontElement& e)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin(name.c_str());
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->biz_upd_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+	};
+	fonts->biz_upd_gothic->Begin(graphics.get_dc().Get());
+	r_font_render("test", test);
+	fonts->biz_upd_gothic->End(graphics.get_dc().Get());
+
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
 	// シャドウマップの破棄
@@ -282,4 +310,39 @@ void SceneTitle::loading_thread(ID3D11Device* device)
 	ModelCashes::Load_IntoTitle(device);
 
 	is_ready = true;
+}
+
+bool SceneTitle::step_string(float elapsed_time, std::wstring full_text,
+	StepFontElement& step_font_element, float speed, bool loop)
+{
+	step_font_element.timer += elapsed_time * speed;
+	step_font_element.step = static_cast<int>(step_font_element.timer);
+	size_t size = full_text.size();
+	if (step_font_element.index >= size + 1) // 一文字分時間を置く
+	{
+		if (!loop)
+		{
+			return true;
+		}
+		else
+		{
+			step_font_element.timer = 0.0f;
+			step_font_element.step = 0;
+			step_font_element.index = 0;
+			step_font_element.s = L"";
+		}
+	}
+
+	if (step_font_element.step % 2 == 0)
+	{
+		if (step_font_element.index < size)
+		{
+			step_font_element.s += full_text[step_font_element.index];
+			step_font_element.step = 1;
+			step_font_element.timer = 1.0f;
+		}
+		++step_font_element.index;
+	}
+
+	return false;
 }

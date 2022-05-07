@@ -99,6 +99,26 @@ private:
     float slashing_wait_timer = 0.0f;
 
     std::unique_ptr<PointLights> point_lights;
+
+    struct StepFontElement
+    {
+        std::wstring s = L"";
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 length{};
+
+        // step string
+        float timer = 0;
+        int step    = 0;
+        int index   = 0;
+    };
+    StepFontElement test;
+
+    bool step_string(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element,
+        float speed = 1.0f, bool loop = false);
+
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_ready;
