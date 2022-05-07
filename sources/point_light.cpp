@@ -16,7 +16,7 @@ PointLights::PointLights(GraphicsPipeline& graphics)
 	set_all_parameters(1, { -4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(2, { 4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(3, { 4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(4, { 22.2f,21.9f,37.4f,0 },  { 1,1,1,1 }, 3.6f, 6.6f);
+	set_all_parameters(4, { 22.3f,21.9f,37.4f,0 },  { 1,1,1,1 }, 4.0f, 6.4f);
 	set_all_parameters(5, { 3,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
 	set_all_parameters(6, { 5,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
 	set_all_parameters(7, { 7,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
@@ -28,7 +28,7 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	static DirectX::XMFLOAT3  angle = { 0,0,0 };
-	static DirectX::XMFLOAT3  scale = { 0.004f,0.0f,0.001f };
+	static DirectX::XMFLOAT3  scale = { 0.0003f,0.0f,0.0003f };
 
 #ifdef USE_IMGUI
 	ImGui::Begin("point light");
