@@ -43,6 +43,7 @@ void TitleCamera::Initialize(GraphicsPipeline& graphics)
 	target = { 0.0f,3.0f,0.0f };
 	eye = { 0.0f,4.0f,-20.0f };
 
+	scene_constants->data.light_direction.w = 0.6f;
 }
 
 void TitleCamera::Update(float elapsedTime)
