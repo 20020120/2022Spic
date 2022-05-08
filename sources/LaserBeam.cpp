@@ -13,7 +13,7 @@ void LaserBeam::fInitialize(ID3D11Device* pDevice_, const wchar_t* TextureName_)
 void LaserBeam::fUpdate()
 {
 	fCalcTransform();
-	fGuiMenu();
+	//fGuiMenu();
 }
 
 void LaserBeam::fRender(GraphicsPipeline& Graphics_)

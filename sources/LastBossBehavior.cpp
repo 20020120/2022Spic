@@ -1,4 +1,5 @@
 #include"LastBoss.h"
+#include"Operators.h"
 //****************************************************************
 // 
 // 戦艦モード 
@@ -37,6 +38,7 @@ void LastBoss::fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void LastBoss::fShipBeamStartInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_start);
+
 }
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -55,10 +57,29 @@ void LastBoss::fShipBeamChargeInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_idle,true);
     mTimer = mkShipBeamChargeSec;
+
+    const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    DirectX::XMFLOAT3 up{};
+    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mPointerBegin, up);
+
+    //--------------------<レーザーポインターを初期化>--------------------//
+    mPointerEnd = mPointerBegin;
+    // 前方にポインターを伸ばす
+    const auto front = Math::GetFront(mOrientation);
+    mPointerEnd = mPointerBegin + front * 100.0f;
+    mLaserPointer.fSetPosition(mPointerBegin, mPointerEnd);
+    mLaserPointer.fSetRadius(0.035f);
+    mLaserPointer.fSetColor({ 1.0f,0.0f,0.0f ,1.0f });
+    mPointerAlpha = 1.0f;
+    mPointerThreshold = 0.0f;
 }
 
 void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+
+    // レーザーポインターを伸ばす
+    mPointerThreshold += elapsedTime_ * 5.0f;
+    mLaserPointer.fSetLengthThreshold(mPointerThreshold);
 
     // TODO : ここで小さめのカメラシェイク
     mTimer -= elapsedTime_;
@@ -73,10 +94,34 @@ void LastBoss::fShipBeamShootInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_shot_start);
     mTimer = mkShipBeamShootSec;
+
+    //--------------------<レーザーポインターを消す>--------------------//
+    mPointerThreshold = 0.0f;
+    mLaserPointer.fSetPosition(mPointerBegin, mPointerBegin);
+    mLaserPointer.fSetRadius(0.0f);
+    mLaserPointer.fSetColor({ 1.0f,0.0f,0.0f ,1.0f });
+
+    //--------------------<レーザービームを発射する>--------------------//
+    const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    DirectX::XMFLOAT3 up{};
+    // ボーンの位置を取得
+    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mPointerBegin, up);
+    const auto front = Math::GetFront(mOrientation);
+    mLaserEnd = mLaserBegin + front * 100.0f;
+    mLaserThreshold = 0.0f;
+    mLaserRadius = 20.0f;
+    mBeam.fSetAlpha(1.0f);
+    mBeam.fSetPosition(mLaserBegin, mLaserEnd);
+    mBeam.fSetLengthThreshold(mLaserThreshold);
+    mBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
+    mBeam.fSetRadius(mLaserRadius);
 }
 
 void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mLaserThreshold += elapsedTime_ * 20.0f;
+    mBeam.fSetLengthThreshold(mLaserThreshold);
+
     // TODO : ここで激しいカメラシェイク
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
@@ -92,7 +137,14 @@ void LastBoss::fShipBeamEndInit()
 
 void LastBoss::fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fChangeState(DivideState::ShipToHuman);
+    mLaserRadius -= elapsedTime_ * 10.0f;
+    mLaserRadius = (std::max)(0.0f, mLaserRadius);
+    mBeam.fSetRadius(mLaserRadius);
+
+    if (mLaserRadius <= 0.0f)
+    {
+        fChangeState(DivideState::ShipToHuman);
+    }
 }
 
 void LastBoss::fChangeShipToHumanInit()
@@ -105,15 +157,117 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, GraphicsPipeline& Gr
     if(mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::HumanIdle);
+
+        // 現在のモードを人型に変更する
+        mCurrentMode = Mode::Human;
     }
 }
 
-void LastBoss::fHumanInit()
+void LastBoss::fHumanIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_idle, true);
 }
 
-void LastBoss::fHumanUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-   
+   // 条件に応じて攻撃手段を分岐させる
+
+}
+
+void LastBoss::fHumanMoveInit()
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanAllShotInit()
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanAllShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanRotAttackInit()
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanDieStartInit()
+{
+    // 位置をリセット
+    mPosition = { 0.0f,0.0f,20.0f };
+    mpModel->play_animation(mAnimPara, AnimationName::human_die);
+
+    // TODO : エフェクトの類をすべてリセットする
+
+    // TODO : カメラをボスの方に向ける
+
+}
+
+void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+   if(mpModel->end_of_animation(mAnimPara))
+   {
+       fChangeState(DivideState::HumanDieMiddle);
+   }
+}
+
+void LastBoss::fHumanDieMiddleInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::human_die_idle, true);
+    mTimer = mkHumanDieIdleSec;
+}
+
+void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mTimer -= elapsedTime_;
+    if(mTimer<=0.0f)
+    {
+        fChangeState(DivideState::HumanToDragon);
+    }
+}
+
+void LastBoss::fHumanToDragonInit()
+{
+    mpModel->play_animation(mAnimPara,AnimationName::human_to_dragon);
+}
+
+void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::DragonIdle);
+        mCurrentMode = Mode::Dragon;
+    }
+}
+
+void LastBoss::fDragonIdleInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
+}
+
+void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
+}
+
+
+void LastBoss::fRender(GraphicsPipeline& graphics)
+{
+    BaseEnemy::fRender(graphics);
+    mLaserPointer.fRender(graphics);
+    
+    mBeam.fRender(graphics);
 }

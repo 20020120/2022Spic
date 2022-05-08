@@ -30,7 +30,7 @@ public:
     virtual void fDie();
 
     void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-    void fRender(GraphicsPipeline& Graphics_);
+    virtual void fRender(GraphicsPipeline& Graphics_);
     virtual void fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);

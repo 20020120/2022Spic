@@ -1,5 +1,6 @@
 #pragma once
 #include"BaseEnemy.h"
+#include"LaserBeam.h"
 //****************************************************************
 // 
 // ラストボス
@@ -21,7 +22,22 @@ class LastBoss final : public BaseEnemy
         inline static const char* ShipToHuman   = "ShipToHuman";
 
         //--------------------<人型>--------------------//
-        inline static const char* HumanIdle = "HumanIdle";
+        inline static const char* HumanIdle = "HumanIdle"; // 待機
+        inline static const char* HumanMove = "HumanMove"; // 移動
+        inline static const char* HumanAllShot = "HumanAllShot"; // 乱射する
+        inline static const char* HumanRotAttack = "HumanRotAttack"; // 回転攻撃
+        inline static const char* HumanWithdrawal_Begin = "HumanWithdrawal_Begin"; // 一旦対比する
+        inline static const char* HumanWithdrawal_Middle = "HumanWithdrawal_Middle"; // 範囲外で待つ
+        // 一定時間内に手下を蹴散らせなければ必殺技
+        inline static const char* HumanWithdrawal_End = "HumanWithdrawal_End";
+
+        //--------------------<人型の死亡>--------------------//
+        inline static const char* HumanDieStart = "HumanDieStart";   // 人型の死亡開始
+        inline static const char* HumanDieMiddle = "HumanDieMiddle"; // 人型の死亡待機
+        inline static const char* HumanToDragon = "HumanToDragon";   // 人型からドラゴン
+
+        //--------------------<ドラゴン>--------------------//
+        inline static const char* DragonIdle = "DragonIdle"; // 待機
 
     };
 
@@ -60,6 +76,23 @@ class LastBoss final : public BaseEnemy
         dragon_damage,
         dragon_die,
     };
+
+    enum class AttackKind // 乱数から抽出する攻撃の種類
+    {
+        //--------------------<人型>--------------------//
+        HumanRotAttack,     // 回転攻撃
+        HumanAllShot,       // 乱射
+        HumanSpecialAttack  // 必殺技
+    };
+
+    enum class Mode // ボスのモード
+    {
+        Ship,          // 戦艦（ダメージは受けない）
+        Human,         // 人型（体力の100%~20%）
+        HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
+        Dragon,        // ドラゴン（体力の20%~0%）
+    };
+
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
              const DirectX::XMFLOAT3& EmitterPoint_,
@@ -74,12 +107,19 @@ public:
     void fSetStun(bool Arg_) override;
      
     //--------------------<タレットの関数>--------------------//
-    skeleton::bone mTurretBorn{}; // タレットのボーンの位置
+    skeleton::bone mShipFace{}; // タレットのボーンの位置
+
 protected:
     void fRegisterFunctions() override;
 
 private:
     void fGuiMenu();
+
+
+    AttackKind fRandomAttackFromHp(); // 現在の体力の割合から行動を決める
+    [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
+    void fChangeHumanToDragon();
+
 
 private:
     //****************************************************************
@@ -91,6 +131,24 @@ private:
     DirectX::XMFLOAT3 mTurretPosition{}; // タレットの位置
     float mTimer{}; // 汎用タイマー
 
+    // ビーム
+    LaserBeam mBeam{};
+    DirectX::XMFLOAT3 mLaserBegin{};   // ビームの始点
+    DirectX::XMFLOAT3 mLaserEnd{};     // ビームの終点
+    float mLaserThreshold{};           // ビームの長さ0.0f~1.0f
+    float mLaserAlpha{};
+    float mLaserRadius{};              // ビームの太さ
+
+
+    LaserBeam mLaserPointer{};
+    DirectX::XMFLOAT3 mPointerBegin{}; // レーザーポインターの始点
+    DirectX::XMFLOAT3 mPointerEnd{};   // レーザーポインターの終点
+    float mPointerThreshold{};         // レーザーポインターの長さ0.0f~1.0f
+    float mPointerAlpha{};
+
+    // 現在のモード
+    Mode mCurrentMode{ Mode::Ship };
+
     //****************************************************************
     // 
     // 定数
@@ -99,6 +157,9 @@ private:
     const float mkRotSpeed { 20.0f }; // 回転速度
     const float  mkShipBeamChargeSec{ 5.0f }; // 戦艦のビームをチャージする長さ
     const float  mkShipBeamShootSec{ 5.0f }; // 戦艦のビームを発射している長さ
+    const float  mkHumanDieIdleSec{ 5.0f };  // 人型の死亡時間
+
+    const float mkPercentToDragon{ 0.2f }; // ドラゴン形態に遷移する体力の割合
 private:
 
     //****************************************************************
@@ -128,7 +189,29 @@ private:
     void fChangeShipToHumanUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
 
     //--------------------<人型>--------------------//
-    void fHumanInit();
-    void fHumanUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanIdleInit();
+    void fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanMoveInit();
+    void fHumanMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fHumanAllShotInit();
+    void fHumanAllShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fHumanRotAttackInit();
+    void fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //--------------------<人型の死亡エフェクト>--------------------//
+    void fHumanDieStartInit();
+    void fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanDieMiddleInit();
+    void fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanToDragonInit();
+    void fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //--------------------<ドラゴン>--------------------//
+    void fDragonIdleInit();
+    void fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+public:
+    void fRender(GraphicsPipeline& Graphics_) override;
 };
