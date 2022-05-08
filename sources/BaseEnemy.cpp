@@ -66,8 +66,9 @@ void BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
 
 void BaseEnemy::fDie()
 {
-    
+    mIsAlive = false;
 }
+
 
 void BaseEnemy::fUpdateVernierEffectPos()
 {
@@ -165,8 +166,8 @@ bool BaseEnemy::fGetAttack() const
 const Capsule& BaseEnemy::fGetBodyCapsule() 
 {
     mBodyCapsule.mBottom = mPosition;
-    DirectX::XMFLOAT3 up = { 0.01f,1.0f,0.0f };
-    mBodyCapsule.mTop = mPosition * up * 5.0f;
+    const DirectX::XMFLOAT3 up = { 0.01f,1.0f,0.0f };
+    mBodyCapsule.mTop = mPosition +( up * 5.0f);
     return mBodyCapsule;
 }
 
@@ -182,7 +183,7 @@ const DirectX::XMFLOAT3& BaseEnemy::fGetPosition() const
 
 bool BaseEnemy::fGetIsAlive() const
 {
-    return mCurrentHitPoint > 0;
+    return mIsAlive;
 }
 
 bool BaseEnemy::fComputeAndGetIntoCamera() const

@@ -72,7 +72,7 @@ protected:
     int mCurrentHitPoint{};
     float mInvincibleTime{};
     const int mMaxHp{};
-
+    bool mIsAlive{true};// €–S‰‰o‚Ì‚½‚ß
 private:
     int mAttackPower{};
     float mAttackInvTime{};

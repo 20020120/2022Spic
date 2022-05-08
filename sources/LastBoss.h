@@ -38,7 +38,8 @@ class LastBoss final : public BaseEnemy
 
         //--------------------<ドラゴン>--------------------//
         inline static const char* DragonIdle = "DragonIdle"; // 待機
-
+        inline static const char* DragonDieStart = "DragonDieStart"; // 死亡
+        inline static const char* DragonDieEnd = "DragonDieEnd"; // 死亡
     };
 
     enum  AnimationName {
@@ -119,7 +120,6 @@ private:
     AttackKind fRandomAttackFromHp(); // 現在の体力の割合から行動を決める
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
     void fChangeHumanToDragon();
-
 
 private:
     //****************************************************************
@@ -211,6 +211,13 @@ private:
     //--------------------<ドラゴン>--------------------//
     void fDragonIdleInit();
     void fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //--------------------<ドラゴン死亡エフェクト>--------------------//
+    void fDragonDieStartInit();
+    void fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fDragonDieMiddleInit();
+    void fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    
 
 public:
     void fRender(GraphicsPipeline& Graphics_) override;

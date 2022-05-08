@@ -7,12 +7,17 @@
 //****************************************************************
 void LastBoss::fShipStartInit()
 {
-   
+    mDissolve = 1.0f;
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fChangeState(DivideState::ShipIdle);
+    mDissolve -= elapsedTime_ * 2.0f;
+    mDissolve = (std::max)(0.0f, mDissolve);
+    if (mDissolve <= 0.0f)
+    {
+        fChangeState(DivideState::ShipIdle);
+    }
 }
 
 void LastBoss::fShipIdleInit()
@@ -250,6 +255,8 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     {
         fChangeState(DivideState::DragonIdle);
         mCurrentMode = Mode::Dragon;
+        // 体力の値をドラゴンモードの初期値にしておく
+        mCurrentHitPoint = mMaxHp * mkPercentToDragon;
     }
 }
 
@@ -261,6 +268,37 @@ void LastBoss::fDragonIdleInit()
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     
+}
+
+void LastBoss::fDragonDieStartInit()
+{
+    // 位置をリセット
+    mPosition = { 0.0f,0.0f,50.0f };
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_die);
+    // TODO カメラをボスに注目させる
+
+}
+
+void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::DragonDieEnd);
+    }
+}
+
+void LastBoss::fDragonDieMiddleInit()
+{
+    mDissolve = 0.0f;
+}
+
+void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mDissolve += elapsedTime_;
+    if(mDissolve>=1.0f)
+    {
+        mIsAlive = false;
+    }
 }
 
 

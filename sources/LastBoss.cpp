@@ -11,7 +11,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& Emitter
         "./resources/Models/Enemy/boss_turret.fbx");
     mScale = { 0.8f,0.8f,0.8f };
     fRegisterFunctions();
-    mDissolve = 0.0f;
+   
     // ƒ{[ƒ“‚ð‰Šú‰»
     mShipFace = mpModel->get_bone_by_name("shipface_top_joint");
     mCurrentMode = Mode::Ship;
@@ -63,7 +63,7 @@ void LastBoss::fUpdateAttackCapsule()
 
 void LastBoss::fDie()
 {
-    BaseEnemy::fDie();
+    fChangeState(DivideState::DragonDieStart);
 }
 
 void LastBoss::fDamaged(int damage, float invincible_time)
@@ -225,6 +225,33 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::DragonIdle, tuple));
     }
 
+
+    // ƒhƒ‰ƒSƒ“FŽ€–S
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonDieStartInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonDieStartUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonDieStart, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonDieMiddleInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonDieMiddleUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonDieEnd, tuple));
+    }
+
     fChangeState(DivideState::ShipStart);
 }
 
@@ -295,4 +322,5 @@ void LastBoss::fChangeHumanToDragon()
         mCurrentMode = Mode::HumanToDragon;
     }
 }
+
 
