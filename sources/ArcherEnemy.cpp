@@ -224,7 +224,7 @@ void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ArcherEnemy::fMoveInit()
 {
   
-     mpModel->play_animation(mAnimPara, AnimationName::walk, true, 0.1f);
+     mpModel->play_animation(mAnimPara, AnimationName::walk, true);
     mAttackingTime = 0.0f;
 }
 
@@ -402,7 +402,7 @@ void ArcherEnemy::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void ArcherEnemy::fStunInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
+    mpModel->play_animation(mAnimPara, AnimationName::damage, false);
 
     mStayTimer = 0;
 
