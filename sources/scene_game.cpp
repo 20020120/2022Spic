@@ -371,18 +371,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	player->Render(graphics, elapsed_time);
 	mBulletManager.fRender(graphics);
 
-	//--------<ui>--------//
-	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	// enemy_hp_gauge
-	enemy_hp_gauge->render(graphics.get_dc().Get());
-	// reticle
-	reticle->render(graphics.get_dc().Get());
-	// wave
-	//wave->render(graphics.get_dc().Get());
-	Camera* c = cameraManager->GetCurrentCamera();
-	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
-	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
@@ -435,8 +423,19 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
-
+	//--------<ui>--------//
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	// enemy_hp_gauge
+	enemy_hp_gauge->render(graphics.get_dc().Get());
+	// reticle
+	reticle->render(graphics.get_dc().Get());
+	// wave
+	//wave->render(graphics.get_dc().Get());
+	Camera* c = cameraManager->GetCurrentCamera();
+	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
+	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
+	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 }
