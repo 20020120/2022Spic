@@ -14,7 +14,7 @@
 #define Emissive   5
 
 SamplerState sampler_states[3] : register(s0);
-texture2D texture_maps[6] : register(t0);
+Texture2D texture_maps[6] : register(t0);
 
 Texture2D shadow_map : register(t6);
 SamplerState shadow_sampler_state : register(s6);

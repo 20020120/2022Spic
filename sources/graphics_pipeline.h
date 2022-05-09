@@ -78,6 +78,8 @@ public:
 	//--------<描画プリセットのセッター>--------//
 	// シェーダー
 	void set_pipeline_preset(SHADER_TYPES shader_type);
+	// ラスタライザーステート
+	void set_pipeline_preset(RASTERIZER_STATE rasterizer_state);
 	// ラスタライザーステート、デプスステンシルステート
 	void set_pipeline_preset(RASTERIZER_STATE rasterizer_state, DEPTH_STENCIL depth_stencil_state);
 	// ブレンドステート、ラスタライザーステート、デプスステンシルステート

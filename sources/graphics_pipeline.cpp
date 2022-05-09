@@ -418,6 +418,12 @@ void GraphicsPipeline::set_pipeline_preset(SHADER_TYPES shader_type)
 	if (pixel_shaders.count(shader_type)) device_context->PSSetShader(pixel_shaders.at(shader_type).Get(), nullptr, 0);
 }
 
+void GraphicsPipeline::set_pipeline_preset(RASTERIZER_STATE rasterizer_state)
+{
+	// ラスタライザステート
+	device_context->RSSetState(rasterizer_states[static_cast<int>(rasterizer_state)].Get());
+}
+
 void GraphicsPipeline::set_pipeline_preset(RASTERIZER_STATE rasterizer_state, DEPTH_STENCIL depth_stencil_state)
 {
 	// ラスタライザステート
