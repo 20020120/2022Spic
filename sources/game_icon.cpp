@@ -46,12 +46,12 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 {
 	GameFile::get_instance().load();
 	//--shake--//
-	shake.position = { 565.0f, 295.0f };
-	shake.scale = { 0.6f, 0.6f };
+	shake.position = { 647.0f, 295.0f };
+	shake.scale = { 0.9f, 0.9f };
 	shake.s = L"カメラシェイク";
 	//--vibration--//
-	vibration.position = { 565.0f, 380.0f };
-	vibration.scale = { 0.6f, 0.6f };
+	vibration.position = { 668.0f, 380.0f };
+	vibration.scale = { 0.9f, 0.9f };
 	vibration.s = L"コントローラー振動";
 	//--omission--//
 	omission.position = { 545.0f, 465.0f };
@@ -63,7 +63,7 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	sensitivity.s = L"カメラ感度";
 
 	//--button--//
-	float on_pos_x = 900.0f; float off_pos_x = 1095.0f;
+	float on_pos_x = 925.0f; float off_pos_x = 1132.0f;
 	// SHAKE
 	choices[ChoicesType::SHAKE][0].position = { on_pos_x, shake.position.y };
 	choices[ChoicesType::SHAKE][0].scale = { shake.scale };
@@ -226,12 +226,12 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 			selecterL_arrival_pos = { 395.0f, shake.position.y };
 			selecterR_arrival_pos = { 705.0f, shake.position.y };
 		}
-		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
-		{
-			state = ChoicesType::OMISSION;
-			selecterL_arrival_pos = { 385.0f, omission.position.y };
-			selecterR_arrival_pos = { 705.0f, omission.position.y };
-		}
+		//if (game_pad->get_button_down() & GamePad::BTN_DOWN)
+		//{
+		//	state = ChoicesType::OMISSION;
+		//	selecterL_arrival_pos = { 385.0f, omission.position.y };
+		//	selecterR_arrival_pos = { 705.0f, omission.position.y };
+		//}
 		r_button(ChoicesType::VIBRATION);
 		break;
 
@@ -376,17 +376,19 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 
 void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 {
-	for (int i = 0; i < BUTTON_COUNT; ++i)
+	//for (int i = 0; i < BUTTON_COUNT; ++i)
+	for (int i = 0; i < 2; ++i)
 	{
 		float selecter_posL[2] = { 835.0f,1005.0f }; float selecter_posR[2] = { 960.0f, 1160.0f };
 		for (int o = 0; o < 2; ++o)
 		{
-			DirectX::XMFLOAT2 length = choices[i][o].length * DirectX::XMFLOAT2(0.7f, 0.7f);
-			if (Collision::hit_check_rect(cursor_pos, { 5,5 }, choices[i][o].position, length))
+			DirectX::XMFLOAT2 length = choices[i][o].length * DirectX::XMFLOAT2(0.8f, 0.7f);
+			DirectX::XMFLOAT2 offset = choices[i][o].length * DirectX::XMFLOAT2(0.6f, 0.0f);
+			if (Collision::hit_check_rect(cursor_pos, { 5,5 }, choices[i][o].position - offset, length))
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
-					float selecter_arrival_pos_y[BUTTON_COUNT] = { shake.position.y, vibration.position.y, omission.position.y };
+					float selecter_arrival_pos_y[BUTTON_COUNT]  = { shake.position.y, vibration.position.y, omission.position.y };
 					float selecterL_arrival_pos_x[BUTTON_COUNT] = { 395.0f, 360.0f, 385.0f };
 					float selecterR_arrival_pos_x[BUTTON_COUNT] = { 705.0f, 745.0f, 705.0f };
 					state = ChoicesType(i);
@@ -413,7 +415,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 	//--bar--//
 	static DirectX::XMFLOAT2 value = { 20,0 };
 #ifdef USE_IMGUI
-	ImGui::Begin("test");
+	ImGui::Begin("add radius");
 	ImGui::DragFloat2("value", &value.x, 0.1f);
 	ImGui::End();
 #endif

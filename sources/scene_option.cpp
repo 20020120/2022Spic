@@ -221,13 +221,13 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	};
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	{
-		static DirectX::XMFLOAT2 pos{ 385.0f, 115.0f };
-		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
+		static DirectX::XMFLOAT2 pos{ 420.0f, 115.0f };
+		static DirectX::XMFLOAT2 scale{ 1.0f, 1.0f };
 		r_font_render("LB", L"LB", pos, scale);
 	}
 	{
-		static DirectX::XMFLOAT2 pos{ 845.0f, 115.0f };
-		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
+		static DirectX::XMFLOAT2 pos{ 885.0f, 115.0f };
+		static DirectX::XMFLOAT2 scale{ 1.0f, 1.0f };
 		r_font_render("RB", L"RB", pos, scale);
 	}
 	fonts->yu_gothic->End(graphics.get_dc().Get());
