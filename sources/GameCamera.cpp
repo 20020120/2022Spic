@@ -198,6 +198,7 @@ void GameCamera::gameUpdate(float elapsedTime)
 		if(!player->during_chain_attack())
 		{
 			state = CameraStopAttackEnd;
+			timerStart = true;
 			break;
 		}
 		break;
@@ -221,12 +222,21 @@ void GameCamera::gameUpdate(float elapsedTime)
 		if (cameraAvoidEnd)
 		{
 			cameraAvoidEnd = false;
+			timer = 0.0f;
 			state = Free;
 			break;
 		}
 		//UpdateAttackEndTarget(PlayerPosition, PlayerUp, elapsedTime);
-		UpdateTarget(PlayerPosition, PlayerUp);
-		UpdateStopAttackEndEye(elapsedTime);
+		if(timerStart)
+		{
+			timer += elapsedTime;
+		}
+		if (timer > 1.0f)
+		{
+			timerStart = false;
+			UpdateTarget(PlayerPosition, PlayerUp);
+			UpdateStopAttackEndEye(elapsedTime);
+		}
 		break;
     }
 
@@ -242,6 +252,10 @@ void GameCamera::SetAngle(float elapsedTime)
 	if (ax > 0.1f || ax < 0.1f)
 	{
 		horizonDegree = 180 * ax * elapsedTime;
+		if (player->during_search_time())
+		{
+			horizonDegree = 180 * ax * elapsedTime * 0.2f;
+		}
 	}
 	//if (ay > 0.1f || ay < 0.1f)
 	//{
@@ -538,16 +552,24 @@ void GameCamera::UpdateStopAttackEndEye(float elapsedTime)
 	DirectX::XMVECTOR CameraToGoal = CameraGoalPosition - CameraPosition;
 	const DirectX::XMVECTOR CameraToGoalLength = DirectX::XMVector3Length(CameraToGoal);
 	const float cameraToGoalLength = DirectX::XMVectorGetX(CameraToGoalLength);
-	CameraToGoal = DirectX::XMVector3Normalize(CameraToGoal);
+
+	if(!attackEnd)
+	{
+		attackEndSpeed = cameraToGoalLength * lerpLate;
+		attackEnd = true;
+	}
+
+    //CameraToGoal = DirectX::XMVector3Normalize(CameraToGoal);
 
 	if (cameraToGoalLength > radius - 0.2f)
 	{
-		CameraPosition += CameraToGoal * lerpLate * elapsedTime;
+		CameraPosition += CameraToGoal * attackEndSpeed * elapsedTime;
 		DirectX::XMStoreFloat3(&eye, CameraPosition);
 	}
 	else
 	{
 		cameraAvoidEnd = true;
+		attackEnd = false;
 	}
 }
 

@@ -132,6 +132,11 @@ private:
     int state{ CameraState::Free };
 
     DirectX::XMFLOAT3 avoidTargetPos{};
+
+    bool attackEnd{ false };
+    float attackEndSpeed{};
+    bool timerStart{ false };
+    float timer{};
 };
 
 class ClearCamera : public Camera
