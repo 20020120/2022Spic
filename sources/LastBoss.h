@@ -1,6 +1,7 @@
 #pragma once
 #include"BaseEnemy.h"
-#include"LaserBeam.h"
+#include "Common.h"
+#include"LaserBeam.h"\
 //****************************************************************
 // 
 // ラストボス
@@ -165,10 +166,14 @@ private:
     float mPointerThreshold{};         // レーザーポインターの長さ0.0f~1.0f
     float mPointerAlpha{};
     float mRgbColorPower{};
+    float mRgbColorSpeed{ 10.0f };
+    float mHeartTimer{};
 
     // 現在のモード
     Mode mCurrentMode{ Mode::Ship };
 
+    // 弾を
+    AddBulletFunc mfAddBullet{};
     //****************************************************************
     // 
     // 定数
@@ -180,6 +185,8 @@ private:
     const float  mkHumanDieIdleSec{ 5.0f };  // 人型の死亡時間
 
     const float mkPercentToDragon{ 0.2f }; // ドラゴン形態に遷移する体力の割合
+
+    const float mkWaitHeartEffect = 0.5f;
 private:
 
     //****************************************************************
@@ -231,7 +238,7 @@ private:
     //--------------------<ドラゴン>--------------------//
     void fDragonIdleInit();
     void fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
+    
     //--------------------<ドラゴン死亡エフェクト>--------------------//
     void fDragonDieStartInit();
     void fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);

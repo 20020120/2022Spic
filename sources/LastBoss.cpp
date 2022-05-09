@@ -1,10 +1,9 @@
 #include"LastBoss.h"
 
+#include "BulletManager.h"
 
 
-
-LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
-                   const EnemyParamPack& ParamPack_)
+LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,const EnemyParamPack& ParamPack_)
     :BaseEnemy(Graphics_,
         "./resources/Models/Enemy/boss_animation_second.fbx",
         ParamPack_, EmitterPoint_)
@@ -25,11 +24,11 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& Emitter
     mpTurretRight = std::make_unique<Turret>(Graphics_);
     // タレットのボーンを初期化
     mTurretBoneLeft = mpModel->get_bone_by_name
-    ("secondarygun_L_turret_first_joint");
+    ("armor_L_fire_joint");
     mTurretBoneRight= mpModel->get_bone_by_name
-    ("secondarygun_R_turret_first_joint");
-
-
+    ("armor_R_fire_joint");
+    
+    mfAddBullet= BulletManager::Instance().fGetAddFunction();
 
 }
 
@@ -59,14 +58,25 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     case Mode::Human:
         // 体力が特定の割合を下回ったら
         fChangeHumanToDragon();
-         break;
+        break;
     case Mode::Dragon:
-         break;
-    default: ; }
+        break;
+    default:;
+    }
 
     // タレットを更新
     mpTurretLeft->fUpdate(elapsedTime_, Graphics_);
     mpTurretRight->fUpdate(elapsedTime_, Graphics_);
+
+
+
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    DirectX::XMFLOAT4X4 rotMat{};
+    mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
+        mOrientation, mPosition), mTurretBoneLeft, position,
+        up, rotMat);
+    debug_figure->create_sphere(position, 20.0f, { 0.0f,0.0f,1.0f,1.0f });
 }
 
 void LastBoss::fUpdateAttackCapsule()

@@ -62,6 +62,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	tunnel = std::make_unique<Tunnel>(graphics.get_device().Get());
 	//mini_map
 	minimap = std::make_unique<MiniMap>(graphics);
+
+	audio_manager->stop_all_bgm();
+	audio_manager->play_bgm(BGM_INDEX::GAME);
 }
 
 void SceneGame::uninitialize()
@@ -74,7 +77,7 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	static float bgm_volume = 0.2f;
+	static float bgm_volume = 2.0f;
 	static float se_volume = 0.2f;
 
 	audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
@@ -240,7 +243,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// shadow_map
 	shadow_map->debug_imgui();
 
-	//\effect_manager->update(elapsed_time);
+	effect_manager->update(elapsed_time);
 
 	// effect demo
 #ifdef USE_IMGUI

@@ -3,10 +3,11 @@
 #include "Scene.h"
 #include "graphics_pipeline.h"
 #include "SpriteBatch.h"
+#include "practical_entities.h"
 
 class SpriteBatch;
 
-class SceneLoading : public Scene
+class SceneLoading : public Scene, PracticalEntities
 {
 public:
     //--------<constructor/destructor>--------//

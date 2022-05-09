@@ -15,7 +15,9 @@ void SceneLoading::initialize(GraphicsPipeline& graphics)
     thread.detach();
 }
 
-void SceneLoading::uninitialize() {}
+void SceneLoading::uninitialize()
+{
+}
 
 void SceneLoading::update(GraphicsPipeline& graphics, float elapsed_time)
 {

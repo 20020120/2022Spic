@@ -14,6 +14,8 @@ enum class BGM_INDEX
     BOSS_BATTLESHIP,
     BOSS_HUMANOID,
     BOSS_DRAGON,
+
+    BGM_COUNT
 };
 
 enum class SE_INDEX
@@ -32,6 +34,7 @@ public:
     //----bgm----//
     void play_bgm(BGM_INDEX index);
     void stop_bgm(BGM_INDEX index);
+    void stop_all_bgm();
     void set_volume_bgm(BGM_INDEX index, float volume);
     //----se----//
     void play_se(SE_INDEX index);

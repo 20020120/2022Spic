@@ -130,6 +130,14 @@ void AudioManager::stop_bgm(BGM_INDEX index)
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 }
 
+void AudioManager::stop_all_bgm()
+{
+	for(int i = 0;i < static_cast<int>(BGM_INDEX::BGM_COUNT);i++)
+	{
+		stop_bgm(static_cast<BGM_INDEX>(i));
+	}
+}
+
 void AudioManager::set_volume_bgm(BGM_INDEX index, float volume)
 {
 	HRESULT hr{ S_OK };

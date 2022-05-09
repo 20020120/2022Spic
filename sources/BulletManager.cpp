@@ -18,8 +18,26 @@ void BulletManager::fUpdate(float elapsedTime_)
 {
     for(const auto bullet: mBulletVec)
     {
-        bullet->fUpdate(elapsedTime_);
+        if(bullet->fGetIsAlive())
+        {
+            bullet->fUpdate(elapsedTime_);
+        }
+        else
+        {
+            mRemoveVec.emplace_back(bullet);
+        }
     }
+
+    for(auto bullet: mRemoveVec)
+    {
+            auto e = std::find(mBulletVec.begin(), mBulletVec.end(), bullet);
+            if (e != mBulletVec.end())
+            {
+                safe_delete(*e);
+                mBulletVec.erase(e);
+            }
+    }
+    mRemoveVec.clear();
 }
 
 void BulletManager::fRender(GraphicsPipeline& Graphics_)

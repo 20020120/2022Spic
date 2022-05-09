@@ -1,7 +1,8 @@
 #include"LastBoss.h"
 #include"Operators.h"
 #include"post_effect.h"
-
+#include"BulletManager.h"
+#include "CannonballBullet.h"
 //****************************************************************
 // 
 // 戦艦モード 
@@ -195,13 +196,27 @@ void LastBoss::fHumanMoveUpdate(float elapsedTime_,
 void LastBoss::fHumanAllShotInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
+
+    // テストで撃ってみる
+
 }
 
-void LastBoss::fHumanAllShotUpdate(float elapsedTime_, 
+void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
+    // ボーンが向いている方向を計算
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    DirectX::XMFLOAT4X4 rotMat{};
+    mpModel->fech_by_bone(mAnimPara,Math::calc_world_matrix(mScale,
+        mOrientation, mPosition), mTurretBoneLeft, position,
+        up,rotMat);
+    const DirectX::XMFLOAT3 front = { rotMat._31,rotMat._32,rotMat._33 };
+
     if(mpModel->end_of_animation(mAnimPara))
     {
+        mfAddBullet(new CannonballBullet(Graphics_, front,
+            300.0f, position));
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -241,13 +256,34 @@ void LastBoss::fHumanDieMiddleInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_die_idle, true);
     mTimer = mkHumanDieIdleSec;
     mRgbColorPower = 0.0f;
+    mHeartTimer = 0.0f;
 }
 
 void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    // RGBずらしで心臓のどくどくを演出する
     mTimer -= elapsedTime_;
     
-    //PostEffect::boss_awakening_effect({0.5f,0.5f},)
+    PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower);
+    if(mHeartTimer<=0.0f)
+    {
+        mRgbColorPower += mRgbColorSpeed * elapsedTime_;
+        if (mRgbColorPower > 1.0f)
+        {
+            mRgbColorSpeed *= -1.0f;
+        }
+        if (mRgbColorPower < 0.0f)
+        {
+            //  一周したら待機する
+            mHeartTimer = mkWaitHeartEffect;
+            mRgbColorSpeed *= -1.0f;
+        }
+    }
+    else
+    {
+        mHeartTimer -= elapsedTime_;
+    }
+
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::HumanToDragon);

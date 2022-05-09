@@ -53,6 +53,7 @@ public:
     {
         Game,
         Tunnel,
+        BossPerformance,
     };
 private:
     // shadowmap
