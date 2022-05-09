@@ -17,7 +17,7 @@ public:
     // ä÷êî
     // 
     //****************************************************************
-    BaseBullet(GraphicsPipeline& Graphics_, const char* EffectFileName_);
+    BaseBullet(GraphicsPipeline& Graphics_, const char* EffectFileName_,DirectX::XMFLOAT3 EffectPosition_);
     ~BaseBullet() override = default;
 
     virtual void fUpdate(float elapsedTime_);
@@ -34,7 +34,7 @@ public:
     };
 
     BulletData fGetBulletData() const { return mBulletData; }
-
+    bool fGetIsAlive()const;
     void fSetBulletData(float mLengthA, float mLengthB, float radius, int damage, float invincible_time)
     {
         mBulletData.mLengthFromPositionA = mLengthA;

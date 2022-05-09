@@ -191,7 +191,7 @@ const skeleton::bone& SkinnedMesh::get_bone_by_name(std::string name)
             }
         }
     }
-    assert("指定された名前のボーンがありません");
+    _ASSERT_EXPR(false,"指定された名前のボーンがありません");
     return dummy;
 }
 
