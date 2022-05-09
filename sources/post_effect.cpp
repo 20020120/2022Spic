@@ -32,6 +32,7 @@ PostEffect::PostEffect(ID3D11Device* device)
 		create_ps_from_cso(device, "shaders/vignetting_ps.cso", pixel_shaders[10].GetAddressOf());
 		create_ps_from_cso(device, "shaders/dash_blur_ps.cso", pixel_shaders[11].GetAddressOf());
 		create_ps_from_cso(device, "shaders/lockon_ps.cso", pixel_shaders[12].GetAddressOf());
+		create_ps_from_cso(device, "shaders/zoom_RGB_shift.cso", pixel_shaders[13].GetAddressOf());
 	}
 	// 定数バッファ
 	effect_constants = std::make_unique<Constants<PostEffectConstants>>(device);
@@ -65,7 +66,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL"};
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL", "ZOOM_RGB_SHIFT" };
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -110,9 +111,9 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 						if (ImGui::TreeNode(ss.c_str()))
 						{
 
-							ImGui::DragFloat("min", &effect_constants->data.luminance_min_max.x, 0.01f);
-							ImGui::DragFloat("max", &effect_constants->data.luminance_min_max.y, 0.01f);
-							ImGui::DragFloat3("dot_rgb", &effect_constants->data.luminance_dot_rgb.x, 0.01f);
+							ImGui::DragFloat("min", &effect_constants_for_preservation.luminance_min_max.x, 0.01f);
+							ImGui::DragFloat("max", &effect_constants_for_preservation.luminance_min_max.y, 0.01f);
+							ImGui::DragFloat3("dot_rgb", &effect_constants_for_preservation.luminance_dot_rgb.x, 0.01f);
 							ImGui::TreePop();
 						}
 						ImGui::End();
@@ -134,8 +135,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 						ImGui::Begin("pst efc para");
 						if (ImGui::TreeNode(ss.c_str()))
 						{
-							ImGui::DragFloat("gaussian_sigma", &effect_constants->data.blur_gaussian_sigma, 0.01f);
-							ImGui::DragFloat("bloom_intensity", &effect_constants->data.blur_bloom_intensity, 0.01f);
+							ImGui::DragFloat("gaussian_sigma", &effect_constants_for_preservation.blur_gaussian_sigma, 0.01f);
+							ImGui::DragFloat("bloom_intensity", &effect_constants_for_preservation.blur_bloom_intensity, 0.01f);
 							ImGui::TreePop();
 						}
 						ImGui::End();
@@ -160,7 +161,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("slashing_power", &effect_constants->data.slashing_power, 0.001f);
+						ImGui::DragFloat("slashing_power", &effect_constants_for_preservation.slashing_power, 0.001f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -171,8 +172,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 			}
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::WHITE_NOISE))
 			{
-				effect_constants->data.white_noise_time >= 20.0f
-					? effect_constants->data.white_noise_time = 10.0f : effect_constants->data.white_noise_time += elapsed_time;
+				effect_constants_for_preservation.white_noise_time >= 20.0f
+					? effect_constants_for_preservation.white_noise_time = 10.0f : effect_constants_for_preservation.white_noise_time += elapsed_time;
 #ifdef USE_IMGUI
 				std::string ss = "white noise " + std::to_string(i + 1);
 				if (display_effect_imgui)
@@ -180,7 +181,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("time", &effect_constants->data.white_noise_time, 0.1f);
+						ImGui::DragFloat("time", &effect_constants_for_preservation.white_noise_time, 0.1f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -198,8 +199,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("Resolution", &effect_constants->data.low_resolution, 0.1f);
-						ImGui::DragFloat("number_of_divisions", &effect_constants->data.low_resolution_number_of_divisions, 1.0f);
+						ImGui::DragFloat("Resolution", &effect_constants_for_preservation.low_resolution, 0.1f);
+						ImGui::DragFloat("number_of_divisions", &effect_constants_for_preservation.low_resolution_number_of_divisions, 1.0f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -210,8 +211,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 			}
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::SCAN_LINE))
 			{
-				effect_constants->data.scan_line_time <= -20.0f ?
-					effect_constants->data.scan_line_time = 10.0f : effect_constants->data.scan_line_time -= elapsed_time * 5;
+				effect_constants_for_preservation.scan_line_time <= -20.0f ?
+					effect_constants_for_preservation.scan_line_time = 10.0f : effect_constants_for_preservation.scan_line_time -= elapsed_time * 5;
 #ifdef USE_IMGUI
 				std::string ss = "scan line " + std::to_string(i + 1);
 				if (display_effect_imgui)
@@ -219,7 +220,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("time", &effect_constants->data.scan_line_time, 0.1f);
+						ImGui::DragFloat("time", &effect_constants_for_preservation.scan_line_time, 0.1f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -237,10 +238,10 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat3("border_color1", &effect_constants->data.border_color1.x, 0.001f);
-						ImGui::DragFloat3("border_color2", &effect_constants->data.border_color2.x, 0.001f);
-						ImGui::DragFloat3("border_color3", &effect_constants->data.border_color3.x, 0.001f);
-						ImGui::DragFloat3("border_color4", &effect_constants->data.border_color4.x, 0.001f);
+						ImGui::DragFloat3("border_color1", &effect_constants_for_preservation.border_color1.x, 0.001f);
+						ImGui::DragFloat3("border_color2", &effect_constants_for_preservation.border_color2.x, 0.001f);
+						ImGui::DragFloat3("border_color3", &effect_constants_for_preservation.border_color3.x, 0.001f);
+						ImGui::DragFloat3("border_color4", &effect_constants_for_preservation.border_color4.x, 0.001f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -258,7 +259,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("distortion", &effect_constants->data.barrel_shaped_distortion, 0.001f);
+						ImGui::DragFloat("distortion", &effect_constants_for_preservation.barrel_shaped_distortion, 0.001f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -269,8 +270,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 			}
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::GLITCH))
 			{
-				effect_constants->data.glitch_time >= 20.0f
-					? effect_constants->data.glitch_time = 10.0f : effect_constants->data.glitch_time += 0.5f * elapsed_time;
+				effect_constants_for_preservation.glitch_time >= 20.0f
+					? effect_constants_for_preservation.glitch_time = 10.0f : effect_constants_for_preservation.glitch_time += 0.5f * elapsed_time;
 #ifdef USE_IMGUI
 				std::string ss = "glitch " + std::to_string(i + 1);
 				if (display_effect_imgui)
@@ -278,9 +279,9 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat2("glitch_pase", &effect_constants->data.glitch_pase.x, 0.001f);
-						ImGui::DragFloat("glitch_step_value", &effect_constants->data.glitch_step_value, 0.001f);
-						ImGui::DragFloat("glitch_time", &effect_constants->data.glitch_time);
+						ImGui::DragFloat2("glitch_pase", &effect_constants_for_preservation.glitch_pase.x, 0.001f);
+						ImGui::DragFloat("glitch_step_value", &effect_constants_for_preservation.glitch_step_value, 0.001f);
+						ImGui::DragFloat("glitch_time", &effect_constants_for_preservation.glitch_time);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -298,8 +299,8 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat2("vignetting_pos", &effect_constants->data.vignetting_pos.x, 0.001f);
-						ImGui::DragFloat("vignetting_scope", &effect_constants->data.vignetting_scope, 0.001f);
+						ImGui::DragFloat2("vignetting_pos", &effect_constants_for_preservation.vignetting_pos.x, 0.001f);
+						ImGui::DragFloat("vignetting_scope", &effect_constants_for_preservation.vignetting_scope, 0.001f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -317,9 +318,9 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat2("reference_pos", &effect_constants->data.reference_position.x, 0.01f);
-						ImGui::DragFloat("zoom_power", &effect_constants->data.zoom_power, 0.01f);
-						ImGui::DragInt("focus_detail", &effect_constants->data.focus_detail);
+						ImGui::DragFloat2("reference_pos", &effect_constants_for_preservation.reference_position.x, 0.01f);
+						ImGui::DragFloat("zoom_power", &effect_constants_for_preservation.zoom_power, 0.01f);
+						ImGui::DragInt("focus_detail", &effect_constants_for_preservation.focus_detail);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -337,10 +338,10 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("scope", &effect_constants->data.lockon_scope, 0.001f);
-						ImGui::DragFloat("thickness", &effect_constants->data.lockon_thickness, 0.001f);
-						ImGui::ColorEdit3("color", &effect_constants->data.lockon_color.x);
-						ImGui::DragFloat("alpha", &effect_constants->data.lockon_alpha, 0.01f);
+						ImGui::DragFloat("scope", &effect_constants_for_preservation.lockon_scope, 0.001f);
+						ImGui::DragFloat("thickness", &effect_constants_for_preservation.lockon_thickness, 0.001f);
+						ImGui::ColorEdit3("color", &effect_constants_for_preservation.lockon_color.x);
+						ImGui::DragFloat("alpha", &effect_constants_for_preservation.lockon_alpha, 0.01f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -359,10 +360,10 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 					ImGui::Begin("pst efc para");
 					if (ImGui::TreeNode(ss.c_str()))
 					{
-						ImGui::DragFloat("scope", &effect_constants->data.lockon_scope, 0.001f);
-						ImGui::DragFloat("thickness", &effect_constants->data.lockon_thickness, 0.001f);
-						ImGui::ColorEdit3("color", &effect_constants->data.lockon_color.x);
-						ImGui::DragFloat("alpha", &effect_constants->data.lockon_alpha, 0.01f);
+						ImGui::DragFloat("scope", &effect_constants_for_preservation.lockon_scope, 0.001f);
+						ImGui::DragFloat("thickness", &effect_constants_for_preservation.lockon_thickness, 0.001f);
+						ImGui::ColorEdit3("color", &effect_constants_for_preservation.lockon_color.x);
+						ImGui::DragFloat("alpha", &effect_constants_for_preservation.lockon_alpha, 0.01f);
 						ImGui::TreePop();
 					}
 					ImGui::End();
@@ -370,6 +371,25 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 #endif
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 12);
+			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::ZOOM_RGB_SHIFT))
+			{
+#ifdef USE_IMGUI
+				std::string ss = "zoom rgb shift " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat2("target point", &effect_constants_for_preservation.rgb_shift_target_point.x, 0.001f);
+						ImGui::DragFloat("power", &effect_constants_for_preservation.rgb_shift_zoom_power, 0.001f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 13);
 			}
 		}
 	}
@@ -447,4 +467,12 @@ void PostEffect::title_post_effect(float power)
 	effect_constants_for_preservation.slashing_power = power;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::RGB_SHIFT);
+}
+
+void PostEffect::boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power)
+{
+	effect_constants_for_preservation.rgb_shift_zoom_power = power;
+	effect_constants_for_preservation.rgb_shift_target_point = screen_pos;
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::ZOOM_RGB_SHIFT);
 }

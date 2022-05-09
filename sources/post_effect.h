@@ -26,6 +26,7 @@ public:
 	static void stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions);
 	static void lockon_post_effect(float scope, float alpha);
 	static void title_post_effect(float power);
+	static void boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }
@@ -47,6 +48,7 @@ private:
 		DASH_BLUR,                  // ダッシュブラー
 		LOCKON,                     // ロックオン
 		LOCKON_CENTRAL,             // ロックオン真ん中
+		ZOOM_RGB_SHIFT,             // RGB_SHIFT(ズーム)
 
 		PST_EFC_COUNT               //この定数が最後に
 	};
@@ -102,7 +104,11 @@ private:
 		float pad10;
 		// slashing attack
 		float slashing_power = 0.0;
-		DirectX::XMFLOAT3 post_effect_pad11;
+		DirectX::XMFLOAT3 pad11;
+		// zoom rgb shift
+		DirectX::XMFLOAT2 rgb_shift_target_point = { 0.5f,0.5f };
+		float rgb_shift_zoom_power = 0;
+		float pad12;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
     //--------< 関数 >--------//

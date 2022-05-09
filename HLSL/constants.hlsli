@@ -92,6 +92,10 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     // slashing attack
     float slashing_power;
     float3 post_effect_pad11;
+    // zoom rgb shift
+    float2 rgb_shift_target_point;
+    float rgb_shift_zoom_power;
+    float post_effect_pad12;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)

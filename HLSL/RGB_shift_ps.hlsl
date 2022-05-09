@@ -9,7 +9,7 @@ Texture2D texture_maps[4] : register(t0);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    //--------<RGB‚¸‚ç‚µ>--------//
+    //--------<‰æ–Ê‚Ìã‰º‚ð‚¸‚ç‚·>--------//
     // r’l‚ð‰¡•ûŒü‚É‚¸‚ç‚·
     float2 sample_point = pin.texcoord;
     if (pin.texcoord.y > 0.5f)

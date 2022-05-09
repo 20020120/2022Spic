@@ -987,6 +987,9 @@
     <FxCompile Include="HLSL\lockon_ps.hlsl">
       <Filter>Shaders\post_effect</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\zoom_RGB_shift.hlsl">
+      <Filter>Shaders\post_effect</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
