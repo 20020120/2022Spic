@@ -6,24 +6,32 @@ CannonballBullet::CannonballBullet(GraphicsPipeline& Graphics_,
 {
     mVelocity = FirstVec_ * Power_;
     mPosition = Position_;
+    mScale = { 18.0f,18.0f,18.0f };
+
+    // エフェクトを初期化
+    mpBombEffect = std::make_unique<Effect>(
+        Graphics_,
+        effect_manager->get_effekseer_manager(),
+        "./resources/Effect/bomb_2.efk");
+}
+
+CannonballBullet::~CannonballBullet()
+{
+    mpEffect->stop(effect_manager->get_effekseer_manager());
+    // 着弾爆発エフェクトを再生
+    mpBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 10.0f);
 }
 
 void CannonballBullet::fUpdate(float elapsed_time)
 {
 
-    // 放物線
-    const DirectX::XMFLOAT3 speed =
-    {
-        mVelocity.x,
-        mVelocity.y * mkGravity,
-        mVelocity.z
-    };
-    mVelocity = speed;
-    mPosition += (speed * elapsed_time);
+    mVelocity.y -= (mkGravity*elapsed_time);
+    mPosition += (mVelocity * elapsed_time);
 
     if(mPosition.y<=0.0f)
     {
         mIsAlive = false;
     }
+
     BaseBullet::fUpdate(elapsed_time);
 }

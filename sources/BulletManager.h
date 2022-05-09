@@ -37,7 +37,7 @@ public:
     );
 private:
     void fAllClear();
-
+    void fGuiMenu();
 
     //****************************************************************
     // 
@@ -48,5 +48,5 @@ private:
     AddBulletFunc mfAddBullet; // ’e‚ğ¶¬‚·‚éŠÖ”
     std::vector<BaseBullet*> mBulletVec{}; // ’e‚ğŠi”[‚·‚éƒRƒ“ƒeƒi
     std::vector<BaseBullet*> mRemoveVec{}; // ’e‚ğŠi”[‚·‚éƒRƒ“ƒeƒi
-
+    bool mOpenGui{}; // Gui‚ğŠJ‚¢‚Ä‚¢‚é‚©‚Ç‚¤‚©
 };

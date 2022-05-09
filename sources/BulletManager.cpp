@@ -16,6 +16,8 @@ void BulletManager::fInitialize()
 
 void BulletManager::fUpdate(float elapsedTime_)
 {
+    fGuiMenu();
+
     for(const auto bullet: mBulletVec)
     {
         if(bullet->fGetIsAlive())
@@ -97,4 +99,14 @@ void BulletManager::fAllClear()
     }
     mBulletVec.clear();
     mRemoveVec.clear();
+}
+
+void BulletManager::fGuiMenu()
+{
+    imgui_menu_bar("Game", "BulletManager", mOpenGui);
+#ifdef USE_IMGUI
+    ImGui::Begin("BulletManager");
+    ImGui::Text("Amount%i", mBulletVec.size());
+    ImGui::End();
+#endif
 }

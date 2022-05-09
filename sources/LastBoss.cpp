@@ -27,7 +27,16 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& Emitter
     ("armor_L_fire_joint");
     mTurretBoneRight= mpModel->get_bone_by_name
     ("armor_R_fire_joint");
-    
+
+    mpSecondGunLeft = std::make_unique<SecondGun>(Graphics_);
+    mpSecondGunRight = std::make_unique<SecondGun>(Graphics_);
+    mSecondGunBoneLeft = mpModel->get_bone_by_name
+    ("secondarygun_L_root_joint");
+    mSecondGunBoneRight = mpModel->get_bone_by_name
+    ("secondarygun_R_root_joint");
+
+
+    // ’e”­Ë—p‚ÌŠÖ”‚ğæ“¾
     mfAddBullet= BulletManager::Instance().fGetAddFunction();
 
 }

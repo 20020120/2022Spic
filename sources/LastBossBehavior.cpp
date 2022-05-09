@@ -196,27 +196,57 @@ void LastBoss::fHumanMoveUpdate(float elapsedTime_,
 void LastBoss::fHumanAllShotInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
-
-    // テストで撃ってみる
-
+    mTimer = 0.0f;
 }
 
 void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
-    // ボーンが向いている方向を計算
-    DirectX::XMFLOAT3 position{};
-    DirectX::XMFLOAT3 up{};
-    DirectX::XMFLOAT4X4 rotMat{};
-    mpModel->fech_by_bone(mAnimPara,Math::calc_world_matrix(mScale,
-        mOrientation, mPosition), mTurretBoneLeft, position,
-        up,rotMat);
-    const DirectX::XMFLOAT3 front = { rotMat._31,rotMat._32,rotMat._33 };
+
+    //--------------------<銃口の向きに発射>--------------------//
+    mTimer += elapsedTime_;
+    if (mTimer >= mkHumanAllShotBegin)
+    {
+        // ボーンが向いている方向を計算
+        DirectX::XMFLOAT3 up{};
+
+
+        DirectX::XMFLOAT3 rightPosition{};
+        DirectX::XMFLOAT3 leftPosition{};
+        DirectX::XMFLOAT4X4 rightRotMat{};
+        DirectX::XMFLOAT4X4 leftRotMat{};
+
+        mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
+            mOrientation, mPosition), mTurretBoneLeft, leftPosition,
+            up, leftRotMat);
+
+        mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
+            mOrientation, mPosition), mTurretBoneRight, rightPosition,
+            up, rightRotMat);
+
+        const DirectX::XMFLOAT3 rightFront = 
+              { rightRotMat._31,rightRotMat._32, rightRotMat._33 };
+        const DirectX::XMFLOAT3 leftFront  = 
+              { leftRotMat._31,leftRotMat._32, leftRotMat._33 };
+
+        // 一定間隔で発射
+        if (mShotTimer <= 0.0f)
+        {
+            mfAddBullet(new CannonballBullet(Graphics_, leftFront,
+                100.0f, rightPosition));
+            mfAddBullet(new CannonballBullet(Graphics_,rightFront ,
+                100.0f, leftPosition));
+            mShotTimer = mkHumanAllShotDelay;
+        }
+        else
+        {
+            mShotTimer -= elapsedTime_;
+        }
+    }
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        mfAddBullet(new CannonballBullet(Graphics_, front,
-            300.0f, position));
+        
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -229,6 +259,11 @@ void LastBoss::fHumanRotAttackInit()
 void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanSpAttackBeginInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
 }
 
 void LastBoss::fHumanDieStartInit()
@@ -323,7 +358,7 @@ void LastBoss::fDragonDieStartInit()
     mPosition = { 0.0f,0.0f,50.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_die);
     // TODO カメラをボスに注目させる
-
+    
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -355,16 +390,31 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     // ビーム類を描画
     mLaserPointer.fRender(graphics);
     mBeam.fRender(graphics);
+
+    //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
     //--------------------<タレット描画>--------------------//
     // タレットの親の位置を取得する
-    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 rightPosition{};
+    DirectX::XMFLOAT3 leftPosition{};
     DirectX::XMFLOAT3 up{};
-    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
-    mOrientation, mPosition);
+    const DirectX::XMFLOAT4X4 world =Math::calc_world_matrix(
+        mScale,mOrientation, mPosition);
 
-    mpModel->fech_by_bone( world,mTurretBoneLeft,position,up);
-    mpTurretLeft->fRender(graphics, world, position);
-    mpModel->fech_by_bone(world, mTurretBoneRight, position, up);
-    mpTurretLeft->fRender(graphics, world, position);
+    mpModel->fech_by_bone(mAnimPara, world, mTurretBoneLeft, leftPosition,
+        up);
+    mpModel->fech_by_bone(mAnimPara, world, mTurretBoneRight, rightPosition,
+        up);
+
+    mpTurretLeft->fRender(graphics, world, leftPosition);
+    mpTurretRight->fRender(graphics, world, rightPosition);
+
+    //--------------------<セカンドガン描画>--------------------//
+    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneLeft, leftPosition,
+        up);
+    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneRight, rightPosition,
+        up);
+
+    mpSecondGunLeft->fRender(graphics, world, leftPosition);
+    mpSecondGunRight->fRender(graphics, world, rightPosition);
 
 }

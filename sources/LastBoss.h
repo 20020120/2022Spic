@@ -109,6 +109,21 @@ class LastBoss final : public BaseEnemy
         std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
     };
+  
+    //--------------------<第二砲身のクラス>--------------------//
+    class SecondGun final
+    {
+    public :
+        SecondGun(GraphicsPipeline& Graphics_);
+        void fUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+        void fRender(GraphicsPipeline& graphics_,
+            const DirectX::XMFLOAT4X4& ParentWorld_,
+            const DirectX::XMFLOAT3& Position_);
+    private:
+        std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
+        SkinnedMesh::anim_Parameters mAnimPara{};
+    };
+
 
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
@@ -159,6 +174,12 @@ private:
     skeleton::bone mTurretBoneRight{};  // タレットのボーン
     skeleton::bone mTurretBoneLeft{};   // タレットのボーン
 
+    //--------------------<ボスのセカンドガン>--------------------//
+    std::unique_ptr<SecondGun> mpSecondGunRight{ nullptr };
+    std::unique_ptr<SecondGun> mpSecondGunLeft{ nullptr };
+    skeleton::bone mSecondGunBoneRight{};  // タレットのボーン
+    skeleton::bone mSecondGunBoneLeft{};   // タレットのボーン
+
 
     LaserBeam mLaserPointer{};
     DirectX::XMFLOAT3 mPointerBegin{}; // レーザーポインターの始点
@@ -174,6 +195,8 @@ private:
 
     // 弾を
     AddBulletFunc mfAddBullet{};
+    float mShotTimer{ 0.0f };
+
     //****************************************************************
     // 
     // 定数
@@ -187,6 +210,8 @@ private:
     const float mkPercentToDragon{ 0.2f }; // ドラゴン形態に遷移する体力の割合
 
     const float mkWaitHeartEffect = 0.5f;
+    const float mkHumanAllShotDelay{ 0.15f };
+    const float mkHumanAllShotBegin{ 0.3f };
 private:
 
     //****************************************************************
@@ -226,6 +251,13 @@ private:
 
     void fHumanRotAttackInit();
     void fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    //--------------------<人型必殺技>--------------------//
+    void fHumanSpAttackBeginInit(); // 飛びのく
+    void fHumanSpAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+
+
 
     //--------------------<人型の死亡エフェクト>--------------------//
     void fHumanDieStartInit();
