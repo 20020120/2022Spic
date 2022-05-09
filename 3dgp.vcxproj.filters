@@ -489,6 +489,9 @@
     <ClCompile Include="sources\SceneTutorial.cpp">
       <Filter>Sources\scene</Filter>
     </ClCompile>
+    <ClCompile Include="sources\Turret.cpp">
+      <Filter>Sources\character\Boss\00_LastBoss</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
