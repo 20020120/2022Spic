@@ -138,6 +138,9 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
             ImGui::SliderInt("tutorial_state", &state, 1, 7);
             tutorial_state = static_cast<TutorialState>(state);
 
+            ImGui::DragFloat("execution_timer", &execution_timer);
+            ImGui::Checkbox("is_next", &is_next_tutorial);
+
             ImGui::End();
         }
     }
@@ -167,8 +170,10 @@ void Player::ChangeTutorialState(int state)
 {
     //もし今のチュートリアルステートよりも小さい値が入ってきたら
     //ひとつ前にもどるからはいれないようにする
-    if (tutorial_state > static_cast<TutorialState>(state)) return;
+    if (tutorial_state > static_cast<TutorialState>(state) || tutorial_state == static_cast<TutorialState>(state)) return;
     tutorial_state = static_cast<TutorialState>(state);
+    is_next_tutorial = false;
+    execution_timer = 0;
 }
 
 void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
@@ -182,6 +187,8 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     switch (tutorial_state)
     {
     case Player::TutorialState::MoveTutorial:
+        //MoveTutorialの時にこの時間動いていたら終わったことにする
+        if (execution_timer > 1.5f) is_next_tutorial = true;
         break;
     case Player::TutorialState::AvoidanceTutorial:
     {
@@ -277,6 +284,9 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     switch (tutorial_state)
     {
     case Player::TutorialState::MoveTutorial:
+        execution_timer += 1.0f * elapsed_time;
+        //MoveTutorialの時にこの時間動いていたら終わったことにする
+        if (execution_timer > 1.5f) is_next_tutorial = true;
         break;
     case Player::TutorialState::AvoidanceTutorial:
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)

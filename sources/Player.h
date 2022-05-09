@@ -580,11 +580,17 @@ private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
     //------------------------------------------------------------------------------------------//
+    //今のチュートリアルが終わった時にtrueになる
+    bool is_next_tutorial{ false };
+    //今のチュートリアルでどれだけ操作したかどうか
+    float execution_timer{ 0 };
     //チュートリアルの関数ポインタを呼ぶ
     void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
+    bool GetNextTutorial() { return is_next_tutorial; }
+    void FalseNextTutorial() { is_next_tutorial = false; }
 private:
     //1が最初で大きくなっていくようにする
     enum class TutorialState

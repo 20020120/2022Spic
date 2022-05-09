@@ -154,7 +154,7 @@ private:
     };
     TutorialCheckText tutorial_check_text_parm;
     //ｔチェックボックスのテキスト
-    std::wstring tutorial_check_text{};
+    std::wstring tutorial_check_text = L"UI";
 private:
     //チェックボックスの画像
     struct CheckMarkParm

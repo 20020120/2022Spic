@@ -501,6 +501,11 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::MoveTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Lスティックで移動させる";
+		if (player->GetNextTutorial() && is_next)
+		{
+			tutorial_state = TutorialState::AvoidanceTutorial;
+			player->FalseNextTutorial();
+		}
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
@@ -569,6 +574,14 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		ImGui::TreePop();
 	}
 	ImGui::End();
+	ImGui::Begin("tutorial_check_text_parm");
+	if (ImGui::TreeNode("tutorial_check_text_parm"))
+	{
+		ImGui::DragFloat2("pos", &tutorial_check_text_parm.position.x,0.1f);
+		ImGui::DragFloat2("scale", &tutorial_check_text_parm.scale.x, 0.1f);
+		ImGui::TreePop();
+	}
+	ImGui::End();
 #endif // USE_IMGUI
 	if (check_mark_parm.is_threshold)
 	{
@@ -578,9 +591,9 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);
 	check_box->end(graphics.get_dc().Get());
 
-	//fonts->yu_gothic->Begin(graphics.get_dc().Get());
-	//fonts->yu_gothic->Draw(tutorial_check_text, tutorial_check_text_parm.position, tutorial_check_text_parm.scale, tutorial_check_text_parm.color, tutorial_check_text_parm.angle, TEXT_ALIGN::UPPER_LEFT);
-	//fonts->yu_gothic->End(graphics.get_dc().Get());
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
+	fonts->yu_gothic->Draw(tutorial_check_text, tutorial_check_text_parm.position, tutorial_check_text_parm.scale, tutorial_check_text_parm.color, tutorial_check_text_parm.angle, TEXT_ALIGN::UPPER_LEFT);
+	fonts->yu_gothic->End(graphics.get_dc().Get());
 
 	check_mark->begin(graphics.get_dc().Get());
 	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
