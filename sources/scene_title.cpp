@@ -72,6 +72,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	slashing_power = 0;
 	slashing_wait_timer = 0;
 
+	audio_manager->stop_all_bgm();
+	audio_manager->play_bgm(BGM_INDEX::TITLE);
+
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//スレッドの管理を放棄
@@ -81,14 +84,12 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 void SceneTitle::uninitialize()
 {
 	post_effect->clear_post_effect();
-	audio_manager->stop_bgm(BGM_INDEX::TITLE);
 }
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	static float bgm_volume = 2.0f;
 
-	audio_manager->play_bgm(BGM_INDEX::TITLE);
 	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 
 	//----<3D関連>----//
