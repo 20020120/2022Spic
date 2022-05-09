@@ -574,7 +574,7 @@ DirectX::XMFLOAT2 Font::adjust_text_origin(TEXT_ALIGN align, const DirectX::XMFL
 FontInstances::FontInstances(ID3D11Device* device)
 {
 	// ÉtÉHÉìÉgèâä˙âª
-	biz_upd_gothic   = std::make_unique<Font>(device, "resources/Fonts/BIZUDPGothic.fnt", 2048);
+	yu_gothic        = std::make_unique<Font>(device, "resources/Fonts/YuGothic.fnt", 2048);
 	gothic           = std::make_unique<Font>(device, "resources/Fonts/MS Gothic_64.fnt", 2048);
 	algerian_gold    = std::make_unique<Sprite>(device, L".\\resources\\Fonts\\Algerian_Gold(256x256).png");
 }

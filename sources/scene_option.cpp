@@ -217,9 +217,9 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		fonts->biz_upd_gothic->Draw(string, pos + add_position, scale, { 1,1,1,1 }, 0, TEXT_ALIGN::MIDDLE);
+		fonts->yu_gothic->Draw(string, pos + add_position, scale, { 1,1,1,1 }, 0, TEXT_ALIGN::MIDDLE);
 	};
-	fonts->biz_upd_gothic->Begin(graphics.get_dc().Get());
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	{
 		static DirectX::XMFLOAT2 pos{ 385.0f, 115.0f };
 		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
@@ -230,7 +230,7 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		static DirectX::XMFLOAT2 scale{ 0.5f, 0.5f };
 		r_font_render("RB", L"RB", pos, scale);
 	}
-	fonts->biz_upd_gothic->End(graphics.get_dc().Get());
+	fonts->yu_gothic->End(graphics.get_dc().Get());
 	//--icons--//
 	std::string gui_names[3] = { "volume", "game", "transition" };
 	if (icon_map.count(state)) { icon_map.at(state)->render(gui_names[static_cast<int>(state)], graphics.get_dc().Get(), add_position); }

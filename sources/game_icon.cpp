@@ -310,10 +310,10 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		fonts->biz_upd_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
+		fonts->yu_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
 	};
 
-	fonts->biz_upd_gothic->Begin(dc);
+	fonts->yu_gothic->Begin(dc);
 	r_font_render("shake", shake);
 	r_font_render("vibration", vibration);
 	//r_font_render("omission", omission);
@@ -328,7 +328,7 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 			r_font_render(s, choices[i][o]);
 		}
 	}
-	fonts->biz_upd_gothic->End(dc);
+	fonts->yu_gothic->End(dc);
 
 	sprite_selecter->begin(dc);
 	//for (int i = 0; i < BUTTON_COUNT; ++i)

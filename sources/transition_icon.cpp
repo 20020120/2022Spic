@@ -82,8 +82,8 @@ void TransitionIcon::render(std::string gui, ID3D11DeviceContext* dc, const Dire
     }
     ImGui::End();
 #endif // USE_IMGUI
-    fonts->biz_upd_gothic->Begin(dc);
-    fonts->biz_upd_gothic->Draw(game.s, game.position + add_pos, game.scale, game.color, game.angle, TEXT_ALIGN::MIDDLE, game.length);
-    fonts->biz_upd_gothic->Draw(title.s, title.position + add_pos, title.scale, title.color, title.angle, TEXT_ALIGN::MIDDLE, title.length);
-    fonts->biz_upd_gothic->End(dc);
+    fonts->yu_gothic->Begin(dc);
+    fonts->yu_gothic->Draw(game.s, game.position + add_pos, game.scale, game.color, game.angle, TEXT_ALIGN::MIDDLE, game.length);
+    fonts->yu_gothic->Draw(title.s, title.position + add_pos, title.scale, title.color, title.angle, TEXT_ALIGN::MIDDLE, title.length);
+    fonts->yu_gothic->End(dc);
 }

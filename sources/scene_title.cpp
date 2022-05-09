@@ -250,11 +250,11 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		fonts->biz_upd_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
 	};
-	fonts->biz_upd_gothic->Begin(graphics.get_dc().Get());
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	r_font_render("test", test);
-	fonts->biz_upd_gothic->End(graphics.get_dc().Get());
+	fonts->yu_gothic->End(graphics.get_dc().Get());
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 

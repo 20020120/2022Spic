@@ -236,14 +236,14 @@ void VolumeIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX:
 		}
 		ImGui::End();
 #endif // USE_IMGUI
-		fonts->biz_upd_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
+		fonts->yu_gothic->Draw(e.s, e.position + add_pos, e.scale, e.color, e.angle, TEXT_ALIGN::MIDDLE, e.length);
 	};
 
-	fonts->biz_upd_gothic->Begin(dc);
+	fonts->yu_gothic->Begin(dc);
 	r_font_render("master", master);
 	r_font_render("bgm", bgm);
 	r_font_render("se", se);
-	fonts->biz_upd_gothic->End(dc);
+	fonts->yu_gothic->End(dc);
 
 	sprite_scale->begin(dc);
 	for (int i = 0; i < BAR_COUNT; ++i)
