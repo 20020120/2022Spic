@@ -274,6 +274,7 @@
     <ClCompile Include="sources\resource_manager.cpp" />
     <ClCompile Include="sources\reticle.cpp" />
     <ClCompile Include="sources\scene.cpp" />
+    <ClCompile Include="sources\SceneTutorial.cpp" />
     <ClCompile Include="sources\scene_game.cpp" />
     <ClCompile Include="sources\scene_loading.cpp" />
     <ClCompile Include="sources\scene_manager.cpp" />
@@ -382,6 +383,7 @@
     <ClInclude Include="sources\resource_manager.h" />
     <ClInclude Include="sources\reticle.h" />
     <ClInclude Include="sources\scene.h" />
+    <ClInclude Include="sources\SceneTutorial.h" />
     <ClInclude Include="sources\scene_game.h" />
     <ClInclude Include="sources\scene_loading.h" />
     <ClInclude Include="sources\scene_manager.h" />

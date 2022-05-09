@@ -486,6 +486,9 @@
     <ClCompile Include="sources\LastBossBehavior.cpp">
       <Filter>Sources\character\Boss\00_LastBoss</Filter>
     </ClCompile>
+    <ClCompile Include="sources\SceneTutorial.cpp">
+      <Filter>Sources\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -805,6 +808,9 @@
     </ClInclude>
     <ClInclude Include="sources\ModelCashe.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\SceneTutorial.h">
+      <Filter>Sources\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
