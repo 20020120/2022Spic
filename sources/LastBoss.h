@@ -164,6 +164,7 @@ private:
     DirectX::XMFLOAT3 mPointerEnd{};   // レーザーポインターの終点
     float mPointerThreshold{};         // レーザーポインターの長さ0.0f~1.0f
     float mPointerAlpha{};
+    float mRgbColorPower{};
 
     // 現在のモード
     Mode mCurrentMode{ Mode::Ship };
