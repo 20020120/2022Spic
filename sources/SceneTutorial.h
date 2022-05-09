@@ -148,12 +148,23 @@ private:
     struct TutorialCheckText
     {
         DirectX::XMFLOAT2 position{};
-        DirectX::XMFLOAT2 scale{};
+        DirectX::XMFLOAT2 scale{ 0.7f,0.7f };
+        float angle;
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
     };
+    TutorialCheckText tutorial_check_text_parm;
     //ｔチェックボックスのテキスト
     std::wstring tutorial_check_text{};
 private:
     //チェックボックスの画像
+    struct CheckMarkParm
+    {
+        DirectX::XMFLOAT2 pos{ 32.0f,76.0f };
+        DirectX::XMFLOAT2 scale{ 0.2f,0.2f };
+        float threshold{1.0f};
+        bool is_threshold{ false };
+    };
+    CheckMarkParm check_mark_parm;
     std::unique_ptr<SpriteDissolve> check_mark{ nullptr };
     std::unique_ptr<SpriteBatch> check_box{ nullptr };
 

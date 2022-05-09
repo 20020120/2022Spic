@@ -504,27 +504,27 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"Rスティックでカメラを動かす";
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"LTボタンでロックオンする";
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"Bボタンを押して攻撃";
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Lスティックで移動させる";
+		tutorial_check_text = L"Aボタンを押して覚醒";
 		break;
 	default:
 		break;
@@ -558,6 +558,35 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
+#ifdef USE_IMGUI
+	ImGui::Begin("check_mark_parm");
+	if (ImGui::TreeNode("check_mark_parm"))
+	{
+		ImGui::DragFloat2("pos", &check_mark_parm.pos.x,0.1f);
+		ImGui::DragFloat2("scale", &check_mark_parm.scale.x, 0.1f);
+		ImGui::DragFloat("threshold", &check_mark_parm.threshold, 0.01f);
+		ImGui::Checkbox("is_threshold", &check_mark_parm.is_threshold);
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif // USE_IMGUI
+	if (check_mark_parm.is_threshold)
+	{
+		if(check_mark_parm.threshold > 0)check_mark_parm.threshold -= 1.0f * elapsed_time;
+	}
+	check_box->begin(graphics.get_dc().Get());
+	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);
+	check_box->end(graphics.get_dc().Get());
+
+	//fonts->yu_gothic->Begin(graphics.get_dc().Get());
+	//fonts->yu_gothic->Draw(tutorial_check_text, tutorial_check_text_parm.position, tutorial_check_text_parm.scale, tutorial_check_text_parm.color, tutorial_check_text_parm.angle, TEXT_ALIGN::UPPER_LEFT);
+	//fonts->yu_gothic->End(graphics.get_dc().Get());
+
+	check_mark->begin(graphics.get_dc().Get());
+	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
+	check_mark->end(graphics.get_dc().Get());
+
+
 }
 
 bool TutorialScene::StepString(float elapsed_time, StepFontElement& step_font_element, bool loop)
