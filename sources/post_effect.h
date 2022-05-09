@@ -21,11 +21,11 @@ public:
 	void blit(ID3D11DeviceContext* dc);
 	void scene_preview();
 
-	void clear_post_effect();
-	void dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos);
-	void stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions);
-	void lockon_post_effect(float scope, float alpha);
-	void title_post_effect(float power);
+	static void clear_post_effect();
+	static void dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOAT3& pos);
+	static void stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions);
+	static void lockon_post_effect(float scope, float alpha);
+	static void title_post_effect(float power);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }
@@ -116,8 +116,10 @@ private:
 	// FullScreenQuad‚ÌŽÀ‘Ì
 	std::unique_ptr<FullScreenQuad> bit_block_transfer;
 
-	int post_effect_count = 1;
 	int last_pst_efc_index;
-	int effect_type[FRAMEBUFFERS_COUNT - 2] = { static_cast<int>(POST_EFFECT_TYPE::NONE) };
 	bool display_effect_imgui = false;
+
+	static PostEffectConstants effect_constants_for_preservation;
+	static int post_effect_count;
+	static int effect_type[FRAMEBUFFERS_COUNT - 2];
 };

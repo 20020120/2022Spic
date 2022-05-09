@@ -8,6 +8,11 @@
 #include "codinate_convert.h"
 #include"user.h"
 
+PostEffect::PostEffectConstants PostEffect::effect_constants_for_preservation = {};
+int PostEffect::post_effect_count = 1;
+int PostEffect::effect_type[FRAMEBUFFERS_COUNT - 2] = { static_cast<int>(POST_EFFECT_TYPE::NONE) };
+
+
 PostEffect::PostEffect(ID3D11Device* device)
 {
 	// デバイス・デバイスコンテキスト・スワップチェーンの作成
@@ -86,6 +91,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 		};
 		for (int i = 0; i < post_effect_count; ++i)
 		{
+			effect_constants->data = effect_constants_for_preservation;
 			int last_minute_framebuffer_slot = i == 0 ? 0 : i + 1;
 
 			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::NONE))
@@ -401,6 +407,7 @@ void PostEffect::scene_preview()
 void PostEffect::clear_post_effect()
 {
 	post_effect_count = 1;
+	effect_constants_for_preservation = {};
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::NONE);
 }
 
@@ -410,25 +417,25 @@ void PostEffect::dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOA
 	UINT num_viewports = 1;
 	dc->RSGetViewports(&num_viewports, &viewport);
 
-	effect_constants->data.reference_position = { conversion_2D(dc, pos).x / viewport.Width, conversion_2D(dc, pos).y / viewport.Height,0,0 };
+	effect_constants_for_preservation.reference_position = { conversion_2D(dc, pos).x / viewport.Width, conversion_2D(dc, pos).y / viewport.Height,0,0 };
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR);
 }
 
 void PostEffect::stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions)
 {
-	effect_constants->data.low_resolution = -3.5f;
-	effect_constants->data.low_resolution_number_of_divisions = divisions;
+	effect_constants_for_preservation.low_resolution = -3.5f;
+	effect_constants_for_preservation.low_resolution_number_of_divisions = divisions;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOW_RESOLUTION);
 }
 
 void PostEffect::lockon_post_effect(float scope, float alpha)
 {
-	effect_constants->data.lockon_scope     = scope;
-	effect_constants->data.vignetting_scope = scope;
-	effect_constants->data.lockon_alpha     = alpha;
-	post_effect_count                       = 3;
+	effect_constants_for_preservation.lockon_scope     = scope;
+	effect_constants_for_preservation.vignetting_scope = scope;
+	effect_constants_for_preservation.lockon_alpha     = alpha;
+	post_effect_count = 3;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::LOCKON);
 	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::LOCKON_CENTRAL);
 	effect_type[2] = static_cast<int>(POST_EFFECT_TYPE::VIGNETTING);
@@ -437,7 +444,7 @@ void PostEffect::lockon_post_effect(float scope, float alpha)
 
 void PostEffect::title_post_effect(float power)
 {
-	effect_constants->data.slashing_power = power;
+	effect_constants_for_preservation.slashing_power = power;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::RGB_SHIFT);
 }

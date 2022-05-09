@@ -77,7 +77,10 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	thread.detach();
 }
 
-void SceneTitle::uninitialize() {}
+void SceneTitle::uninitialize()
+{
+	post_effect->clear_post_effect();
+}
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
