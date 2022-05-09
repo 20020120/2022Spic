@@ -263,11 +263,8 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
 {
     // RGB‚¸‚ç‚µ‚ÅS‘Ÿ‚Ì‚Ç‚­‚Ç‚­‚ğ‰‰o‚·‚é
     mTimer -= elapsedTime_;
-<<<<<<< Updated upstream
     
-    //PostEffect::boss_awakening_effect({0.5f,0.5f},)
-=======
-
+    PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower);
     if(mHeartTimer<=0.0f)
     {
         mRgbColorPower += mRgbColorSpeed * elapsedTime_;
@@ -286,11 +283,7 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
     {
         mHeartTimer -= elapsedTime_;
     }
-   
-  
 
-    PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower);
->>>>>>> Stashed changes
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::HumanToDragon);
