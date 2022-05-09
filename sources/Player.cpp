@@ -179,6 +179,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     //プレイヤーのパラメータの変更
     InflectionParameters(elapsed_time);
 
+    PlayerJustification(elapsed_time, position);
+
     if (is_awakening)
     {
         for (int i = 0; i < 2; ++i)
@@ -194,8 +196,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
     LerpCameraTarget(elapsed_time);
     player_config->update(graphics,elapsed_time);
-    if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
+
+        if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
 #if 0
     if (is_lock_on)
@@ -293,7 +296,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat("glow_time", &glow_time);
             ImGui::DragFloat4("emissive_color", &emissive_color.x,0.1f);
             DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
-            float length_radius = Math::calc_vector_AtoB_length(p, target);//距離(半径)
+            float length_radius = Math::calc_vector_AtoB_length(p, {0,0,0});//距離(半径)
             ImGui::DragFloat("l", &length_radius);
             ImGui::End();
         }

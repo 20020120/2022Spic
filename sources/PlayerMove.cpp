@@ -126,6 +126,37 @@ void PlayerMove::UpdateRotateToTarget(float elapsed_time, DirectX::XMFLOAT3& pos
     PitchTurn(position, camera_pos, cameraForward, orientation, elapsed_time);
 }
 
+void PlayerMove::PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos)
+{
+    using namespace DirectX;
+    //原点
+    XMFLOAT3 starting_point{ 0,0,0 };
+    XMVECTOR starting_point_vec{ XMLoadFloat3(&starting_point) };
+    //プレイヤー
+    XMVECTOR player_pos_vec{ XMLoadFloat3(&pos) };
+    XMVECTOR dir{ starting_point_vec - player_pos_vec };
+    //長さを求める
+    XMVECTOR length_vec{ XMVector3Length(dir) };
+    float length{};
+    XMStoreFloat(&length, length_vec);
+    //最大距離よりも大きくなったら
+    if (length > MAX_LENGTH)
+    {
+        //長さの差を求める
+        float difference{ length - MAX_LENGTH };
+        //原点の方向のベクトル
+        XMVECTOR dir_normal_vec{ XMVector3Normalize(dir) };
+        //原点方向に差の位置を出す
+        XMVECTOR remedy{ XMVectorScale(dir_normal_vec,difference) };
+        XMFLOAT3 remedy_p{};
+        XMStoreFloat3(&remedy_p, remedy);
+        pos.x += remedy_p.x;
+        pos.y += remedy_p.y;
+        pos.z += remedy_p.z;
+
+    }
+}
+
 void PlayerMove::MoveTutorialUpdateVelocity(float elapsed_time, DirectX::XMFLOAT3& position, DirectX::XMFLOAT4& orientation, const DirectX::XMFLOAT3& camera_forward, const DirectX::XMFLOAT3& camera_right, const DirectX::XMFLOAT3& camera_pos, SkyDome* sky_dome)
 {
     DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
