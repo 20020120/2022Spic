@@ -57,6 +57,26 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tunnel = std::make_unique<Tunnel>(graphics.get_device().Get());
 	//mini_map
 	minimap = std::make_unique<MiniMap>(graphics);
+
+	check_mark = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckMark.png",
+		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1, true);
+	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
+
+	//チュートリアル文の初期化
+	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
+	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
+	tutorial_text_element[2].tutorial_text = L"敵が視界に入っている時にLTボタンを押している間\nロックオンすることができます";
+	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
+	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
+	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとスタンしている敵をロックオンして\n一度に攻撃することができます";
+	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります。";
+
+	tutorial_text_element[0].position = { 304.0f,556.0f };
+	tutorial_text_element[1].position = { 307.0f,595.0f };
+	tutorial_text_element[2].position = { 309.0f,573.0f };
+	tutorial_text_element[3].position = { 295.0f,516.0f };
+	tutorial_text_element[4].position = { 277.0f,566.0f };
+
 }
 
 void TutorialScene::uninitialize()
@@ -69,6 +89,8 @@ void TutorialScene::uninitialize()
 
 void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	TutorialUpdate(graphics, elapsed_time);
+
 	// option
 	if (option->get_validity())
 	{
@@ -461,34 +483,113 @@ void TutorialScene::register_shadowmap(GraphicsPipeline& graphics, float elapsed
 
 void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_time)
 {
+#ifdef USE_IMGUI
+	{
+		if (is_next)
+		{
+			ImGui::Begin("tutorial_state");
+			static int state = 1;
+			ImGui::SliderInt("tutorial_state", &state, 1, 7);
+			tutorial_state = static_cast<TutorialState>(state);
+			ImGui::End();
+		}
+	}
+#endif
+
 	switch (tutorial_state)
 	{
 	case TutorialScene::TutorialState::MoveTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
+		tutorial_check_text = L"Lスティックで移動させる";
 		break;
 	default:
 		break;
 	}
+
 }
 
 void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_time)
 {
+	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+
+	//ここで-1してるのは1から始まっているから
+	if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_next = true;
+	else is_next = false;
+	auto r_font_render = [&](std::string name, StepFontElement& e)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin(name.c_str());
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+	};
+
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
+	r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
+	fonts->yu_gothic->End(graphics.get_dc().Get());
+}
+
+bool TutorialScene::StepString(float elapsed_time, StepFontElement& step_font_element, bool loop)
+{
+	step_font_element.timer += elapsed_time * step_font_element.speed;
+	step_font_element.step = static_cast<int>(step_font_element.timer);
+	size_t size = step_font_element.tutorial_text.size();
+	if (step_font_element.index >= size + 1) // 一文字分時間を置く
+	{
+		if (!loop)
+		{
+			return true;
+		}
+		else
+		{
+			step_font_element.timer = 0.0f;
+			step_font_element.step = 0;
+			step_font_element.index = 0;
+			step_font_element.s = L"";
+		}
+	}
+
+	if (step_font_element.step % 2 == 0)
+	{
+		if (step_font_element.index < size)
+		{
+			step_font_element.s += step_font_element.tutorial_text[step_font_element.index];
+			step_font_element.step = 1;
+			step_font_element.timer = 1.0f;
+		}
+		++step_font_element.index;
+	}
+
+	return false;
 }

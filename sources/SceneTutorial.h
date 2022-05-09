@@ -24,6 +24,7 @@
 #include "scene_option.h"
 #include "BulletManager.h"
 #include "tunnel.h"
+#include "sprite_dissolve.h"
 
 class TutorialScene : public Scene, public PracticalEntities
 {
@@ -76,7 +77,7 @@ public:
     };
 
     TutorialState tutorial_state{ TutorialState::MoveTutorial };
-
+    bool is_next{ false };
 private:
     // shadowmap
     std::unique_ptr<ShadowMap> shadow_map;
@@ -120,5 +121,41 @@ private:
     bool during_clear = false;
     float tunnel_alpha = 0.0f;
     std::unique_ptr<Tunnel> tunnel{ nullptr };
+private:
+    //チュートリアルのテキスト
+    //説明文用の構造体
+    struct StepFontElement
+    {
+        std::wstring s = L"";
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 0.7f, 0.7f };
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+        float angle{};
+        DirectX::XMFLOAT2 length{};
+        //説明文のテキスト
+        std::wstring tutorial_text=L"l";
+
+        // step string
+        float timer = 0;
+        int step = 0;
+        int index = 0;
+        //スピード
+        float speed{ 25.0f };
+    };
+    StepFontElement tutorial_text_element[7];
+
+    bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
+    struct TutorialCheckText
+    {
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{};
+    };
+    //ｔチェックボックスのテキスト
+    std::wstring tutorial_check_text{};
+private:
+    //チェックボックスの画像
+    std::unique_ptr<SpriteDissolve> check_mark{ nullptr };
+    std::unique_ptr<SpriteBatch> check_box{ nullptr };
+
 
 };

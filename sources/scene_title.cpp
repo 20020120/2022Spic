@@ -8,6 +8,7 @@
 #include "scene_loading.h"
 #include "scene_manager.h"
 #include "ModelCashe.h"
+#include"SceneTutorial.h"
 
 bool SceneTitle::is_ready = false;
 
@@ -146,7 +147,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (Math::equal_check(slashing_power, SLASHING_MAX))
 	{
-		SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+		SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::DOT, 2.0f);
 		point_lights->finalize(graphics);
 		is_ready = false;
 	}

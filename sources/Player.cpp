@@ -298,6 +298,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
             float length_radius = Math::calc_vector_AtoB_length(p, {0,0,0});//‹——£(”¼Œa)
             ImGui::DragFloat("l", &length_radius);
+
             ImGui::End();
         }
     }
