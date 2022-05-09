@@ -8,7 +8,8 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const DirectX::XMFLOAT3& EntryPosition_,
 					const wchar_t* IconFileName)
 :mPosition(EntryPosition_),mCurrentHitPoint(Param_.MaxHp)
-,mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower),mStunTime(Param_.StunTime)
+,mInvincibleTime(Param_.InvincibleTime),mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower)
+,mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
     //ミニマップ用アイコン
@@ -19,7 +20,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mVernierEffect = std::make_unique<Effect>(Graphics_, 
       effect_manager->get_effekseer_manager(), mkVernierPath);
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
-    mCubeHalfSize = mScale.x * 100.0f;
+    mCubeHalfSize = mScale.x * 5.0f;
     mDissolve = 1.0f;
 }
 

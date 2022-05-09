@@ -97,15 +97,16 @@ class LastBoss final : public BaseEnemy
     class Turret final
     {
     public:
-        Turret(skeleton::bone Bone_);
+        Turret(GraphicsPipeline& Graphics_);
         void fUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-        void fRender(GraphicsPipeline& graphics_, DirectX::XMFLOAT4X4 ParentWorld_);
-
+        void fRender(GraphicsPipeline& graphics_, 
+                     const DirectX::XMFLOAT4X4& ParentWorld_,
+                     const DirectX::XMFLOAT3& Position_);
 
     private:
-        skeleton::bone mParentBone{};
-        DirectX::XMFLOAT4 mOrientation{}; // 角度
+        DirectX::XMFLOAT4 mOrientation{0.0f,0.0f,0.0f,1.0f}; // 角度
         std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
+        SkinnedMesh::anim_Parameters mAnimPara{};
     };
 
 public:
@@ -141,8 +142,6 @@ private:
     // 変数
     // 
     //****************************************************************
-    std::unique_ptr<SkinnedMesh> mpTurret{ nullptr }; // タレットのモデル
-    DirectX::XMFLOAT3 mTurretPosition{}; // タレットの位置
     float mTimer{}; // 汎用タイマー
 
     // ビーム
@@ -152,6 +151,12 @@ private:
     float mLaserThreshold{};           // ビームの長さ0.0f~1.0f
     float mLaserAlpha{};
     float mLaserRadius{};              // ビームの太さ
+
+    //--------------------<ボスのタレット>--------------------//
+    std::unique_ptr<Turret> mpTurretRight{ nullptr };
+    std::unique_ptr<Turret> mpTurretLeft{ nullptr };
+    skeleton::bone mTurretBoneRight{};  // タレットのボーン
+    skeleton::bone mTurretBoneLeft{};   // タレットのボーン
 
 
     LaserBeam mLaserPointer{};

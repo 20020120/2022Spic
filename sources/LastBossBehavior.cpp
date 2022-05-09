@@ -184,24 +184,29 @@ void LastBoss::fHumanMoveInit()
     throw std::logic_error("Not implemented");
 }
 
-void LastBoss::fHumanMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fHumanMoveUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
 {
     throw std::logic_error("Not implemented");
 }
 
 void LastBoss::fHumanAllShotInit()
 {
-    throw std::logic_error("Not implemented");
+    mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
 }
 
-void LastBoss::fHumanAllShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fHumanAllShotUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
 {
-    throw std::logic_error("Not implemented");
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::HumanIdle);
+    }
 }
 
 void LastBoss::fHumanRotAttackInit()
 {
-    mpModel->play_animation(mAnimPara,)
+
 }
 
 void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -305,7 +310,19 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
     BaseEnemy::fRender(graphics);
+    // ビーム類を描画
     mLaserPointer.fRender(graphics);
-    
     mBeam.fRender(graphics);
+    //--------------------<タレット描画>--------------------//
+    // タレットの親の位置を取得する
+    DirectX::XMFLOAT3 position{};
+    DirectX::XMFLOAT3 up{};
+    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
+    mOrientation, mPosition);
+
+    mpModel->fech_by_bone( world,mTurretBoneLeft,position,up);
+    mpTurretLeft->fRender(graphics, world, position);
+    mpModel->fech_by_bone(world, mTurretBoneRight, position, up);
+    mpTurretLeft->fRender(graphics, world, position);
+
 }

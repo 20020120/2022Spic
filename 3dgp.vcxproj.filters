@@ -477,7 +477,7 @@
     <ClCompile Include="sources\ShieldEnemy.cpp">
       <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClCompile>
-    <ClCompile Include="sources\AhieldEnemy_Ace.cpp">
+    <ClCompile Include="sources\ShieldEnemy_Ace.cpp">
       <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClCompile>
     <ClCompile Include="sources\mini_map.cpp">
@@ -491,6 +491,9 @@
     </ClCompile>
     <ClCompile Include="sources\Turret.cpp">
       <Filter>Sources\character\Boss\00_LastBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\CannonballBullet.cpp">
+      <Filter>Sources\bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -803,7 +806,7 @@
     <ClInclude Include="sources\ShieldEnemy.h">
       <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClInclude>
-    <ClInclude Include="sources\AhieldEnemy_Ace.h">
+    <ClInclude Include="sources\ShieldEnemy_Ace.h">
       <Filter>Sources\character\enemy\03_Shield</Filter>
     </ClInclude>
     <ClInclude Include="sources\mini_map.h">
@@ -814,6 +817,9 @@
     </ClInclude>
     <ClInclude Include="sources\SceneTutorial.h">
       <Filter>Sources\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\CannonballBullet.h">
+      <Filter>Sources\bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
