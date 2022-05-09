@@ -28,7 +28,7 @@ Option::Option(GraphicsPipeline& graphics)
 		element.scale = { 0.25f, 0.25f };
 		element.color = { 1,1,1,1 };
 
-		element.position = { 480.0f, 160.0f };
+		element.position = { 480.0f, 188.0f };
 		icon_elements.insert(std::make_pair(IconType::VOLUME, element));
 		element.position.x = 610.0f;
 		icon_elements.insert(std::make_pair(IconType::GAME, element));
@@ -221,12 +221,12 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	};
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	{
-		static DirectX::XMFLOAT2 pos{ 420.0f, 115.0f };
+		static DirectX::XMFLOAT2 pos{ 420.0f, 170.0f };
 		static DirectX::XMFLOAT2 scale{ 1.0f, 1.0f };
 		r_font_render("LB", L"LB", pos, scale);
 	}
 	{
-		static DirectX::XMFLOAT2 pos{ 885.0f, 115.0f };
+		static DirectX::XMFLOAT2 pos{ 885.0f, 170.0f };
 		static DirectX::XMFLOAT2 scale{ 1.0f, 1.0f };
 		r_font_render("RB", L"RB", pos, scale);
 	}

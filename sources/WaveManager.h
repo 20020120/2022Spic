@@ -106,7 +106,7 @@ private:
 
     bool close = false;
     float wait_timer = 1.5f;
-
+public:
     enum STAGE_IDENTIFIER /*S_到達数_左からの数*/
     {
         S_1_1,
@@ -115,15 +115,13 @@ private:
         S_3_1,
         S_3_2,
         S_3_3,
-        S_4_1,
-        S_4_2,
-        S_5_1,
-        BOSS,
-
+        BOSS_BATTLESHIP, // ボス戦艦
+        BOSS_HUMANOID,   // ボス人型
+        BOSS_DRAGON,     // ボスドラゴン
 
         STAGE_COUNT,
     };
-
+private:
     struct StageDetails
     {
         enum class ROUTE
@@ -175,6 +173,11 @@ private:
 
     float clear_wait_timer = 3.0f;
     bool clear_flg = false;
+
+public:
+    // getter
+    const STAGE_IDENTIFIER& get_current_stage() { return current_stage; }
+
     //---ここまで--//
 
 

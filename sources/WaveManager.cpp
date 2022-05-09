@@ -20,8 +20,8 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     // ステージ情報の登録
     DirectX::XMFLOAT2 stage_points[STAGE_IDENTIFIER::STAGE_COUNT] =
     {
-        { 1500, 2700 },{ 900, 2100 },{ 2100, 2100 },{ 300, 1200 },{ 1500, 1500 },
-        { 2700, 1500 },{ 1500, 900 },{ 2700, 900 },{ 2200, 300 },{ 1200, 300 }
+        { 1128, 1310 },{ 784, 974 },{ 1518, 974 },{ 484, 564 },{ 1070, 564 },
+        { 1520, 564 },{ 1070, 176 },{ 1070, 176 },{ 1070, 176 }
     };
     for (int i = 0; i < STAGE_IDENTIFIER::STAGE_COUNT; ++i) { stage_details[i].position = stage_points[i]; }
     /*1-1*/
@@ -34,46 +34,41 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_2_1;
         stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::S_3_1));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::RIGHT, STAGE_IDENTIFIER::S_3_2));
     }
     /*2-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_2_2;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::S_3_2));
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::RIGHT, STAGE_IDENTIFIER::S_3_3));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_3_3));
     }
     /*3-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_1;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
     }
     /*3-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_2;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_4_1));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
     }
     /*3-3*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_3;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_4_2));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
     }
-    /*4-1*/
+    /*BOSS_BATTLESHIP*/
     {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_4_1;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
+        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::BOSS_BATTLESHIP;
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_HUMANOID));
     }
-    /*4-2*/
+    /*BOSS_HUMANOID*/
     {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_4_2;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::S_5_1));
+        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::BOSS_HUMANOID;
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_DRAGON));
     }
-    /*5-1*/
+    /*BOSS_DRAGON*/
     {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_5_1;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::LEFT, STAGE_IDENTIFIER::BOSS));
-    }
-    /*BOSS*/
-    {
-        // 次のルートなし
+        /* 次のルートなし */
     }
 
     // map
@@ -325,7 +320,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
     // 矢印の位置
     {
-        DirectX::XMFLOAT2 offset = player_icon.arg.texsize * player_icon.arg.scale * 1.2f;
+        DirectX::XMFLOAT2 offset = player_icon.arg.texsize * player_icon.arg.scale * 1.0f;
         if (arrows.count(StageDetails::ROUTE::LEFT)) { arrows.at(StageDetails::ROUTE::LEFT).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(-offset.x, 0); }
         if (arrows.count(StageDetails::ROUTE::RIGHT)) { arrows.at(StageDetails::ROUTE::RIGHT).arg.pos = player_icon.arg.pos + DirectX::XMFLOAT2(offset.x, 0); }
         if (arrows.count(StageDetails::ROUTE::UP)) { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
@@ -333,7 +328,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
-    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "1-1","2-1","2-2","3-1","3-2","3-3","4-1","4-2","5-1","BOSS" };
+    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP", "BOSS_HUMANOID", "BOSS_DRAGON", };
     {
         static int elem = current_stage;
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
@@ -384,7 +379,7 @@ void WaveManager::transition_reduction()
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
     arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
-    arrival_scale = { 0.5f,0.5f };
+    arrival_scale = { 1.0f,1.0f };
     // map
     map.threshold = 10.0f;
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
@@ -392,7 +387,7 @@ void WaveManager::transition_reduction()
     // player_icon
     player_icon.threshold = 10.0f; // プレイヤーのアニメーションを待つ
     player_icon.arg.pos = viewpoint;
-    player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
+    player_icon.arg.scale = DirectX::XMFLOAT2(0.3f, 0.3f) * map.arg.scale;
 }
 
 void WaveManager::update_reduction(float elapsed_time)
@@ -408,12 +403,12 @@ void WaveManager::update_reduction(float elapsed_time)
     player_icon.arg.pos = viewpoint;
     // scaleの変更
     map.arg.scale = Math::lerp(map.arg.scale, arrival_scale, lerp_rate * elapsed_time);
-    player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
+    player_icon.arg.scale = DirectX::XMFLOAT2(0.3f, 0.3f) * map.arg.scale;
 
     // 選択状態に遷移
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
     {
-        if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
+        if (current_stage != STAGE_IDENTIFIER::BOSS_DRAGON) { transition_selection(); }
         else // ゲームクリア
         {
             SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
@@ -424,7 +419,7 @@ void WaveManager::update_reduction(float elapsed_time)
 
 void WaveManager::transition_selection()
 {
-    if (current_stage == STAGE_IDENTIFIER::BOSS)
+    if (current_stage == STAGE_IDENTIFIER::BOSS_DRAGON)
     {
         bool a = true;
         assert(!a && "ボス部屋です");
@@ -511,8 +506,8 @@ void WaveManager::update_selection(float elapsed_time)
     {
         arrow.second.threshold = Math::lerp(arrow.second.threshold, -0.5f, 2.0f * elapsed_time);
 
-        if (arrow.first == route_state) { arrow.second.arg.scale = player_icon.arg.scale * 1.3f; }
-        else { arrow.second.arg.scale = player_icon.arg.scale * 0.8f; }
+        if (arrow.first == route_state) { arrow.second.arg.scale = player_icon.arg.scale * 0.5f; }
+        else { arrow.second.arg.scale = player_icon.arg.scale * 0.3f; }
     }
     // next_stageのセット
     if (game_pad->get_button_down() & GamePad::BTN_B)
@@ -520,22 +515,51 @@ void WaveManager::update_selection(float elapsed_time)
         next_stage = stage_details[current_stage].journeys.at(route_state);
         transition_enlargement();
     }
+
+    DirectX::XMFLOAT2 min_point = map.arg.pos;
+    DirectX::XMFLOAT2 max_point = { min_point + map.arg.texsize * map.arg.scale };
+
     // 右スティックでマップ移動
-    viewpoint.x += game_pad->get_axis_RX() * 400.0f * elapsed_time;
-    viewpoint.y -= game_pad->get_axis_RY() * 400.0f * elapsed_time;
+    if (game_pad->get_axis_RX() < 0)
+    {
+        if (min_point.x < 0)
+        {
+            viewpoint.x -= game_pad->get_axis_RX() * 600.0f * elapsed_time;
+        }
+    }
+    else
+    {
+        if (max_point.x > 1280)
+        {
+            viewpoint.x -= game_pad->get_axis_RX() * 600.0f * elapsed_time;
+        }
+    }
+
+    if (game_pad->get_axis_RY() < 0)
+    {
+        if (max_point.y > 720)
+        {
+            viewpoint.y += game_pad->get_axis_RY() * 600.0f * elapsed_time;
+        }
+    }
+    else
+    {
+        if (min_point.y < 0)
+        {
+            viewpoint.y += game_pad->get_axis_RY() * 600.0f * elapsed_time;
+        }
+    }
+
     // 移動
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
     player_icon.arg.pos = viewpoint;
-
-    viewpoint.x = Math::clamp(viewpoint.x, 0.0f, 1280.0f);
-    viewpoint.y = Math::clamp(viewpoint.y, 360.0f, 360.0f + map.arg.texsize.y * map.arg.scale.y);
 
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
     {
         ImGui::Separator();
         int elem = stage_details[current_stage].journeys.at(route_state);
-        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "1-1","2-1","2-2","3-1","3-2","3-3","4-1","4-2","5-1","BOSS" };
+        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP", "BOSS_HUMANOID", "BOSS_DRAGON", };
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("candidate stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
         ImGui::Separator();
@@ -561,7 +585,7 @@ void WaveManager::update_enlargement(float elapsed_time)
     wait_timer = (std::max)(wait_timer, 0.0f);
 
     // viewpointの移動
-    float lerp_rate = 2.0f;
+    float lerp_rate = 1.5f;
     viewpoint = Math::lerp(viewpoint, arrival_viewpoint, lerp_rate * elapsed_time);
     // positionの移動
     map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;

@@ -9,21 +9,21 @@ TransitionIcon::TransitionIcon(ID3D11Device* device)
     : IconBase(device)
 {
     //--game--//
-	game.position = { 878.0f, 310.0f };
+	game.position = { 773.0f, 310.0f };
 	game.scale = { 1.5f, 1.5f };
     game.s = L"ゲームに戻る";
     //--title--//
-    title.position = { 898.0f, 455.0f };
+    title.position = { 793.0f, 455.0f };
 	title.scale = { 1.5f, 1.5f };
     title.s = L"タイトルに戻る";
 
 	//--selecterL--//
-	selecterL.position = { 480.0f, game.position.y };
+	selecterL.position = { 375.0f, game.position.y };
 	//--selecterR--//
-	selecterR.position = { 1035.0f, game.position.y };
+	selecterR.position = { 930.0f, game.position.y };
 
-	selecterL_arrival_pos = { 480.0f, selecterL.position.y };
-	selecterR_arrival_pos = { 1035.0f, selecterR.position.y };
+	selecterL_arrival_pos = { 375.0f, selecterL.position.y };
+	selecterR_arrival_pos = { 930.0f, selecterR.position.y };
 }
 
 void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -34,8 +34,8 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (game_pad->get_axis_LY() < -0.5f))
 		{
 			state = 1;
-			selecterL_arrival_pos = { 480.0f, title.position.y };
-			selecterR_arrival_pos = { 1035.0f, title.position.y };
+			selecterL_arrival_pos = { 375.0f, title.position.y };
+			selecterR_arrival_pos = { 930.0f, title.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
@@ -47,8 +47,8 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (game_pad->get_axis_LY() > 0.5f))
 		{
 			state = 0;
-			selecterL_arrival_pos = { 480.0f, game.position.y };
-			selecterR_arrival_pos = { 1035.0f, game.position.y };
+			selecterL_arrival_pos = { 375.0f, game.position.y };
+			selecterR_arrival_pos = { 930.0f, game.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{

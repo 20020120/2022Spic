@@ -48,23 +48,23 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 {
 	VolumeFile::get_instance().load();
 	//--master--//
-	master.position = { 506.0f, 300.0f };
+	master.position = { 401.0f, 300.0f };
 	master.scale    = { 0.9f, 0.9f };
 	master.s = L"‘S‘Ì‰¹—Ê";
 	//--bgm--//
-	bgm.position = { 535.0f, 420.0f };
+	bgm.position = { 430.0f, 420.0f };
 	bgm.scale    = { 0.9f, 0.9f };
 	bgm.s = L"BGM‰¹—Ê";
 	//--se--//
-	se.position = { 525.0f, 540.0f };
+	se.position = { 420.0f, 540.0f };
 	se.scale    = { 0.9f, 0.9f };
 	se.s = L"SE‰¹—Ê";
 
 	//--selecterL--//
-	selecterL.position = { 360.0f, master.position.y };
+	selecterL.position = { 255.0f, master.position.y };
 	selecterL.scale    = { 0.3f, 0.3f };
 	//--selecterR--//
-	selecterR.position = { 590.0f, master.position.y };
+	selecterR.position = { 485.0f, master.position.y };
 	selecterR.scale    = { 0.3f, 0.3f };
 
 	selecterL_arrival_pos = { selecterL.position.x, master.position.y };
@@ -84,7 +84,7 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 			scales[i].at(o).pivot = scales[i].at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 			scales[i].at(o).scale = { 0.5f, 0.6f };
 			scales[i].at(o).color = { 1,1,1,1 };
-			scales[i].at(o).position = { 670.0f + 20.0f * o, positions[i] };
+			scales[i].at(o).position = { 565.0f + 20.0f * o, positions[i] };
 		}
 		for (int o = 0; o < MAX_SCALE_COUNT; ++o)
 		{
@@ -93,23 +93,23 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 			shell_scales[i].at(o).pivot    = shell_scales[i].at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 			shell_scales[i].at(o).scale    = { 0.5f, 0.6f };
 			shell_scales[i].at(o).color    = { 1,1,1,0.25f };
-			shell_scales[i].at(o).position = { 670.0f + 20.0f * o, positions[i] };
+			shell_scales[i].at(o).position = { 565.0f + 20.0f * o, positions[i] };
 		}
 	}
 	//--volume_numbers--//
 	{
 		Number* number = new Number(device);
-		number->set_offset_pos({ 1125.0f, master.position.y });
+		number->set_offset_pos({ 1020.0f, master.position.y });
 		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::MASTER, number));
 
 		number = new Number(device);
-		number->set_offset_pos({ 1125.0f, bgm.position.y });
+		number->set_offset_pos({ 1020.0f, bgm.position.y });
 		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::BGM, number));
 
 		number = new Number(device);
-		number->set_offset_pos({ 1125.0f, se.position.y });
+		number->set_offset_pos({ 1020.0f, se.position.y });
 		number->set_offset_scale({ 0.3f, 0.3f });
 		volume_numbers.insert(std::make_pair(BarType::SE, number));
 	}
@@ -148,7 +148,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				scales[type].at(index).pivot    = scales[type].at(index).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 				scales[type].at(index).scale    = { 0.5f, 0.6f };
 				scales[type].at(index).color    = { 1,1,1,1 };
-				scales[type].at(index).position = { 670.0f + 20.0f * index, positions[type] };
+				scales[type].at(index).position = { 565.0f + 20.0f * index, positions[type] };
 			}
 			save_volumes();
 		}
@@ -324,7 +324,7 @@ void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 					scales[o].at(i).pivot    = scales[o].at(i).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 					scales[o].at(i).scale    = { 0.5f, 0.6f };
 					scales[o].at(i).color    = { 1,1,1,1 };
-					scales[o].at(i).position = { 670.0f + 20.0f * i, positions[o] };
+					scales[o].at(i).position = { 565.0f + 20.0f * i, positions[o] };
 				}
 
 				save_volumes();
