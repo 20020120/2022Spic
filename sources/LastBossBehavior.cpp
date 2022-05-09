@@ -1,5 +1,7 @@
 #include"LastBoss.h"
 #include"Operators.h"
+#include"post_effect.h"
+
 //****************************************************************
 // 
 // íŠÍƒ‚[ƒh 
@@ -238,14 +240,18 @@ void LastBoss::fHumanDieMiddleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_die_idle, true);
     mTimer = mkHumanDieIdleSec;
+    mRgbColorPower = 0.0f;
 }
 
 void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer -= elapsedTime_;
+    
+    PostEffect::boss_awakening_effect({0.5f,0.5f},)
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::HumanToDragon);
+        PostEffect::clear_post_effect();
     }
 }
 
