@@ -207,7 +207,8 @@
     <ClCompile Include="imgui\imgui_ja_gryph_ranges.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="sources\AhieldEnemy_Ace.cpp" />
+    <ClCompile Include="sources\CannonballBullet.cpp" />
+    <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
     <ClCompile Include="sources\audio.cpp" />
@@ -315,7 +316,8 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="sources\AhieldEnemy_Ace.h" />
+    <ClInclude Include="sources\CannonballBullet.h" />
+    <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />
     <ClInclude Include="sources\audio.h" />

@@ -1,15 +1,15 @@
 #include"LastBoss.h"
 
+
+
+
 LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
-    const EnemyParamPack& ParamPack_)
+                   const EnemyParamPack& ParamPack_)
     :BaseEnemy(Graphics_,
         "./resources/Models/Enemy/boss_animation_second.fbx",
         ParamPack_, EmitterPoint_)
 {
     // タレットのモデルを初期化
-    mpTurret = std::make_unique<SkinnedMesh>(Graphics_.get_device().Get(),
-        "./resources/Models/Enemy/boss_turret.fbx");
-    mScale = { 0.8f,0.8f,0.8f };
     fRegisterFunctions();
    
     // ボーンを初期化
@@ -19,14 +19,23 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& Emitter
     // laserを初期化
     mBeam.fInitialize(Graphics_.get_device().Get(),L"");
     mLaserPointer.fInitialize(Graphics_.get_device().Get(),L"");
+
+    // タレットを初期化
+    mpTurretLeft = std::make_unique<Turret>(Graphics_);
+    mpTurretRight = std::make_unique<Turret>(Graphics_);
+    // タレットのボーンを初期化
+    mTurretBoneLeft = mpModel->get_bone_by_name
+    ("secondarygun_L_turret_first_joint");
+    mTurretBoneRight= mpModel->get_bone_by_name
+    ("secondarygun_R_turret_first_joint");
+
+
+
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
     : BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_animation_second.fbx")
 {
-    // タレットのモデルを初期化
-    mpTurret = std::make_unique<SkinnedMesh>(Graphics_.get_device().Get(),
-        "./resources/Models/Enemy/boss_turret.fbx");
 
     mScale = { 0.05f,0.05f,0.05f };
 }
@@ -54,6 +63,10 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     case Mode::Dragon:
          break;
     default: ; }
+
+    // タレットを更新
+    mpTurretLeft->fUpdate(elapsedTime_, Graphics_);
+    mpTurretRight->fUpdate(elapsedTime_, Graphics_);
 }
 
 void LastBoss::fUpdateAttackCapsule()
@@ -178,6 +191,20 @@ void LastBoss::fRegisterFunctions()
     {
         InitFunc ini = [=]()->void
         {
+            fHumanAllShotInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fHumanAllShotUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanAllShot, 
+            tuple));
+    }
+
+    {
+        InitFunc ini = [=]()->void
+        {
             fHumanDieStartInit();
         };
         UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
@@ -211,6 +238,9 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanToDragon, tuple));
     }
+    
+
+
     // ドラゴン：待機
     {
         InitFunc ini = [=]()->void
@@ -288,6 +318,15 @@ void LastBoss::fGuiMenu()
         ImGui::InputInt("CurrentHp", &mCurrentHitPoint);
         float p = fComputePercentHp();
         ImGui::SliderFloat("Percent",&p,0.0f,1.0f);
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("State"))
+    {
+        if (ImGui::Button("HumanAllShot"))
+        {
+            fChangeState(DivideState::HumanAllShot);
+        }
         ImGui::TreePop();
     }
     
