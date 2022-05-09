@@ -48,16 +48,16 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 {
 	VolumeFile::get_instance().load();
 	//--master--//
-	master.position = { 475.0f, 300.0f };
-	master.scale    = { 0.6f, 0.6f };
+	master.position = { 506.0f, 300.0f };
+	master.scale    = { 0.9f, 0.9f };
 	master.s = L"‘S‘Ì‰¹—Ê";
 	//--bgm--//
-	bgm.position = { 480.0f, 420.0f };
-	bgm.scale    = { 0.6f, 0.6f };
+	bgm.position = { 535.0f, 420.0f };
+	bgm.scale    = { 0.9f, 0.9f };
 	bgm.s = L"BGM‰¹—Ê";
 	//--se--//
-	se.position = { 480.0f, 540.0f };
-	se.scale    = { 0.6f, 0.6f };
+	se.position = { 525.0f, 540.0f };
+	se.scale    = { 0.9f, 0.9f };
 	se.s = L"SE‰¹—Ê";
 
 	//--selecterL--//

@@ -9,10 +9,12 @@ TransitionIcon::TransitionIcon(ID3D11Device* device)
     : IconBase(device)
 {
     //--game--//
-	game.position = { 760.0f, 310.0f };
+	game.position = { 878.0f, 310.0f };
+	game.scale = { 1.5f, 1.5f };
     game.s = L"ゲームに戻る";
     //--title--//
-    title.position = { 780.0f, 455.0f };
+    title.position = { 898.0f, 455.0f };
+	title.scale = { 1.5f, 1.5f };
     title.s = L"タイトルに戻る";
 
 	//--selecterL--//
@@ -66,7 +68,7 @@ void TransitionIcon::render(std::string gui, ID3D11DeviceContext* dc, const Dire
     IconBase::render(gui, dc, add_pos);
 #ifdef USE_IMGUI
     ImGui::Begin("option");
-    if (ImGui::TreeNode("game"))
+    if (ImGui::TreeNode("game string"))
     {
         ImGui::DragFloat2("pos", &game.position.x);
         ImGui::DragFloat2("scale", &game.scale.x, 0.1f);
