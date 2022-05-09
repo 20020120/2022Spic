@@ -201,7 +201,7 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 
 void LastBoss::fHumanRotAttackInit()
 {
-    throw std::logic_error("Not implemented");
+    mpModel->play_animation(mAnimPara,)
 }
 
 void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

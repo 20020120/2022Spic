@@ -93,6 +93,20 @@ class LastBoss final : public BaseEnemy
         HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
         Dragon,        // ドラゴン（体力の20%~0%）
     };
+    //--------------------<砲身のクラス>--------------------//
+    class Turret final
+    {
+    public:
+        Turret(skeleton::bone Bone_);
+        void fUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+        void fRender(GraphicsPipeline& graphics_, DirectX::XMFLOAT4X4 ParentWorld_);
+
+
+    private:
+        skeleton::bone mParentBone{};
+        DirectX::XMFLOAT4 mOrientation{}; // 角度
+        std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
+    };
 
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
