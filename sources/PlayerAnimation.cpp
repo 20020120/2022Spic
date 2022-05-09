@@ -537,6 +537,8 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
+    //クリア演出中なら解除する
+    if (during_clear) during_clear = false;
     condition_state = ConditionState::Alive;
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
@@ -986,5 +988,5 @@ void Player::TransitionStageMove()
     velocity = {};
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::StageMoveUpdate;
-
+    during_clear = true;
 }

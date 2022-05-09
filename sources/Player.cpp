@@ -153,51 +153,53 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
     ImGui::End();
 #endif // USE_IMGUI
-
-    ExecFuncUpdate(elapsed_time, sky_dome, enemies);
-    switch (behavior_state)
+    //クリア演出中じゃないとき
+    if (during_clear == false)
     {
-    case Player::Behavior::Normal:
-        player_attack_power = 3;
-        if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+        ExecFuncUpdate(elapsed_time, sky_dome, enemies);
+        switch (behavior_state)
         {
-            transition_chain_behavior();
+        case Player::Behavior::Normal:
+            player_attack_power = 3;
+            if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+            {
+                transition_chain_behavior();
+            }
+            //ロックオン
+            LockOn();
+            //カメラリセット
+            CameraReset();
+            break;
+        case Player::Behavior::Chain:
+
+            break;
+        default:
+            break;
         }
-        //ロックオン
-        LockOn();
-        //カメラリセット
-        CameraReset();
-        break;
-    case Player::Behavior::Chain:
 
-        break;
-    default:
-        break;
-    }
+        GetPlayerDirections();
+        //プレイヤーのパラメータの変更
+        InflectionParameters(elapsed_time);
 
-    GetPlayerDirections();
-    //プレイヤーのパラメータの変更
-    InflectionParameters(elapsed_time);
+        PlayerJustification(elapsed_time, position);
 
-    PlayerJustification(elapsed_time, position);
-
-    if (is_awakening)
-    {
-        for (int i = 0; i < 2; ++i)
+        if (is_awakening)
         {
-            mSwordTrail[i].fUpdate(elapsed_time, 10);
-            mSwordTrail[i].fEraseTrailPoint(elapsed_time);
+            for (int i = 0; i < 2; ++i)
+            {
+                mSwordTrail[i].fUpdate(elapsed_time, 10);
+                mSwordTrail[i].fEraseTrailPoint(elapsed_time);
+            }
         }
-    }
-    else
-    {
-        mSwordTrail[0].fUpdate(elapsed_time, 10);
-        mSwordTrail[0].fEraseTrailPoint(elapsed_time);
-    }
-    LerpCameraTarget(elapsed_time);
-    player_config->update(graphics,elapsed_time);
+        else
+        {
+            mSwordTrail[0].fUpdate(elapsed_time, 10);
+            mSwordTrail[0].fEraseTrailPoint(elapsed_time);
+        }
+        LerpCameraTarget(elapsed_time);
+        player_config->update(graphics, elapsed_time);
 
-
+    }
         if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
 
 #if 0
@@ -327,8 +329,8 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
-
-    player_config->render(graphics.get_dc().Get());
+    //クリア演出中じゃないとき
+    if(during_clear == false)player_config->render(graphics.get_dc().Get());
 }
 
 void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)

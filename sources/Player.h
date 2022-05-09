@@ -154,7 +154,6 @@ private:
     DirectX::XMFLOAT3 camera_target{};
     //カメラのターゲットの補間
     void LerpCameraTarget(float elapsed_time);
-
 private:
     //ターゲットの敵
     BaseEnemy* target_enemy;
@@ -229,6 +228,8 @@ private:
     DirectX::XMFLOAT4 attack_animation_blends_speeds{ 0.3f,0.0f,0.0f,0.0f };
     //アニメーションをしていいかどうか
     bool is_update_animation{ true };
+    //クリア演出中
+    bool during_clear{ false };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
