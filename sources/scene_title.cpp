@@ -72,6 +72,9 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	slashing_power = 0;
 	slashing_wait_timer = 0;
 
+	audio_manager->stop_all_bgm();
+	audio_manager->play_bgm(BGM_INDEX::TITLE);
+
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//スレッドの管理を放棄
@@ -85,6 +88,10 @@ void SceneTitle::uninitialize()
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	static float bgm_volume = 2.0f;
+
+	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+
 	//----<3D関連>----//
 	// cameraManager
 	Camera* c = cameraManager->GetCurrentCamera();
@@ -147,7 +154,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (Math::equal_check(slashing_power, SLASHING_MAX))
 	{
-		SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+		SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::DOT, 2.0f);
 		point_lights->finalize(graphics);
 		is_ready = false;
 	}

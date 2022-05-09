@@ -485,43 +485,72 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 {
 #ifdef USE_IMGUI
 	{
-		if (is_next)
+		if (is_end_text)
 		{
-			ImGui::Begin("tutorial_state");
-			static int state = 1;
-			ImGui::SliderInt("tutorial_state", &state, 1, 7);
-			tutorial_state = static_cast<TutorialState>(state);
-			ImGui::End();
+			//ImGui::Begin("tutorial_state");
+			//static int state = 1;
+			//ImGui::SliderInt("tutorial_state", &state, 1, 7);
+			//tutorial_state = static_cast<TutorialState>(state);
+			//ImGui::End();
 		}
 	}
 #endif
+	//プレイヤー側の今のチュートリアルが終わってるときかつis_nextがtrueの時
+	if (player->GetNextTutorial() && is_end_text)
+	{
+		//チェックボックスのディゾルブを開始
+		check_mark_parm.is_threshold = true;
+	}
+	if (check_mark_parm.is_threshold)
+	{
+		//0よりも大きかったら引いていく
+		if (check_mark_parm.threshold > 0)check_mark_parm.threshold -= 1.0f * elapsed_time;
+		else
+		{
+			is_next = true;
+		}
+	}
 
 	switch (tutorial_state)
 	{
 	case TutorialScene::TutorialState::MoveTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Lスティックで移動させる";
-		if (player->GetNextTutorial() && is_next)
+		if (is_next)
 		{
-			tutorial_state = TutorialState::AvoidanceTutorial;
-			player->FalseNextTutorial();
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::AvoidanceTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
 		}
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Rスティックでカメラを動かす";
+		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
+		tutorial_check_text = L"LTボタンでロックオンする";
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"LTボタンでロックオンする";
+		tutorial_check_text = L"Bボタンを押して攻撃";
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
-		tutorial_check_text = L"Bボタンを押して攻撃";
+		tutorial_check_text = L"回り込み回避をする";
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
@@ -542,8 +571,8 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 
 	//ここで-1してるのは1から始まっているから
-	if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_next = true;
-	else is_next = false;
+	if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_end_text = true;
+	else is_end_text = false;
 	auto r_font_render = [&](std::string name, StepFontElement& e)
 	{
 #ifdef USE_IMGUI
@@ -583,10 +612,6 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	}
 	ImGui::End();
 #endif // USE_IMGUI
-	if (check_mark_parm.is_threshold)
-	{
-		if(check_mark_parm.threshold > 0)check_mark_parm.threshold -= 1.0f * elapsed_time;
-	}
 	check_box->begin(graphics.get_dc().Get());
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);
 	check_box->end(graphics.get_dc().Get());

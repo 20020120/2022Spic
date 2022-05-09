@@ -77,7 +77,6 @@ public:
     };
 
     TutorialState tutorial_state{ TutorialState::MoveTutorial };
-    bool is_next{ false };
 private:
     // shadowmap
     std::unique_ptr<ShadowMap> shadow_map;
@@ -117,6 +116,9 @@ private:
     std::unique_ptr<Option> option{ nullptr };
     std::unique_ptr<MiniMap> minimap{ nullptr };
 
+    bool is_next{ false };
+    //次のチュートリアルに行くまでの時間
+    float Judea_timer{ 0 };
     // クリア演出
     bool during_clear = false;
     float tunnel_alpha = 0.0f;
@@ -133,7 +135,7 @@ private:
         float angle{};
         DirectX::XMFLOAT2 length{};
         //説明文のテキスト
-        std::wstring tutorial_text=L"l";
+        std::wstring tutorial_text=L"UI";
 
         // step string
         float timer = 0;
@@ -145,9 +147,11 @@ private:
     StepFontElement tutorial_text_element[7];
 
     bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
+    bool is_end_text{ false };
+
     struct TutorialCheckText
     {
-        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 position{ 103.0f,79.8f };
         DirectX::XMFLOAT2 scale{ 0.7f,0.7f };
         float angle;
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
