@@ -13,6 +13,7 @@
 #include "texture.h"
 
 #include "user.h"
+#include "volume_icon.h"
 
 void SceneGame::initialize(GraphicsPipeline& graphics)
 {
@@ -73,6 +74,16 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	static float bgm_volume = 0.2f;
+	static float se_volume = 0.2f;
+
+	audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_BATTLESHIP, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_HUMANOID, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_DRAGON, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
+
+
 	// option
 	if (option->get_validity())
 	{
@@ -276,8 +287,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	// audio ƒfƒ‚
-	static float bgm_volume = 0.2f;
-	static float se_volume = 0.2f;
 	static bool is_open_button = { false };
 	static bool display_audio_imgui = { false };
 #ifdef USE_IMGUI
@@ -291,12 +300,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 				ImGui::DragFloat("bgm_volume", &bgm_volume, 0.1f, 0.0f, 3.0f);
 				//if (!is_open_button)
 				{
-					if (ImGui::Button("play bgm")) { audio_manager->play_bgm(BGM_INDEX::ENDING); is_open_button = true; }
+					if (ImGui::Button("play bgm")) { audio_manager->play_bgm(BGM_INDEX::GAME); is_open_button = true; }
 					if (ImGui::Button("play TITLE bgm")) { audio_manager->play_bgm(BGM_INDEX::TITLE); is_open_button = true; }
 				}
 				//else
 				{
-					if (ImGui::Button("stop bgm")) { audio_manager->stop_bgm(BGM_INDEX::ENDING); is_open_button = false; }
+					if (ImGui::Button("stop bgm")) { audio_manager->stop_bgm(BGM_INDEX::GAME); is_open_button = false; }
 				}
 				ImGui::TreePop();
 			}
@@ -311,10 +320,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 #endif
-	audio_manager->set_volume_bgm(BGM_INDEX::ENDING, bgm_volume);
-	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume);
-	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
-
 
 	//****************************************************************
 	//

@@ -56,8 +56,12 @@ void AudioManager::initialize_XAudio2()
 //-------------------------------------------------------
 void AudioManager::initialize_bgm()
 {
-	register_bgm(L"resources/Audios/009.wav", BGM_INDEX::TITLE, 0.1f);
-	register_bgm(L"resources/Audios/ending.wav", BGM_INDEX::ENDING, 0.1f);
+	register_bgm(L"resources/Audios/title.wav", BGM_INDEX::TITLE, 0.1f);
+	register_bgm(L"resources/Audios/tutorial.wav", BGM_INDEX::TUTORIAL, 0.1f);
+	register_bgm(L"resources/Audios/gaming.wav", BGM_INDEX::GAME, 0.1f);
+	register_bgm(L"resources/Audios/boss_battleship.wav", BGM_INDEX::BOSS_BATTLESHIP, 0.1f);
+	register_bgm(L"resources/Audios/boss_human.wav", BGM_INDEX::BOSS_HUMANOID, 0.1f);
+	register_bgm(L"resources/Audios/boss_dragon.wav", BGM_INDEX::BOSS_DRAGON, 0.1f);
 
 
 }

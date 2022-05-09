@@ -9,7 +9,11 @@
 enum class BGM_INDEX
 {
     TITLE,
-    ENDING,
+    TUTORIAL,
+    GAME,
+    BOSS_BATTLESHIP,
+    BOSS_HUMANOID,
+    BOSS_DRAGON,
 };
 
 enum class SE_INDEX

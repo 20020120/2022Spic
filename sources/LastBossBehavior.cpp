@@ -247,7 +247,7 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
 {
     mTimer -= elapsedTime_;
     
-    PostEffect::boss_awakening_effect({0.5f,0.5f},)
+    //PostEffect::boss_awakening_effect({0.5f,0.5f},)
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::HumanToDragon);
