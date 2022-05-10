@@ -8,6 +8,7 @@
 #include"scene_game.h"
 #include "framework.h"
 #include "graphics_pipeline.h"
+#include"imgui_include.h"
 
 #include "collision.h"
 #include "shader.h"
@@ -698,6 +699,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		break;
 	case TutorialScene::TutorialState::FreePractice:
 		tutorial_check_text = L"自由に練習する";
+		tutorial_skip_text = L"チュートリアル終了";
 		break;
 	default:
 		break;
@@ -707,7 +709,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	{
 		change_scene_timer += 1.0f * elapsed_time;
 		change_gauge_parm.threshold -=(1.0f * elapsed_time) / 3.0f;
-		if (change_scene_timer > 3.0f)
+		if (change_scene_timer > 3.5f)
 		{
 			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 		}
@@ -751,39 +753,49 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 
 	}
 #ifdef USE_IMGUI
-	ImGui::Begin("check_mark_parm");
-	if (ImGui::TreeNode("check_mark_parm"))
+	static bool display_scape_imgui;
+	imgui_menu_bar("Tutorial", "Tutorial", display_scape_imgui);
+	if (display_scape_imgui)
 	{
-		ImGui::DragFloat2("pos", &check_mark_parm.pos.x,0.1f);
-		ImGui::DragFloat2("scale", &check_mark_parm.scale.x, 0.1f);
-		ImGui::DragFloat("threshold", &check_mark_parm.threshold, 0.01f);
-		ImGui::Checkbox("is_threshold", &check_mark_parm.is_threshold);
-		ImGui::TreePop();
+		ImGui::Begin("Tutorial");
+		if (ImGui::TreeNode("check_mark_parm"))
+		{
+			ImGui::DragFloat2("pos", &check_mark_parm.pos.x, 0.1f);
+			ImGui::DragFloat2("scale", &check_mark_parm.scale.x, 0.1f);
+			ImGui::DragFloat("threshold", &check_mark_parm.threshold, 0.01f);
+			ImGui::Checkbox("is_threshold", &check_mark_parm.is_threshold);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("tutorial_check_text_parm"))
+		{
+			ImGui::DragFloat2("pos", &tutorial_check_text_parm.position.x, 0.1f);
+			ImGui::DragFloat2("scale", &tutorial_check_text_parm.scale.x, 0.1f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("change_gauge_parm"))
+		{
+			ImGui::DragFloat2("pos", &change_gauge_parm.pos.x, 0.1f);
+			ImGui::DragFloat2("scale", &change_gauge_parm.scale.x, 0.1f);
+			ImGui::DragFloat("threshold", &change_gauge_parm.threshold, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("change_scene_txt"))
+		{
+			ImGui::DragFloat2("pos", &change_scene_txt.position.x, 0.1f);
+			ImGui::DragFloat2("scale", &change_scene_txt.scale.x, 0.1f);
+			ImGui::TreePop();
+		}
+		ImGui::End();
 	}
-	ImGui::End();
-	ImGui::Begin("tutorial_check_text_parm");
-	if (ImGui::TreeNode("tutorial_check_text_parm"))
-	{
-		ImGui::DragFloat2("pos", &tutorial_check_text_parm.position.x,0.1f);
-		ImGui::DragFloat2("scale", &tutorial_check_text_parm.scale.x, 0.1f);
-		ImGui::TreePop();
-	}
-	ImGui::End();
-	ImGui::Begin("change_gauge_parm");
-	if (ImGui::TreeNode("change_gauge_parm"))
-	{
-		ImGui::DragFloat2("pos", &change_gauge_parm.pos.x,0.1f);
-		ImGui::DragFloat2("scale", &change_gauge_parm.scale.x, 0.1f);
-		ImGui::DragFloat("threshold", &change_gauge_parm.threshold, 0.01f);
-		ImGui::TreePop();
-	}
-	ImGui::End();
 #endif // USE_IMGUI
 
 	change_scene_gauge->begin(graphics.get_dc().Get());
 	change_scene_gauge->render(graphics.get_dc().Get(), change_gauge_parm.pos, change_gauge_parm.scale,change_gauge_parm.threshold);
 	change_scene_gauge->end(graphics.get_dc().Get());
 
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
+	fonts->yu_gothic->Draw(tutorial_skip_text, change_scene_txt.position, change_scene_txt.scale, change_scene_txt.color, change_scene_txt.angle, TEXT_ALIGN::UPPER_LEFT);
+	fonts->yu_gothic->End(graphics.get_dc().Get());
 
 
 	check_box->begin(graphics.get_dc().Get());
