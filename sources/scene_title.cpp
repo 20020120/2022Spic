@@ -299,8 +299,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	// 画面遷移
 	if (Math::equal_check(slashing_power, SLASHING_MAX))
 	{
-		if (have_tutorial_state == 1) /* チュートリアルなし */ { SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f); }
-		else{ SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::DOT, 2.0f); }
+		if (have_tutorial_state == 1) /* チュートリアルなし */ { SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f); }
+		else{ SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f); }
 
 		point_lights->finalize(graphics);
 		is_ready = false;
@@ -332,6 +332,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 
 
 	/*-----!!!ここから上にオブジェクトの描画はしないで!!!!-----*/
+	//-------<3Dパート>--------//
 	// sky_dome
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
 	sky_dome->Render(graphics, elapsed_time);
@@ -347,10 +348,42 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 
+	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
+	// シャドウマップの破棄
+	shadow_map->clear_shadowmap(graphics);
+	// post_effect
+	post_effect->end(graphics.get_dc().Get());
+	// 描画ステート設定
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
+	// エフェクトをかける
+	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
+	post_effect->blit(graphics.get_dc().Get());
+	post_effect->scene_preview();
+	// bloom
+	{
+		// 定数バッファにフェッチする
+		static bool display_bloom_imgui = false;
+#ifdef USE_IMGUI
+		imgui_menu_bar("contents", "bloom", display_bloom_imgui);
+		if (display_bloom_imgui)
+		{
+			ImGui::Begin("bloom");
+			ImGui::DragFloat("extraction_threshold", &bloom_constants->data.bloom_extraction_threshold, 0.1f);
+			ImGui::DragFloat("convolution_intensity", &bloom_constants->data.blur_convolution_intensity, 0.1f);
+			ImGui::End();
+		}
+#endif // USE_IMGUI
+		bloom_constants->bind(graphics.get_dc().Get(), 8);
+
+		graphics.set_pipeline_preset(BLEND_STATE::NO_PROCESS, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
+		bloom_effect->make(graphics.get_dc().Get(), post_effect->get_color_map().Get());
+		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
+		bloom_effect->blit(graphics.get_dc().Get());
+	}
 	//-------<2Dパート>--------//
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	auto r_sprite_render = [&](std::string gui_name,SpriteBatch* batch, Element& e)
+	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e)
 	{
 		//--sprite_string--//
 #ifdef USE_IMGUI
@@ -410,41 +443,6 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		r_font_render("yes", tutorial_tab.yes);
 		r_font_render("no", tutorial_tab.no);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
-	}
-
-
-	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
-
-	// シャドウマップの破棄
-	shadow_map->clear_shadowmap(graphics);
-	// post_effect
-	post_effect->end(graphics.get_dc().Get());
-	// 描画ステート設定
-	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
-	// エフェクトをかける
-	post_effect->apply_an_effect(graphics.get_dc().Get(), elapsed_time);
-	post_effect->blit(graphics.get_dc().Get());
-	post_effect->scene_preview();
-	// bloom
-	{
-		// 定数バッファにフェッチする
-		static bool display_bloom_imgui = false;
-#ifdef USE_IMGUI
-		imgui_menu_bar("contents", "bloom", display_bloom_imgui);
-		if (display_bloom_imgui)
-		{
-			ImGui::Begin("bloom");
-			ImGui::DragFloat("extraction_threshold", &bloom_constants->data.bloom_extraction_threshold, 0.1f);
-			ImGui::DragFloat("convolution_intensity", &bloom_constants->data.blur_convolution_intensity, 0.1f);
-			ImGui::End();
-		}
-#endif // USE_IMGUI
-		bloom_constants->bind(graphics.get_dc().Get(), 8);
-
-		graphics.set_pipeline_preset(BLEND_STATE::NO_PROCESS, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
-		bloom_effect->make(graphics.get_dc().Get(), post_effect->get_color_map().Get());
-		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
-		bloom_effect->blit(graphics.get_dc().Get());
 	}
 }
 

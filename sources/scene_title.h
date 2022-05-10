@@ -53,8 +53,8 @@ private:
     std::unique_ptr<Bloom> bloom_effect;
     struct BloomConstants
     {
-        float bloom_extraction_threshold = 0.800f;
-        float blur_convolution_intensity = 0.500f;
+        float bloom_extraction_threshold = 0.8f;
+        float blur_convolution_intensity = 4.0f;
 
         float bloom_options[2];
     };
