@@ -11,7 +11,7 @@
 #include"SceneTutorial.h"
 
 bool SceneTitle::is_ready = false;
-//#define Tutorial
+#define Tutorial
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
 	//--タイトル前ロード--//
