@@ -17,9 +17,13 @@ SceneManager::SceneManager(GraphicsPipeline& graphics)
         L".\\resources\\Sprites\\mask\\MoveUp.png", 1);
     dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::TYPE2, sprite_dissolve));
     // DOT
-    sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png",
+    sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\load\\load_back.png",
         L".\\resources\\Sprites\\mask\\dot.png", 1);
     dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::DOT, sprite_dissolve));
+    // HORIZON
+    sprite_dissolve = new SpriteDissolve(graphics.get_device().Get(), L".\\resources\\Sprites\\load\\load_back.png",
+        L".\\resources\\Sprites\\mask\\horizon1.png", 1);
+    dissolve_sprites.insert(std::make_pair(DISSOLVE_TYPE::HORIZON, sprite_dissolve));
 }
 
 SceneManager::~SceneManager()
