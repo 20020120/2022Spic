@@ -15,6 +15,10 @@ bool framework::initialize()
 	graphics->initialize(hwnd);
 	// entities
 	entities_initialize(*graphics);
+	// オプションのロード
+	VolumeFile::get_instance().load();
+	GameFile::get_instance().load();
+
 	// シーンの初期化
 	scene_manager = std::make_unique<SceneManager>(*graphics);
 	//scene_manager->set_next_scene(new SceneTitle());
