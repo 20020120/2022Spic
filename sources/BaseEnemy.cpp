@@ -159,6 +159,11 @@ void BaseEnemy::fSetAttack(bool Arg_)
     mIsAttack = Arg_;
 }
 
+void BaseEnemy::fSetIsRockOnOfChain(bool RockOn_)
+{
+    mIsRockOnOfChain = RockOn_;
+}
+
 bool BaseEnemy::fGetAttack() const
 {
     return mIsAttack;
@@ -229,6 +234,11 @@ float BaseEnemy::fGetPercentHitPoint() const
 bool BaseEnemy::fGetStun() const
 {
     return mIsStun;
+}
+
+bool BaseEnemy::fIsRockOnOfChain() const
+{
+    return mIsRockOnOfChain;
 }
 
 
