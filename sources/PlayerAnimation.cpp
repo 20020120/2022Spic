@@ -49,6 +49,8 @@ void Player::TransitionTitleAnimationReadyIdle()
     model->play_animation(AnimationClips::TitleAnimationReadyIdle,true);
     //ここでupdateしておかないと1フレームだけ初期のアニメーションが映ってしまうから
     model->update_animation(1.0f);
+    //タイトルはメッシュを隠さないから0にしておく
+    threshold_mesh = 0.0f;
 }
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
@@ -252,7 +254,12 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
 #else
-           TransitionAttackType2(attack_animation_blends_speeds.z);
+            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            {
+                TransitionAttackType2(attack_animation_blends_speeds.z);
+            }
+            else   TransitionIdle();
+
 #endif // 0
         }
     }
@@ -305,7 +312,14 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
 #else
-             TransitionAttackType3(attack_animation_blends_speeds.w);
+            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            {
+                TransitionAttackType3(attack_animation_blends_speeds.w);
+            }
+            else
+            {
+                TransitionIdle();
+            }
 #endif // 0
         }
     }

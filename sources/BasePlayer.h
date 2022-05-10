@@ -21,7 +21,7 @@ protected:
     DirectX::XMFLOAT4 orientation{ 0,0,0,1.0f };
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };
     float threshold;
-    float threshold_mesh{ 0.0f };
+    float threshold_mesh{ 1.0f };
     float glow_time;
     DirectX::XMFLOAT4 emissive_color{ 1.0f,1.0f,1.0f,3.0f };
 protected:

@@ -205,7 +205,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 #if 0
     if (is_lock_on)
     {
-        BehindAvoidancePosition();
+        //BehindAvoidancePosition();
         for (const auto& point : behind_interpolated_way_points)
         {
             debug_figure->create_sphere(point, 1.0f, { 1,1,1,1 });
