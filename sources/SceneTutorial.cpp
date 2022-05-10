@@ -5,7 +5,7 @@
 #include "scene_title.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
-
+#include"scene_game.h"
 #include "framework.h"
 #include "graphics_pipeline.h"
 
@@ -498,14 +498,12 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 {
 #ifdef USE_IMGUI
 	{
-		if (is_end_text)
-		{
-			//ImGui::Begin("tutorial_state");
+			ImGui::Begin("tutorial");
+			ImGui::DragFloat("change_scene_timer", &change_scene_timer);
 			//static int state = 1;
 			//ImGui::SliderInt("tutorial_state", &state, 1, 7);
 			//tutorial_state = static_cast<TutorialState>(state);
-			//ImGui::End();
-		}
+			ImGui::End();
 	}
 #endif
 	//プレイヤー側の今のチュートリアルが終わってるときかつis_nextがtrueの時
@@ -698,7 +696,18 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		break;
 	case TutorialScene::TutorialState::FreePractice:
 		tutorial_check_text = L"自由に練習する";
-
+		if (game_pad->get_button() & GamePad::BTN_BACK)
+		{
+			change_scene_timer += 1.0f * elapsed_time;
+			if (change_scene_timer > 2.0f)
+			{
+				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+			}
+		}
+		else
+		{
+			change_scene_timer = 0;
+		}
 		break;
 	default:
 		break;
