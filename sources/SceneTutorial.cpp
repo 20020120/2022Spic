@@ -73,6 +73,8 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 
 	check_mark = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckMark.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1, true);
+	change_scene_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\enemy_hp_gauge.png",
+		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
 
 	//チュートリアル文の初期化
@@ -700,9 +702,11 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	default:
 		break;
 	}
+	//バックボタンを長押しして3秒たったらチュートリアルスキップ
 	if (game_pad->get_button() & GamePad::BTN_BACK)
 	{
 		change_scene_timer += 1.0f * elapsed_time;
+		change_gauge_parm.threshold -=(1.0f * elapsed_time) / 3.0f;
 		if (change_scene_timer > 3.0f)
 		{
 			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
@@ -710,6 +714,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	}
 	else
 	{
+		change_gauge_parm.threshold = 1.0f;
 		change_scene_timer = 0;
 	}
 
@@ -764,7 +769,20 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		ImGui::TreePop();
 	}
 	ImGui::End();
+	ImGui::Begin("change_gauge_parm");
+	if (ImGui::TreeNode("change_gauge_parm"))
+	{
+		ImGui::DragFloat2("pos", &change_gauge_parm.pos.x,0.1f);
+		ImGui::DragFloat2("scale", &change_gauge_parm.scale.x, 0.1f);
+		ImGui::DragFloat("threshold", &change_gauge_parm.threshold, 0.01f);
+		ImGui::TreePop();
+	}
+	ImGui::End();
 #endif // USE_IMGUI
+
+	change_scene_gauge->begin(graphics.get_dc().Get());
+	change_scene_gauge->render(graphics.get_dc().Get(), change_gauge_parm.pos, change_gauge_parm.scale,change_gauge_parm.threshold);
+	change_scene_gauge->end(graphics.get_dc().Get());
 
 
 

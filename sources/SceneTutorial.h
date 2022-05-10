@@ -176,4 +176,12 @@ private:
 private:
     //ƒV[ƒ“•ÏX‚·‚é‚Æ‚«‚Ì•Ï”
     float change_scene_timer{ 0 };
+    std::unique_ptr<SpriteDissolve> change_scene_gauge{ nullptr };
+    struct ChangeSceneGauge
+    {
+        DirectX::XMFLOAT2 pos{ 14.0f,284.0f };
+        DirectX::XMFLOAT2 scale{ 0.5f,0.3f };
+        float threshold{ 1.0f };
+    };
+    ChangeSceneGauge change_gauge_parm;
 };
