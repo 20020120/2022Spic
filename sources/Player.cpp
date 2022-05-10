@@ -396,38 +396,15 @@ void Player::BehindAvoidancePosition()
     XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
     float length_radius = Math::calc_vector_AtoB_length(p, target);//‹——£(”¼Œa)
     float diameter = length_radius * 0.6f;//(’¼Œa)
-    DirectX::XMFLOAT3 r{ right };
     //‚Ç‚Á‚¿‚Ìvelocity‚Å¶‰E”»’è‚·‚é‚©
-#if 0
-    if (velocity.x * velocity.x > velocity.z * velocity.z)
-    {
-        if (velocity.x > 0)
-        {
-            r = right;
-        }
-        else
-        {
-            r.x = -right.x;
-            r.y = -right.y;
-            r.z = -right.z;
-        }
-    }
-    else
-    {
-        if (velocity.z > 0)
-        {
-            r = right;
-        }
-        else
-        {
-            r.x = -right.x;
-            r.y = -right.y;
-            r.z = -right.z;
-        }
-    }
-
-#endif // 0
+    DirectX::XMFLOAT3 r{ right };
     DirectX::XMFLOAT3 behind_point_4{};
+    if (game_pad->get_axis_LX() < 0)
+    {
+        r.x = -r.x;
+        r.y = -r.y;
+        r.z = -r.z;
+    }
     ////----------------’†Œp‚P---------------------//
     behind_point_1.x = target.x + (((r.x * cosf(DirectX::XMConvertToRadians(300.0f))) + (forward.x * sinf(DirectX::XMConvertToRadians(300.0f)))) * (length_radius * 0.6f));//“G‚ÌŒã‚ë‘¤
     behind_point_1.y = position.y;//“G‚ÌŒã‚ë‘¤
@@ -1014,8 +991,11 @@ void Player::LockOn()
                 }
                 else
                 {
-                    is_lock_on = false;
-                    is_camera_lock_on = false;
+                    if (is_behind_avoidance == false)
+                    {
+                        is_lock_on = false;
+                        is_camera_lock_on = false;
+                    }
                 }
             }
             else
