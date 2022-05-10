@@ -49,6 +49,8 @@ void Player::TransitionTitleAnimationReadyIdle()
     model->play_animation(AnimationClips::TitleAnimationReadyIdle,true);
     //ここでupdateしておかないと1フレームだけ初期のアニメーションが映ってしまうから
     model->update_animation(1.0f);
+    //タイトルはメッシュを隠さないから0にしておく
+    threshold_mesh = 0.0f;
 }
 void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
@@ -157,13 +159,15 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //behind_timer += 2.0f * elapsed_time;
 
     //BehindAvoidanceMove(elapsed_time);
-
+    is_lock_on = true;
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,0.2f))
     {
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
         is_just_avoidance = false;
+        //ロックオンしている敵をスタンさせる
+        target_enemy->fSetStun(true);
         TransitionIdle();
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -252,7 +256,12 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
 #else
-           TransitionAttackType2(attack_animation_blends_speeds.z);
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+            {
+                TransitionAttackType2(attack_animation_blends_speeds.z);
+            }
+            else   TransitionIdle();
+
 #endif // 0
         }
     }
@@ -305,7 +314,14 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
 #else
-             TransitionAttackType3(attack_animation_blends_speeds.w);
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+            {
+                TransitionAttackType3(attack_animation_blends_speeds.w);
+            }
+            else
+            {
+                TransitionIdle();
+            }
 #endif // 0
         }
     }
@@ -641,10 +657,8 @@ void Player::TransitionBehindAvoidance()
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    //ロックオンしている敵をスタンさせる
-    target_enemy->fSetStun(true);
     //背後に回り込むときの関数に切り替える
-    player_activity = &Player::BehindAvoidanceUpdate;;
+    player_activity = &Player::BehindAvoidanceUpdate;
 }
 
 void Player::TransitionChargeInit()

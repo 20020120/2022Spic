@@ -49,6 +49,12 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
         //mWaveTimer += elapsedTime_;
     }
 
+    //--------------<プレイヤーがチェイン中はエネミーの行動をすべて停止させる>-------------//
+    if(mIsPlayerChainTime)
+    {
+        return;
+    }
+
     //--------------------<敵の更新処理>--------------------//
     fEnemiesUpdate(graphics_,elapsedTime_);
 
@@ -233,6 +239,13 @@ bool EnemyManager::fGetClearWave() const
 {
     // 残りデータが０かつフィールドに敵が残っていない
     return (mCurrentWaveVec.size() <= 0 && mEnemyVec.size() <= 0);
+}
+
+
+
+void EnemyManager::fSetIsPlayerChainTime(bool IsChain_)
+{
+    mIsPlayerChainTime = IsChain_;
 }
 
 void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)

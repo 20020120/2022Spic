@@ -77,7 +77,7 @@ private:
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
     //後ろに回り込める距離
-    static constexpr float  BEHIND_LANGE_MAX = 20.0f;
+    static constexpr float  BEHIND_LANGE_MAX = 35.0f;
     static constexpr float  BEHIND_LANGE_MIN = 10.0f;
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 100.0f;

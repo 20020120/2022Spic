@@ -84,13 +84,17 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 void SceneTitle::uninitialize()
 {
 	post_effect->clear_post_effect();
+	audio_manager->stop_all_se();
 }
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	static float bgm_volume = 2.0f;
+	static float se_volume = 2.0f;
 
 	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_volume_se(SE_INDEX::SELECT, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
+	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	//----<3D関連>----//
 	// cameraManager
@@ -110,12 +114,14 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		case 0: // start
 			if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
 			{
+				audio_manager->play_se(SE_INDEX::SELECT);
 				state = 1;
 				arrival_pos1 = { 315.0f, 630.0f };
 				arrival_pos2 = { 870.0f, 630.0f };
 			}
 			if (is_ready && game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				audio_manager->play_se(SE_INDEX::DECISION);
 				player->StartTitleAnimation();
 				return;
 			}
@@ -123,6 +129,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		case 1: // exit
 			if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
 			{
+				audio_manager->play_se(SE_INDEX::SELECT);
 				state = 0;
 				arrival_pos1 = { 250.0f, 515.0f };
 				arrival_pos2 = { 950.0f, 515.0f };
@@ -202,11 +209,18 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	point_lights->render(graphics, elapsed_time);
 
 
+	//-------<2Dパート>--------//
+	std::filesystem::path path = "./resources/Data/tutorial.json";
+	if (std::filesystem::exists(path.c_str())) // チュートリアルデータあり
+	{
+
+	}
+	else
+	{
+
+	}
+
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	//--sprite_back--//
-	//sprite_back->begin(graphics.get_dc().Get());
-	//sprite_back->render(graphics.get_dc().Get(), back.position, back.scale, back.pivot, back.color, back.angle, back.texpos, back.texsize);
-	//sprite_back->end(graphics.get_dc().Get());
 	//--sprite_string--//
 #ifdef USE_IMGUI
 	ImGui::Begin("start");

@@ -138,6 +138,7 @@ void AudioManager::stop_all_bgm()
 	}
 }
 
+
 void AudioManager::set_volume_bgm(BGM_INDEX index, float volume)
 {
 	HRESULT hr{ S_OK };
@@ -159,8 +160,14 @@ void AudioManager::initialize_se()
 		LOOP_MAX = 254,
 	};
 
-	register_se(L"resources/Audios/decision.wav", SE_INDEX::DECISION, 0.1f);
-	register_se(L"resources/Audios/item_get.wav", SE_INDEX::GET, 0.1f);
+	register_se(L"resources/Audios/SE/select.wav", SE_INDEX::SELECT, 0.1f);
+	register_se(L"resources/Audios/SE/decision.wav", SE_INDEX::DECISION, 0.1f);
+	register_se(L"resources/Audios/SE/draw_sword.wav", SE_INDEX::DRAW_SWORD, 0.1f);
+	register_se(L"resources/Audios/SE/return_sword.wav", SE_INDEX::RETURN_SWORD, 0.1f);
+	register_se(L"resources/Audios/SE/swing_sword.wav", SE_INDEX::SWING_SWORD, 0.1f);
+	register_se(L"resources/Audios/SE/attack_sword.wav", SE_INDEX::ATTACK_SWORD, 0.1f);
+	register_se(L"resources/Audios/SE/enemy_emergence.wav", SE_INDEX::ENEMY_EMERGENCE, 0.1f);
+	register_se(L"resources/Audios/SE/shot_bow.wav", SE_INDEX::SHOT_BOW, 0.1f);
 
 }
 
@@ -240,4 +247,20 @@ void AudioManager::set_volume_se(SE_INDEX index, float volume)
 	assert(se_source_voices[static_cast<int>(index)] != nullptr	&& "SEÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
 	hr = se_source_voices[static_cast<int>(index)]->SetVolume(volume);
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+}
+
+void AudioManager::stop_se(SE_INDEX index)
+{
+	HRESULT hr{ S_OK };
+	// Use the Start function to start the source voice.
+	hr = se_source_voices[static_cast<int>(index)]->Stop(0);
+	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+}
+
+void AudioManager::stop_all_se()
+{
+	for (int i = 0; i < static_cast<int>(SE_INDEX::SE_COUNT); i++)
+	{
+		stop_se(static_cast<SE_INDEX>(i));
+	}
 }

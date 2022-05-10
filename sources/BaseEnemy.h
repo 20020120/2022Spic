@@ -15,7 +15,7 @@ typedef std::tuple<InitFunc, UpdateFunc > FunctionTuple;
 class BaseEnemy :public PracticalEntities
 {
 public:
-    BaseEnemy(GraphicsPipeline& Graphics_, 
+    BaseEnemy(GraphicsPipeline& Graphics_,
               const char* FileName_,
               const EnemyParamPack& Param_,
               const DirectX::XMFLOAT3& EntryPosition_,
@@ -40,7 +40,7 @@ public:
     virtual void fSetStun(bool Arg_);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
-    void fSetIsRockOnOfChain(bool RockOn_);
+    void fSetIsLockOnOfChain(bool RockOn_);
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetAttack() const;
@@ -54,7 +54,7 @@ public:
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
-    [[nodiscard]] bool fIsRockOnOfChain()const;
+    [[nodiscard]] bool fIsLockOnOfChain()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -91,10 +91,10 @@ private:
 protected:
     virtual void fRegisterFunctions() = 0;
     void fChangeState(const char* Tag_);
-    bool mIsRockOnOfChain = false;
+    bool mIsLockOnOfChain = false;
 protected:
     // 攻撃の当たり判定
-    Capsule mAttackCapsule{}; 
+    Capsule mAttackCapsule{};
     // ダメージを食らう当たり判定
     Capsule mBodyCapsule{};
 private:

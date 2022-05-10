@@ -272,6 +272,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						LockOnSuggest enemy_suggest; // サジェスト登録
 						enemy_suggest.position = enemies.at(i)->fGetPosition();
 						lockon_suggests.emplace_back(enemy_suggest);
+
+						enemies.at(i)->fSetIsLockOnOfChain(true);
 					}
 				}
 			}
@@ -325,6 +327,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 						LockOnSuggest enemy_suggest; // サジェスト登録
 						enemy_suggest.position = enemies.at(i)->fGetPosition();
 						lockon_suggests.emplace_back(enemy_suggest);
+
+						enemies.at(i)->fSetIsLockOnOfChain(true);
 					}
 				}
 			}
@@ -606,20 +610,20 @@ void Player::transition_chain_attack()
 	switch (attack_type)
 	{
 	case ATTACK_TYPE::FIRST:
-		if (is_awakening) { model->play_animation(AwakingAttackType1, false, true, 0.3f, 2.0f); }
-		else { model->play_animation(AttackType1, false, true, 0.3f, 2.0f); }
+		if (is_awakening) { model->play_animation(AwakingAttackType1, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(AttackType1, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::SECOND;
 		break;
 
 	case ATTACK_TYPE::SECOND:
-		if (is_awakening) { model->play_animation(AwakingAttackType2, false, true, 0.3f, 2.0f); }
-		else { model->play_animation(AttackType2, false, true, 0.3f, 2.0f); }
+		if (is_awakening) { model->play_animation(AwakingAttackType2, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(AttackType2, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::THIRD;
 		break;
 
 	case ATTACK_TYPE::THIRD:
-		if (is_awakening) { model->play_animation(AwakingAttackType3, false, true, 0.3f, 2.0f); }
-		else { model->play_animation(AttackType3, false, true, 0.3f, 2.0f); }
+		if (is_awakening) { model->play_animation(AwakingAttackType3, false, true, 0.1f, 5.0f); }
+		else { model->play_animation(AttackType3, false, true, 0.1f, 5.0f); }
 		attack_type = ATTACK_TYPE::FIRST;
 		break;
 	}
@@ -636,11 +640,19 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 
 	// 攻撃が終わった
-	if (model->end_of_animation())
+	//if (model->end_of_animation())
 	{
 		// 分割したポイントの最後なら通常行動へ
 		if (transit_index >= interpolated_way_points.size() - 1)
 		{
+			// ロックオンされた敵にダメージ
+			for (const auto& enemy : enemies)
+			{
+				if (!enemy->fIsLockOnOfChain()) continue; // ダメージを与えるのはロックオンされた敵のみ
+				enemy->fDamaged(100, 0.3f);
+				enemy->fSetIsLockOnOfChain(false);
+			}
+
 			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
 			transition_normal_behavior();

@@ -176,4 +176,21 @@ private:
 private:
     //シーン変更するときの変数
     float change_scene_timer{ 0 };
+    std::unique_ptr<SpriteDissolve> change_scene_gauge{ nullptr };
+    struct ChangeSceneGauge
+    {
+        DirectX::XMFLOAT2 pos{ 14.0f,284.0f };
+        DirectX::XMFLOAT2 scale{ 0.5f,0.3f };
+        float threshold{ 1.0f };
+    };
+    ChangeSceneGauge change_gauge_parm;
+    std::wstring tutorial_skip_text = L"バックボタン長押しでチュートリアルスキップ";
+    struct ChangeSceneTxt
+    {
+        DirectX::XMFLOAT2 position{ 19.0f,282.8f };
+        DirectX::XMFLOAT2 scale{ 0.37f,0.4f };
+        float angle;
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+    };
+    ChangeSceneTxt change_scene_txt;
 };
