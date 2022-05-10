@@ -202,11 +202,18 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	point_lights->render(graphics, elapsed_time);
 
 
+	//-------<2Dパート>--------//
+	std::filesystem::path path = "./resources/Data/tutorial.json";
+	if (std::filesystem::exists(path.c_str())) // チュートリアルデータあり
+	{
+
+	}
+	else
+	{
+
+	}
+
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	//--sprite_back--//
-	//sprite_back->begin(graphics.get_dc().Get());
-	//sprite_back->render(graphics.get_dc().Get(), back.position, back.scale, back.pivot, back.color, back.angle, back.texpos, back.texsize);
-	//sprite_back->end(graphics.get_dc().Get());
 	//--sprite_string--//
 #ifdef USE_IMGUI
 	ImGui::Begin("start");
