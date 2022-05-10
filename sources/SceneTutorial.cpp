@@ -539,22 +539,122 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::AvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::LockOnTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LTボタンでロックオンする";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::AttackTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Bボタンを押して攻撃";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::BehindAvoidanceTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::ChainAttackTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::AwaikingTutorial;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
