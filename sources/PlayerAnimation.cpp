@@ -256,7 +256,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
 #else
-            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
@@ -314,7 +314,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
 #else
-            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
