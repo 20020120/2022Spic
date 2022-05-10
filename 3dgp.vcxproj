@@ -301,6 +301,7 @@
     <ClCompile Include="sources\transition_icon.cpp" />
     <ClCompile Include="sources\tunnel.cpp" />
     <ClCompile Include="sources\Turret.cpp" />
+    <ClCompile Include="sources\TutorialEnemy.cpp" />
     <ClCompile Include="sources\UserLua.cpp" />
     <ClCompile Include="sources\volume_icon.cpp" />
     <ClCompile Include="sources\WaveManager.cpp" />
@@ -410,6 +411,7 @@
     <ClInclude Include="sources\texture.h" />
     <ClInclude Include="sources\transition_icon.h" />
     <ClInclude Include="sources\tunnel.h" />
+    <ClInclude Include="sources\TutorialEnemy.h" />
     <ClInclude Include="sources\UserLua.h" />
     <ClInclude Include="sources\volume_icon.h" />
     <ClInclude Include="sources\WaveManager.h" />

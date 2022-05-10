@@ -32,6 +32,8 @@ class LastBoss final : public BaseEnemy
         // ˆê’èŠÔ“à‚Éè‰º‚ğRU‚ç‚¹‚È‚¯‚ê‚Î•KE‹Z
         inline static const char* HumanWithdrawal_End = "HumanWithdrawal_End";
 
+        inline static const char* HumanBlowAttack = "HumanBlowAttack";
+
         //--------------------<lŒ^‚Ì€–S>--------------------//
         inline static const char* HumanDieStart = "HumanDieStart";   // lŒ^‚Ì€–SŠJn
         inline static const char* HumanDieMiddle = "HumanDieMiddle"; // lŒ^‚Ì€–S‘Ò‹@
@@ -251,6 +253,9 @@ private:
 
     void fHumanRotAttackInit();
     void fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fHumanBlowAttackInit();
+    void fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     //--------------------<lŒ^•KE‹Z>--------------------//
     void fHumanSpAttackBeginInit(); // ”ò‚Ñ‚Ì‚­

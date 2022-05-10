@@ -257,7 +257,20 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanToDragon, tuple));
     }
-    
+
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanBlowAttackInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fHumanBlowAttackUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanBlowAttack, tuple));
+    }
+
 
 
     // ÉhÉâÉSÉìÅFë“ã@
@@ -345,6 +358,10 @@ void LastBoss::fGuiMenu()
         if (ImGui::Button("HumanAllShot"))
         {
             fChangeState(DivideState::HumanAllShot);
+        }
+        if (ImGui::Button("HumanBlow"))
+        {
+            fChangeState(DivideState::HumanBlowAttack);
         }
         ImGui::TreePop();
     }
