@@ -184,6 +184,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
 	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
 
+	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
+	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
+
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
@@ -441,8 +444,9 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
+	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+	minimap->render(graphics, p_pos,p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
