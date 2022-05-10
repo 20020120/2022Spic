@@ -72,34 +72,6 @@ private:
     TitleStageParm title_stage_parm;
 
     //--------< 変数 >--------//
-    struct Element
-    {
-        DirectX::XMFLOAT2 position{};
-        DirectX::XMFLOAT2 scale{ 1, 1 };
-        DirectX::XMFLOAT2 pivot{};
-        DirectX::XMFLOAT4 color{ 1,1,1,1 };
-        float angle{};
-        DirectX::XMFLOAT2 texpos{};
-        DirectX::XMFLOAT2 texsize{};
-    };
-    Element back;
-    std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
-    Element start;
-    Element exit;
-    std::unique_ptr<SpriteBatch> sprite_string{ nullptr };
-    Element selecter1;
-    DirectX::XMFLOAT2 arrival_pos1{};
-    Element selecter2;
-    DirectX::XMFLOAT2 arrival_pos2{};
-    std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
-    int state = 0;
-
-    static constexpr float SLASHING_MAX = 0.06f;
-    float slashing_power = 0.0f;
-    float slashing_wait_timer = 0.0f;
-
-    std::unique_ptr<PointLights> point_lights;
-
     struct StepFontElement
     {
         std::wstring s = L"";
@@ -111,13 +83,59 @@ private:
 
         // step string
         float timer = 0;
-        int step    = 0;
-        int index   = 0;
+        int step = 0;
+        int index = 0;
     };
-    StepFontElement test;
+    StepFontElement beginning;    // 初めから
+    StepFontElement succession;   // 続きから
+    StepFontElement exit;         // ゲーム終了
+    StepFontElement now_loading;  // ロード中
 
     bool step_string(float elapsed_time, std::wstring full_text, StepFontElement& step_font_element,
         float speed = 1.0f, bool loop = false);
+
+    struct Element
+    {
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT2 pivot{};
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 texpos{};
+        DirectX::XMFLOAT2 texsize{};
+    };
+    Element slash;
+    std::unique_ptr<SpriteBatch> sprite_slash{ nullptr };
+    Element selecter1;
+    Element selecter2;
+    std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
+    DirectX::XMFLOAT2 arrival_pos1{};
+    DirectX::XMFLOAT2 arrival_pos2{};
+
+    int state = 0;
+    int have_tutorial_state = -1; // -1:チュートリアルデータなし 0:チュートリアルあり 1:チュートリアルなし
+
+    //--tutorial tab--//
+    struct TutorialTabParameters
+    {
+        bool display = false;
+        DirectX::XMFLOAT2 arrival_posL{};
+        DirectX::XMFLOAT2 arrival_posR{};
+        Element selecterL;
+        Element selecterR;
+        StepFontElement headline;
+        StepFontElement back;
+        StepFontElement yes;
+        StepFontElement no;
+    };
+    TutorialTabParameters tutorial_tab;
+
+    //--slashing post effect--//
+    static constexpr float SLASHING_MAX = 0.06f;
+    float slashing_power = 0.0f;
+    float slashing_wait_timer = 0.0f;
+
+    std::unique_ptr<PointLights> point_lights;
 
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
