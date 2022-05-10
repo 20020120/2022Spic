@@ -9,6 +9,7 @@
 #include"post_effect.h"
 #include"graphics_pipeline.h"
 #include "Common.h"
+#include"game_icon.h"
 
 class Player :public BasePlayer, private PlayerMove
 {

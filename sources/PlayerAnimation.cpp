@@ -938,7 +938,7 @@ void Player::TransitionDie()
     else model->play_animation(AnimationClips::Die, false, true);
     //XVŠÖ”‚ÉØ‚è‘Ö‚¦
     player_activity = &Player::DieUpdate;
-    game_pad->set_vibration(1.0f, 1.0f, 0.6f);
+    if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.6f);
 }
 
 void Player::TransitionDying()
