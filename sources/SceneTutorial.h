@@ -73,7 +73,9 @@ public:
         //チェイン攻撃
         ChainAttackTutorial,
         //覚醒
-        AwaikingTutorial
+        AwaikingTutorial,
+        //自由時間
+        FreePractice,
     };
 
     TutorialState tutorial_state{ TutorialState::MoveTutorial };

@@ -659,6 +659,29 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Aボタンを押して覚醒";
+		if (is_next)
+		{
+			Judea_timer += 1.0f * elapsed_time;
+			if (Judea_timer > 1.0f)
+			{
+				//次のステートに設定
+				tutorial_state = TutorialState::FreePractice;
+				//次に進むフラグの初期化
+				is_next = false;
+				//プレイヤーの次に進むフラグを初期化
+				player->FalseNextTutorial();
+				//猶予時間を初期化
+				Judea_timer = 0;
+				//ディゾルブ時間を初期化
+				check_mark_parm.threshold = 1.0f;
+				//ディゾルブしていいかどうかのフラグを初期化
+				check_mark_parm.is_threshold = false;
+			}
+		}
+		break;
+	case TutorialScene::TutorialState::FreePractice:
+		tutorial_check_text = L"自由に練習する";
+
 		break;
 	default:
 		break;
@@ -669,29 +692,33 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_time)
 {
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-
-	//ここで-1してるのは1から始まっているから
-	if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_end_text = true;
-	else is_end_text = false;
-	auto r_font_render = [&](std::string name, StepFontElement& e)
+	if (tutorial_state != TutorialState::FreePractice)
 	{
-#ifdef USE_IMGUI
-		ImGui::Begin(name.c_str());
-		if (ImGui::TreeNode(name.c_str()))
+		//ここで-1してるのは1から始まっているから
+		if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_end_text = true;
+		else is_end_text = false;
+		auto r_font_render = [&](std::string name, StepFontElement& e)
 		{
-			ImGui::DragFloat2("pos", &e.position.x);
-			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
-			ImGui::ColorEdit4("color", &e.color.x);
-			ImGui::TreePop();
-		}
-		ImGui::End();
+#ifdef USE_IMGUI
+			ImGui::Begin(name.c_str());
+			if (ImGui::TreeNode(name.c_str()))
+			{
+				ImGui::DragFloat2("pos", &e.position.x);
+				ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+				ImGui::ColorEdit4("color", &e.color.x);
+				ImGui::TreePop();
+			}
+			ImGui::End();
 #endif // USE_IMGUI
-		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
-	};
+			fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+		};
 
-	fonts->yu_gothic->Begin(graphics.get_dc().Get());
-	r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
-	fonts->yu_gothic->End(graphics.get_dc().Get());
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+
+
+	}
 #ifdef USE_IMGUI
 	ImGui::Begin("check_mark_parm");
 	if (ImGui::TreeNode("check_mark_parm"))
@@ -712,6 +739,9 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	}
 	ImGui::End();
 #endif // USE_IMGUI
+
+
+
 	check_box->begin(graphics.get_dc().Get());
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);
 	check_box->end(graphics.get_dc().Get());

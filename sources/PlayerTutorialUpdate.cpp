@@ -5,10 +5,10 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
-        ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
         player_attack_power = 3;
         //‰ñ‚èž‚Ý‰ñ”ð‚æ‚è‚ài‚ñ‚Å‚¢‚½‚çØ‚è‘Ö‚¦‚ê‚é
         if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
