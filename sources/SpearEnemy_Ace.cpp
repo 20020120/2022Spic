@@ -193,6 +193,7 @@ void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
     if(mWaitTimer<=0.0f)
     {
         fChangeState(DivideState::Idle);
+        mIsStun = false;
     }
 }
 

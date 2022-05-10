@@ -258,6 +258,7 @@ void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     if (mWaitTimer <= 0.0f)
     {
         fChangeState(DivedState::Idle);
+        mIsStun = false;
     }
 }
 
