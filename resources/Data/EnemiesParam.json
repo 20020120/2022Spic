@@ -55,6 +55,17 @@
                 "AttackCapsuleRad": 5.0,
                 "StunTime": 20.0
             }
+        },
+        {
+            "key": "TutorialNoMove",
+            "value": {
+                "MaxHp": 1,
+                "AttackPower": 0,
+                "InvincibleTime": 0.0,
+                "BodyCapsuleRad": 0.0,
+                "AttackCapsuleRad": 0.0,
+                "StunTime": 0.0
+            }
         }
     ]
 }

@@ -28,5 +28,10 @@ private:
 private:
     //--------< •Ï” >--------//
     Scene* next_scene{};
-    std::unique_ptr<SpriteBatch> sprite_batch;
+    std::unique_ptr<SpriteBatch> load_back;
+    std::unique_ptr<SpriteBatch> load_text;
+    std::unique_ptr<SpriteBatch> load_icon;
+
+    float loadTextWidth{};
+    DirectX::XMFLOAT2 loadIconPosition{};
 };
