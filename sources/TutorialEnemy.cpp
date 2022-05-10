@@ -1,12 +1,15 @@
 #include"TutorialEnemy.h"
 
-TutorialEnemy_NoMove::TutorialEnemy_NoMove(GraphicsPipeline& graphics, const char* file_name,
-    const EnemyParamPack& param, const DirectX::XMFLOAT3& entry_position, const wchar_t* icon_file_name): BaseEnemy(graphics, file_name, param, entry_position, icon_file_name)
+TutorialEnemy_NoMove::TutorialEnemy_NoMove(GraphicsPipeline& graphics, 
+     const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param ): BaseEnemy(graphics, 
+         "./resources/Models/Enemy/enemy_tutorial.fbx", param, entry_position)
 {
-
+    mPosition = entry_position;
+    mScale = { 0.06f,0.06f,0.06f };
+    fRegisterFunctions();
 }
 
-TutorialEnemy_NoMove::TutorialEnemy_NoMove(GraphicsPipeline& graphics, const char* file_name): BaseEnemy(graphics, file_name)
+TutorialEnemy_NoMove::TutorialEnemy_NoMove(GraphicsPipeline& graphics): BaseEnemy(graphics, "./resources/Models/Enemy/enemy_tutorial.fbx")
 {}
 
 void TutorialEnemy_NoMove::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -33,6 +36,31 @@ void TutorialEnemy_NoMove::fRegisterFunctions()
         FunctionTuple tuple = std::make_tuple(Ini, Up);
         mFunctionMap.insert(std::make_pair(DivideState::Start, tuple));
     }
+    {
+        InitFunc Ini = [=]()->void
+        {
+            fIdleInit();
+        };
+        UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fIdleUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivideState::Idle, tuple));
+    }
+    {
+        InitFunc Ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc Up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        FunctionTuple tuple = std::make_tuple(Ini, Up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun, tuple));
+    }
+    fChangeState(DivideState::Start);
 }
 
 void TutorialEnemy_NoMove::fStartInit()

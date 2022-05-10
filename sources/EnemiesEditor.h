@@ -44,7 +44,7 @@ inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
     const char* enemyName[] = {
         "Archer","Shield","Sword","Spear",
         "Archer_Ace","Shield_Ace","Sword_Ace","Spear_Ace",
-        "Boss"
+        "Boss","TutorialNoMove"
     };
 
     // ƒL[‚ğŒŸõ‚µ‚Ä‚ ‚ê‚Îæ“¾ ‚È‚¯‚ê‚Îì¬

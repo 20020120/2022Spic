@@ -58,6 +58,7 @@ enum class EnemyType
     Sword_Ace,  // “‚Ì“G 
     Spear_Ace,
     Boss,
+    Tutorial_NoMove,
     // ªªªªªªªªª‚±‚±‚©‚çã‚É‘‚â‚·ªªªªªªªªªªªªª
     Count, // í—Ş‚Ì‘—Ê
 };

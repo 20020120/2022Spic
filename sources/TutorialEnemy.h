@@ -19,10 +19,10 @@ class TutorialEnemy_NoMove final :public BaseEnemy
     };
 
 public:
-    TutorialEnemy_NoMove(GraphicsPipeline& graphics, const char* file_name, const EnemyParamPack& param,
-        const DirectX::XMFLOAT3& entry_position, const wchar_t* icon_file_name);
+    TutorialEnemy_NoMove(GraphicsPipeline& graphics,
+        const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param);
 
-    TutorialEnemy_NoMove(GraphicsPipeline& graphics, const char* file_name);
+    TutorialEnemy_NoMove(GraphicsPipeline& graphics);
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
