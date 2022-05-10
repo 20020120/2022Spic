@@ -26,7 +26,7 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 	{ {128,128},{1,1} };
 	
 }
-void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
+void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos, , const DirectX::XMFLOAT2& player_forward,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
 {
 	//レーダーあいこん　
 
