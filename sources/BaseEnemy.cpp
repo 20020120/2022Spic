@@ -8,7 +8,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
                      const DirectX::XMFLOAT3& EntryPosition_,
 					const wchar_t* IconFileName)
 :mPosition(EntryPosition_),mCurrentHitPoint(Param_.MaxHp)
-,mInvincibleTime(Param_.InvincibleTime),mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower)
+,mAttackInvTime(Param_.InvincibleTime),mMaxHp(Param_.MaxHp),mAttackPower(Param_.AttackPower)
 ,mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);

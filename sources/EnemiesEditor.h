@@ -21,7 +21,7 @@ public:
     ~EnemyEditor();
      const EnemyParamPack& fGetParam(EnemyType Type_);
      void fGuiMenu();
-    void fSave();
+
 private:
     void fLoad();
 
@@ -36,7 +36,6 @@ inline EnemyEditor::EnemyEditor()
 
 inline EnemyEditor::~EnemyEditor()
 {
-    fSave();
 }
 
 inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
@@ -74,10 +73,6 @@ inline void EnemyEditor::fGuiMenu()
         {
             fLoad();
         }
-        if(ImGui::Button("Save"))
-        {
-            fSave();
-        }
         ImGui::TreePop();
     }
 #endif
@@ -97,18 +92,5 @@ inline void EnemyEditor::fLoad()
             cereal::JSONInputArchive o_archive(ifs);
             o_archive(mEnemyParamMap);
         }
-    }
-}
-
-inline void EnemyEditor::fSave()
-{
-    // Json‚É‚©‚«‚¾‚µ
-    std::filesystem::path path = mFilePath;
-    path.replace_extension(".json");
-    std::ofstream ifs(path);
-    if (ifs)
-    {
-        cereal::JSONOutputArchive o_archive(ifs);
-        o_archive(mEnemyParamMap);
     }
 }

@@ -71,7 +71,6 @@ void EnemyManager::fFinalize()
 {
     fAllClear();
     fDeleteCash();
-    mEditor.fSave();
 }
 
 int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
@@ -95,12 +94,12 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                enemy->fDamaged(PlayerAttackPower_, 0.3f);
+                enemy->fDamaged(PlayerAttackPower_, 2.3f);
                 hitCounts++;
             }
         }
     }
-
+    
     return hitCounts;
 }
 
@@ -514,10 +513,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         {
             fStartWave(mCurrentWave);
         }
-        if(ImGui::Button("Save"))
-        {
-            mEditor.fSave();
-        }
+       
         ImGui::Separator();
 
         if (ImGui::Button("AllClear"))

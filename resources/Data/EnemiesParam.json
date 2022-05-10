@@ -15,7 +15,7 @@
         {
             "key": "Boss",
             "value": {
-                "MaxHp": 10,
+                "MaxHp": 100,
                 "AttackPower": 0,
                 "InvincibleTime": 0.0,
                 "BodyCapsuleRad": 20.0,
