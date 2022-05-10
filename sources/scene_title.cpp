@@ -311,11 +311,28 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	effect_manager->update(elapsed_time);
 
+
+	static bool start = false;
+	static float speed = 15000.0f;
 #ifdef USE_IMGUI
-	ImGui::Begin("slashing_power");
+	ImGui::Begin("slashing");
 	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
+	ImGui::Checkbox("start", &start);
+	ImGui::DragFloat("speed", &speed, 0.1f);
+	if (ImGui::Button("reset"))
+	{
+		start = false;
+		slash.position.x = 1280.0f;
+	}
 	ImGui::End();
 #endif // USE_IMGUI
+
+	if (start)
+	{
+		slash.position.x -= speed * elapsed_time;
+		slash.position.x = (std::max)(slash.position.x, -1700.0f);
+	}
+
 	post_effect->title_post_effect(slashing_power);
 }
 
