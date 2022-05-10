@@ -63,6 +63,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//mini_map
 	minimap = std::make_unique<MiniMap>(graphics);
 
+
+	for (auto& bgm_switch : bgm_switches) { bgm_switch = false; }
+
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::GAME);
 }
@@ -79,6 +82,29 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	static float bgm_volume = 2.0f;
 	static float se_volume = 0.2f;
+
+	// ƒ{ƒX‚ÌBGMØ‚è‘Ö‚¦
+	if (!bgm_switches[0] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_BATTLESHIP)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
+
+		bgm_switches[0] = true;
+	}
+	else if (!bgm_switches[1] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_HUMANOID)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+
+		bgm_switches[1] = true;
+	}
+	else if (!bgm_switches[2] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_DRAGON)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+
+		bgm_switches[2] = true;
+	}
 
 	audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_BATTLESHIP, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
