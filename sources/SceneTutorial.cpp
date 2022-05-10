@@ -1,4 +1,5 @@
 #include "SceneTutorial.h"
+#include <cereal/archives/json.hpp>
 
 #include <memory>
 #include "scene_title.h"
@@ -17,6 +18,18 @@
 
 void TutorialScene::initialize(GraphicsPipeline& graphics)
 {
+
+	// Json‚É‚©‚«‚¾‚µ
+	std::filesystem::path path = "./resources/Data/tutorial.json";
+	path.replace_extension(".json");
+	int a = 1;
+	std::ofstream ifs(path);
+	if (ifs)
+	{
+		cereal::JSONOutputArchive o_archive(ifs);
+		o_archive(a);
+	}
+
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
 	// post effect
