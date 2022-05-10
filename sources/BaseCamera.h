@@ -91,5 +91,5 @@ protected:
     bool attack{ false };
     bool attacking{ false };
     bool cameraAvoidEnd{ false };
-    float lerpLate{ 50.0f };
+    float lerpLate{ 1.0f };
 };

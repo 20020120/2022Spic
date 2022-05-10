@@ -11,7 +11,7 @@
 #include"SceneTutorial.h"
 
 bool SceneTitle::is_ready = false;
-
+#define Tutorial
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
 	//--タイトル前ロード--//
@@ -154,7 +154,12 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (Math::equal_check(slashing_power, SLASHING_MAX))
 	{
+#ifdef Tutorial
 		SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::DOT, 2.0f);
+#else
+		SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+#endif // DEBUG
+
 		point_lights->finalize(graphics);
 		is_ready = false;
 	}

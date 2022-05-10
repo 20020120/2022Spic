@@ -173,6 +173,7 @@ private:
     CheckMarkParm check_mark_parm;
     std::unique_ptr<SpriteDissolve> check_mark{ nullptr };
     std::unique_ptr<SpriteBatch> check_box{ nullptr };
-
-
+private:
+    //ƒV[ƒ“•ÏX‚·‚é‚Æ‚«‚Ì•Ï”
+    float change_scene_timer{ 0 };
 };
