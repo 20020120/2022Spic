@@ -187,6 +187,11 @@ void GameCamera::gameUpdate(float elapsedTime)
 			UpdateTarget(PlayerPosition, PlayerUp);
 			UpdateEye();
 		}
+		if(!player->during_search_time() && !player->during_chain_attack())
+		{
+			state = Free;
+			break;
+		}
 		if(player->during_chain_attack())
 		{
 			state = Attacking;
