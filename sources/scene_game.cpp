@@ -316,7 +316,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			{
 				ImGui::DragFloat("se_volume", &se_volume, 0.1f, 0.0f, 3.0f);
 				if (ImGui::Button("play se")) { audio_manager->play_se(SE_INDEX::DECISION); }
-				if (ImGui::Button("play item_get se")) { audio_manager->play_se(SE_INDEX::GET); }
+				//if (ImGui::Button("play item_get se")) { audio_manager->play_se(SE_INDEX::GET); }
 				ImGui::TreePop();
 			}
 			ImGui::End();

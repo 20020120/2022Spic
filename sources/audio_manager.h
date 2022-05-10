@@ -20,8 +20,16 @@ enum class BGM_INDEX
 
 enum class SE_INDEX
 {
-    DECISION,
-    GET,
+    SELECT,         //‘I‘ğ‰¹
+    DECISION,       //Œˆ’è‰¹
+    DRAW_SWORD,     //Œ•‚ğ”²‚­‰¹
+    RETURN_SWORD,   //Œ•‚ğâ‚É–ß‚·
+    SWING_SWORD,    //UŒ‚(“–‚½‚Á‚Ä‚¢‚È‚¢)
+    ATTACK_SWORD,   //UŒ‚(“–‚½‚Á‚Ä‚¢‚é)
+    ENEMY_EMERGENCE,//“GoŒ»
+    SHOT_BOW,       //‹|UŒ‚
+
+    SE_COUNT
 };
 
 class AudioManager
@@ -38,6 +46,8 @@ public:
     void set_volume_bgm(BGM_INDEX index, float volume);
     //----se----//
     void play_se(SE_INDEX index);
+    void stop_se(SE_INDEX index);
+    void stop_all_se();
     void set_volume_se(SE_INDEX index, float volume);
 private:
     //--------< ’è” >--------//
