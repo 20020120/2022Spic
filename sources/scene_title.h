@@ -136,6 +136,9 @@ private:
     float slashing_wait_timer = 0.0f;
 
     std::unique_ptr<PointLights> point_lights;
+    std::unique_ptr<Effect> fire_effect;
+    DirectX::XMFLOAT3 fire_pos_1{ 4.3f,3.3f,0.9f };
+    DirectX::XMFLOAT3 fire_pos_2{ -4.5f,3.3f,0.9f };
 
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);

@@ -39,6 +39,10 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	// pointlight
 	point_lights = std::make_unique<PointLights>(graphics);
+	// effect
+	fire_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\fire.efk");
+	fire_effect->play(effect_manager->get_effekseer_manager(), fire_pos_1, 0.45f);
+	fire_effect->play(effect_manager->get_effekseer_manager(), fire_pos_2, 0.45f);
 
 	//-------<2Dパート>--------//
 	//--slash--//
@@ -119,6 +123,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
 
+
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//スレッドの管理を放棄
@@ -129,6 +134,7 @@ void SceneTitle::uninitialize()
 {
 	post_effect->clear_post_effect();
 	audio_manager->stop_all_se();
+	fire_effect->stop(effect_manager->get_effekseer_manager());
 }
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
@@ -139,6 +145,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_volume_se(SE_INDEX::SELECT, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
+
 
 	//----<3D関連>----//
 	// cameraManager
@@ -302,12 +309,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
 	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
+	effect_manager->update(elapsed_time);
+
 #ifdef USE_IMGUI
 	ImGui::Begin("slashing_power");
 	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
 	ImGui::End();
 #endif // USE_IMGUI
-
 	post_effect->title_post_effect(slashing_power);
 }
 
@@ -335,6 +343,9 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	// point_lights
 	point_lights->render(graphics, elapsed_time);
+
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
+	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 
 
 	//-------<2Dパート>--------//
