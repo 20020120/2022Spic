@@ -40,6 +40,7 @@ public:
     virtual void fSetStun(bool Arg_);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
+    void fSetIsRockOnOfChain(bool RockOn_);
 
     //--------------------<ÉQÉbÉ^Å[ä÷êî>--------------------//
     [[nodiscard]] bool fGetAttack() const;
@@ -53,6 +54,7 @@ public:
     [[nodiscard]] float fGetLengthFromPlayer()const;
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
+    [[nodiscard]] bool fIsRockOnOfChain()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -89,7 +91,7 @@ private:
 protected:
     virtual void fRegisterFunctions() = 0;
     void fChangeState(const char* Tag_);
-
+    bool mIsRockOnOfChain = false;
 protected:
     // çUåÇÇÃìñÇΩÇËîªíË
     Capsule mAttackCapsule{}; 
