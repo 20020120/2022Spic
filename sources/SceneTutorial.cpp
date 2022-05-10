@@ -696,21 +696,21 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		break;
 	case TutorialScene::TutorialState::FreePractice:
 		tutorial_check_text = L"Ž©—R‚É—ûK‚·‚é";
-		if (game_pad->get_button() & GamePad::BTN_BACK)
-		{
-			change_scene_timer += 1.0f * elapsed_time;
-			if (change_scene_timer > 2.0f)
-			{
-				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
-			}
-		}
-		else
-		{
-			change_scene_timer = 0;
-		}
 		break;
 	default:
 		break;
+	}
+	if (game_pad->get_button() & GamePad::BTN_BACK)
+	{
+		change_scene_timer += 1.0f * elapsed_time;
+		if (change_scene_timer > 3.0f)
+		{
+			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
+		}
+	}
+	else
+	{
+		change_scene_timer = 0;
 	}
 
 }
