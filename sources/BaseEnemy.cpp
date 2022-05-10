@@ -17,7 +17,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
 
-    mVernierEffect = std::make_unique<Effect>(Graphics_, 
+    mVernierEffect = std::make_unique<Effect>(Graphics_,
       effect_manager->get_effekseer_manager(), mkVernierPath);
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
     mCubeHalfSize = mScale.x * 5.0f;
@@ -43,7 +43,7 @@ void BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mpModel->update_animation(mAnimPara, elapsedTime_);
 }
 
-void BaseEnemy::fRender(GraphicsPipeline& Graphics_) 
+void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
 {
     Graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
     mDissolve = (std::max)(0.0f, mDissolve);
@@ -134,7 +134,7 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
             mOrientation = Math::RotQuaternion(mOrientation, up, -dot * RotSpeed_ * elapsedTime_);
         }
     }
-    
+
 }
 
 void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
@@ -159,9 +159,9 @@ void BaseEnemy::fSetAttack(bool Arg_)
     mIsAttack = Arg_;
 }
 
-void BaseEnemy::fSetIsRockOnOfChain(bool RockOn_)
+void BaseEnemy::fSetIsLockOnOfChain(bool RockOn_)
 {
-    mIsRockOnOfChain = RockOn_;
+    mIsLockOnOfChain = RockOn_;
 }
 
 bool BaseEnemy::fGetAttack() const
@@ -169,7 +169,7 @@ bool BaseEnemy::fGetAttack() const
     return mIsAttack;
 }
 
-const Capsule& BaseEnemy::fGetBodyCapsule() 
+const Capsule& BaseEnemy::fGetBodyCapsule()
 {
     mBodyCapsule.mBottom = mPosition;
     const DirectX::XMFLOAT3 up = { 0.01f,1.0f,0.0f };
@@ -236,9 +236,9 @@ bool BaseEnemy::fGetStun() const
     return mIsStun;
 }
 
-bool BaseEnemy::fIsRockOnOfChain() const
+bool BaseEnemy::fIsLockOnOfChain() const
 {
-    return mIsRockOnOfChain;
+    return mIsLockOnOfChain;
 }
 
 
