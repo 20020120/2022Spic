@@ -490,16 +490,22 @@ void GameCamera::UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget,float elapsedTi
 	DirectX::XMVECTOR CameraToGoal = CameraGoalPosition - CameraPosition;
 	const DirectX::XMVECTOR CameraToGoalLength = DirectX::XMVector3Length(CameraToGoal);
 	const float cameraToGoalLength = DirectX::XMVectorGetX(CameraToGoalLength);
-	CameraToGoal = DirectX::XMVector3Normalize(CameraToGoal);
+
+	if (!attackEnd)
+	{
+		attackEndSpeed = cameraToGoalLength * lerpLate;
+		attackEnd = true;
+	}
 
 	if (cameraToGoalLength > radius - 0.2f)
 	{
-		CameraPosition += CameraToGoal * lerpLate * elapsedTime;
+		CameraPosition += CameraToGoal * attackEndSpeed * elapsedTime;
 		DirectX::XMStoreFloat3(&eye, CameraPosition);
 	}
 	else
 	{
 		cameraAvoidEnd = true;
+		attackEnd = false;
 	}
 }
 
