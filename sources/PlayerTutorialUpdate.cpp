@@ -5,10 +5,10 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
-        ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
         player_attack_power = 3;
         //回り込み回避よりも進んでいたら切り替えれる
         if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
@@ -19,7 +19,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
             }
         }
         //チュートリアルがロックオンの時よりも大きければ出来る
-        if (tutorial_state >= TutorialState::LockOnTutorial)     LockOn();
+        if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
         //カメラリセット
         CameraReset();
         break;
@@ -394,6 +394,8 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     AvoidanceAcceleration(elapsed_time);
     if (avoidance_boost_time > avoidance_easing_time&& model->end_of_animation())
     {
+        //もしチュートリアルが回避なら
+        if (tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
             //回避中かどうかの設定
             is_avoidance = false;
             is_behind_avoidance = false;
@@ -424,6 +426,8 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
         is_avoidance = false;
         is_behind_avoidance = false;
         is_just_avoidance = false;
+        //もしチュートリアルが回り込み回避なら
+        if (tutorial_state == TutorialState::BehindAvoidanceTutorial) is_next_tutorial = true;
         TransitionTutoriaIdle();
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
@@ -475,6 +479,8 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity = {};
+            //チュートリアルが攻撃なら
+            if (tutorial_state == TutorialState::AttackTutorial) is_next_tutorial = true;
             TransitionTutorialAttack1(attack_animation_blends_speeds.y);
         }
     }
@@ -615,6 +621,8 @@ void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::
 {
     if (model->end_of_animation())
     {
+        //もしチュートリアルが覚醒なら
+        if (tutorial_state == TutorialState::AwaikingTutorial) is_next_tutorial = true;
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {

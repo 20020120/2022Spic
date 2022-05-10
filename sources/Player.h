@@ -356,6 +356,8 @@ private:
 private:
     //ロックオン
     void LockOn();
+    //チュートリアルでのロックオン(処理は変わらない)
+    void TutorialLockOn();
     //チェイン攻撃の時のロックオン
     void ChainLockOn();
     //カメラリセット

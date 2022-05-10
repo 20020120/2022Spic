@@ -642,6 +642,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		if (transit_index >= interpolated_way_points.size() - 1)
 		{
 			is_chain_attack = false;
+			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
 			transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ

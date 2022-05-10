@@ -261,6 +261,19 @@ void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graph
     throw std::logic_error("Not implemented");
 }
 
+void LastBoss::fHumanBlowAttackInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
+}
+
+void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::HumanIdle);
+    }
+}
+
 void LastBoss::fHumanSpAttackBeginInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
@@ -392,6 +405,7 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mBeam.fRender(graphics);
 
     //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
+    
     //--------------------<タレット描画>--------------------//
     // タレットの親の位置を取得する
     DirectX::XMFLOAT3 rightPosition{};

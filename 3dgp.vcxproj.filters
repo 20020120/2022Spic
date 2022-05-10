@@ -172,6 +172,9 @@
     <Filter Include="Sources\character\Boss\00_LastBoss">
       <UniqueIdentifier>{8f196ac0-144c-494b-9666-96ebb0189f34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\enemy\05_Tutorial">
+      <UniqueIdentifier>{ecb28b4b-bee3-4d16-ba28-9038eeb272d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -494,6 +497,9 @@
     </ClCompile>
     <ClCompile Include="sources\CannonballBullet.cpp">
       <Filter>Sources\bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\TutorialEnemy.cpp">
+      <Filter>Sources\character\enemy\05_Tutorial</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -820,6 +826,9 @@
     </ClInclude>
     <ClInclude Include="sources\CannonballBullet.h">
       <Filter>Sources\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\TutorialEnemy.h">
+      <Filter>Sources\character\enemy\05_Tutorial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
