@@ -52,17 +52,21 @@ void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
     mpModel->render(Graphics_.get_dc().Get(), mAnimPara, world, color,mDissolve);
 }
 
-void BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
+bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
 {
+    bool ret{ false };
     if(mInvincibleTime<=0.0f)
     {
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
+        ret = true;
     }
     if (mCurrentHitPoint <= 0)
     {
         fDie();
     }
+
+    return ret;
 }
 
 void BaseEnemy::fDie()

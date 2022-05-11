@@ -1,15 +1,20 @@
 #pragma once
 #include"BaseEnemy.h"
 #include "Common.h"
-#include"LaserBeam.h"\
+#include"LaserBeam.h"
 //****************************************************************
 // 
 // ラストボス
 // 
 //****************************************************************
 
+  // 前方宣言
+class EnemyManager;
+
 class LastBoss final : public BaseEnemy
 {
+  
+
     struct DivideState
     {
         //--------------------<戦艦>--------------------//
@@ -31,8 +36,9 @@ class LastBoss final : public BaseEnemy
         inline static const char* HumanWithdrawal_Middle = "HumanWithdrawal_Middle"; // 範囲外で待つ
         // 一定時間内に手下を蹴散らせなければ必殺技
         inline static const char* HumanWithdrawal_End = "HumanWithdrawal_End";
-
         inline static const char* HumanBlowAttack = "HumanBlowAttack";
+
+        inline static const char* HumanSpAway = "HumanSpAway";
 
         //--------------------<人型の死亡>--------------------//
         inline static const char* HumanDieStart = "HumanDieStart";   // 人型の死亡開始
@@ -79,6 +85,10 @@ class LastBoss final : public BaseEnemy
         dragon_breath_end,
         dragon_damage,
         dragon_die,
+        ship_to_human_quick,
+        human_to_ship_quick,
+        human_to_dragon_quick,
+        dragon_to_human_quick,
     };
 
     enum class AttackKind // 乱数から抽出する攻撃の種類
@@ -130,14 +140,14 @@ class LastBoss final : public BaseEnemy
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
              const DirectX::XMFLOAT3& EmitterPoint_,
-             const EnemyParamPack& ParamPack_);
+             const EnemyParamPack& ParamPack_,
+             EnemyManager* pEnemyManager_);
 
     LastBoss(GraphicsPipeline& Graphics_);
     ~LastBoss() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
     void fDie() override;
-    void fDamaged(int Damage_, float InvincibleTime_) override;
     void fSetStun(bool Arg_) override;
      
     //--------------------<タレットの関数>--------------------//
@@ -154,6 +164,7 @@ private:
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
     void fChangeHumanToDragon();
 
+    void fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_);
 private:
     //****************************************************************
     // 
@@ -192,6 +203,15 @@ private:
     float mRgbColorSpeed{ 10.0f };
     float mHeartTimer{};
 
+    //--------------------<人型の必殺技>--------------------//
+    DirectX::XMFLOAT3 mAwayBegin{}; // 飛びのき地点の始点
+    const DirectX::XMFLOAT3 mAwayEnd{0.0f,40.0f,200.0f}; // 飛びのき地点の終点
+    float mAwayLerp{}; // Lerp係数
+    DirectX::XMFLOAT4 mBeginOrientation{};
+    DirectX::XMFLOAT4 mEndOrientation{ 0.0f,0.0f,0.0f,1.0f };
+
+    const EnemyManager* mpEnemyManager{nullptr};
+
     // 現在のモード
     Mode mCurrentMode{ Mode::Ship };
 
@@ -213,6 +233,7 @@ private:
 
     const float mkWaitHeartEffect = 0.5f;
     const float mkHumanAllShotDelay{ 0.15f };
+    const float mkHumanAllShotEnd{ 1.3f };
     const float mkHumanAllShotBegin{ 0.3f };
 private:
 
@@ -251,17 +272,24 @@ private:
     void fHumanAllShotInit();
     void fHumanAllShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    void fHumanRotAttackInit();
-    void fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
     void fHumanBlowAttackInit();
     void fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     //--------------------<人型必殺技>--------------------//
-    void fHumanSpAttackBeginInit(); // 飛びのく
-    void fHumanSpAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanSpAttackAwayInit(); // 飛びのく
+    void fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fHumanSpAttackSummonInit(); // 敵を召喚
+    void fHumanSpAttackSummonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fHumanSpAttackWaitInit(); // 一定時間待機
+    void fHumanSpAttackWaitUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fHumanSpAttackCancelInit(); // 全敵を倒されたらイベント
+    void fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fHumanSpAttackTimeOverInit(); // 制限時間を超えたら攻撃
+    void fHumanSpAttackTimeOverUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
 
     //--------------------<人型の死亡エフェクト>--------------------//

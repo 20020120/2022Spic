@@ -84,7 +84,7 @@ void SceneLoading::render(GraphicsPipeline& graphics, float elapsed_time)
     load_text->end(graphics.get_dc().Get());
 
     load_icon->begin(graphics.get_dc().Get());
-    load_icon->render(graphics.get_dc().Get(), { 950,475 }, { 0.5, 0.5 },
+    load_icon->render(graphics.get_dc().Get(), { 1050,450 }, { 0.5, 0.5 },
         {0,0},{1,1,1,1},0,loadIconPosition,{512,512});
     load_icon->end(graphics.get_dc().Get());
 

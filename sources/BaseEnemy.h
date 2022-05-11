@@ -31,7 +31,7 @@ public:
 
     void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     virtual void fRender(GraphicsPipeline& Graphics_);
-    virtual void fDamaged(int Damage_, float InvincibleTime_);
+    virtual bool  fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);

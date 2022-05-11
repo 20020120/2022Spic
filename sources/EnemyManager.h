@@ -77,7 +77,9 @@ public:
     void fRegisterCash(GraphicsPipeline& graphics_);
     void fDeleteCash(); // キャッシュを削除
 
-
+    // ボスから呼び出す
+    void fCreateBossUnit(GraphicsPipeline& Graphics_,
+        DirectX::XMFLOAT3 Position_);
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理

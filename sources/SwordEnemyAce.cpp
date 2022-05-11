@@ -254,8 +254,9 @@ void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     }
 }
 
-void SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
+bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
 {
+    bool ret = false;
     if (mInvincibleTime <= 0.0f)
     {
         mIsHit = true;
@@ -263,12 +264,14 @@ void SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
         {
             mCurrentHitPoint -= damage;
             mInvincibleTime = invincible_time;
+            ret = true;
         }
     }
     if (mCurrentHitPoint <= 0)
     {
         fDie();
     }
+    return ret;
 }
 
 void SwordEnemy_Ace::fSetStun(bool arg)

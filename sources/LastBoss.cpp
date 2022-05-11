@@ -1,12 +1,15 @@
 #include"LastBoss.h"
 
 #include "BulletManager.h"
+#include"EnemyManager.h"
 
-
-LastBoss::LastBoss(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,const EnemyParamPack& ParamPack_)
+LastBoss::LastBoss(GraphicsPipeline& Graphics_,
+    const DirectX::XMFLOAT3& EmitterPoint_,
+    const EnemyParamPack& ParamPack_,
+    EnemyManager* pEnemyManager_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/boss_animation_second.fbx",
-        ParamPack_, EmitterPoint_)
+        "./resources/Models/Enemy/boss_animation_third.fbx",
+        ParamPack_, EmitterPoint_),mpEnemyManager(pEnemyManager_)
 {
     // タレットのモデルを初期化
     fRegisterFunctions();
@@ -96,11 +99,6 @@ void LastBoss::fUpdateAttackCapsule()
 void LastBoss::fDie()
 {
     fChangeState(DivideState::DragonDieStart);
-}
-
-void LastBoss::fDamaged(int damage, float invincible_time)
-{
-    BaseEnemy::fDamaged(damage, invincible_time);
 }
 
 void LastBoss::fSetStun(bool arg)
@@ -271,6 +269,19 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::HumanBlowAttack, tuple));
     }
 
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpAttackAwayInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpAttackAwayUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpAway, tuple));
+    }
+
 
 
     // ドラゴン：待機
@@ -363,6 +374,10 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::HumanBlowAttack);
         }
+        if (ImGui::Button("HumanAway"))
+        {
+            fChangeState(DivideState::HumanSpAway);
+        }
         ImGui::TreePop();
     }
     
@@ -396,6 +411,29 @@ void LastBoss::fChangeHumanToDragon()
         // 変形中モードに遷移（ダメージは受けない）
         mCurrentMode = Mode::HumanToDragon;
     }
+}
+
+void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_)
+{
+    // ユニットを召喚する
+
+    // 定数
+    float SummonRadius = { 30.0f };
+    DirectX::XMFLOAT3 SummonCenterPosition = { 0.0f,0.0f,0.0f };
+
+    // 一体当たりの回転角を算出する
+    const float peaceOfRotation = 360.0f / static_cast<float>(Amounts_);
+    for (int i = 0; i < Amounts_; ++i)
+    {
+        // 回転角に応じた位置を決定する
+        const float rot = DirectX::XMConvertToRadians(peaceOfRotation * i);
+        SummonCenterPosition = { cosf(rot),0.0f,sinf(rot) };
+        
+        mpEnemyManager->
+
+    }
+
+
 }
 
 

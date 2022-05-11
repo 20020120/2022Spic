@@ -259,6 +259,17 @@ namespace Math
         XMStoreFloat(&lerp, XMVectorLerp(start_vec, end_vec, lerp_rate));
         return lerp;
     }
+
+    inline DirectX::XMFLOAT4 lerp(const DirectX::XMFLOAT4& begin, 
+        const DirectX::XMFLOAT4& end,float thread)
+    {
+        auto res = DirectX::XMVectorLerp(DirectX::XMLoadFloat4(&begin),
+            DirectX::XMLoadFloat4(&end), thread);
+        DirectX::XMFLOAT4 s{};
+        DirectX::XMStoreFloat4(&s, res);
+        return s;
+    }
+
     //-------------------------------------------------------
     //  二点からベクトルを算出する
     //-------------------------------------------------------

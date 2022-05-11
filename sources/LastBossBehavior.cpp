@@ -195,7 +195,7 @@ void LastBoss::fHumanMoveUpdate(float elapsedTime_,
 
 void LastBoss::fHumanAllShotInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
+    mpModel->play_animation(mAnimPara, AnimationName::human_bullet);
     mTimer = 0.0f;
 }
 
@@ -205,36 +205,23 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
 
     //--------------------<銃口の向きに発射>--------------------//
     mTimer += elapsedTime_;
-    if (mTimer >= mkHumanAllShotBegin)
+    if (mTimer < mkHumanAllShotEnd&& mTimer > mkHumanAllShotBegin)
     {
         // ボーンが向いている方向を計算
         DirectX::XMFLOAT3 up{};
-
-
-        DirectX::XMFLOAT3 rightPosition{};
         DirectX::XMFLOAT3 leftPosition{};
-        DirectX::XMFLOAT4X4 rightRotMat{};
         DirectX::XMFLOAT4X4 leftRotMat{};
 
         mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
             mOrientation, mPosition), mTurretBoneLeft, leftPosition,
             up, leftRotMat);
-
-        mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
-            mOrientation, mPosition), mTurretBoneRight, rightPosition,
-            up, rightRotMat);
-
-        const DirectX::XMFLOAT3 rightFront = 
-              { rightRotMat._31,rightRotMat._32, rightRotMat._33 };
         const DirectX::XMFLOAT3 leftFront  = 
               { leftRotMat._31,leftRotMat._32, leftRotMat._33 };
 
         // 一定間隔で発射
         if (mShotTimer <= 0.0f)
         {
-            mfAddBullet(new CannonballBullet(Graphics_, leftFront,
-                100.0f, rightPosition));
-            mfAddBullet(new CannonballBullet(Graphics_,rightFront ,
+            mfAddBullet(new CannonballBullet(Graphics_,leftFront ,
                 100.0f, leftPosition));
             mShotTimer = mkHumanAllShotDelay;
         }
@@ -251,15 +238,6 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
     }
 }
 
-void LastBoss::fHumanRotAttackInit()
-{
-
-}
-
-void LastBoss::fHumanRotAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-{
-    throw std::logic_error("Not implemented");
-}
 
 void LastBoss::fHumanBlowAttackInit()
 {
@@ -274,10 +252,36 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Grap
     }
 }
 
-void LastBoss::fHumanSpAttackBeginInit()
+void LastBoss::fHumanSpAttackAwayInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
+   // 飛びのく地点をセット
+    mAwayBegin = mPosition;
+    mAwayLerp = 0.0f;
+
+    mBeginOrientation = mOrientation;
+
+    mpModel->play_animation(mAnimPara, AnimationName::human_to_ship_quick);
 }
+
+void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    // 正面を向くように回転
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        mAwayLerp += elapsedTime_ * 2.0f;
+        mAwayLerp = (std::min)(1.0f, mAwayLerp);
+
+        // 移動
+        mPosition = Math::lerp(mAwayBegin, mAwayEnd, mAwayLerp);
+        mOrientation = Math::lerp(mBeginOrientation, mEndOrientation, mAwayLerp);
+    }
+
+    if(mAwayLerp>1.0f)
+    {
+        
+    }
+}
+
 
 void LastBoss::fHumanDieStartInit()
 {
@@ -400,9 +404,6 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
     BaseEnemy::fRender(graphics);
-    // ビーム類を描画
-    mLaserPointer.fRender(graphics);
-    mBeam.fRender(graphics);
 
     //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
     
@@ -423,12 +424,16 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mpTurretRight->fRender(graphics, world, rightPosition);
 
     //--------------------<セカンドガン描画>--------------------//
-    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneLeft, leftPosition,
-        up);
-    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneRight, rightPosition,
-        up);
+    DirectX::XMFLOAT4X4 rightMat{};
+    DirectX::XMFLOAT4X4 leftMat{};
+    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneLeft,leftMat);
+    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneRight, rightMat);
 
-    mpSecondGunLeft->fRender(graphics, world, leftPosition);
-    mpSecondGunRight->fRender(graphics, world, rightPosition);
+    mpSecondGunLeft->fRender(graphics, leftMat, leftPosition);
+    mpSecondGunRight->fRender(graphics, rightMat, rightPosition);
 
+
+    // ビーム類を描画
+    mLaserPointer.fRender(graphics);
+    mBeam.fRender(graphics);
 }
