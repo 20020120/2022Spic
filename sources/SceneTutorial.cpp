@@ -50,6 +50,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
 
 	player = std::make_unique<Player>(graphics);
+	player->SetTutorialDamageFunc();
 	// ƒJƒƒ‰
 	cameraManager = std::make_unique<CameraManager>();
 
