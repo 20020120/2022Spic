@@ -104,8 +104,8 @@ private:
         DirectX::XMFLOAT2 texpos{};
         DirectX::XMFLOAT2 texsize{};
     };
-    Element slash;
-    std::unique_ptr<SpriteBatch> sprite_slash{ nullptr };
+    Element flash;
+    std::unique_ptr<SpriteBatch> sprite_flash{ nullptr };
     Element selecter1;
     Element selecter2;
     std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
