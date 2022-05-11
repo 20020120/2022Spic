@@ -160,24 +160,39 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetCameraPosition(c->get_eye());
 	player->UpdateTitle(elapsed_time);
 
+	// スティックを傾け続けたら少し間をおいて入力を許可する
+	if (!can_axis)
+	{
+		axis_wait_timer += elapsed_time;
+		if (axis_wait_timer > AXIS_WAIT_TIME)
+		{
+			axis_wait_timer = 0;
+			can_axis = true;
+		}
+	}
+
 	auto r_up = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 	{
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f))
 		{
 			audio_manager->play_se(SE_INDEX::SELECT);
 			this->state = state;
 			this->arrival_pos1 = arrival_pos1;
 			this->arrival_pos2 = arrival_pos2;
+
+			can_axis = false;
 		}
 	};
 	auto r_down = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 	{
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f))
 		{
 			audio_manager->play_se(SE_INDEX::SELECT);
 			this->state = state;
 			this->arrival_pos1 = arrival_pos1;
 			this->arrival_pos2 = arrival_pos2;
+
+			can_axis = false;
 		}
 	};
 
@@ -191,22 +206,26 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			{
 				auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
 				{
-					if ((game_pad->get_button_down() & GamePad::BTN_UP) || game_pad->get_axis_LY() > 0.5f)
+					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f))
 					{
 						audio_manager->play_se(SE_INDEX::SELECT);
 						have_tutorial_state = state;
 						tutorial_tab.arrival_posL = arrival_posL;
 						tutorial_tab.arrival_posR = arrival_posR;
+
+						can_axis = false;
 					}
 				};
 				auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
 				{
-					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || game_pad->get_axis_LY() < -0.5f)
+					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f))
 					{
 						audio_manager->play_se(SE_INDEX::SELECT);
 						have_tutorial_state = state;
 						tutorial_tab.arrival_posL = arrival_posL;
 						tutorial_tab.arrival_posR = arrival_posR;
+
+						can_axis = false;
 					}
 				};
 				switch (have_tutorial_state)
@@ -314,7 +333,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	effect_manager->update(elapsed_time);
 
 
-	static bool start = false;
+	static bool start  = false;
 	static float speed = 15000.0f;
 #ifdef USE_IMGUI
 	ImGui::Begin("slashing");
