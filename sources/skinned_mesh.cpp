@@ -175,6 +175,25 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
 #endif
 }
 
+SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename,
+    std::string sub_colors[2], bool triangulate, float sampling_rate)
+    : SkinnedMesh(device, fbx_filename, triangulate, sampling_rate)
+{
+    // sub color map作成
+    for (size_t texture_index = 0; texture_index < 2; ++texture_index)
+    {
+        if (sub_colors[texture_index].size() > 0)
+        {
+            std::filesystem::path path(fbx_filename);
+            path.replace_filename(sub_colors[texture_index]);
+            D3D11_TEXTURE2D_DESC texture2d_desc;
+            load_texture_from_file(device, path.c_str(),
+                sub_color_shader_resource_views[texture_index].GetAddressOf(), &texture2d_desc);
+        }
+    }
+}
+
+
 const skeleton::bone& SkinnedMesh::get_bone_by_name(std::string name)
 {
     skeleton::bone dummy = {};
@@ -247,7 +266,7 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4&
     }
 }
 
-void SkinnedMesh::fech_by_bone(anim_Parameters& para, 
+void SkinnedMesh::fech_by_bone(anim_Parameters& para,
                               const DirectX::XMFLOAT4X4& world,
     const skeleton::bone& bone,
     DirectX::XMFLOAT4X4& ResultMat)
@@ -272,15 +291,29 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para,
 }
 
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
-                         const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
-                         const DirectX::XMFLOAT4& emissive_color, float glow_thickness)
+    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
+    const DirectX::XMFLOAT4& emissive_color, float glow_thickness,
+    float purple_threshold, float red_threshold, std::string sub_color_mesh_name)
 {
     geometry_constants->data.dissolve_threshold.x = threshold;
     geometry_constants->data.dissolve_threshold.y = glow_time;
     geometry_constants->data.emissive_color = emissive_color;
     geometry_constants->data.glow_thickness = glow_thickness;
+
+
     for (const mesh& mesh : meshes)
     {
+        if (mesh.name == sub_color_mesh_name)
+        {
+            geometry_constants->data.sub_color_threshold_purple = purple_threshold;
+            geometry_constants->data.sub_color_threshold_red    = red_threshold;
+        }
+        else
+        {
+            geometry_constants->data.sub_color_threshold_purple = 0;
+            geometry_constants->data.sub_color_threshold_red    = 0;
+        }
+
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
         //{
         //    continue;
@@ -333,6 +366,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 const material& material{ materials.at(subset.material_unique_id) };
 
                 XMStoreFloat4(&geometry_constants->data.material_color, XMLoadFloat4(&material_color) * XMLoadFloat4(&material.Kd));
+
                 geometry_constants->bind(dc, 0, CB_FLAG::PS_VS);
                 // シェーダーリソースビューのセット
                 dc->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
@@ -343,6 +377,8 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& wor
                 dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
                 dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
                 dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
+                dc->PSSetShaderResources(20, 1, sub_color_shader_resource_views[0].GetAddressOf());
+                dc->PSSetShaderResources(21, 1, sub_color_shader_resource_views[1].GetAddressOf());
                 // 描画
                 dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
             }
@@ -357,6 +393,11 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, anim_Parameters& para, const D
     geometry_constants->data.dissolve_threshold.y = glow_time;
     geometry_constants->data.emissive_color = emissive_color;
     geometry_constants->data.glow_thickness = glow_thickness;
+
+    geometry_constants->data.sub_color_threshold_purple = 0;
+    geometry_constants->data.sub_color_threshold_red = 0;
+
+
     for (const mesh& mesh : meshes)
     {
         //if (!Collision::frustum_vs_cuboid(world_min_bounding_box, world_max_bounding_box))
@@ -421,6 +462,8 @@ void SkinnedMesh::render(ID3D11DeviceContext* dc, anim_Parameters& para, const D
                 dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
                 dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
                 dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
+                dc->PSSetShaderResources(20, 1, sub_color_shader_resource_views[0].GetAddressOf());
+                dc->PSSetShaderResources(21, 1, sub_color_shader_resource_views[1].GetAddressOf());
                 // 描画
                 dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
             }

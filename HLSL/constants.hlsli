@@ -8,6 +8,9 @@ cbuffer OBJECT_CONSTANTS : register(b0)
     float4 dissolve_threshold; // x:縁が近るディゾルブ y:光の筋ディゾルブ
     float glow_thickness; // glowの幅
     float3 object_pad1;
+    float sub_color_threshold_purple;
+    float sub_color_threshold_red;
+    float2 object_pad2;
 };
 
 cbuffer SCENE_CONSTANTS : register(b1)

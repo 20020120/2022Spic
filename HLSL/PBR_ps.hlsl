@@ -22,6 +22,9 @@ SamplerState shadow_sampler_state : register(s6);
 Texture2D dissolve_map : register(t8);
 Texture2D glow_map : register(t9);
 
+Texture2D sub_color_map_purple : register(t20);
+Texture2D sub_color_map_red : register(t21);
+
 static const float PI = 3.1415926f; // ƒÎ
 
 float3 cast_shadow(in float3 color, float depth, float3 shadow_texcoord)
@@ -153,6 +156,30 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 roughness_map = texture_maps[ROUGHNESS].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
     float4 ao_map = texture_maps[AO].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
     float4 emissive_map = texture_maps[Emissive].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+
+    float4 sub_color_purple = sub_color_map_purple.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float4 sub_color_red    = sub_color_map_red.Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+
+    // sub color ‚É‚æ‚éüŒ`•âŠ®
+    float3 lerp_color_map = color_map;
+
+    if (sub_color_purple.r > 0.9f && sub_color_purple.g > 0.9f && sub_color_purple.b > 0.9f
+     && sub_color_red.r > 0.9f    && sub_color_red.g > 0.9f    && sub_color_red.b > 0.9f)
+    {
+    }
+    else
+    {
+        if (sub_color_threshold_purple > 0.01f)
+        {
+            lerp_color_map = lerp(color_map, sub_color_purple, sub_color_threshold_purple);
+        }
+        if (sub_color_threshold_red > 0.01f)
+        {
+            lerp_color_map = lerp(sub_color_purple, sub_color_red, sub_color_threshold_red);
+        }
+    }
+
+    color_map.rgb = lerp_color_map;
 
     // shadow map
     //float depth = shadow_map.Sample(shadow_sampler_state, pin.shadow_texcoord.xy).r;

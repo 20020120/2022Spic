@@ -174,6 +174,7 @@ class SkinnedMesh
 public:
     //--------<constructor/destructor>--------//
     SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool triangulate = false, float sampling_rate = 0);
+    SkinnedMesh(ID3D11Device* device, const char* fbx_filename, std::string sub_colors[2], bool triangulate = false, float sampling_rate = 0);
     virtual ~SkinnedMesh() = default;
 private:
     //--------< •Ï” >--------//
@@ -267,6 +268,9 @@ private:
         DirectX::XMFLOAT4 dissolve_threshold{ 0,0,0,0 };
         float glow_thickness = 0.8f; // glow‚Ì•
         DirectX::XMFLOAT3 pad1;
+        float sub_color_threshold_purple = 0;
+        float sub_color_threshold_red = 0;
+        DirectX::XMFLOAT2 pad2;
     };
     struct material
     {
@@ -284,12 +288,17 @@ private:
         template<class T>
         void serialize(T& archive) { archive(unique_id, name, Ka, Kd, Ks, texture_filenames); }
     };
+
+    // TEXTURE_COUNT‘‚â‚·‚ÆƒVƒŠƒAƒ‹ì‚è’¼‚µ‚É‚È‚èA§ìŒã”¼‚É‚»‚ê‚Í‚µ‚ñ‚Ç‚¢‚Ì‚Å‚±‚±‚Å‘‚â‚·
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sub_color_shader_resource_views[2]; // 0:purple 1:red
+
 public:
     //--------< ŠÖ” >--------//
     typedef std::tuple<std::string, float> mesh_tuple;
     void render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
-        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), float glow_thickness = 0.8f);
+        const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+        float glow_thickness = 0.8f, float purple_threshold = 0, float red_threshold = 0, std::string sub_color_mesh_name = "");
     void render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
         const DirectX::XMFLOAT4& material_color, float threshold = 0, float glow_time = 0,
         const DirectX::XMFLOAT4& emissive_color = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), float glow_thickness = 0.8f);
@@ -320,6 +329,9 @@ public:
             geometry_constants->data.dissolve_threshold.y = glow_time;
             geometry_constants->data.emissive_color = emissive_color;
             geometry_constants->data.glow_thickness = glow_thickness;
+            geometry_constants->data.sub_color_threshold_purple = 0;
+            geometry_constants->data.sub_color_threshold_red = 0;
+
 
             uint32_t stride{ sizeof(vertex) };
             uint32_t offset{ 0 };
@@ -378,6 +390,8 @@ public:
                     dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
                     dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
                     dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
+                    dc->PSSetShaderResources(20, 1, sub_color_shader_resource_views[0].GetAddressOf());
+                    dc->PSSetShaderResources(21, 1, sub_color_shader_resource_views[1].GetAddressOf());
                     // •`‰æ
                     dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
                 }

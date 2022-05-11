@@ -4,6 +4,8 @@
 #include"practical_entities.h"
 #include"graphics_pipeline.h"
 #include"collision.h"
+#include"user.h"
+
 class SkyDome : PracticalEntities
 {
 public:
@@ -22,8 +24,23 @@ public:
     void SetPosition(DirectX::XMFLOAT3 p) { position = p; }
     void SetScale(DirectX::XMFLOAT3 p) { scale = p; }
     void SetAngle(DirectX::XMFLOAT3 p) { angle = p; }
+
+    static void set_purple_threshold(float threshold)
+    {
+        purple_threshold = threshold;
+        purple_threshold = Math::clamp(purple_threshold, 0.0f, 1.0f);
+    }
+    static void set_red_threshold(float threshold)
+    {
+        red_threshold = threshold;
+        red_threshold = Math::clamp(red_threshold, 0.0f, 1.0f);
+    }
+
 private:
     std::shared_ptr<SkinnedMesh> model;
     std::shared_ptr<SkinnedMesh> model1;
 
+
+    static float purple_threshold;
+    static float red_threshold;
 };
