@@ -51,6 +51,7 @@ private:
         inline static const char* HumanSpOver = "HumanSpOver"; // 時間切れ
         inline static const char* HumanSpCharge = "HumanSpCharge"; // ため
         inline static const char* HumanSpShoot = "HumanSpShoot"; // 発射
+        inline static const char* HumanSpDamage = "HumanSpDamage"; // ダメージ
 
 
         //--------------------<人型の死亡>--------------------//
@@ -321,6 +322,11 @@ private:
     void fHumanSpBeamShootInit();
     void fHumanSpBeamShootUpdate(float elapsedTime_, 
         GraphicsPipeline& Graphics_);
+    
+    void fHumanSpDamageInit();
+    void fHumanSpDamageUpdate(float elapsedTime_,
+        GraphicsPipeline& Graphics_);
+
 
 
     //--------------------<人型の死亡エフェクト>--------------------//

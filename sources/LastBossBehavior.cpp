@@ -3,6 +3,7 @@
 #include"post_effect.h"
 #include"BulletManager.h"
 #include "CannonballBullet.h"
+#include "EnemyManager.h"
 //****************************************************************
 // 
 // 戦艦モード 
@@ -279,7 +280,7 @@ void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Gr
     if(mAwayLerp>=1.0f)
     {
         fChangeState(DivideState::HumanSpWait);
-        fSpawnChildUnit(Graphics_, 10);
+        fSpawnChildUnit(Graphics_, 1);
     }
 }
 
@@ -296,6 +297,11 @@ void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_,
     if(mTimer>=mkHumanSpWaitTime)
     {
         fChangeState(DivideState::HumanSpOver);
+    }
+
+    if(mpEnemyManager->fGetEnemyCounts()<=1)
+    {
+        fChangeState(DivideState::HumanSpDamage);
     }
 }
 
@@ -382,6 +388,30 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
     }
     if (mAwayLerp > 1.0f)
     {
+        fChangeState(DivideState::HumanIdle);
+    }
+}
+
+void LastBoss::fHumanSpDamageInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::human_damage);
+    mAwayBegin = mPosition;
+    mAwayLerp = 0.0f;
+}
+
+void LastBoss::fHumanSpDamageUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
+        mAwayLerp += elapsedTime_ * 2.0f;
+        fResetLaser();
+    }
+    if (mAwayLerp > 1.0f)
+    {
+        // ダメージを与える
+        mCurrentHitPoint -= (mMaxHp * 0.3f);
         fChangeState(DivideState::HumanIdle);
     }
 }

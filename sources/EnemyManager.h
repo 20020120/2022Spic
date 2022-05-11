@@ -72,6 +72,7 @@ public:
     void fDeleteEnemies();
     
     [[nodiscard]] std::vector<BaseEnemy*> fGetEnemies() const;
+    size_t fGetEnemyCounts()const;
 
     //--------------------<キャッシュにモデルデータを登録>--------------------//
     void fRegisterCash(GraphicsPipeline& graphics_);

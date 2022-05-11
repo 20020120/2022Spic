@@ -335,6 +335,20 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanSpCharge, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpDamageInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpDamageUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpDamage, tuple));
+    }
+
 
 
 

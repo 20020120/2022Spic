@@ -615,6 +615,11 @@ std::vector<BaseEnemy*> EnemyManager::fGetEnemies() const
     return mEnemyVec;
 }
 
+size_t EnemyManager::fGetEnemyCounts() const
+{
+    return mEnemyVec.size();
+}
+
 void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
 {
     // キャッシュにモデルを登録
