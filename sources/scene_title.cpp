@@ -46,12 +46,12 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	fire_effect2->play(effect_manager->get_effekseer_manager(), fire_pos_2, 0.45f);
 
 	//-------<2Dƒp[ƒg>--------//
-	//--slash--//
-	sprite_slash   = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_slash.png", 1);
-	slash.position = { 1280,360 };
-	slash.scale    = { 1,1 };
-	slash.texsize  = { static_cast<float>(sprite_slash->get_texture2d_desc().Width), static_cast<float>(sprite_slash->get_texture2d_desc().Height) };
-	slash.color    = { 1,1,1,1 };
+	//--flash--//
+	sprite_flash = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_slash.png", 1);
+	flash.position = { 1280,360 };
+	flash.scale    = { 1,1 };
+	flash.texsize  = { static_cast<float>(sprite_flash->get_texture2d_desc().Width), static_cast<float>(sprite_flash->get_texture2d_desc().Height) };
+	flash.color    = { 1,1,1,1 };
 	//--selecter--//
 	sprite_selecter    = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\selecter.png", 2);
 	selecter1.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
@@ -299,18 +299,39 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			break;
 		}
 	}
+	else
+	{
+		slashing_wait_timer += elapsed_time;
+	}
+
+	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
+	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
+
+	static float speed = 15000.0f;
+#ifdef USE_IMGUI
+	ImGui::Begin("slashing");
+	ImGui::Text("slashing_wait_timer : %f", slashing_wait_timer);
+	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
+	ImGui::DragFloat("speed", &speed, 0.1f);
+	ImGui::End();
+#endif // USE_IMGUI
+
+	// ‘MŒõ‚ª‘–‚é
+	if (slashing_wait_timer > 4.3f)
+	{
+		flash.position.x -= speed * elapsed_time;
+		flash.position.x = (std::max)(flash.position.x, -1700.0f);
+	}
+
 	if (player->GetEndTitleAnimation())
 	{
-		if (slashing_power <= 0) // ‚Ü‚¸‚Í­‚µ‚¸‚ç‚·
+		// ‚Ü‚¸‚Í­‚µ‚¸‚ç‚·
+		if (slashing_power <= 0 && slashing_wait_timer > 5.0f)
 		{
 			slashing_power = 0.015f;
 		}
-		else
-		{
-			slashing_wait_timer += elapsed_time;
-		}
 		// ­‚µ‚¸‚Â‚¸‚ç‚·
-		if (slashing_wait_timer > 1.0f)
+		if (slashing_wait_timer > 6.0f)
 		{
 			slashing_power += elapsed_time * 0.05f;
 			slashing_power = (std::min)(slashing_power, SLASHING_MAX);
@@ -327,32 +348,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		is_load_ready = false;
 	}
 
-	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
-	selecter2.position = Math::lerp(selecter2.position, arrival_pos2, 10.0f * elapsed_time);
 
 	effect_manager->update(elapsed_time);
-
-
-	static bool start  = false;
-	static float speed = 15000.0f;
-#ifdef USE_IMGUI
-	ImGui::Begin("slashing");
-	ImGui::DragFloat("slashing_power", &slashing_power, 0.01f);
-	ImGui::Checkbox("start", &start);
-	ImGui::DragFloat("speed", &speed, 0.1f);
-	if (ImGui::Button("reset"))
-	{
-		start = false;
-		slash.position.x = 1280.0f;
-	}
-	ImGui::End();
-#endif // USE_IMGUI
-
-	if (start)
-	{
-		slash.position.x -= speed * elapsed_time;
-		slash.position.x = (std::max)(slash.position.x, -1700.0f);
-	}
 
 	post_effect->title_post_effect(slashing_power);
 }
@@ -454,8 +451,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
 	};
 
-	//--sprite_slash--//
-	r_sprite_render("slash", sprite_slash.get(), slash);
+	//--sprite_flash--//
+	r_sprite_render("flash", sprite_flash.get(), flash);
 	//--sprite_selecter--//
 	r_sprite_render("selecter1", sprite_selecter.get(), selecter1);
 	r_sprite_render("selecter2", sprite_selecter.get(), selecter2);
