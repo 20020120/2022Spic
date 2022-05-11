@@ -282,6 +282,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			r_down(2, { 980.0f, 650.0f }, { 1190.0f, 650.0f });
 			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				have_tutorial_state = 1; // チュートリアルなし
 				audio_manager->play_se(SE_INDEX::DECISION);
 				player->StartTitleAnimation();
 				return;
@@ -341,8 +342,14 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	// 画面遷移
 	if (Math::equal_check(slashing_power, SLASHING_MAX))
 	{
-		if (have_tutorial_state == 1) /* チュートリアルなし */ { SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f); }
-		else{ SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f); }
+		if (have_tutorial_state == 1) /* チュートリアルなし */
+		{
+			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::HORIZON, 2.0f);
+		}
+		else
+		{
+			SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f);
+		}
 
 		point_lights->finalize(graphics);
 		is_load_ready = false;

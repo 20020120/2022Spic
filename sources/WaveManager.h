@@ -115,9 +115,7 @@ public:
         S_3_1,
         S_3_2,
         S_3_3,
-        BOSS_BATTLESHIP, // ボス戦艦
-        BOSS_HUMANOID,   // ボス人型
-        BOSS_DRAGON,     // ボスドラゴン
+        BOSS,
 
         STAGE_COUNT,
     };

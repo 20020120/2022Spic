@@ -21,7 +21,7 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     DirectX::XMFLOAT2 stage_points[STAGE_IDENTIFIER::STAGE_COUNT] =
     {
         { 1128, 1310 },{ 784, 974 },{ 1518, 974 },{ 484, 564 },{ 1070, 564 },
-        { 1520, 564 },{ 1070, 176 },{ 1070, 176 },{ 1070, 176 }
+        { 1520, 564 },{ 1070, 176 }
     };
     for (int i = 0; i < STAGE_IDENTIFIER::STAGE_COUNT; ++i) { stage_details[i].position = stage_points[i]; }
     /*1-1*/
@@ -44,29 +44,19 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     /*3-1*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_1;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
     }
     /*3-2*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_2;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
     }
     /*3-3*/
     {
         STAGE_IDENTIFIER index = STAGE_IDENTIFIER::S_3_3;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_BATTLESHIP));
+        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS));
     }
-    /*BOSS_BATTLESHIP*/
-    {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::BOSS_BATTLESHIP;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_HUMANOID));
-    }
-    /*BOSS_HUMANOID*/
-    {
-        STAGE_IDENTIFIER index = STAGE_IDENTIFIER::BOSS_HUMANOID;
-        stage_details[index].journeys.insert(std::make_pair(StageDetails::ROUTE::UP, STAGE_IDENTIFIER::BOSS_DRAGON));
-    }
-    /*BOSS_DRAGON*/
+    /*BOSS*/
     {
         /* 次のルートなし */
     }
@@ -328,7 +318,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
-    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP", "BOSS_HUMANOID", "BOSS_DRAGON", };
+    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP" };
     {
         static int elem = current_stage;
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
@@ -408,7 +398,7 @@ void WaveManager::update_reduction(float elapsed_time)
     // 選択状態に遷移
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
     {
-        if (current_stage != STAGE_IDENTIFIER::BOSS_DRAGON) { transition_selection(); }
+        if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
         else // ゲームクリア
         {
             SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
@@ -419,7 +409,7 @@ void WaveManager::update_reduction(float elapsed_time)
 
 void WaveManager::transition_selection()
 {
-    if (current_stage == STAGE_IDENTIFIER::BOSS_DRAGON)
+    if (current_stage == STAGE_IDENTIFIER::BOSS)
     {
         bool a = true;
         assert(!a && "ボス部屋です");
@@ -559,7 +549,7 @@ void WaveManager::update_selection(float elapsed_time)
     {
         ImGui::Separator();
         int elem = stage_details[current_stage].journeys.at(route_state);
-        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP", "BOSS_HUMANOID", "BOSS_DRAGON", };
+        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP"};
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("candidate stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
         ImGui::Separator();
