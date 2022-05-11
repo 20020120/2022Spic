@@ -292,7 +292,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
 
-
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
@@ -764,6 +763,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ƒ_ƒ[ƒWˆ—
     player_health -= damage;
+    if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
     // €–S‚µ‚½‚Ìˆ—
     /*if (player_health <= 0)

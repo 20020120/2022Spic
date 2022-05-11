@@ -25,6 +25,7 @@ void Player::UpdateTitleAnimationStartIdle(float elaosed_time)
     //モデルのアニメーションが終わった時かつ1秒たったら
     if (model->end_of_animation() && title_timer > 0.5f)
     {
+        title_timer = 0;
         model->play_animation(AnimationClips::TitleAnimationEnd);
         player_title_activity = &Player::UpdateTitleAnimationEnd;
     }
@@ -39,9 +40,11 @@ void Player::UpdateTitleAnimationEnd(float elaosed_time)
 }
 void Player::UpdateTitleAnimationEndIdle(float elaosed_time)
 {
+    title_timer += 1.0f * elaosed_time;
+    if(title_timer > 0.5) end_title_animation = true;
+
     if (model->end_of_animation())
     {
-        end_title_animation = true;
     }
 }
 void Player::TransitionTitleAnimationReadyIdle()
@@ -256,7 +259,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
 #else
-            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
                 TransitionAttackType2(attack_animation_blends_speeds.z);
             }
@@ -314,7 +317,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
 #else
-            if (target_enemy != nullptr && target_enemy->fGetIsAlive())
+            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
                 TransitionAttackType3(attack_animation_blends_speeds.w);
             }
@@ -921,7 +924,6 @@ void Player::TransitionWingDashIdle()
 void Player::TransitionWingDashEnd()
 {
 }
-
 void Player::TransitionDie()
 {
     condition_state = ConditionState::Dye;
@@ -938,7 +940,7 @@ void Player::TransitionDie()
     else model->play_animation(AnimationClips::Die, false, true);
     //更新関数に切り替え
     player_activity = &Player::DieUpdate;
-
+    if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 1.0f);
 }
 
 void Player::TransitionDying()

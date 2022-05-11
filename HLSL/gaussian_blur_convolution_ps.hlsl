@@ -15,10 +15,10 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
     [unroll]
     for (uint downsampled_index = 0; downsampled_index < downsampled_count; ++downsampled_index)
     {
-        sampled_color += downsampled_textures[downsampled_index].Sample(sampler_states[ANISOTROPIC], texcoord).xyz;
+        sampled_color += downsampled_textures[downsampled_index].Sample(sampler_states[LINEAR_BORDER_BLACK], texcoord).xyz;
     }
 #else
-    sampled_color += downsampled_textures[downsampled_count - 1].Sample(sampler_states[ANISOTROPIC], texcoord).xyz;
+    sampled_color += downsampled_textures[downsampled_count - 1].Sample(sampler_states[LINEAR_BORDER_BLACK], texcoord).xyz;
 #endif
     return float4(sampled_color * blur_convolution_intensity, 1);
 }

@@ -1,8 +1,8 @@
 {
     "value0": {
-        "shake": false,
-        "vibration": false,
-        "omission": false,
+        "shake": true,
+        "vibration": true,
+        "omission": true,
         "sensitivity": 0.5
     }
 }

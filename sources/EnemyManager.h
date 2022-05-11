@@ -57,6 +57,7 @@ public:
     [[nodiscard]]  BaseEnemy* fGetSecondEnemyPosition();
     [[nodiscard]] bool fGetClearWave() const;
     //--------------------<セッター関数>--------------------//
+    void fSetIsPlayerChainTime(bool IsChain_);//プレイヤーがチェイン状態であるかどうかをエネミーが受け取る関数
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
 
 public:
@@ -116,7 +117,7 @@ private:
     EnemyEditor mEditor{};
 
     bool mDebugMode{};
-
+    bool mIsPlayerChainTime = false;
     //--------------------<プレイヤーの位置>--------------------//
     DirectX::XMFLOAT3 mPlayerPosition{};
 

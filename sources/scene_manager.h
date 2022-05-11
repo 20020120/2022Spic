@@ -14,6 +14,7 @@ enum class DISSOLVE_TYPE
     TYPE1,
     TYPE2,
     DOT,
+    HORIZON,
 };
 
 class SceneManager : public PracticalEntities
