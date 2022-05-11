@@ -138,13 +138,20 @@ void AudioManager::stop_all_bgm()
 	}
 }
 
-
 void AudioManager::set_volume_bgm(BGM_INDEX index, float volume)
 {
 	HRESULT hr{ S_OK };
 	assert(bgm_source_voices[static_cast<int>(index)] != nullptr && "BGMÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
 	hr = bgm_source_voices[static_cast<int>(index)]->SetVolume(volume);
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+}
+
+void AudioManager::set_all_volume_bgm(float volume)
+{
+	for (int i = 0; i < static_cast<int>(BGM_INDEX::BGM_COUNT); i++)
+	{
+		set_volume_bgm(static_cast<BGM_INDEX>(i), volume);
+	}
 }
 
 //-------------------------------------------------------
@@ -247,6 +254,14 @@ void AudioManager::set_volume_se(SE_INDEX index, float volume)
 	assert(se_source_voices[static_cast<int>(index)] != nullptr	&& "SEÇ™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
 	hr = se_source_voices[static_cast<int>(index)]->SetVolume(volume);
 	_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+}
+
+void AudioManager::set_all_volume_se(float volume)
+{
+	for (int i = 0; i < static_cast<int>(SE_INDEX::SE_COUNT); i++)
+	{
+		set_volume_se(static_cast<SE_INDEX>(i), volume);
+	}
 }
 
 void AudioManager::stop_se(SE_INDEX index)

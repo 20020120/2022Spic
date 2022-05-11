@@ -44,11 +44,13 @@ public:
     void stop_bgm(BGM_INDEX index);
     void stop_all_bgm();
     void set_volume_bgm(BGM_INDEX index, float volume);
+    void set_all_volume_bgm(float volume);
     //----se----//
     void play_se(SE_INDEX index);
     void stop_se(SE_INDEX index);
     void stop_all_se();
     void set_volume_se(SE_INDEX index, float volume);
+    void set_all_volume_se(float volume);
 private:
     //--------< ’è” >--------//
     static const int MAX_BGM_COUNT = 256;
