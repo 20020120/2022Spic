@@ -63,6 +63,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//mini_map
 	minimap = std::make_unique<MiniMap>(graphics);
 
+
+	for (auto& bgm_switch : bgm_switches) { bgm_switch = false; }
+
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::GAME);
 }
@@ -79,6 +82,29 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	static float bgm_volume = 2.0f;
 	static float se_volume = 0.2f;
+
+	// ボスのBGM切り替え
+	if (!bgm_switches[0] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_BATTLESHIP)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
+
+		bgm_switches[0] = true;
+	}
+	else if (!bgm_switches[1] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_HUMANOID)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+
+		bgm_switches[1] = true;
+	}
+	else if (!bgm_switches[2] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_DRAGON)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+
+		bgm_switches[2] = true;
+	}
 
 	audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_BATTLESHIP, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
@@ -183,6 +209,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
 	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
+
+	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
+	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
 
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
@@ -441,8 +470,9 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
+	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+	minimap->render(graphics, p_pos,p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }

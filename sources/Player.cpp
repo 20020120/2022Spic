@@ -292,7 +292,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
 
-
             ImGui::DragFloat("threshold", &threshold,0.01f,0,1.0f);
             ImGui::DragFloat("threshold_mesh", &threshold_mesh,0.01f,0,1.0f);
             ImGui::DragFloat("glow_time", &glow_time);
@@ -764,12 +763,45 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ダメージ処理
     player_health -= damage;
+    if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
     // 死亡した時の処理
     /*if (player_health <= 0)
     {
 
     }*/
+}
+
+void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
+{
+    //ジャスト回避
+    if (is_behind_avoidance)
+    {
+        is_just_avoidance = true;
+        //ジャスト回避だったらダメージを受けない
+        return;
+    }
+    //ダメージが0の場合は健康状態を変更する必要がない
+    if (damage == 0)return;
+    //死亡している場合は健康状態を変更しない
+    if (player_health <= 0)return;
+
+    if (invincible_timer > 0.0f)return;
+    //攻撃状態ならダメージを受けない
+    if (is_attack) return;
+    //もし回避中じゃなかったら怯む
+    if (is_avoidance == false) TransitionTutorialDamage();
+    else
+    {
+        //回避中ならひるまずダメージが下がって受ける
+        damage = damage - 1;
+    }
+    //無敵時間設定
+    invincible_timer = InvincibleTime;
+    //ダメージ処理
+    player_health -= damage;
+    if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
+
 }
 
 void Player::PlayerKnocKback(float elapsed_time)

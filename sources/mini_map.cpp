@@ -11,7 +11,7 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 	//パラメーター初期値設定
 	//ミニマップ下地
 	minimap_icon_param =
-	{ {1000,28},{1,1} };
+	{ {1080,32},{1,1} };
 	//プレイヤー
 	player_icon_param =
 	{ {128,128},{1,1} };
@@ -26,16 +26,16 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 	{ {128,128},{1,1} };
 	
 }
-void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
+void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos, const DirectX::XMFLOAT2& player_forward,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
 {
 	//レーダーあいこん　
 
-	DirectX::XMFLOAT2 center_pos = { 1113,142.0f };//アイコンの基準位置
+	DirectX::XMFLOAT2 center_pos = { 1161,114.0f };//アイコンの基準位置
 	mini_map_icon->begin(graphics.get_dc().Get());
 	mini_map_icon->render(graphics.get_dc().Get(), {  minimap_icon_param.position.x, minimap_icon_param.position.y }, { minimap_icon_param.scale });
 	mini_map_icon->end(graphics.get_dc().Get());
-	const float add_pl_icon_pos = 16.0f;
-	player_icon_param.position = { center_pos.x,center_pos.y + add_pl_icon_pos };
+
+	player_icon_param.position = { center_pos.x,center_pos.y  };
 #if USE_IMGUI
 	ImGui::Begin("minimapp");
 	ImGui::DragFloat2("minimap", &player_icon_param.position.x);

@@ -94,6 +94,8 @@ private:
     std::unique_ptr<Option> option{ nullptr };
     std::unique_ptr<MiniMap> minimap{ nullptr };
 
+    // bgm切り替え用変数
+    bool bgm_switches[3] = { false,false,false };
     // クリア演出
     bool during_clear = false;
     float tunnel_alpha = 0.0f;

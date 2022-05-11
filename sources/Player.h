@@ -9,6 +9,7 @@
 #include"post_effect.h"
 #include"graphics_pipeline.h"
 #include "Common.h"
+#include"game_icon.h"
 
 class Player :public BasePlayer, private PlayerMove
 {
@@ -330,6 +331,7 @@ public:
     void AddCombo(int count);
     //--------------------<敵からダメージを受ける>--------------------//
     void DamagedCheck(int damage, float InvincibleTime);
+    void TutorialDamagedCheck(int damage, float InvincibleTime);
     void PlayerKnocKback(float elapsed_time);
 public:
     void FalseCameraReset() { camera_reset = false; }
@@ -630,6 +632,7 @@ private:
     void TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     void TutorialInvAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+    void TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //各遷移関数
     void TransitionTutoriaIdle(float blend_second = 0.3f);
     void TransitionTutorialMove(float blend_second = 0.3f);
@@ -642,8 +645,12 @@ private:
     void TransitionTutorialAttack3(float blend_second = 0.3f);
     void TransitionTutorialAwaiking();
     void TransitionTutorialInvAwaiking();
+    //ダメージ受けたときに遷移
+    void TransitionTutorialDamage();
+
 
     void TutorialAwaiking();//覚醒状態のON,OFF
 public:
     int GetTutorialState() { return static_cast<int>(tutorial_state); }
+    void SetTutorialDamageFunc();
 };

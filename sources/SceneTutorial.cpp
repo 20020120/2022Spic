@@ -50,6 +50,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
 
 	player = std::make_unique<Player>(graphics);
+	player->SetTutorialDamageFunc();
 	// カメラ
 	cameraManager = std::make_unique<CameraManager>();
 
@@ -123,7 +124,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 	BulletManager& mBulletManager = BulletManager::Instance();
-
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
@@ -263,7 +263,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// shadow_map
 	shadow_map->debug_imgui();
 
-	//\effect_manager->update(elapsed_time);
+	effect_manager->update(elapsed_time);
 
 	// effect demo
 #ifdef USE_IMGUI
@@ -415,8 +415,9 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
+	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+	minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
