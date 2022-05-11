@@ -18,9 +18,14 @@ void LaserBeam::fUpdate()
 
 void LaserBeam::fRender(GraphicsPipeline& Graphics_)
 {
+    if (mLengthThreshold <= 0.0f)
+    {
+        return;
+    }
     mConstantBuffer->bind(Graphics_.get_dc().Get(), 10);
 	Graphics_.set_pipeline_preset(SHADER_TYPES::LaserBeam);
 	DirectX::XMFLOAT4X4 worldMat= Math::calc_world_matrix(mScale, mOrientation, mStartPoint);
+    
 	mpSkinnedMesh->render(Graphics_.get_dc().Get(), worldMat, { 1.0f,1.0f,1.0f,1.0 });
 }
 

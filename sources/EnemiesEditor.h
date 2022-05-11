@@ -24,7 +24,7 @@ public:
 
 private:
     void fLoad();
-
+    void fSave();
     std::map<std::string, EnemyParamPack> mEnemyParamMap{};
     const char* mFilePath = "./resources/Data/EnemiesParam.json";
 };
@@ -36,6 +36,7 @@ inline EnemyEditor::EnemyEditor()
 
 inline EnemyEditor::~EnemyEditor()
 {
+    fSave();
 }
 
 inline const EnemyParamPack& EnemyEditor::fGetParam(EnemyType Type_)
@@ -90,6 +91,23 @@ inline void EnemyEditor::fLoad()
         if (ifs)
         {
             cereal::JSONInputArchive o_archive(ifs);
+            o_archive(mEnemyParamMap);
+        }
+    }
+}
+
+inline void EnemyEditor::fSave()
+{
+    // Jsonファイルから値を取得
+    std::filesystem::path path = mFilePath;
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
+    {
+        std::ofstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONOutputArchive o_archive(ifs);
             o_archive(mEnemyParamMap);
         }
     }

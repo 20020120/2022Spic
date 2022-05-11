@@ -140,6 +140,35 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
     }
 }
 
+void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_, 
+    DirectX::XMFLOAT3 Target_)
+{
+    // プレイヤーの方向に回転
+    constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
+
+    // プレイヤーとのベクトル
+    const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(Target_ - mPosition);
+    // 自分の正面ベクトル
+    const auto front = Math::Normalize(Math::GetFront(mOrientation));
+    float dot = Math::Dot(vToPlayer, front);
+
+    dot = acosf(dot);
+
+    if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
+    {
+        DirectX::XMVECTOR q;
+        float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
+        if (cross > 0)
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, up, dot * RotSpeed_ * elapsedTime_);
+        }
+        else
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, up, -dot * RotSpeed_ * elapsedTime_);
+        }
+    }
+}
+
 void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
 {
     // プレイヤーの方向に回転

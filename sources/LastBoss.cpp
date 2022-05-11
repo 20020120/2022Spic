@@ -486,7 +486,7 @@ void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_) const
         const DirectX::XMFLOAT3 unitPosition
         = { cosf(rot),0.0f,sinf(rot) };
         mpEnemyManager->fCreateBossUnit(Graphics_,
-            SummonCenterPosition + unitPosition, mfAddBullet);
+            SummonCenterPosition + unitPosition);
     }
 
 

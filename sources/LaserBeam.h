@@ -38,7 +38,22 @@ public:
     void fSetColor(DirectX::XMFLOAT4 Color_);
     void fSetAlpha(float Alpha_);
     void fSetLengthThreshold(float Threshold_);
-  
+
+    //--------------------<ƒQƒbƒ^[ŠÖ”>--------------------//
+    DirectX::XMFLOAT3 fGetStart()const
+    {
+        return mStartPoint;
+    }
+    DirectX::XMFLOAT3 fGetEnd()const
+    {
+        return mEndPoint;
+    }
+    float fGetRadius()const
+    {
+        return mRadius;
+    }
+
+
 private:
     void fCalcTransform(); // p¨‚Ìî•ñ‚ğZo
     void fGuiMenu();

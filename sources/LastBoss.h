@@ -13,8 +13,16 @@ class EnemyManager;
 
 class LastBoss final : public BaseEnemy
 {
-  
+public:
+    enum class Mode // ボスのモード
+    {
+        Ship,          // 戦艦（ダメージは受けない）
+        Human,         // 人型（体力の100%~20%）
+        HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
+        Dragon,        // ドラゴン（体力の20%~0%）
+    };
 
+private:
     struct DivideState
     {
         //--------------------<戦艦>--------------------//
@@ -104,13 +112,6 @@ class LastBoss final : public BaseEnemy
         HumanSpecialAttack  // 必殺技
     };
 
-    enum class Mode // ボスのモード
-    {
-        Ship,          // 戦艦（ダメージは受けない）
-        Human,         // 人型（体力の100%~20%）
-        HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
-        Dragon,        // ドラゴン（体力の20%~0%）
-    };
     //--------------------<砲身のクラス>--------------------//
     class Turret final
     {
@@ -217,9 +218,11 @@ private:
 
     EnemyManager* mpEnemyManager{nullptr};
 
+public:
     // 現在のモード
     Mode mCurrentMode{ Mode::Ship };
 
+private:
     // 弾を
     AddBulletFunc mfAddBullet{};
     float mShotTimer{ 0.0f };

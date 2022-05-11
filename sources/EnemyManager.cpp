@@ -350,6 +350,9 @@ case EnemyType::Tutorial_NoMove:
     mEnemyVec.emplace_back(enemy);
 }
     break;
+case EnemyType::Boss_Unit:
+    fCreateBossUnit(graphics_, mPlayerPosition);
+    break;
     default:;
     }
 
@@ -513,8 +516,12 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         ImGui::Separator();
         static int elem = static_cast<int>(EnemyType::Sword);
         constexpr int count = static_cast<int>(EnemyType::Count);
-        const char* elems_names[count] = { "Archer","Shield","Sword","Spear",
-            "Archer_Ace","Shield_Ace","Sword_Ace","Spear_Ace","Boss","TutorialNoMove"};
+        const char* elems_names[count] =
+
+        {
+            "Archer","Shield","Sword","Spear","Archer_Ace",
+            "Shield_Ace","Sword_Ace","Spear_Ace",
+            "Boss","TutorialNoMove","BossUnit"};
 
         const char* elem_name = (elem >= 0 && elem < count) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("slider enum", &elem, 0, count - 1, elem_name);
@@ -646,11 +653,11 @@ void EnemyManager::fDeleteCash()
 
 
 void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
-    const DirectX::XMFLOAT3& Position_,
-    AddBulletFunc Func_)
+    const DirectX::XMFLOAT3& Position_)
 {
     BaseEnemy* enemy = new BossUnit(Graphics_,
         Position_,
-        mEditor.fGetParam(EnemyType::Boss_Unit), Func_);
+        mEditor.fGetParam(EnemyType::Boss_Unit),
+        BulletManager::Instance().fGetAddFunction());
     mEnemyVec.emplace_back(enemy);
 }
