@@ -123,7 +123,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 	BulletManager& mBulletManager = BulletManager::Instance();
-
 	// ƒNƒŠƒA‰‰o
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
 	if (mWaveManager.during_clear_performance())
@@ -263,7 +262,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// shadow_map
 	shadow_map->debug_imgui();
 
-	//\effect_manager->update(elapsed_time);
+	effect_manager->update(elapsed_time);
 
 	// effect demo
 #ifdef USE_IMGUI

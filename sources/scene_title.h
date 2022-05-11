@@ -136,7 +136,8 @@ private:
     float slashing_wait_timer = 0.0f;
 
     std::unique_ptr<PointLights> point_lights;
-    std::unique_ptr<Effect> fire_effect;
+    std::unique_ptr<Effect> fire_effect1;
+    std::unique_ptr<Effect> fire_effect2;
     DirectX::XMFLOAT3 fire_pos_1{ 4.3f,3.3f,0.9f };
     DirectX::XMFLOAT3 fire_pos_2{ -4.5f,3.3f,0.9f };
 

@@ -40,9 +40,10 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	// pointlight
 	point_lights = std::make_unique<PointLights>(graphics);
 	// effect
-	fire_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\fire.efk");
-	fire_effect->play(effect_manager->get_effekseer_manager(), fire_pos_1, 0.45f);
-	fire_effect->play(effect_manager->get_effekseer_manager(), fire_pos_2, 0.45f);
+	fire_effect1 = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\fire.efk");
+	fire_effect2 = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\fire.efk");
+	fire_effect1->play(effect_manager->get_effekseer_manager(), fire_pos_1, 0.45f);
+	fire_effect2->play(effect_manager->get_effekseer_manager(), fire_pos_2, 0.45f);
 
 	//-------<2Dƒp[ƒg>--------//
 	//--slash--//
@@ -134,7 +135,8 @@ void SceneTitle::uninitialize()
 {
 	post_effect->clear_post_effect();
 	audio_manager->stop_all_se();
-	fire_effect->stop(effect_manager->get_effekseer_manager());
+	fire_effect1->stop(effect_manager->get_effekseer_manager());
+	fire_effect2->stop(effect_manager->get_effekseer_manager());
 }
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)

@@ -34,6 +34,7 @@ void Player::UpdateTitleAnimationEnd(float elaosed_time)
     if (model->end_of_animation())
     {
         model->play_animation(AnimationClips::TitleAnimationEndIdle);
+        end_title_animation = true;
         player_title_activity = &Player::UpdateTitleAnimationEndIdle;
     }
 }
@@ -41,7 +42,6 @@ void Player::UpdateTitleAnimationEndIdle(float elaosed_time)
 {
     if (model->end_of_animation())
     {
-        end_title_animation = true;
     }
 }
 void Player::TransitionTitleAnimationReadyIdle()
@@ -921,7 +921,6 @@ void Player::TransitionWingDashIdle()
 void Player::TransitionWingDashEnd()
 {
 }
-
 void Player::TransitionDie()
 {
     condition_state = ConditionState::Dye;
