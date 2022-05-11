@@ -123,20 +123,23 @@ void ShieldEnemy::fUpdateAttackCapsule()
 {
 }
 
-void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
+bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
 {
     //シールド効果がON状態且つ、正面から攻撃された場合は攻撃をはじくアニメーションへ遷移
     if( is_shield  &&fJudge_in_view() )
     {
         fChangeState(DivedState::Shield);
-        return;
+        return false;
     }
+    bool ret{ false };
 
     //無敵時間が存在していないときにダメージを食らったら
     if (mInvincibleTime <= 0.0f)
     {
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
+
+        ret = true;
      //   fChangeState(DivedState::Damaged);
     }
     //HPがゼロになってしまったら
@@ -145,6 +148,7 @@ void ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
         //fChangeState(DivedState::Die);
         fDie();
     }
+    return ret;
 }
 
 void ShieldEnemy::fSpawnInit()

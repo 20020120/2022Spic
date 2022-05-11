@@ -4,9 +4,10 @@
 // 
 //****************************************************************
 
-#include <utility>
 
 #include"LastBoss.h"
+
+
 LastBoss::Turret::Turret(GraphicsPipeline& Graphics_)
 {
    // ƒ‚ƒfƒ‹‚Ì‰Šú‰»
@@ -33,7 +34,7 @@ void LastBoss::Turret::fRender(GraphicsPipeline& graphics_,
     DirectX::XMStoreFloat4x4(&trans, matrix);
     
     mpModel->render(graphics_.get_dc().Get(), Turret::mAnimPara, 
-        trans, { 1.0f,1.0f,1.0f,1.0f },1.0f);
+        trans, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 //****************************************************************
@@ -53,8 +54,7 @@ void LastBoss::SecondGun::fUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mpModel->update_animation(elapsedTime_);
 }
 
-void LastBoss::SecondGun::fRender(GraphicsPipeline& graphics_, const DirectX::XMFLOAT4X4& ParentWorld_,
-    const DirectX::XMFLOAT3& Position_)
+void LastBoss::SecondGun::fRender(GraphicsPipeline& graphics_, const DirectX::XMFLOAT4X4& ParentWorld_,const DirectX::XMFLOAT3& Position_)
 {
     constexpr float scale = 1.0f;
 
@@ -64,11 +64,11 @@ void LastBoss::SecondGun::fRender(GraphicsPipeline& graphics_, const DirectX::XM
     const auto rotMat = DirectX::XMMatrixIdentity();
 
 
-    const DirectX::XMMATRIX matrix =
-        DirectX::XMLoadFloat4x4(&ParentWorld_) * scaleMat * rotMat * transMat;
+    const DirectX::XMMATRIX matrix =transMat*
+        DirectX::XMLoadFloat4x4(&ParentWorld_);
     DirectX::XMFLOAT4X4 trans{};
     DirectX::XMStoreFloat4x4(&trans, matrix);
 
     mpModel->render(graphics_.get_dc().Get(), SecondGun::mAnimPara,
-        trans, { 1.0f,1.0f,1.0f,1.0f }, 1.0f);
+        ParentWorld_, { 1.0f,1.0f,1.0f,1.0f });
 }

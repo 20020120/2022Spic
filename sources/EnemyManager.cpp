@@ -100,8 +100,10 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                enemy->fDamaged(PlayerAttackPower_, 2.3f);
-                hitCounts++;
+                if(enemy->fDamaged(PlayerAttackPower_, 2.3f))
+                {
+                    hitCounts++;
+                }
             }
         }
     }
@@ -331,7 +333,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         {
         BaseEnemy* enemy = new LastBoss(graphics_,
             Source_.mEmitterPoint,
-            mEditor.fGetParam(Source_.mType));
+            mEditor.fGetParam(Source_.mType),this);
         mEnemyVec.emplace_back(enemy);
         }
         break;
@@ -635,4 +637,15 @@ void EnemyManager::fDeleteCash()
         }
     }
     mCashEnemyVec.clear();
+}
+
+
+
+void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
+    DirectX::XMFLOAT3 Position_)
+{
+    BaseEnemy* enemy = new SpearEnemy(Graphics_,
+        Position_,
+        mEditor.fGetParam(EnemyType::Boss_Unit));
+    mEnemyVec.emplace_back(enemy);
 }

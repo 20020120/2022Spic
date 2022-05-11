@@ -247,9 +247,33 @@ void SkinnedMesh::fech_by_bone(anim_Parameters& para, const DirectX::XMFLOAT4X4&
     }
 }
 
+void SkinnedMesh::fech_by_bone(anim_Parameters& para, 
+                              const DirectX::XMFLOAT4X4& world,
+    const skeleton::bone& bone,
+    DirectX::XMFLOAT4X4& ResultMat)
+{
+    if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
+    {
+        const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
+        DirectX::XMFLOAT4X4 w;
+        XMStoreFloat4x4(&w, XMLoadFloat4x4(&bone_node.global_transform) * XMLoadFloat4x4(&world));
+
+        DirectX::XMFLOAT3 pos = { w._41,w._42,w._43 };
+        DirectX::XMFLOAT3 scale = { Math::Length({w._11,w._12,w._13}),  Math::Length({w._21,w._22,w._23}),  Math::Length({w._31,w._32,w._33}) };
+
+        DirectX::XMMATRIX S{ DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) };
+        DirectX::XMMATRIX T{ DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z) };
+        DirectX::XMMATRIX R = DirectX::XMLoadFloat4x4(&w) * DirectX::XMMatrixInverse(nullptr, S) * DirectX::XMMatrixInverse(nullptr, T);
+
+        DirectX::XMStoreFloat4x4(&ResultMat, S * R * T);
+    }
+
+
+}
+
 void SkinnedMesh::render(ID3D11DeviceContext* dc, const DirectX::XMFLOAT4X4& world,
-    const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
-    const DirectX::XMFLOAT4& emissive_color, float glow_thickness)
+                         const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
+                         const DirectX::XMFLOAT4& emissive_color, float glow_thickness)
 {
     geometry_constants->data.dissolve_threshold.x = threshold;
     geometry_constants->data.dissolve_threshold.y = glow_time;
