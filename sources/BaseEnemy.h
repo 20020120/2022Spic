@@ -34,6 +34,7 @@ public:
     virtual bool  fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
+    void fTurnToPlayerXYZ(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
 
     //--------------------<セッター関数>--------------------//

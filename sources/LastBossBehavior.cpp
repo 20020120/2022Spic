@@ -276,9 +276,91 @@ void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Gr
         mOrientation = Math::lerp(mBeginOrientation, mEndOrientation, mAwayLerp);
     }
 
-    if(mAwayLerp>1.0f)
+    if(mAwayLerp>=1.0f)
     {
-        
+        fChangeState(DivideState::HumanSpWait);
+        fSpawnChildUnit(Graphics_, 10);
+    }
+}
+
+void LastBoss::fHumanSpAttackWaitInit()
+{
+    mTimer = 0.0f;
+}
+
+void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 20.0f);
+    mTimer += elapsedTime_;
+    if(mTimer>=mkHumanSpWaitTime)
+    {
+        fChangeState(DivideState::HumanSpOver);
+    }
+}
+
+void LastBoss::fHumanSpAttackCancelInit()
+{
+    
+}
+
+void LastBoss::fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
+}
+
+void LastBoss::fHumanSpAttackTimeOverInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::ship_to_human_quick);
+}
+
+void LastBoss::fHumanSpAttackTimeOverUpdate(float elapsedTime_,
+    GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::HumanSpCharge);
+    }
+}
+
+void LastBoss::fHumanSpAttackChargeInit()
+{
+    mAnimationSpeed = 0.7f;
+    mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
+}
+
+void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 5.0f);
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::HumanSpShoot);
+        mAnimationSpeed = 1.0f;
+    }
+}
+
+void LastBoss::fHumanSpBeamShootInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::human_beam_shoot);
+    mTimer = -0.0f;
+
+    mAwayBegin = mPosition;
+    mAwayLerp = 0.0f;
+}
+
+void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
+{
+    mTimer += elapsedTime_;
+    if(mTimer>mkHumanSpBeamTime)
+    {
+        mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
+        mAwayLerp += elapsedTime_ * 2.0f;
+    }
+    if (mAwayLerp > 1.0f)
+    {
+        fChangeState(DivideState::HumanIdle);
     }
 }
 

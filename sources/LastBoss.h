@@ -38,7 +38,12 @@ class LastBoss final : public BaseEnemy
         inline static const char* HumanWithdrawal_End = "HumanWithdrawal_End";
         inline static const char* HumanBlowAttack = "HumanBlowAttack";
 
-        inline static const char* HumanSpAway = "HumanSpAway";
+        inline static const char* HumanSpAway = "HumanSpAway"; // 遠くに飛ぶ
+        inline static const char* HumanSpWait = "HumanSpWait"; // 待っている
+        inline static const char* HumanSpOver = "HumanSpOver"; // 時間切れ
+        inline static const char* HumanSpCharge = "HumanSpCharge"; // ため
+        inline static const char* HumanSpShoot = "HumanSpShoot"; // 発射
+
 
         //--------------------<人型の死亡>--------------------//
         inline static const char* HumanDieStart = "HumanDieStart";   // 人型の死亡開始
@@ -164,7 +169,7 @@ private:
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
     void fChangeHumanToDragon();
 
-    void fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_);
+    void fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_) const;
 private:
     //****************************************************************
     // 
@@ -210,7 +215,7 @@ private:
     DirectX::XMFLOAT4 mBeginOrientation{};
     DirectX::XMFLOAT4 mEndOrientation{ 0.0f,0.0f,0.0f,1.0f };
 
-    const EnemyManager* mpEnemyManager{nullptr};
+    EnemyManager* mpEnemyManager{nullptr};
 
     // 現在のモード
     Mode mCurrentMode{ Mode::Ship };
@@ -235,6 +240,10 @@ private:
     const float mkHumanAllShotDelay{ 0.15f };
     const float mkHumanAllShotEnd{ 1.3f };
     const float mkHumanAllShotBegin{ 0.3f };
+   
+    const float mkHumanSpWaitTime{ 15.0f };
+    const float mkHumanSpBeamTime{ 5.0f };
+
 private:
 
     //****************************************************************
@@ -289,7 +298,15 @@ private:
     void fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     void fHumanSpAttackTimeOverInit(); // 制限時間を超えたら攻撃
-    void fHumanSpAttackTimeOverUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fHumanSpAttackTimeOverUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
+    void fHumanSpAttackChargeInit();
+    void fHumanSpAttackChargeUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
+
+    void fHumanSpBeamShootInit();
+    void fHumanSpBeamShootUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
 
 
     //--------------------<人型の死亡エフェクト>--------------------//

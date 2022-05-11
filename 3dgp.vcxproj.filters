@@ -175,6 +175,9 @@
     <Filter Include="Sources\character\enemy\05_Tutorial">
       <UniqueIdentifier>{ecb28b4b-bee3-4d16-ba28-9038eeb272d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\enemy\06_BossUnit">
+      <UniqueIdentifier>{9d391b03-84a3-4f32-b351-f0686e6144bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -500,6 +503,9 @@
     </ClCompile>
     <ClCompile Include="sources\TutorialEnemy.cpp">
       <Filter>Sources\character\enemy\05_Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\BossUnit.cpp">
+      <Filter>Sources\character\enemy\06_BossUnit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -829,6 +835,9 @@
     </ClInclude>
     <ClInclude Include="sources\TutorialEnemy.h">
       <Filter>Sources\character\enemy\05_Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BossUnit.h">
+      <Filter>Sources\character\enemy\06_BossUnit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

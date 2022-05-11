@@ -13,10 +13,14 @@
 #include"LastBoss.h"
 #include"TutorialEnemy.h"
 #include"SwordEnemyAce.h"
+#include"BossUnit.h"
+
 #include"imgui_include.h"
 #include "user.h"
 #include"collision.h"
 #include"Operators.h"
+
+
 #include <fstream>
 
 //****************************************************************
@@ -642,10 +646,11 @@ void EnemyManager::fDeleteCash()
 
 
 void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
-    DirectX::XMFLOAT3 Position_)
+    const DirectX::XMFLOAT3& Position_,
+    AddBulletFunc Func_)
 {
-    BaseEnemy* enemy = new SpearEnemy(Graphics_,
+    BaseEnemy* enemy = new BossUnit(Graphics_,
         Position_,
-        mEditor.fGetParam(EnemyType::Boss_Unit));
+        mEditor.fGetParam(EnemyType::Boss_Unit), Func_);
     mEnemyVec.emplace_back(enemy);
 }

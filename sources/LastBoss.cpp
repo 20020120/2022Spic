@@ -2,6 +2,7 @@
 
 #include "BulletManager.h"
 #include"EnemyManager.h"
+#include"Operators.h"
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
@@ -281,6 +282,58 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanSpAway, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpAttackWaitInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpAttackWaitUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpWait, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpAttackTimeOverInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpAttackTimeOverUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpOver, tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpBeamShootInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpBeamShootUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpShoot,
+            tuple));
+    }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanSpAttackChargeInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanSpAttackChargeUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanSpCharge, tuple));
+    }
 
 
 
@@ -378,6 +431,10 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::HumanSpAway);
         }
+        if(ImGui::Button("Summon"))
+        {
+            
+        }
         ImGui::TreePop();
     }
     
@@ -413,24 +470,23 @@ void LastBoss::fChangeHumanToDragon()
     }
 }
 
-void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_)
+void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_) const
 {
     // ƒ†ƒjƒbƒg‚ğ¢Š«‚·‚é
 
     // ’è”
-    float SummonRadius = { 30.0f };
-    DirectX::XMFLOAT3 SummonCenterPosition = { 0.0f,0.0f,0.0f };
+    constexpr DirectX::XMFLOAT3 SummonCenterPosition = { 0.0f,0.0f,0.0f };
 
     // ˆê‘Ì“–‚½‚è‚Ì‰ñ“]Šp‚ğZo‚·‚é
     const float peaceOfRotation = 360.0f / static_cast<float>(Amounts_);
     for (int i = 0; i < Amounts_; ++i)
     {
         // ‰ñ“]Šp‚É‰‚¶‚½ˆÊ’u‚ğŒˆ’è‚·‚é
-        const float rot = DirectX::XMConvertToRadians(peaceOfRotation * i);
-        SummonCenterPosition = { cosf(rot),0.0f,sinf(rot) };
-        
-        mpEnemyManager->
-
+        const float rot = DirectX::XMConvertToRadians(peaceOfRotation * static_cast<float>(i));
+        const DirectX::XMFLOAT3 unitPosition
+        = { cosf(rot),0.0f,sinf(rot) };
+        mpEnemyManager->fCreateBossUnit(Graphics_,
+            SummonCenterPosition + unitPosition, mfAddBullet);
     }
 
 

@@ -138,7 +138,36 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
             mOrientation = Math::RotQuaternion(mOrientation, up, -dot * RotSpeed_ * elapsedTime_);
         }
     }
+}
 
+void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
+{
+    // プレイヤーの方向に回転
+    // 軸を算出
+    DirectX::XMFLOAT3 axis = {};
+
+    // プレイヤーとのベクトル
+    const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
+    // 自分の正面ベクトル
+    const auto front = Math::Normalize(Math::GetFront(mOrientation));
+    float dot = Math::Dot(vToPlayer, front);
+
+    dot = acosf(dot);
+
+    if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
+    {
+        axis = Math::Cross(front, vToPlayer); 
+        DirectX::XMVECTOR q;
+        float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
+        if (cross > 0)
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, axis, dot * RotSpeed_ * elapsedTime_);
+        }
+        else
+        {
+            mOrientation = Math::RotQuaternion(mOrientation, axis, -dot * RotSpeed_ * elapsedTime_);
+        }
+    }
 }
 
 void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)

@@ -79,7 +79,8 @@ public:
 
     // ボスから呼び出す
     void fCreateBossUnit(GraphicsPipeline& Graphics_,
-        DirectX::XMFLOAT3 Position_);
+        const DirectX::XMFLOAT3& Position_, 
+        AddBulletFunc Func_);
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
