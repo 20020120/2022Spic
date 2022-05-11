@@ -653,6 +653,14 @@ void Player::TutorialInvAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, st
     }
 }
 
+void Player::TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (model->end_of_animation())
+    {
+        TransitionTutoriaIdle();
+    }
+}
+
 void Player::TransitionTutoriaIdle(float blend_second)
 {
     //覚醒状態の時の待機アニメーションにセット
@@ -920,6 +928,25 @@ void Player::TransitionTutorialInvAwaiking()
     player_tutorial_activity = &Player::TutorialInvAwaikingUpdate;
 }
 
+void Player::TransitionTutorialDamage()
+{
+    //ダッシュエフェクトの終了
+    start_dash_effect = false;
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //覚醒状態の時のダメージアニメーションに設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingDamage, false, true);
+    //通常状態の時のアニメーションに設定
+    else model->play_animation(AnimationClips::Damage, false, true);
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //ダメージ受けたときの更新関数に切り替える
+    player_activity = &Player::DamageUpdate;
+
+}
+
 void Player::TutorialAwaiking()
 {
     //ボタン入力
@@ -928,4 +955,9 @@ void Player::TutorialAwaiking()
         if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
     }
     if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
+}
+
+void Player::SetTutorialDamageFunc()
+{
+    damage_func = [=](int damage, float invincible)->void {TutorialDamagedCheck(damage, invincible); };
 }
