@@ -14,6 +14,7 @@ class BossUnit final : public BaseEnemy
         inline static constexpr const char* Wonder = "Wonder";
         inline static constexpr const char* AttackBegin = "AttackBegin";
         inline static constexpr const char* AttackBeam = "AttackBeam";
+        inline static constexpr const char* Stun = "Stun";
     };
 
     enum AnimationName
@@ -45,6 +46,7 @@ protected:
 
     void fSelectWonderOrAttack();
     void fResetLaser();
+    void fGuiMenu();
 private:
     float mTimer = 0.0f;
     std::mt19937 mt{ std::random_device{}() };
@@ -61,11 +63,14 @@ private:
     bool mOnPlayer{};
     DirectX::XMFLOAT3 TargetPos{};
 
+    float mLifeTimer{};
+
     const DirectX::XMFLOAT3 mStartPosition{};
     const float length = { 100.0f };
     const float mkIdleTime = 3.0f;
     const float mkWalkTime = 3.0f;
     const float mkChargeTime = 2.0f;
+    const float mkLifeTime = 20.0f;
 private:
     //--------------------<ステートマシン>--------------------//
     void fStartInit();
@@ -82,6 +87,9 @@ private:
 
     void fAttackBeamInit();
     void fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     void fRender(GraphicsPipeline& Graphics_) override;
 };

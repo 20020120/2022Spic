@@ -122,10 +122,13 @@ private:
                      const DirectX::XMFLOAT4X4& ParentWorld_,
                      const DirectX::XMFLOAT3& Position_);
 
+
+        DirectX::XMFLOAT3 fGetPosition()const;
     private:
         DirectX::XMFLOAT4 mOrientation{0.0f,0.0f,0.0f,1.0f}; // 角度
         std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
+        DirectX::XMFLOAT3 mPosition;
     };
   
     //--------------------<第二砲身のクラス>--------------------//
@@ -165,6 +168,7 @@ protected:
 private:
     void fGuiMenu();
 
+    void fResetLaser();
 
     AttackKind fRandomAttackFromHp(); // 現在の体力の割合から行動を決める
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
@@ -186,6 +190,13 @@ private:
     float mLaserThreshold{};           // ビームの長さ0.0f~1.0f
     float mLaserAlpha{};
     float mLaserRadius{};              // ビームの太さ
+
+    // 人型のビーム
+    LaserBeam mRightBeam{};
+    LaserBeam mLeftBeam{};
+    float mRightBeamThreshold{};
+    float mLeftBeamThreshold{};
+
 
     //--------------------<ボスのタレット>--------------------//
     std::unique_ptr<Turret> mpTurretRight{ nullptr };
@@ -246,7 +257,7 @@ private:
    
     const float mkHumanSpWaitTime{ 15.0f };
     const float mkHumanSpBeamTime{ 5.0f };
-
+    const float mkSpChargeTime = 7.0f;
 private:
 
     //****************************************************************

@@ -39,10 +39,18 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     mSecondGunBoneRight = mpModel->get_bone_by_name
     ("secondarygun_R_root_joint");
 
-
     // ’e”­ŽË—p‚ÌŠÖ”‚ðŽæ“¾
     mfAddBullet= BulletManager::Instance().fGetAddFunction();
 
+    // ƒr[ƒ€‚ð‰Šú‰»
+    mRightBeam.fInitialize(Graphics_.get_device().Get(), L"");
+    mLeftBeam.fInitialize(Graphics_.get_device().Get(), L"");
+
+    mRightBeam.fSetRadius(3.0f);
+    mRightBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
+    mLeftBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
+    mLeftBeam.fSetRadius(3.0f);
+    mRightBeam.fSetRadius(3.0f);
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
@@ -81,15 +89,8 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     mpTurretLeft->fUpdate(elapsedTime_, Graphics_);
     mpTurretRight->fUpdate(elapsedTime_, Graphics_);
 
-
-
-    DirectX::XMFLOAT3 position{};
-    DirectX::XMFLOAT3 up{};
-    DirectX::XMFLOAT4X4 rotMat{};
-    mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
-        mOrientation, mPosition), mTurretBoneLeft, position,
-        up, rotMat);
-    debug_figure->create_sphere(position, 20.0f, { 0.0f,0.0f,1.0f,1.0f });
+    mRightBeam.fUpdate();
+    mLeftBeam.fUpdate();
 }
 
 void LastBoss::fUpdateAttackCapsule()
@@ -437,11 +438,21 @@ void LastBoss::fGuiMenu()
         }
         ImGui::TreePop();
     }
-    
-    
 
     ImGui::End();
 #endif
+}
+
+void LastBoss::fResetLaser()
+{
+    mRightBeamThreshold = 0.0f;
+    mLeftBeamThreshold = 0.0f;
+
+    mRightBeam.fSetAlpha(1.0f);
+    mLeftBeam.fSetAlpha(1.0f);
+
+    mLeftBeam.fSetLengthThreshold(mLeftBeamThreshold);
+    mRightBeam.fSetLengthThreshold(mRightBeamThreshold);
 }
 
 LastBoss::AttackKind LastBoss::fRandomAttackFromHp()

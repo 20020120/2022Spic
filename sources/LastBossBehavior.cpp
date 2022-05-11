@@ -326,14 +326,25 @@ void LastBoss::fHumanSpAttackTimeOverUpdate(float elapsedTime_,
 void LastBoss::fHumanSpAttackChargeInit()
 {
     mAnimationSpeed = 0.7f;
-    mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge);
+    mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge, true);
+    mTimer = mkSpChargeTime;
 }
 
 void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_, 5.0f);
-    if(mpModel->end_of_animation(mAnimPara))
+    mTimer -= elapsedTime_;
+
+    if(mTimer>=2.0f)
+    {
+        fTurnToPlayer(elapsedTime_, 5.0f);
+        mRightBeam.fSetPosition(mpTurretRight->fGetPosition(), mPlayerPosition);
+        mLeftBeam.fSetPosition(mpTurretLeft->fGetPosition(), mPlayerPosition);
+    }
+   
+
+
+    if (mTimer <= 0.0f)
     {
         fChangeState(DivideState::HumanSpShoot);
         mAnimationSpeed = 1.0f;
@@ -343,7 +354,7 @@ void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_,
 void LastBoss::fHumanSpBeamShootInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_beam_shoot);
-    mTimer = -0.0f;
+    mTimer = 0.0f;
 
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
@@ -357,6 +368,17 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
     {
         mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
         mAwayLerp += elapsedTime_ * 2.0f;
+        fResetLaser();
+    }
+    else
+    {
+        mLeftBeamThreshold += elapsedTime_ * 10.0f;
+        mLeftBeamThreshold = (std::min)(2.0f, mLeftBeamThreshold);
+        mRightBeamThreshold += elapsedTime_ * 10.0f;
+        mRightBeamThreshold = (std::min)(2.0f, mRightBeamThreshold);
+
+        mLeftBeam.fSetLengthThreshold(mLeftBeamThreshold);
+        mRightBeam.fSetLengthThreshold(mRightBeamThreshold);
     }
     if (mAwayLerp > 1.0f)
     {
@@ -518,4 +540,6 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     // ƒr[ƒ€—Ş‚ğ•`‰æ
     mLaserPointer.fRender(graphics);
     mBeam.fRender(graphics);
+    mRightBeam.fRender(graphics);
+    mLeftBeam. fRender(graphics);
 }

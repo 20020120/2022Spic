@@ -19,7 +19,7 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_,
     mBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
     mBeam.fSetRadius(2.0f);
     mWarningLine.fSetRadius(0.05f);
-
+    mLifeTimer = mkLifeTime;
 }
 
 BossUnit::BossUnit(GraphicsPipeline& Graphics_)
@@ -31,6 +31,12 @@ void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     fBaseUpdate(elapsedTime_, Graphics_);
     mBeam.fUpdate();
     mWarningLine.fUpdate();
+
+    mLifeTimer -= elapsedTime_;
+    if(mLifeTimer<0.0f)
+    {
+        fDie();
+    }
 }
 
 void BossUnit::fUpdateAttackCapsule()
@@ -46,6 +52,11 @@ bool BossUnit::fDamaged(int damage, float invincible_time)
 void BossUnit::fSetStun(bool arg)
 {
     BaseEnemy::fSetStun(arg);
+    if (mIsStun)
+    {
+        fResetLaser();
+        fChangeState(DivideState::Stun);
+    }
 }
 
 void BossUnit::fRegisterFunctions()
@@ -121,7 +132,22 @@ void BossUnit::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::AttackBeam,
             tuple));
     }
-    
+
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun,
+            tuple));
+    }
+
     fChangeState(DivideState::Start);
 }
 
@@ -148,6 +174,23 @@ void BossUnit::fResetLaser()
 
     mBeamThreshold = 0.0f;
     mWarningThreshold = 0.0f;
+    mIsAttack = false;
+}
+
+void BossUnit::fGuiMenu()
+{
+#ifdef USE_IMGUI
+    ImGui::Begin("BossUnit");
+    ImGui::Text("IsAttack:");
+    ImGui::SameLine();
+    ImGui::Text(mIsAttack ? "true" : "false");
+
+    ImGui::Text("OnPlayer:");
+    ImGui::SameLine();
+    ImGui::Text(mOnPlayer ? "true" : "false");
+
+    ImGui::End();
+#endif
 }
 
 void BossUnit::fStartInit()
@@ -251,7 +294,6 @@ void BossUnit::fAttackChargeInit()
    {
        mWarningLine.fSetPosition(mPosition, mPlayerPosition);
        mBeam.fSetPosition(mPosition, mPlayerPosition);
-       fTurnToPlayer(1.0f, 20.0f);
    }
    else
    {
@@ -263,7 +305,7 @@ void BossUnit::fAttackChargeInit()
        TargetPos = mPlayerPosition + TargetAdd;
    }
 
-
+   mpModel->play_animation(mAnimPara, AnimationName::BEAM_CHARGE_START);
     mTimer = 0.0f;
 }
 
@@ -280,7 +322,17 @@ void BossUnit::fAttackChargeUpdate(float elapsedTime_,
         mWarningLine.fSetPosition(mPosition, mPosition + front * 100.0f);
         mBeam.fSetPosition(mPosition, mPosition + front * 100.0f);
     }
-    
+    else
+    {
+        if (mTimer <= mkChargeTime * 0.3f)
+        {
+
+            fTurnToPlayer(elapsedTime_, 20.0f);
+            mWarningLine.fSetPosition(mPosition, mPlayerPosition);
+            mBeam.fSetPosition(mPosition, mPlayerPosition);
+        }
+    }
+   
     mTimer += elapsedTime_;
     if(mTimer>mkChargeTime)
     {
@@ -288,12 +340,20 @@ void BossUnit::fAttackChargeUpdate(float elapsedTime_,
     }
 
     mWarningLine.fSetLengthThreshold(mWarningThreshold);
+
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        mpModel->play_animation(mAnimPara,
+            AnimationName::BEAM_CHARGE_IDLE, true);
+    }
+
 }
 
 void BossUnit::fAttackBeamInit()
 {
     mTimer = 0.0f;
     mIsAttack = true;
+    mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_START);
 }
 
 void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -313,6 +373,27 @@ void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
         mIsAttack = false;
     }
     mBeam.fSetLengthThreshold(mBeamThreshold);
+
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_IDLE);
+    }
+}
+
+void BossUnit::fStunInit()
+{
+    mTimer = 0.0f;
+    mpModel->play_animation(mAnimPara, AnimationName::STUN, true);
+}
+
+void BossUnit::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mTimer += elapsedTime_;
+    if(mTimer>=mStunTime)
+    {
+        fChangeState(DivideState::Idle);
+        mIsStun = false;
+    }
 }
 
 void BossUnit::fRender(GraphicsPipeline& graphics)

@@ -32,9 +32,21 @@ void LastBoss::Turret::fRender(GraphicsPipeline& graphics_,
         DirectX::XMLoadFloat4x4(&ParentWorld_) * transMat;
     DirectX::XMFLOAT4X4 trans{};
     DirectX::XMStoreFloat4x4(&trans, matrix);
-    
+
+    mPosition =
+    {
+        trans._41,
+        trans._42,
+        trans._43
+
+    };
     mpModel->render(graphics_.get_dc().Get(), Turret::mAnimPara, 
         trans, { 1.0f,1.0f,1.0f,1.0f });
+}
+
+DirectX::XMFLOAT3 LastBoss::Turret::fGetPosition() const
+{
+    return mPosition;
 }
 
 //****************************************************************

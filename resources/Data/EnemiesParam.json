@@ -31,7 +31,7 @@
                 "InvincibleTime": 0.4000000059604645,
                 "BodyCapsuleRad": 5.0,
                 "AttackCapsuleRad": 2.0,
-                "StunTime": 0.0
+                "StunTime": 15.0
             }
         },
         {

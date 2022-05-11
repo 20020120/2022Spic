@@ -72,6 +72,7 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
 void BaseEnemy::fDie()
 {
     mIsAlive = false;
+    mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 
