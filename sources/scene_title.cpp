@@ -10,7 +10,7 @@
 #include "ModelCashe.h"
 #include"SceneTutorial.h"
 
-bool SceneTitle::is_ready = false;
+bool SceneTitle::is_load_ready = false;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
 {
@@ -224,13 +224,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				tutorial_tab.selecterR.position = Math::lerp(tutorial_tab.selecterR.position, tutorial_tab.arrival_posR, 10.0f * elapsed_time);
 
 				// Aボタンで戻る
-				if (is_ready && game_pad->get_button_down() & GamePad::BTN_A)
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_A)
 				{
 					audio_manager->play_se(SE_INDEX::SELECT);
 					tutorial_tab.display = false;
 				}
 				// 決定
-				if (is_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					audio_manager->play_se(SE_INDEX::DECISION);
 					player->StartTitleAnimation();
@@ -241,7 +241,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			else
 			{
 				r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
-				if (is_ready && game_pad->get_button_down() & GamePad::BTN_B)
+				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
 					{
@@ -261,7 +261,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		case 1: // succession
 			r_up(0, { 990.0f, 545.0f }, { 1167.0f, 545.0f });
 			r_down(2, { 980.0f, 650.0f }, { 1190.0f, 650.0f });
-			if (game_pad->get_button_down() & GamePad::BTN_B)
+			if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 			{
 				audio_manager->play_se(SE_INDEX::DECISION);
 				player->StartTitleAnimation();
@@ -305,7 +305,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		else{ SceneManager::scene_switching(new SceneLoading(new TutorialScene()), DISSOLVE_TYPE::HORIZON, 2.0f); }
 
 		point_lights->finalize(graphics);
-		is_ready = false;
+		is_load_ready = false;
 	}
 
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
@@ -447,7 +447,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	r_font_render("beginning", beginning);
 	r_font_render("succession", succession);
 	r_font_render("exit", exit);
-	if (!is_ready)	r_font_render("now_loading", now_loading);
+	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
 
@@ -481,7 +481,7 @@ void SceneTitle::loading_thread(ID3D11Device* device)
 	//--タイトル裏ロード--//
 	ModelCashes::Load_IntoTitle(device);
 
-	is_ready = true;
+	is_load_ready = true;
 }
 
 bool SceneTitle::step_string(float elapsed_time, std::wstring full_text,
