@@ -178,8 +178,8 @@ private:
     std::unique_ptr<SpriteDissolve> change_scene_gauge{ nullptr };
     struct ChangeSceneGauge
     {
-        DirectX::XMFLOAT2 pos{ 14.0f,284.0f };
-        DirectX::XMFLOAT2 scale{ 0.5f,0.3f };
+        DirectX::XMFLOAT2 pos{ -13.9f,276.0f };
+        DirectX::XMFLOAT2 scale{ 3.8f,2.9f };
         float threshold{ 1.0f };
     };
     ChangeSceneGauge change_gauge_parm;
@@ -187,7 +187,7 @@ private:
     struct ChangeSceneTxt
     {
         DirectX::XMFLOAT2 position{ 19.0f,282.8f };
-        DirectX::XMFLOAT2 scale{ 0.37f,0.4f };
+        DirectX::XMFLOAT2 scale{ 0.5f,0.5f };
         float angle;
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
     };

@@ -551,7 +551,8 @@ private:
     void transition_normal_behavior()
     {
         behavior_state = Behavior::Normal;
-        TransitionIdle();
+        if (is_tutorial)TransitionTutoriaIdle();
+        else TransitionIdle();
     }
 
 public:
@@ -591,6 +592,8 @@ private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
     //------------------------------------------------------------------------------------------//
+    //チュートリアルかどうか trueでチュートリアル
+    bool is_tutorial{ false };
     //今のチュートリアルが終わった時にtrueになる
     bool is_next_tutorial{ false };
     //今のチュートリアルでどれだけ操作したかどうか
@@ -600,6 +603,7 @@ private:
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
+    void SetIsTutorial(bool tutorial) { is_tutorial = tutorial; }
     bool GetNextTutorial() { return is_next_tutorial; }
     void FalseNextTutorial() { is_next_tutorial = false; }
 private:
