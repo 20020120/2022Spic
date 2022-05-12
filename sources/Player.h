@@ -237,7 +237,6 @@ private:
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
 
-
     skeleton::bone player_bones[8];
 private:
     //プレイヤーのパラメータの変化
@@ -262,6 +261,7 @@ private:
     CapsuleParam sword_capsule_param[2]{};
     CapsuleParam charge_capsule_param{};
     CapsuleParam body_capsule_param{};
+    CapsuleParam just_avoidance_capsule_param{};
 
     DirectX::XMFLOAT3 capsule_body_start{ 0,2.6f,0 };
     DirectX::XMFLOAT3 capsule_body_end{ 0,0.2f,0 };
@@ -300,6 +300,7 @@ public:
     bool GetIsAwakening() { return is_awakening; }
     bool GetIsAlive() { return is_alive; }
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
+    CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
     {
         if (is_charge)
@@ -334,6 +335,8 @@ public:
     void DamagedCheck(int damage, float InvincibleTime);
     void TutorialDamagedCheck(int damage, float InvincibleTime);
     void PlayerKnocKback(float elapsed_time);
+    //プレイヤーのジャスト回避用の当たり判定に当たったら
+    void PlayerJustAvoidance(bool hit);
 public:
     void FalseCameraReset() { camera_reset = false; }
     void FalseCameraLockOn() { is_camera_lock_on = false; }

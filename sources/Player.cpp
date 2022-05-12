@@ -268,6 +268,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                     ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
                     ImGui::TreePop();
                 }
+                if (ImGui::TreeNode("just_avoidance_capsule_param"))
+                {
+                    ImGui::DragFloat3("capsule_parm.start", &just_avoidance_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &just_avoidance_capsule_param.end.x, 0.1f);
+                    ImGui::DragFloat("just_avoidance_capsule_param.rasius", &just_avoidance_capsule_param.rasius, 0.1f);
+                    ImGui::TreePop();
+                }
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("easing"))
@@ -304,7 +311,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
     }
 #endif // USE_IMGUI
-
+    debug_figure->create_capsule(just_avoidance_capsule_param.start, just_avoidance_capsule_param.end, just_avoidance_capsule_param.rasius, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 
@@ -640,6 +647,17 @@ void Player::BodyCapsule()
         charge_capsule_param.end = end;
         charge_capsule_param.rasius = 2.5f;
     }
+    {
+        DirectX::XMFLOAT3 pos = {}, up = {};
+        DirectX::XMFLOAT3 end = {}, e_up = {};
+
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[0], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[1], end, e_up);
+
+        just_avoidance_capsule_param.start = pos;
+        just_avoidance_capsule_param.end = end;
+        just_avoidance_capsule_param.rasius = 4.6f;
+    }
 }
 void Player::SwordCapsule()
 {
@@ -689,7 +707,7 @@ void Player::StunSphere()
         //覚醒状態なら
         if (is_awakening)sphere_radius = 17.0f;
         //覚醒状態じゃないなら
-        else sphere_radius = 2.0f;
+        else sphere_radius = 4.0f;
     }
     else sphere_radius = 0;
 }
@@ -756,12 +774,6 @@ void Player::AddCombo(int count)
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
     //ジャスト回避
-    if (is_behind_avoidance)
-    {
-        is_just_avoidance = true;
-        //ジャスト回避だったらダメージを受けない
-        return;
-    }
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
@@ -795,12 +807,6 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     //チュートリアル中はダメージを受けない
     damage = 0;
     //ジャスト回避
-    if (is_behind_avoidance)
-    {
-        is_just_avoidance = true;
-        //ジャスト回避だったらダメージを受けない
-        return;
-    }
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
@@ -829,7 +835,15 @@ void Player::PlayerKnocKback(float elapsed_time)
     velocity.x = (-forward.x * 2.0f)* velocity.x;
     velocity.y = (-forward.y * 2.0f)* velocity.y;
     velocity.z = (-forward.z * 2.0f)* velocity.z;
+}
 
+void Player::PlayerJustAvoidance(bool hit)
+{
+    if (hit)
+    {
+        is_just_avoidance = true;
+        TransitionBehindAvoidance();
+    }
 }
 
 void Player::GetPlayerDirections()
