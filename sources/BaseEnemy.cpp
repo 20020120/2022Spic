@@ -22,6 +22,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
     mCubeHalfSize = mScale.x * 5.0f;
     mDissolve = 1.0f;
+    mIsStun = false;
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -34,13 +35,20 @@ BaseEnemy::~BaseEnemy()
   //  mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
-void BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    if (mIsPlayerSearch)
+    {
+        elapsedTime_ *= 0.8f;
+    }
     mInvincibleTime -= elapsedTime_;
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
     fUpdateVernierEffectPos();
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
     mpModel->update_animation(mAnimPara, elapsedTime_);
+
+    
+    return elapsedTime_;
 }
 
 void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
@@ -225,6 +233,11 @@ void BaseEnemy::fSetAttack(bool Arg_)
 void BaseEnemy::fSetIsLockOnOfChain(bool RockOn_)
 {
     mIsLockOnOfChain = RockOn_;
+}
+
+void BaseEnemy::fSetIsPlayerSearch(bool Arg_)
+{
+    mIsPlayerSearch = Arg_;
 }
 
 bool BaseEnemy::fGetAttack() const

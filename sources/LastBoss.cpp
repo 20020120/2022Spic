@@ -66,7 +66,7 @@ LastBoss::~LastBoss()
 
 void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
     fGuiMenu();
     mBeam.fUpdate();
     mLaserPointer.fSetAlpha(mPointerAlpha);

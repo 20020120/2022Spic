@@ -14,7 +14,7 @@ TutorialEnemy_NoMove::TutorialEnemy_NoMove(GraphicsPipeline& graphics): BaseEnem
 
 void TutorialEnemy_NoMove::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
 }
 
 void TutorialEnemy_NoMove::fUpdateAttackCapsule()

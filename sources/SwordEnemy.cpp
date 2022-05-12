@@ -20,7 +20,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_,Graphics_);
+    elapsedTime_=fBaseUpdate(elapsedTime_,Graphics_);
     fUpdateAttackCapsule(); // 攻撃用のカプセル位置を更新
 }
 
@@ -277,7 +277,7 @@ void SwordEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mWaitTimer -= elapsedTime_;
     if (mWaitTimer <=0.0f)
     {
-        fChangeState(DivedState::Idle);
+        fChangeState(DivedState::Start);
     }
 
 }
