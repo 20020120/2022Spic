@@ -616,6 +616,19 @@ namespace Math
         _ASSERT_EXPR(Max_ > Min_, "ç≈ëÂílÇ™ç≈è¨ílÇÊÇËÇ‡è¨Ç≥Ç¢");
         return  (std::max)((std::min)(Resource_, Max_), Min_);
     }
+
+    inline DirectX::XMFLOAT3 fBezierCurve(
+        const DirectX::XMFLOAT3& Point0,
+        const DirectX::XMFLOAT3& Point1,
+        const DirectX::XMFLOAT3& Point2,
+        float Threshold
+    )
+    {
+        const DirectX::XMFLOAT3 p0 = Math::lerp(Point0, Point1, Threshold);
+        const DirectX::XMFLOAT3 p1 = Math::lerp(Point1, Point2, Threshold);
+
+        return Math::lerp(p0, p1, Threshold);
+    }
 }
 
 //--------------------------------------------------------------

@@ -55,6 +55,8 @@ private:
         inline static const char* HumanSpShoot = "HumanSpShoot"; // 発射
         inline static const char* HumanSpDamage = "HumanSpDamage"; // ダメージ
 
+        inline static const char* HumanRush = "HumanRush"; // ダメージ
+
 
         //--------------------<人型の死亡>--------------------//
         inline static const char* HumanDieStart = "HumanDieStart";   // 人型の死亡開始

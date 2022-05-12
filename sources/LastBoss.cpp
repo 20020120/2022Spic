@@ -358,7 +358,19 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanMove, tuple));
     }
-
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanRushInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanRushUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanRush, tuple));
+    }
 
 
     // ÉhÉâÉSÉìÅFë“ã@
@@ -455,12 +467,14 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::HumanSpAway);
         }
-        if(ImGui::Button("Summon"))
+        if(ImGui::Button("Rush"))
         {
-            
+            fChangeState(DivideState::HumanRush);
         }
         ImGui::TreePop();
     }
+
+    ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
 
     ImGui::End();
 #endif

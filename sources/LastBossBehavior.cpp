@@ -312,7 +312,44 @@ void LastBoss::fHumanRushInit()
 {
     // 移動目標を設定
     mMoveEnd = mPlayerPosition;
+    mMoveBegin = mPosition;
+    mMoveThreshold = 0.0f;
+}
 
+void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    constexpr float maxRadius = DirectX::XMConvertToRadians(15.0f);
+
+    // プレイヤーの方向に移動するベクトルを作成する
+
+    const DirectX::XMFLOAT3 iniVec{
+        Math::Normalize(mMoveEnd - mMoveBegin) };
+    const DirectX::XMFLOAT3 currentVec{
+        Math::Normalize(mPlayerPosition - mMoveBegin) };
+
+    DirectX::XMFLOAT3 endPoint{};
+    {
+        const float d = Math::Dot(currentVec, mMoveEnd - mMoveBegin);
+        const DirectX::XMFLOAT3 end = mMoveBegin + (currentVec * d);
+        endPoint=Math::lerp(mMoveBegin, end, mMoveThreshold);
+    }
+
+
+    mMoveThreshold += elapsedTime_ * 0.5f;
+
+
+    DirectX::XMFLOAT3 prePosition = mPosition;
+    // スプライン曲線でベクトルを取得
+    mPosition=Math::fBezierCurve(mMoveBegin, mMoveEnd, endPoint,mMoveThreshold);
+
+    DirectX::XMFLOAT3 subVec = Math::Normalize(mPosition - prePosition);
+
+    fTurnToTarget(elapsedTime_, 10.0f, mPosition + subVec);
+
+    if(mMoveThreshold>=1.0f)
+    {
+        fChangeState(DivideState::HumanBlowAttack);
+    }
 }
 
 void LastBoss::fHumanSpAttackAwayInit()
