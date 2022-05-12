@@ -34,6 +34,9 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     GetPlayerDirections();
     //プレイヤーのパラメータの変更
     TutorialInflectionParameters(elapsed_time);
+
+    PlayerJustification(elapsed_time, position);
+
     if (is_awakening)
     {
         for (int i = 0; i < 2; ++i)
@@ -737,6 +740,7 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
+    if (is_just_avoidance_capsul) is_just_avoidance = true;
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
