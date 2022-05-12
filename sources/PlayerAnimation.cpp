@@ -168,6 +168,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
+        //ジャスト回避のフラグを初期化
         is_just_avoidance = false;
         //ロックオンしている敵をスタンさせる
         if(target_enemy != nullptr)target_enemy->fSetStun(true);
