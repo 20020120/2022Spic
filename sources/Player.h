@@ -50,6 +50,7 @@ private:
         AwakingDie,//死亡
         AwakingDying,//死亡中
         NamelessMotion,//モーション
+        NamelessMotionIdle,//モーション
         TitleAnimationReadyIdle,//タイトルモーション1
         TitleAnimationStart,//タイトルモーション2
         TitleAnimationStartIdle,//タイトルモーション3

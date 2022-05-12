@@ -162,7 +162,6 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //behind_timer += 2.0f * elapsed_time;
 
     //BehindAvoidanceMove(elapsed_time);
-    is_lock_on = true;
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,0.2f))
     {
         //回避中かどうかの設定
@@ -173,6 +172,10 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         //ロックオンしている敵をスタンさせる
         if(target_enemy != nullptr)target_enemy->fSetStun(true);
         TransitionIdle();
+    }
+    else
+    {
+        is_lock_on = true;
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
