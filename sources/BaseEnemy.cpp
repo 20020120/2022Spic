@@ -210,7 +210,7 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
 
 void BaseEnemy::fBaseDeathInit()
 {
-
+    fDie();
 }
 
 void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
