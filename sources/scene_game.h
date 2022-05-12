@@ -25,6 +25,7 @@
 #include "scene_option.h"
 #include "BulletManager.h"
 #include "tunnel.h"
+#include"SpriteBatch.h"
 
 class SceneGame : public Scene, public PracticalEntities
 {
@@ -100,4 +101,48 @@ private:
     bool during_clear = false;
     float tunnel_alpha = 0.0f;
     std::unique_ptr<Tunnel> tunnel{ nullptr };
+private:
+    bool is_game_over{ false };
+    struct StepFontElement
+    {
+        std::wstring s = L"";
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 length{};
+
+        // step string
+        float timer = 0;
+        int step = 0;
+        int index = 0;
+    };
+    struct Element
+    {
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT2 pivot{};
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 texpos{};
+        DirectX::XMFLOAT2 texsize{};
+    };
+    Element selecter1;
+    Element selecter2;
+    std::unique_ptr<SpriteBatch> sprite_selecter{ nullptr };
+    //入力を許可するかどうか
+    bool can_axis{ true };
+    //入力してからの時間
+    float axis_wait_timer{};
+    //入力許可時間
+    static constexpr float AXIS_WAIT_TIME = 0.2f;
+
+    //---------ゲームオーバー--------//
+    StepFontElement game_over_text;    // ゲームオーバー
+    StepFontElement back_title;    // タイトルにもどる
+    StepFontElement again;   // 再挑戦
+    int game_over_state{ 0 };
+
+    //---------ゲームクリア-----------//
+
 };
