@@ -142,6 +142,7 @@ private:
         float timer = 0;
         int frame_y = 0;
         bool start_anim = false;
+        float reset_timer = 0.0f;
     };
     LogoParameters logo_parameters;
 

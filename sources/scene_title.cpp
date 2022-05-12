@@ -144,6 +144,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	logo_parameters.timer = 0;
 	logo_parameters.frame_y = 0;
 	logo_parameters.start_anim = false;
+	logo_parameters.reset_timer = 0.0f;
 
 	//--slashing post effect--//
 	slashing_power = 0;
@@ -174,7 +175,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	const int FRAMW_COUNT_Y = 4;
 	static float logo_animation_speed = 0.03f;
 	// 1.0秒待つ
-	if (logo_parameters.timer > 1.0f) { logo_parameters.start_anim = true; }
+	if (logo_parameters.timer > 2.0f) { logo_parameters.start_anim = true; }
 
 	int frame_x;
 	if (!logo_parameters.start_anim) frame_x = 0;
@@ -199,7 +200,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 #endif // USE_IMGUI
 	if (frame_x >= FRAMW_COUNT_X)
 	{
-		// 位置行下のアニメーションへ
+		// 1行下のアニメーションへ
 		if (logo_parameters.frame_y < FRAMW_COUNT_Y - 1)
 		{
 			logo_parameters.timer = 0;
@@ -216,6 +217,20 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		logo_parameters.timer += elapsed_time;
 	}
+	// リセット
+	if (logo_parameters.frame_y >= FRAMW_COUNT_Y - 1)
+	{
+		logo_parameters.reset_timer += elapsed_time;
+		if (logo_parameters.reset_timer > 2.0f)
+		{
+			logo_parameters.reset_timer = 0.0f;
+
+			frame_x = 0;
+			logo_parameters.timer = 0;
+			logo_parameters.frame_y = 0;
+		}
+	}
+
 
 	static float bgm_volume = 2.0f;
 	static float se_volume = 2.0f;
