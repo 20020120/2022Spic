@@ -208,6 +208,17 @@ void GameCamera::gameUpdate(float elapsedTime)
 		}
 		break;
 	case CameraState::Avoiding:
+		if (player->GetEnemyLockOn())
+		{
+			avoidTargetPos = player->GetTarget();
+
+			//avoidTargetPos.y = target.y;
+
+			//target = avoidTargetPos;
+
+			//avoidTargetPos = player->GetTarget();
+		}
+
 		if (!player->GetBehindAvoidance())
 		{
 			state = CameraStopEnd;
@@ -221,7 +232,7 @@ void GameCamera::gameUpdate(float elapsedTime)
 			break;
 		}
 		UpdateStopEndTarget();
-		UpdateStopEndEye(PlayerTarget, elapsedTime);
+		UpdateStopEndEye(DirectX::XMLoadFloat3(&avoidTargetPos), elapsedTime);
 		break;
 	case CameraState::CameraStopAttackEnd:
 		if (cameraAvoidEnd)
@@ -482,9 +493,14 @@ void GameCamera::UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget,float elapsedTi
 {
 	using namespace DirectX;
 	DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
-	DirectX::XMVECTOR PlayerToTarget = PlayerTarget - DirectX::XMLoadFloat3(&player->GetPosition());
+
+	DirectX::XMFLOAT3 playerPosition = player->GetPosition();
+	playerPosition.y = DirectX::XMVectorGetY(PlayerTarget);
+	DirectX::XMVECTOR PlayerPosition = DirectX::XMLoadFloat3(&playerPosition);
+
+	DirectX::XMVECTOR PlayerToTarget = PlayerTarget - PlayerPosition;
 	PlayerToTarget = DirectX::XMVector3Normalize(PlayerToTarget);
-	const DirectX::XMVECTOR CameraGoalPositionVec = -PlayerToTarget * 10 + DirectX::XMLoadFloat3(&player->GetUp()) * 2;
+	DirectX::XMVECTOR CameraGoalPositionVec = -PlayerToTarget * 10 + DirectX::XMLoadFloat3(&player->GetUp()) * 2;
 	const DirectX::XMVECTOR CameraGoalPosition = DirectX::XMLoadFloat3(&eyeCenter) + CameraGoalPositionVec;
 
 	DirectX::XMVECTOR CameraToGoal = CameraGoalPosition - CameraPosition;
@@ -504,6 +520,8 @@ void GameCamera::UpdateStopEndEye(DirectX::XMVECTOR PlayerTarget,float elapsedTi
 	}
 	else
 	{
+		CameraGoalPositionVec = DirectX::XMVector3Normalize(CameraGoalPositionVec);
+		DirectX::XMStoreFloat3(&eyeVector, CameraGoalPositionVec);
 		cameraAvoidEnd = true;
 		attackEnd = false;
 	}
@@ -679,7 +697,19 @@ bool GameCamera::RockOnUpdateEyeVector(float elapsedTime, DirectX::XMVECTOR Play
 			//}
 			if (dot < 0.98f)
 			{
-				const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis, angle * elapsedTime / 0.1f);
+				DirectX::XMFLOAT3 right = GetRight();
+				right.y = 0.0f;
+				DirectX::XMVECTOR Right = DirectX::XMLoadFloat3(&right);
+
+				DirectX::XMVECTOR D = DirectX::XMVector3Dot(EyeVector, Right);
+				float d = DirectX::XMVectorGetX(D);
+
+				float rightOrLeft{}; //1 : ‰E , -1 : ¶
+				if (d > 0)rightOrLeft = -1;
+				else rightOrLeft = 1;
+
+				using namespace DirectX;
+				const DirectX::XMVECTOR Quaternion = DirectX::XMQuaternionRotationAxis(Axis , rightOrLeft * angle * elapsedTime / 0.1f);
 				EyeVector = DirectX::XMVector3Rotate(EyeVector, Quaternion);
 			}
 			DirectX::XMStoreFloat3(&eyeVector, EyeVector);
