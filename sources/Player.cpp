@@ -558,6 +558,24 @@ void Player::InflectionParameters(float elapsed_time)
     invincible_timer -= 1.0f * elapsed_time;
 }
 
+void Player::TutorialInflectionParameters(float elpased_time)
+{
+    player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
+    player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
+    //攻撃力の変動
+    InflectionPower(elpased_time);
+    //コンボの変動
+    InflectionCombo(elpased_time);
+    //体の大きさのカプセルパラメータ設定
+    BodyCapsule();
+    //剣の大きさのカプセルのパラメータ
+    SwordCapsule();
+    //ジャスト回避の範囲スタンのパラメータ
+    StunSphere();
+    //無敵時間の減少
+    invincible_timer -= 1.0f * elpased_time;
+}
+
 void Player::InflectionPower(float elapsed_time)
 {
 
@@ -774,6 +792,8 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
+    //チュートリアル中はダメージを受けない
+    damage = 0;
     //ジャスト回避
     if (is_behind_avoidance)
     {

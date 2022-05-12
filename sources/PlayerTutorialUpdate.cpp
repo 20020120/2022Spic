@@ -33,7 +33,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     //アニメーション更新処理
     GetPlayerDirections();
     //プレイヤーのパラメータの変更
-    InflectionParameters(elapsed_time);
+    TutorialInflectionParameters(elapsed_time);
     if (is_awakening)
     {
         for (int i = 0; i < 2; ++i)

@@ -242,6 +242,7 @@ private:
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
+    void TutorialInflectionParameters(float elpased_time);
     //攻撃力の変化
     void InflectionPower(float elapsed_time);
     //コンボの変化

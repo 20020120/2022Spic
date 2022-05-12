@@ -170,7 +170,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         is_behind_avoidance = false;
         is_just_avoidance = false;
         //ロックオンしている敵をスタンさせる
-        target_enemy->fSetStun(true);
+        if(target_enemy != nullptr)target_enemy->fSetStun(true);
         TransitionIdle();
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
