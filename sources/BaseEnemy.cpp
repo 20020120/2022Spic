@@ -69,18 +69,13 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         mInvincibleTime = InvincibleTime_;
         ret = true;
     }
-    if (mCurrentHitPoint <= 0)
-    {
-        fDie();
-    }
-
+    
     return ret;
 }
 
 void BaseEnemy::fDie()
 {
-    mIsAlive = false;
-    mVernierEffect->stop(effect_manager->get_effekseer_manager());
+    
 }
 
 
@@ -136,7 +131,6 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-	    DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -165,7 +159,6 @@ void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_,
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-        DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -195,7 +188,6 @@ void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
         axis = Math::Cross(front, vToPlayer); 
-        DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -213,6 +205,16 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     // ëOï˚å¸Ç…êi
     const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
     mPosition += (velocity * elapsedTime_);
+}
+
+void BaseEnemy::fBaseDeathInit()
+{
+    fDie();
+}
+
+void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+
 }
 
 void BaseEnemy::fSetStun(bool Arg_)

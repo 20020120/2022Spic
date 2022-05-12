@@ -25,6 +25,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     //パラメーターの初期化
     fParamInitialize();
     fRegisterFunctions();
+
     mfAddFunc = BulletManager::Instance().fGetAddFunction();
 }
 
@@ -184,7 +185,7 @@ void ArcherEnemy::fRegisterFunctions()
 
 void ArcherEnemy::fParamInitialize()
 {
-       mStayTimer = 1.0f;
+	mStayTimer = 0.0f;
     mAttack_flg = false;
 }
 
@@ -210,13 +211,13 @@ void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ArcherEnemy::fIdleInit()
 {
     //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
-
+    mStayTimer = 0;
 }
 
 void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mStayTimer -= elapsedTime_;
-    if (mStayTimer > 0.0f) return;
+    mStayTimer += elapsedTime_;
+    if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
     fChangeState(DivedState::Move);
 }
@@ -307,7 +308,6 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 
         if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
         {
-            DirectX::XMVECTOR q;
             float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
             if (cross > 0)
             {
