@@ -346,6 +346,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 void Player::transition_chain_lockon_begin()
 {
+	is_chain_attack = true;
+
 	if (is_awakening) { model->play_animation(AwakingChargeInit); }
 	else { model->play_animation(ChargeInit); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
@@ -361,8 +363,6 @@ void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy
 
 void Player::transition_chain_lockon()
 {
-	is_chain_attack = true;
-
 	if (!sort_points.empty()) sort_points.clear();
 	if (!way_points.empty()) way_points.clear();
 	if (!interpolated_way_points.empty()) interpolated_way_points.clear();
@@ -655,7 +655,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
-			transition_normal_behavior();
+			transition_chain_search(); /*リセット*/ transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{
