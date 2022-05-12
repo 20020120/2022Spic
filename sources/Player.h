@@ -146,6 +146,8 @@ private:
     bool is_behind_avoidance{ false };
     //ジャスト回避しているかどうか
     bool is_just_avoidance{ false };
+    //ジャスト回避できるカプセルに入っているかどうか
+    bool is_just_avoidance_capsul{ false };
     //倒した敵の位置を保存
     DirectX::XMFLOAT3 old_target{};
     //カメラの補間のゴール地点

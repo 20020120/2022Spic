@@ -842,12 +842,11 @@ void Player::PlayerJustAvoidance(bool hit)
 {
     if (hit && is_attack == false)
     {
-        is_just_avoidance = true;
-        TransitionBehindAvoidance();
+        is_just_avoidance_capsul = true;
     }
     else
     {
-        is_just_avoidance = false;
+        is_just_avoidance_capsul = false;
     }
 }
 

@@ -641,6 +641,7 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    if (is_just_avoidance_capsul) is_just_avoidance = true;
     velocity = {};
     //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
     is_avoidance = true;
