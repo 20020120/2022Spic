@@ -268,7 +268,8 @@ void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void SwordEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
-
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = mStunTime ;
 }
 
@@ -277,6 +278,8 @@ void SwordEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mWaitTimer -= elapsedTime_;
     if (mWaitTimer <=0.0f)
     {
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+        mIsStun = false;
         fChangeState(DivedState::Start);
     }
 

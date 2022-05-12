@@ -25,6 +25,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mIsStun = false;
 
     mBombEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkBombPath);
+    mStunEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkStunPath);
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)

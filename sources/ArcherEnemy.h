@@ -101,10 +101,10 @@ private:
     //ÉXÉ^Éì
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-
-
+public:
+    void fSetStun(bool Arg_) override;
    
-   
+private:  
     //****************************************************************
    // Å@
    // ïœêî 

@@ -242,6 +242,8 @@ void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ShieldEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = 0.0f;
 }
 
@@ -251,10 +253,12 @@ void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // タイマーを加算
     mWaitTimer += elapsedTime_;
     //シールド構え時間が一定時間たったら
-    if (mWaitTimer >= mStunSec * mAnimationSpeed)
+    if (mWaitTimer >= mStunSec )
     {
         fChangeState(DivedState::Move);
-        is_shield = false; //シールド効果OFF
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
+        mIsStun = false;
     }
 
 }
@@ -266,6 +270,14 @@ void ShieldEnemy::fDieInit()
 
 void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+}
+void ShieldEnemy::fSetStun(bool Arg_)
+{
+    mIsStun = Arg_;
+    if (mIsStun)
+    {
+        fChangeState(DivedState::Stun);
+    }
 }
 //プレイヤーが自分の視界内にいるか判別
 bool ShieldEnemy::fJudge_in_view() const

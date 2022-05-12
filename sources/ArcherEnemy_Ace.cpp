@@ -422,7 +422,8 @@ void ArcherEnemy_Ace::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graph
 void ArcherEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::damage, false);
-
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mStayTimer = 0;
 
 }
@@ -432,7 +433,19 @@ void ArcherEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mStayTimer += elapsedTime_;
     if (mStayTimer >= mStunTime)
     {
+        mIsStun = false;
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
         fChangeState(DivedState::Idle);
+    }
+}
+
+void ArcherEnemy_Ace::fSetStun(bool Arg_)
+{
+    mIsStun = Arg_;
+    if (mIsStun)
+    {
+        fChangeState(DivedState::Stun);
     }
 }
 

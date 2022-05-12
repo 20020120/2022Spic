@@ -113,5 +113,9 @@ private:
     // ‚µ‚Ê
     void fDieInit();
     void fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+public:
+	void fSetStun(bool Arg_) override;
+
+
 };
 

@@ -248,7 +248,8 @@ void SpearEnemy::fDamageUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void SpearEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
-
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = mStunTime;
 }
 
@@ -259,6 +260,7 @@ void SpearEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     {
         fChangeState(DivedState::Idle);
         mIsStun = false;
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
     }
 }
 

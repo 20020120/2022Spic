@@ -110,6 +110,8 @@ protected:
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };
     inline static const char* mkVernierPath = "./resources/Effect/sluster_enemy2.efk";
+    std::unique_ptr<Effect> mStunEffect{ nullptr };
+    inline static const char* mkStunPath = "./resources/Effect/stun.efk";
 private:
     std::unique_ptr<Effect> mBombEffect{ nullptr };
     inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";

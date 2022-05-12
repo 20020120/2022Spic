@@ -238,6 +238,8 @@ void SwordEnemy_Ace::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 void SwordEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(AnimationName::stun, true);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = mStunTime;
 }
 
@@ -246,6 +248,8 @@ void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     mWaitTimer -= elapsedTime_;
     if(mWaitTimer<=0.0f)
     {
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+        mIsStun = false;
         fChangeState(DivideState::Idle);
     }
 }
