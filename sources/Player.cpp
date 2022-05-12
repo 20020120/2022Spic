@@ -773,7 +773,7 @@ void Player::AddCombo(int count)
 
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
-    //ジャスト回避
+    if (during_chain_attack()) return;
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
@@ -804,6 +804,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
+    if (during_chain_attack()) return;
     //チュートリアル中はダメージを受けない
     damage = 0;
     //ジャスト回避
@@ -839,10 +840,14 @@ void Player::PlayerKnocKback(float elapsed_time)
 
 void Player::PlayerJustAvoidance(bool hit)
 {
-    if (hit)
+    if (hit && is_attack == false)
     {
         is_just_avoidance = true;
         TransitionBehindAvoidance();
+    }
+    else
+    {
+        is_just_avoidance = false;
     }
 }
 
