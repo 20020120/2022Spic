@@ -23,6 +23,8 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mCubeHalfSize = mScale.x * 5.0f;
     mDissolve = 1.0f;
     mIsStun = false;
+
+    mBombEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkBombPath);
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -211,11 +213,11 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
 void BaseEnemy::fBaseDeathInit()
 {
     fDie();
+    mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 10.0f);
 }
 
 void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-
 }
 
 void BaseEnemy::fSetStun(bool Arg_)

@@ -349,6 +349,19 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::HumanSpDamage, tuple));
     }
 
+    {
+        InitFunc ini = [=]()->void
+        {
+            fHumanMoveInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fHumanMoveUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::HumanMove, tuple));
+    }
 
 
 
@@ -469,15 +482,7 @@ void LastBoss::fResetLaser()
     mRightBeam.fSetLengthThreshold(mRightBeamThreshold);
 }
 
-LastBoss::AttackKind LastBoss::fRandomAttackFromHp()
-{
-    // Å‘å‘Ì—Í‚É‘Î‚·‚é¡‚Ì‘Ì—Í‚ÌŠ„‡‚ğZo‚·‚é(0.0f~1.0f)
-    float percentFromMAxHp = fComputePercentHp();
 
-    
-
-    return {};
-}
 
 float LastBoss::fComputePercentHp() const
 {
