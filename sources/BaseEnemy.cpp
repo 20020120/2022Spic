@@ -214,6 +214,19 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     mPosition += (velocity * elapsedTime_);
 }
 
+<<<<<<< Updated upstream
+=======
+void BaseEnemy::fBaseDeathInit()
+{
+    fDie();
+    mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 1.0f);
+}
+
+void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+}
+>>>>>>> Stashed changes
+
 
 void BaseEnemy::fSetStun(bool Arg_)
 {

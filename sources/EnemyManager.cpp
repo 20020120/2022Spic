@@ -603,6 +603,14 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         {
             mOpenGuiMenu = false;
         }
+
+        if(ImGui::Button("AllStun"))
+        {
+            for(const auto & enemy: mEnemyVec)
+            {
+                enemy->fSetStun(true);
+            }
+        }
         ImGui::End();
     }
 #endif

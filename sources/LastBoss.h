@@ -310,6 +310,9 @@ private:
     void fMoveAwayInit();
     void fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fHumanRushInit();
+    void fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     //--------------------<lŒ^•KŽE‹Z>--------------------//
     void fHumanSpAttackAwayInit(); // ”ò‚Ñ‚Ì‚­
     void fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);

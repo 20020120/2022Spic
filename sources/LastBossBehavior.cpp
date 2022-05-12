@@ -214,13 +214,13 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void LastBoss::fHumanMoveInit()
 {
-    throw std::logic_error("Not implemented");
+ 
 }
 
 void LastBoss::fHumanMoveUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
-    throw std::logic_error("Not implemented");
+   
 }
 
 void LastBoss::fHumanAllShotInit()
@@ -279,15 +279,14 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Grap
     if(mpModel->end_of_animation(mAnimPara))
     {
         const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
-        auto num = RandTargetAdd(mt);
-        if(num<2)
+       // if(const auto num = RandTargetAdd(mt); num<2)
         {
             fChangeState(DivideState::HumanMove);
         }
-        else
-        {
-            fChangeState(DivideState::HumanIdle);
-        }
+        //else
+        //{
+        //    fChangeState(DivideState::HumanIdle);
+        //}
     }
 }
 
@@ -301,11 +300,19 @@ void LastBoss::fMoveAwayInit()
 
 void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mMoveThreshold += elapsedTime_ * 2.0f;
     mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
     if(mMoveThreshold>=1.0f)
     {
         fChangeState(DivideState::HumanIdle);
     }
+}
+
+void LastBoss::fHumanRushInit()
+{
+    // ˆÚ“®–Ú•W‚ğİ’è
+    mMoveEnd = mPlayerPosition;
+
 }
 
 void LastBoss::fHumanSpAttackAwayInit()

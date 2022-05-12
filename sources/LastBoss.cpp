@@ -352,12 +352,12 @@ void LastBoss::fRegisterFunctions()
     {
         InitFunc ini = [=]()->void
         {
-            fHumanMoveInit();
+            fMoveAwayInit();
         };
         UpdateFunc up = [=](float elapsedTime_,
             GraphicsPipeline& Graphics_)->void
         {
-            fHumanMoveUpdate(elapsedTime_, Graphics_);
+            fMoveAwayUpdate(elapsedTime_, Graphics_);
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::HumanMove, tuple));

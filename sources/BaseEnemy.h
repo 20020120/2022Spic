@@ -111,7 +111,7 @@ private:
     inline static const char* mkVernierPath = "./resources/Effect/sluster_enemy2.efk";
 
     std::unique_ptr<Effect> mBombEffect{ nullptr };
-    inline static const char* mkBombPath = "./resources/Effect/Bomb2.efk";
+    inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";
 
     std::unique_ptr<Effect> mDeathEffect{ nullptr };
     inline static const char* mkDeathPath = "./resources/Effect/Bomb2.efk";
