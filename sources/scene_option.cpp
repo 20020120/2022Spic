@@ -52,7 +52,8 @@ Option::Option(GraphicsPipeline& graphics)
 	//--tab--//
 	sprite_tab = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\tab.png", 1);
 	tab.position = { 0, 70 };
-	tab.texsize = { static_cast<float>(sprite_tab->get_texture2d_desc().Width), static_cast<float>(sprite_tab->get_texture2d_desc().Height) };
+	// âEí[Ç…ì‰ÇÃê¸Ç™èoÇÈÇÃÇ≈-1
+	tab.texsize = { static_cast<float>(sprite_tab->get_texture2d_desc().Width) - 1.0f, static_cast<float>(sprite_tab->get_texture2d_desc().Height) };
 	tab.color = { 1.0f,1.0f,1.0f,1.0f };
 	//--frame--//
 	sprite_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\icon_frame.png", 1);
@@ -197,11 +198,7 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		s->end(graphics.get_dc().Get());
 	};
 	//--back--//
-	ImGui::Begin("glow_vertical");
-	static float glow_vertical = {};
-	ImGui::DragFloat("glow_vertical", &glow_vertical, 0.01f);
-	ImGui::End();
-
+	glow_vertical -= elapsed_time * 0.2f;
 	r_render("back", back, sprite_back.get(), add_position, 0, glow_vertical);
 	//--frame--//
 	r_render("frame", frame, sprite_frame.get(), add_position);

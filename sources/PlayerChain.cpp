@@ -24,7 +24,10 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 	if (length <= play)
 	{
 		++index;
-		position = points.at(index);
+		// 完全に重ねるとバグるかもなのですこしずらす
+		position.x = points.at(index).x + 0.01f;
+		position.y = 0;
+		position.z = points.at(index).z + 0.01f;
 
 		if (index != 0 && index % (STEPS * 2) == 0) { return true; } // 敵のポイントについた
 	}

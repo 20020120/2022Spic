@@ -165,6 +165,8 @@ private:
 
     bool can_play_se[3] = { false, false, false };
 
+    float glow_vertical = {};
+
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_load_ready;

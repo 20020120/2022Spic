@@ -590,10 +590,8 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (tutorial_tab.display)
 	{
-		ImGui::Begin("glow_vertical");
-		static float glow_vertical = {};
-		ImGui::DragFloat("glow_vertical", &glow_vertical, 0.01f);
-		ImGui::End();
+		glow_vertical -= elapsed_time * 0.2f;
+
 		r_sprite_render("frame", tutorial_tab.sprite_frame.get(), tutorial_tab.frame, 0, glow_vertical);
 		r_sprite_render("tab selecterL", sprite_selecter.get(), tutorial_tab.selecterL);
 		r_sprite_render("tab selecterR", sprite_selecter.get(), tutorial_tab.selecterR);

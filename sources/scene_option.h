@@ -71,4 +71,6 @@ private:
     Element cursor{};
     DirectX::XMFLOAT2 cursor_velocity{};
     std::unique_ptr<SpriteBatch> sprite_cursor{ nullptr };
+
+    float glow_vertical = {};
 };

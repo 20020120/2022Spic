@@ -22,12 +22,6 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 color = color_map.Sample(anisotropic_sampler_state, pin.texcoord);
     float alpha = color.a;
 
-    //float base = 0.3;
-    //if (pin.texcoord.y < base)
-    //{
-    //    color.rgb += threshold.x * (base - pin.texcoord.y);
-    //}
-
     // ‰¡‚Éü‚ð‘–‚ç‚¹‚é
     float3 glow_horizon_color = { 0.2, 0.2, 0.2 };
     float glow_horizon_interval = 0.5f;
