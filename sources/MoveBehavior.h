@@ -16,7 +16,7 @@ protected:
     float move_vec_y{};
     float move_vec_z{};
     float friction{0.5f};
-    float move_speed{30.0f};
+    float move_speed{40.0f};
     float turn_speed{ DirectX::XMConvertToRadians(720) };
     //レイキャストの変数
     HitResult hit{};

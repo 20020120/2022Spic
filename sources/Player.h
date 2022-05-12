@@ -92,9 +92,9 @@ private:
     //攻撃1の時のアニメーションスピード
     static constexpr float ATTACK1_ANIMATION_SPEED = 3.0f;
     //攻撃2の時のアニメーションスピード
-    static constexpr float ATTACK2_ANIMATION_SPEED = 2.0f;
+    static constexpr float ATTACK2_ANIMATION_SPEED = 3.0f;
     //攻撃3の時のアニメーションスピード
-    static constexpr float ATTACK3_ANIMATION_SPEED = 1.5f;
+    static constexpr float ATTACK3_ANIMATION_SPEED = 2.5f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
     //人型に戻るときのアニメーションスピード
@@ -225,7 +225,7 @@ private:
     //突進のvelocityの補間のレート
     float lerp_rate{ 1.0f };
     //突進のターゲットまでの距離の倍率(どれだけ伸ばすか)
-    float charge_length_magnification{ 75.0f };
+    float charge_length_magnification{ 100.0f };
     //攻撃のアニメーションスピードのデバッグ用
     DirectX::XMFLOAT4 attack_animation_speeds{ 1.0f,1.0f,1.0f,1.0f };
     //攻撃のアニメーション補間の時間
@@ -356,7 +356,7 @@ public:
 private:
     //回避の加速
     void AvoidanceAcceleration(float elapse_time);
-    //突進の加速(線形補間)
+    //突進の加速(線形補間)SetAccelerationVelocityで動くように変更した
     void ChargeAcceleration(float elapse_time);
     //攻撃の加速の設定
     void SetAccelerationVelocity();

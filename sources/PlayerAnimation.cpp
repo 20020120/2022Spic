@@ -186,7 +186,7 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionCharge(attack_animation_blends_speeds.x);
     }
-    ChargeAcceleration(elapsed_time);
+    //ChargeAcceleration(elapsed_time);
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -194,12 +194,17 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
-    ChargeAcceleration(elapsed_time);
+    //ChargeAcceleration(elapsed_time);
+    //UŒ‚‚Ì‰Á‘¬‚Ìİ’è
+    charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    SetAccelerationVelocity();
     //“ËiŠÔ‚ğ’´‚¦‚½‚ç‚»‚ê‚¼‚ê‚Ì‘JˆÚ‚É‚Æ‚Ô
     if (charge_time > CHARGE_MAX_TIME)
     {
-        velocity = {};
         end_dash_effect = true;
+        velocity.x *= 0.2f;
+        velocity.y *= 0.2f;
+        velocity.z *= 0.2f;
 
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -224,7 +229,9 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             end_dash_effect = true;
             //“G‚É“–‚½‚Á‚ÄUŒ‚ƒ{ƒ^ƒ“(“Ëiƒ{ƒ^ƒ“)‚ğ‰Ÿ‚µ‚½‚çˆêŒ‚–Ú
             is_charge = false;
-            velocity = {};
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             TransitionAttackType1(attack_animation_blends_speeds.y);
         }
     }
@@ -242,6 +249,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
+
         attack_time += attack_add_time * elapsed_time;
         //—P—\ŠÔ‚ğ’´‚¦‚½‚ç‘Ò‹@‚É‘JˆÚ
         if (attack_time > ATTACK_TYPE1_MAX_TIME)
@@ -250,9 +258,6 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
         //—P—\ŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚2Œ‚–Ú‚É‘JˆÚ
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            attack_time = 0;
 #if 0
             if (enemy_length > 20.0f)
             {
@@ -265,12 +270,18 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 #else
             if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
-                TransitionAttackType2(attack_animation_blends_speeds.z);
+                if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+                {
+                    attack_time = 0;
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    TransitionAttackType2(attack_animation_blends_speeds.z);
+                }
             }
             else   TransitionIdle();
 
 #endif // 0
-        }
     }
     if (is_awakening)
     {
@@ -296,21 +307,21 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         {
             float length{ Math::calc_vector_AtoB_length(position,target) };
 
-            if (length > 5.0f)ChargeAcceleration(elapsed_time);
+            //if (length > 5.0f)ChargeAcceleration(elapsed_time);
+            SetAccelerationVelocity();
         }
     if (model->end_of_animation())
     {
-        velocity = {};
         //—P—\ŠÔ‚ğ’´‚¦‚½‚ç‘Ò‹@‚É‘JˆÚ
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             attack_time = 0;
             TransitionIdle();
         }
         //—P—\ŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚3Œ‚–Ú‚É‘JˆÚ
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            attack_time = 0;
 #if 0
             if (enemy_length > 0.0f)
             {
@@ -323,14 +334,23 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 #else
             if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
             {
-                TransitionAttackType3(attack_animation_blends_speeds.w);
+                if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+                {
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    attack_time = 0;
+                    TransitionAttackType3(attack_animation_blends_speeds.w);
+                }
             }
             else
             {
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
                 TransitionIdle();
             }
 #endif // 0
-        }
     }
     if (is_awakening)
     {
@@ -357,7 +377,8 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     else
     {
         float length{ Math::calc_vector_AtoB_length(position,target) };
-        if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
     }
 
     if (model->end_of_animation())
@@ -365,17 +386,26 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
-            TransitionCharge(attack_animation_blends_speeds.x);
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            TransitionAttackType1(attack_animation_blends_speeds.x);
         }
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             charge_time = 0;
             TransitionMove();
         }
         //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
         else
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             charge_time = 0;
             TransitionIdle();
         }
@@ -684,8 +714,6 @@ void Player::TransitionChargeInit()
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ƒƒbƒNƒIƒ“‚µ‚Ä‚È‚¢ê‡‚Ìƒ^[ƒQƒbƒg‚Ìİ’è
     charge_point = Math::calc_designated_point(position, forward, 60.0f);
-    //UŒ‚‚Ì‰Á‘¬‚Ìİ’è
-    SetAccelerationVelocity();
     //‰Á‘¬‚ÌƒŒ[ƒg
     lerp_rate = 1.0f;
     //ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‚µ‚Ä‚¢‚¢‚©‚Ç‚¤‚©
@@ -717,6 +745,8 @@ void Player::TransitionCharge(float blend_seconds)
     is_update_animation = true;
     //‰Á‘¬‚ÌƒŒ[ƒg
     lerp_rate = 4.0f;
+    //UŒ‚‚Ì‰Á‘¬‚Ìİ’è
+    //SetAccelerationVelocity();
     //“Ëi’†‚ÌXVŠÖ”‚ÉØ‚è‘Ö‚¦‚é
     player_activity = &Player::ChargeUpdate;
 
@@ -761,7 +791,7 @@ void Player::TransitionAttackType2(float blend_seconds)
     animation_speed = attack_animation_speeds.z;
 #endif // 0
     //UŒ‚‚Ì‰Á‘¬‚Ìİ’è
-    SetAccelerationVelocity();
+    //SetAccelerationVelocity();
     //‰Á‘¬‚ÌƒŒ[ƒg
     lerp_rate = 2.0f;
     //UŒ‚‚ÌŠÔ
@@ -790,7 +820,7 @@ void Player::TransitionAttackType3(float blend_seconds)
     animation_speed = attack_animation_speeds.w;
 #endif // 0
     //UŒ‚‚Ì‰Á‘¬‚Ìİ’è
-    SetAccelerationVelocity();
+    //SetAccelerationVelocity();
     //‰Á‘¬‚ÌƒŒ[ƒg
     lerp_rate =2.0f;
     //UŒ‚‚ÌŠÔ

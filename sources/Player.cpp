@@ -895,6 +895,7 @@ void Player::AvoidanceAcceleration(float elapsed_time)
         velocity.z = Math::clamp(velocity.z, -35.0f, 35.0f);
 }
 
+
 void Player::ChargeAcceleration(float elapse_time)
 {
     //位置を補間
@@ -925,11 +926,11 @@ void Player::ChargeAcceleration(float elapse_time)
     }
 #else
 
-    velocity = Math::lerp(velocity, acceleration_velocity, lerp_rate * elapse_time);
+    //velocity = Math::lerp(velocity, acceleration_velocity, lerp_rate * elapse_time);
 
 #endif // 0
 }
-
+//velocityに直接値を入れる関数に変更
 void Player::SetAccelerationVelocity()
 {
     //位置を補間
@@ -940,9 +941,9 @@ void Player::SetAccelerationVelocity()
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, target)));
         float length{ Math::calc_vector_AtoB_length(position,target) };
 
-        acceleration_velocity.x = v.x * charge_length_magnification;
-        acceleration_velocity.y = v.y * charge_length_magnification;
-        acceleration_velocity.z = v.z * charge_length_magnification;
+        velocity.x = v.x * charge_length_magnification;
+        velocity.y = v.y * charge_length_magnification;
+        velocity.z = v.z * charge_length_magnification;
         //position = Math::lerp(position, target, 10.0f * elapse_time);
     }
     else
@@ -951,9 +952,9 @@ void Player::SetAccelerationVelocity()
         DirectX::XMStoreFloat3(&v, DirectX::XMVector3Normalize(Math::calc_vector_AtoB(position, charge_point)));
         float length{ Math::calc_vector_AtoB_length(position,charge_point) };
 
-        acceleration_velocity.x = v.x * charge_length_magnification;
-        acceleration_velocity.y = v.y * charge_length_magnification;
-        acceleration_velocity.z = v.z * charge_length_magnification;
+        velocity.x = v.x * 100.0f;
+        velocity.y = v.y * 100.0f;
+        velocity.z = v.z * 100.0f;
 
         //position = Math::lerp(position, charge_point, 7.0f * elapse_time);
     }
@@ -1059,7 +1060,7 @@ void Player::LockOn()
                     //ロックオンしたかどうかを設定
                     is_lock_on = true;
                     //攻撃の加速の設定
-                    SetAccelerationVelocity();
+                    //SetAccelerationVelocity();
                 }
                 else
                 {
@@ -1161,7 +1162,7 @@ void Player::TutorialLockOn()
                     //ロックオンしたかどうかを設定
                     is_lock_on = true;
                     //攻撃の加速の設定
-                    SetAccelerationVelocity();
+                    //SetAccelerationVelocity();
                     //もしチュートリアルがロックオンなら
                     if (tutorial_state == TutorialState::LockOnTutorial) is_next_tutorial = true;
                 }
