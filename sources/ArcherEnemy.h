@@ -127,6 +127,8 @@ private:
     const float AT_SHORTEST_DISTANCE = 30.0f;
     //プレイヤーに攻撃を開始する最長距離
     const float AT_LONGEST_DISTANCE = 40.0f;
+    //移動時間（一定時間移動したらアイドル状態に）
+    const float MOVE_TIME = 5.0f;
     //移動スピード
     const float MAX_MOVE_SPEED = 3.0f;
     //回転スピード
