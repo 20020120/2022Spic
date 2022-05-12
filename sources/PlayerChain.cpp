@@ -655,7 +655,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
-			transition_normal_behavior();
+			transition_chain_search(); /*リセット*/ transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{

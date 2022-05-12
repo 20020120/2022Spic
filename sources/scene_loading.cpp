@@ -31,15 +31,8 @@ void SceneLoading::update(GraphicsPipeline& graphics, float elapsed_time)
     static float bgm_volume = 2.0f;
     static float se_volume = 2.0f;
 
-    audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-    audio_manager->set_volume_se(SE_INDEX::SELECT, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
-    audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
-    audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-    audio_manager->set_volume_bgm(BGM_INDEX::BOSS_BATTLESHIP, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-    audio_manager->set_volume_bgm(BGM_INDEX::BOSS_HUMANOID, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-    audio_manager->set_volume_bgm(BGM_INDEX::BOSS_DRAGON, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-    audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
-
+    audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+    audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 
     // 前シーンのuninitialize等でエフェクトを止めると更新がかからない場合があるのでここで更新する
