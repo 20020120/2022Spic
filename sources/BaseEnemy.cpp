@@ -12,7 +12,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
 ,mStunTime(Param_.StunTime)
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
-    //ƒ~ƒjƒ}ƒbƒv—pƒAƒCƒRƒ“
+    //ï¿½~ï¿½jï¿½}ï¿½bï¿½vï¿½pï¿½Aï¿½Cï¿½Rï¿½ï¿½
     mpIcon = std::make_unique<SpriteBatch>(Graphics_.get_device().Get(), IconFileName,1);
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
@@ -23,6 +23,8 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mCubeHalfSize = mScale.x * 5.0f;
     mDissolve = 1.0f;
     mIsStun = false;
+
+    mBombEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkBombPath);
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -69,7 +71,7 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         mInvincibleTime = InvincibleTime_;
         ret = true;
     }
-    //HP‚ª‚È‚­‚È‚Á‚½€–S‚³‚¹‚é
+    //HPï¿½ï¿½ï¿½È‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (mCurrentHitPoint <= 0.0f)
     {
         fDie();
@@ -86,13 +88,13 @@ void BaseEnemy::fDie()
 
 void BaseEnemy::fUpdateVernierEffectPos()
 {
-    //--------------------<ƒo[ƒjƒA‚Ì‚ÌˆÊ’u‚ğŒˆ’è‚·‚é>--------------------//
+    //--------------------<ï¿½oï¿½[ï¿½jï¿½Aï¿½Ì‚ÌˆÊ’uï¿½ï¿½ï¿½ï¿½ï¿½è‚·ï¿½ï¿½>--------------------//
     DirectX::XMFLOAT3 position{};
     DirectX::XMFLOAT3 up{};
     DirectX::XMFLOAT4X4 q{};
 
 
-    // ƒ{[ƒ“‚Ì–¼‘O‚©‚çˆÊ’u‚ÆãƒxƒNƒgƒ‹‚ğæ“¾
+    // ï¿½{ï¿½[ï¿½ï¿½ï¿½Ì–ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½Ê’uï¿½Æï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½æ“¾
     mpModel->fech_by_bone(mAnimPara,
         Math::calc_world_matrix(mScale, mOrientation, mPosition),
         mVenierBone, position, up, q);
@@ -123,12 +125,12 @@ void BaseEnemy::fUpdateVernierEffectPos()
 
 void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 {
-    // ƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‰ñ“]
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½É‰ï¿½]
     constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
 
-    // ƒvƒŒƒCƒ„[‚Æ‚ÌƒxƒNƒgƒ‹
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Æ‚Ìƒxï¿½Nï¿½gï¿½ï¿½
     const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
-    // ©•ª‚Ì³–ÊƒxƒNƒgƒ‹
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½Êƒxï¿½Nï¿½gï¿½ï¿½
     const auto front = Math::Normalize(Math::GetFront(mOrientation));
      float dot = Math::Dot(vToPlayer, front);
 
@@ -151,12 +153,12 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_, 
     DirectX::XMFLOAT3 Target_)
 {
-    // ƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‰ñ“]
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½É‰ï¿½]
     constexpr DirectX::XMFLOAT3 up = { 0.001f,1.0f,0.0f };
 
-    // ƒvƒŒƒCƒ„[‚Æ‚ÌƒxƒNƒgƒ‹
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Æ‚Ìƒxï¿½Nï¿½gï¿½ï¿½
     const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(Target_ - mPosition);
-    // ©•ª‚Ì³–ÊƒxƒNƒgƒ‹
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½Êƒxï¿½Nï¿½gï¿½ï¿½
     const auto front = Math::Normalize(Math::GetFront(mOrientation));
     float dot = Math::Dot(vToPlayer, front);
 
@@ -178,13 +180,13 @@ void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_,
 
 void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
 {
-    // ƒvƒŒƒCƒ„[‚Ì•ûŒü‚É‰ñ“]
-    // ²‚ğZo
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì•ï¿½ï¿½ï¿½ï¿½É‰ï¿½]
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½o
     DirectX::XMFLOAT3 axis = {};
 
-    // ƒvƒŒƒCƒ„[‚Æ‚ÌƒxƒNƒgƒ‹
+    // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Æ‚Ìƒxï¿½Nï¿½gï¿½ï¿½
     const DirectX::XMFLOAT3 vToPlayer = Math::Normalize(mPlayerPosition - mPosition);
-    // ©•ª‚Ì³–ÊƒxƒNƒgƒ‹
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½Êƒxï¿½Nï¿½gï¿½ï¿½
     const auto front = Math::Normalize(Math::GetFront(mOrientation));
     float dot = Math::Dot(vToPlayer, front);
 
@@ -207,7 +209,7 @@ void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
 
 void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
 {
-    // ‘O•ûŒü‚Éi
+    // ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Éi
     const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
     mPosition += (velocity * elapsedTime_);
 }

@@ -455,6 +455,8 @@ private:
     void DieUpdate(float elapsed_time, SkyDome* sky_dome);
     //死亡中
     void DyingUpdate(float elapsed_time, SkyDome* sky_dome);
+    //死亡の更新処理に入ったらtrue
+    bool is_dying_update{ false };
     //モーション
     void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
     //モーション

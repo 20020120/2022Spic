@@ -1,4 +1,6 @@
 #pragma once
+#include <random>
+
 #include"BaseEnemy.h"
 #include "Common.h"
 #include"LaserBeam.h"
@@ -171,7 +173,6 @@ private:
 
     void fResetLaser();
 
-    AttackKind fRandomAttackFromHp(); // 現在の体力の割合から行動を決める
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
     void fChangeHumanToDragon();
 
@@ -198,6 +199,7 @@ private:
     float mRightBeamThreshold{};
     float mLeftBeamThreshold{};
 
+    std::mt19937 mt{ std::random_device{}() };
 
     //--------------------<ボスのタレット>--------------------//
     std::unique_ptr<Turret> mpTurretRight{ nullptr };
@@ -239,6 +241,11 @@ private:
     AddBulletFunc mfAddBullet{};
     float mShotTimer{ 0.0f };
 
+    // プレイヤーから離れる
+    DirectX::XMFLOAT3 mMoveBegin{};
+    DirectX::XMFLOAT3 mMoveEnd{};
+    float mMoveThreshold{};
+
     //****************************************************************
     // 
     // 定数
@@ -259,6 +266,7 @@ private:
     const float mkHumanSpWaitTime{ 15.0f };
     const float mkHumanSpBeamTime{ 5.0f };
     const float mkSpChargeTime = 7.0f;
+    const float mkDistanceToPlayer{ 20.0f };
 private:
 
     //****************************************************************
@@ -298,6 +306,9 @@ private:
 
     void fHumanBlowAttackInit();
     void fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fMoveAwayInit();
+    void fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     //--------------------<人型必殺技>--------------------//
     void fHumanSpAttackAwayInit(); // 飛びのく

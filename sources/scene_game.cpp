@@ -63,6 +63,25 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//mini_map
 	minimap = std::make_unique<MiniMap>(graphics);
 
+	sprite_selecter = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\selecter.png", 2);
+	selecter1.position = { 328.0f,267.3f };
+	selecter1.scale = { 0.2f,0.2f };
+	selecter1.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+	selecter2.position = { 637.1f,267.3f };
+	selecter2.scale = { 0.2f,0.2f };
+	selecter2.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+
+	//font
+	game_over_text.s = L"ゲームオーバー";
+	game_over_text.position = { 553.1f,124.3f };
+	game_over_text.scale = { 1.0f,1.0f };
+	back_title.s = L"タイトルに戻る";
+	back_title.position = { 365.6f,236.7f };
+	back_title.scale = { 1.0f,1.0f };
+	again.s = L"再挑戦";
+	again.position = { 751.6f,236.7f };
+	again.scale = { 1.0f,1.0f };
+
 
 	for (auto& bgm_switch : bgm_switches) { bgm_switch = false; }
 
@@ -103,6 +122,62 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//	audio_manager->stop_all_bgm();
 	//	audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
 
+	if (is_game_over)
+	{
+		// スティックを傾け続けたら少し間をおいて入力を許可する
+		if (!can_axis)
+		{
+			axis_wait_timer += elapsed_time;
+			if (axis_wait_timer > AXIS_WAIT_TIME)
+			{
+				axis_wait_timer = 0;
+				can_axis = true;
+			}
+		}
+		auto r_right_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+		{
+			if ((game_pad->get_button_down() & GamePad::BTN_RIGHT) || (can_axis && game_pad->get_axis_LX() > 0.5f))
+			{
+				audio_manager->play_se(SE_INDEX::SELECT);
+				game_over_state = state;
+				selecter1.position = arrival_posL;
+				selecter2.position = arrival_posR;
+
+				can_axis = false;
+			}
+		};
+		auto r_left_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+		{
+			if ((game_pad->get_button_down() & GamePad::BTN_LEFT) || (can_axis && game_pad->get_axis_LX() < -0.5f))
+			{
+				audio_manager->play_se(SE_INDEX::SELECT);
+				game_over_state = state;
+				selecter1.position = arrival_posL;
+				selecter2.position = arrival_posR;
+				can_axis = false;
+			}
+		};
+
+		switch (game_over_state)
+		{
+		case 0://タイトルに戻る
+			r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+			}
+			break;
+		case 1://再挑戦
+			r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::TYPE1, 2.0f);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 	//	bgm_switches[2] = true;
 	//}
 
@@ -112,7 +187,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_DRAGON, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
-
+	//ゲームオーバーの時は止める
+	if (is_game_over) return;
 	// option
 	if (option->get_validity())
 	{
@@ -174,7 +250,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	Camera* c = cameraManager->GetCurrentCamera();
 
-	if(player->GetIsAlive() == false)	SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
+	if (player->GetIsAlive() == false)	is_game_over = true;
 
 
 	// 敵とのあたり判定(当たったらコンボ加算)
@@ -268,6 +344,39 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			ImGui::ColorEdit4("color", &color.x);
 			ImGui::End();
 		}
+
+		ImGui::Begin("game_over");
+		ImGui::Checkbox("is_game_over", &is_game_over);
+		if (is_game_over)
+		{
+			if (ImGui::TreeNode("game_over_text"))
+			{
+				ImGui::DragFloat2("pos", &game_over_text.position.x, 0.1f);
+				ImGui::DragFloat2("scale", &game_over_text.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("back_title"))
+			{
+				ImGui::DragFloat2("pos", &back_title.position.x, 0.1f);
+				ImGui::DragFloat2("scale", &back_title.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("again"))
+			{
+				ImGui::DragFloat2("pos", &again.position.x, 0.1f);
+				ImGui::DragFloat2("scale", &again.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("selecter"))
+			{
+				ImGui::DragFloat2("selecter1_pos", &selecter1.position.x, 0.1f);
+				ImGui::DragFloat2("selecter1_scale", &selecter1.scale.x, 0.1f);
+				ImGui::DragFloat2("selecter2_pos", &selecter2.position.x, 0.1f);
+				ImGui::DragFloat2("selecter2_scale", &selecter2.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+		}
+		ImGui::End();
 #endif
 		wave->set_positoin(pos); wave->set_offset(offset); wave->set_scale(scale); wave->set_value(value); wave->set_color(color);
 		wave->update(graphics, elapsed_time);
@@ -397,7 +506,32 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	}
 
+	//--ゲームオーバー,ゲームクリア--//
+	auto r_font_render = [&](StepFontElement& e)
+	{
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+	};
 
+	auto r_sprite_render = [&](SpriteBatch* batch, Element& e)
+	{
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+		batch->begin(graphics.get_dc().Get());
+		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		batch->end(graphics.get_dc().Get());
+	};
+
+
+	if (is_game_over)
+	{
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render(game_over_text);
+		r_font_render(back_title);
+		r_font_render(again);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+		r_sprite_render(sprite_selecter.get(), selecter1);
+		r_sprite_render(sprite_selecter.get(), selecter2);
+	}
     // font demo
 #if 0
 	{
@@ -472,6 +606,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	enemy_hp_gauge->render(graphics.get_dc().Get());
 	// reticle
 	reticle->render(graphics.get_dc().Get());
+
 	// wave
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();

@@ -40,7 +40,7 @@ void TitleCamera::Initialize(GraphicsPipeline& graphics)
 	//const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
 	//DirectX::XMStoreFloat3(&eye, Eye);
 
-	target = { 0.0f,3.0f,0.0f };
+	target = { 0.0f,6.5f,0.0f };
 	eye = { 0.0f,4.0f,-20.0f };
 
 	scene_constants->data.light_direction.w = 0.6f;

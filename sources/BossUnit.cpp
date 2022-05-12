@@ -39,7 +39,12 @@ void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 
     if (mLifeTimer < 0.0f)
     {
-        fDie();
+        fChangeState(DivideState::Die);
+    }
+
+    if(mCurrentHitPoint<=0)
+    {
+        fChangeState(DivideState::Die);
     }
 
 
@@ -152,6 +157,21 @@ void BossUnit::fRegisterFunctions()
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::Stun,
+            tuple));
+    }
+
+    {
+        InitFunc ini = [=]()->void
+        {
+            fBaseDeathInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_,
+            GraphicsPipeline& Graphics_)->void
+        {
+            fBaseDeathUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Die,
             tuple));
     }
 

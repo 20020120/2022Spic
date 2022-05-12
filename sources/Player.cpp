@@ -320,17 +320,19 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     glow_time += 1.0f * elapsed_time;
     if (glow_time >= 3.0f) glow_time = 0;
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-
-    //覚醒状態の時は
-    if (is_awakening)
+    if (is_dying_update == false)
     {
-        //モデルを映す
-        if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-    }
-    else
-    {
-        //モデルを消す
-        if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+        //覚醒状態の時は
+        if (is_awakening)
+        {
+            //モデルを映す
+            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+        }
+        else
+        {
+            //モデルを消す
+            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+        }
     }
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
     SkinnedMesh::mesh_tuple armor_r_mdl = std::make_tuple("armor_R_mdl", threshold_mesh);

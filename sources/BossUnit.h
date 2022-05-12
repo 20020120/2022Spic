@@ -15,6 +15,7 @@ class BossUnit final : public BaseEnemy
         inline static constexpr const char* AttackBegin = "AttackBegin";
         inline static constexpr const char* AttackBeam = "AttackBeam";
         inline static constexpr const char* Stun = "Stun";
+        inline static constexpr const char* Die = "Die";
     };
 
     enum AnimationName

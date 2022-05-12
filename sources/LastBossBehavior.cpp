@@ -174,13 +174,42 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, GraphicsPipeline& Gr
 
 void LastBoss::fHumanIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::human_idle, true);
+    mpModel->play_animation(mAnimPara, AnimationName::human_idle);
 }
 
 void LastBoss::fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
    // 条件に応じて攻撃手段を分岐させる
 
+    if (mpModel->end_of_animation(mAnimPara)) return;
+
+    //--------------------<アニメーションが終了したら>--------------------//
+
+    // プレイヤーとの距離が近かったら範囲爆発攻撃を多くする
+    const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+    const int randNumber = RandTargetAdd(mt);
+    if(Math::Length(mPlayerPosition-mPosition)>mkDistanceToPlayer)
+    {
+        if(randNumber<3)
+        {
+            fChangeState(DivideState::HumanBlowAttack);
+        }
+        else
+        {
+            fChangeState(DivideState::HumanAllShot);
+        }
+    }
+    else
+    {
+        if (randNumber >= 3)
+        {
+            fChangeState(DivideState::HumanBlowAttack);
+        }
+        else
+        {
+            fChangeState(DivideState::HumanAllShot);
+        }
+    }
 }
 
 void LastBoss::fHumanMoveInit()
@@ -248,6 +277,32 @@ void LastBoss::fHumanBlowAttackInit()
 void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     if(mpModel->end_of_animation(mAnimPara))
+    {
+        const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+        auto num = RandTargetAdd(mt);
+        if(num<2)
+        {
+            fChangeState(DivideState::HumanMove);
+        }
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+        }
+    }
+}
+
+void LastBoss::fMoveAwayInit()
+{
+    mMoveBegin = mPosition;
+    const auto normalV = Math::Normalize(mPosition - mPlayerPosition);
+    mMoveEnd = mPosition + normalV * 50.0f;
+    mMoveThreshold = 0.0f;
+}
+
+void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
+    if(mMoveThreshold>=1.0f)
     {
         fChangeState(DivideState::HumanIdle);
     }

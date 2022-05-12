@@ -532,12 +532,13 @@ void Player::DieUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::DyingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-        threshold += 1.0f * elapsed_time;
-        threshold_mesh += 1.0f * elapsed_time;
-        if (threshold > 1.0f && threshold_mesh > 1.0f)
-        {
-            is_alive = false;
-        }
+    is_dying_update = true;
+    threshold += 1.0f * elapsed_time;
+    threshold_mesh += 1.0f * elapsed_time;
+    if (threshold > 1.0f && threshold_mesh > 1.0f)
+    {
+        is_alive = false;
+    }
 }
 
 void Player::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
