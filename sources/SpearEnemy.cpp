@@ -16,7 +16,7 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_)
 
 void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
 
 }
 

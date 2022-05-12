@@ -166,6 +166,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
     const auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
+	enemyManager->fSetPlayerSearch(player->during_search_time());
 	mBulletManager.fUpdate(elapsed_time);
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
@@ -202,6 +203,11 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 				player->GetPlayerPower()));
 		}
 	}
+    const bool isCounter= enemyManager->fCalcEnemiesAttackVsPlayerCounter(
+		player->GetJustAvoidanceCapsuleParam().start,
+		player->GetJustAvoidanceCapsuleParam().end,
+		player->GetJustAvoidanceCapsuleParam().rasius);
+	player->PlayerJustAvoidance(isCounter);
 
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,

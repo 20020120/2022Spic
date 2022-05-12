@@ -30,22 +30,32 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 {
 	//レーダーあいこん　
 
-	DirectX::XMFLOAT2 center_pos = { 1161,114.0f };//アイコンの基準位置
+	DirectX::XMFLOAT2 center_pos = { 1177,130.0f };//アイコンの基準位置
 	mini_map_icon->begin(graphics.get_dc().Get());
 	mini_map_icon->render(graphics.get_dc().Get(), {  minimap_icon_param.position.x, minimap_icon_param.position.y }, { minimap_icon_param.scale });
 	mini_map_icon->end(graphics.get_dc().Get());
 
-	player_icon_param.position = { center_pos.x,center_pos.y  };
+	player_icon_param.position = { center_pos.x,center_pos.y   };
 #if USE_IMGUI
 	ImGui::Begin("minimapp");
 	ImGui::DragFloat2("minimap", &player_icon_param.position.x);
 	ImGui::End();
 #endif
+	{
+		DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(XMLoadFloat2(&player_forward), XMLoadFloat2(&camera_forward));
+		float dot = DirectX::XMVectorGetX(Dot);
+		dot = acosf(dot);
 
-	//プレイヤーアイコン
-	player_icon->begin(graphics.get_dc().Get());
-	player_icon->render(graphics.get_dc().Get(), { player_icon_param.position },{player_icon_param.scale});
-	player_icon->end(graphics.get_dc().Get());
+
+		const float cross{ (player_forward.x * camera_forward.y) - (player_forward.y * camera_forward.x) };
+		dot = cross < 0 ? -dot : dot;
+
+		//プレイヤーアイコン
+		player_icon->begin(graphics.get_dc().Get());
+		player_icon->render(graphics.get_dc().Get(), { player_icon_param.position }, { player_icon_param.scale },
+			{ 16,16 }, { 1,1,1,1 }, { DirectX::XMConvertToDegrees(dot) });
+		player_icon->end(graphics.get_dc().Get());
+	}
 	DirectX::XMVECTOR P_Normal = DirectX::XMVector2Normalize(DirectX::XMLoadFloat2(&camera_forward));
 	//エネミーアイコン
 	for(auto& enemy : enemy_list)
@@ -61,15 +71,16 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 		DirectX::XMFLOAT2 normal_p_to_e_vec{};
 		DirectX::XMStoreFloat2(&normal_p_to_e_vec, Normal_P_To_E_Vec);
 		DirectX::XMFLOAT2 enemy_icon_pos;
-		float cross{ (normal_p_to_e_vec.x * camera_forward.y) - (normal_p_to_e_vec.y * camera_forward.x) };
+		const float cross{ (normal_p_to_e_vec.x * camera_forward.y) - (normal_p_to_e_vec.y * camera_forward.x) };
 		//回転方向を指定
 		dot = cross < 0 ? -dot : dot;
 
 		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(player_pos, e_pos);
-		enemy_icon_pos.x =  center_pos.x + length_p_to_e_vec * sinf(dot);
-		enemy_icon_pos.y =  center_pos.y - length_p_to_e_vec * cosf(dot);
+		enemy_icon_pos.x =  (center_pos.x - 32.0f) + length_p_to_e_vec * sinf(dot);
+		enemy_icon_pos.y =  (center_pos.y - 32.0f) - length_p_to_e_vec * cosf(dot);
 		enemy_icon_param.position = enemy_icon_pos;
-		if(length_p_to_e_vec < 100.0f)
+
+		if(length_p_to_e_vec < 90.0f)
 		{
 			enemy->mpIcon->begin(graphics.get_dc().Get());
 			enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });

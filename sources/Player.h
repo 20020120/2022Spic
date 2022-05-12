@@ -50,6 +50,7 @@ private:
         AwakingDie,//死亡
         AwakingDying,//死亡中
         NamelessMotion,//モーション
+        NamelessMotionIdle,//モーション
         TitleAnimationReadyIdle,//タイトルモーション1
         TitleAnimationStart,//タイトルモーション2
         TitleAnimationStartIdle,//タイトルモーション3
@@ -145,6 +146,8 @@ private:
     bool is_behind_avoidance{ false };
     //ジャスト回避しているかどうか
     bool is_just_avoidance{ false };
+    //ジャスト回避できるカプセルに入っているかどうか
+    bool is_just_avoidance_capsul{ false };
     //倒した敵の位置を保存
     DirectX::XMFLOAT3 old_target{};
     //カメラの補間のゴール地点
@@ -548,7 +551,8 @@ private:
     void transition_normal_behavior()
     {
         behavior_state = Behavior::Normal;
-        TransitionIdle();
+        if (is_tutorial)TransitionTutoriaIdle();
+        else TransitionIdle();
     }
 
 public:
@@ -588,6 +592,8 @@ private:
     //------------------------------------------------------------------------------------------//
     //                        チュートリアルに関する関数,変数
     //------------------------------------------------------------------------------------------//
+    //チュートリアルかどうか trueでチュートリアル
+    bool is_tutorial{ false };
     //今のチュートリアルが終わった時にtrueになる
     bool is_next_tutorial{ false };
     //今のチュートリアルでどれだけ操作したかどうか
@@ -597,6 +603,7 @@ private:
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
+    void SetIsTutorial(bool tutorial) { is_tutorial = tutorial; }
     bool GetNextTutorial() { return is_next_tutorial; }
     void FalseNextTutorial() { is_next_tutorial = false; }
 private:

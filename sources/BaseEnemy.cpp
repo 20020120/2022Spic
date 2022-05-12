@@ -22,6 +22,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
     mCubeHalfSize = mScale.x * 5.0f;
     mDissolve = 1.0f;
+    mIsStun = false;
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -34,13 +35,20 @@ BaseEnemy::~BaseEnemy()
   //  mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
-void BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    if (mIsPlayerSearch)
+    {
+        elapsedTime_ *= 0.8f;
+    }
     mInvincibleTime -= elapsedTime_;
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
     fUpdateVernierEffectPos();
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
     mpModel->update_animation(mAnimPara, elapsedTime_);
+
+    
+    return elapsedTime_;
 }
 
 void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
@@ -61,11 +69,7 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         mInvincibleTime = InvincibleTime_;
         ret = true;
     }
-    if (mCurrentHitPoint <= 0)
-    {
-        fDie();
-    }
-
+    
     return ret;
 }
 
@@ -128,7 +132,6 @@ void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-	    DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -157,7 +160,6 @@ void BaseEnemy::fTurnToTarget(float elapsedTime_, float RotSpeed_,
 
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
-        DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -187,7 +189,6 @@ void BaseEnemy::fTurnToPlayerXYZ(float elapsedTime_, float RotSpeed_)
     if (fabs(dot) > DirectX::XMConvertToRadians(2.0f))
     {
         axis = Math::Cross(front, vToPlayer); 
-        DirectX::XMVECTOR q;
         float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
         if (cross > 0)
         {
@@ -205,6 +206,16 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     // ëOï˚å¸Ç…êi
     const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
     mPosition += (velocity * elapsedTime_);
+}
+
+void BaseEnemy::fBaseDeathInit()
+{
+    fDie();
+}
+
+void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+
 }
 
 void BaseEnemy::fSetStun(bool Arg_)
@@ -225,6 +236,11 @@ void BaseEnemy::fSetAttack(bool Arg_)
 void BaseEnemy::fSetIsLockOnOfChain(bool RockOn_)
 {
     mIsLockOnOfChain = RockOn_;
+}
+
+void BaseEnemy::fSetIsPlayerSearch(bool Arg_)
+{
+    mIsPlayerSearch = Arg_;
 }
 
 bool BaseEnemy::fGetAttack() const

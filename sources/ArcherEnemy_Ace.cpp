@@ -13,7 +13,7 @@
 ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     EnemyParamPack ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ArcherEnemy.fbx",
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_arrow.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -30,14 +30,14 @@ ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
 
 
 ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/Archer_Ace.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_arrow.fbx")
 {}
 
 
 void ArcherEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
 }
 
 void ArcherEnemy_Ace::fUpdateAttackCapsule()
@@ -184,7 +184,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
 
 void ArcherEnemy_Ace::fParamInitialize()
 {
-    mStayTimer = 1.0f;
+    mStayTimer = 0.0f;
     mAttack_flg = false;
 }
 
@@ -210,13 +210,13 @@ void ArcherEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 void ArcherEnemy_Ace::fIdleInit()
 {
     //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
-
+    mStayTimer = 0;
 }
 
 void ArcherEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mStayTimer -= elapsedTime_;
-    if (mStayTimer > 0.0f) return;
+    mStayTimer += elapsedTime_;
+    if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
     fChangeState(DivedState::Move);
 }
@@ -253,7 +253,7 @@ void ArcherEnemy_Ace::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 
 void ArcherEnemy_Ace::fMoveApproachInit()
 {
-
+    mStayTimer = 0.0f;
 }
 
 void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -271,11 +271,21 @@ void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& 
     if (LengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
         fChangeState(DivedState::Leave);
+        return;
+    }
+
+    //ˆê’èŽžŠÔˆÚ“®‚µ‚½‚ç‘Ò‹@ó‘Ô‚É‘JˆÚ
+    mStayTimer += elapsedTime_;
+    if (mStayTimer >= MOVE_TIME)
+    {
+        fChangeState(DivedState::Idle);
+        mStayTimer = 0;
     }
 }
 
 void ArcherEnemy_Ace::fMoveLeaveInit()
 {
+    mStayTimer = 0.0f;
 }
 
 
@@ -297,7 +307,6 @@ void ArcherEnemy_Ace::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Gra
 
         if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
         {
-            DirectX::XMVECTOR q;
             float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
             if (cross > 0)
             {
@@ -322,6 +331,15 @@ void ArcherEnemy_Ace::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Gra
     if (LengthFromPlayer > AT_LONGEST_DISTANCE)
     {
         fChangeState(DivedState::Approach);
+        return;
+    }
+
+    //ˆê’èŽžŠÔˆÚ“®‚µ‚½‚ç‘Ò‹@ó‘Ô‚É‘JˆÚ
+    mStayTimer += elapsedTime_;
+    if (mStayTimer >= MOVE_TIME)
+    {
+        fChangeState(DivedState::Idle);
+        mStayTimer = 0;
     }
 }
 

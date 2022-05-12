@@ -49,6 +49,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 
 	player = std::make_unique<Player>(graphics);
 	player->SetTutorialDamageFunc();
+	player->SetIsTutorial(true);
 	// ÉJÉÅÉâ
 	cameraManager = std::make_unique<CameraManager>();
 
@@ -73,7 +74,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 
 	check_mark = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckMark.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1, true);
-	change_scene_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\enemy_hp_gauge.png",
+	change_scene_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
 
@@ -202,6 +203,12 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 				player->GetPlayerPower()));
 		}
 	}
+
+	const bool isCounter = enemyManager->fCalcEnemiesAttackVsPlayerCounter(
+		player->GetJustAvoidanceCapsuleParam().start,
+		player->GetJustAvoidanceCapsuleParam().end,
+		player->GetJustAvoidanceCapsuleParam().rasius);
+	player->PlayerJustAvoidance(isCounter);
 
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,

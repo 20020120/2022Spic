@@ -13,7 +13,7 @@
 ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     EnemyParamPack ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ArcherEnemy.fbx",
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_arrow.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -25,19 +25,20 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     //パラメーターの初期化
     fParamInitialize();
     fRegisterFunctions();
+
     mfAddFunc = BulletManager::Instance().fGetAddFunction();
 }
 
 
 ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ArcherEnemy.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_arrow.fbx")
 {}
 
 
 void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<更新処理>--------------------//
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
 }
 
 void ArcherEnemy::fUpdateAttackCapsule()
@@ -184,7 +185,7 @@ void ArcherEnemy::fRegisterFunctions()
 
 void ArcherEnemy::fParamInitialize()
 {
-       mStayTimer = 1.0f;
+	mStayTimer = 0.0f;
     mAttack_flg = false;
 }
 
@@ -210,13 +211,13 @@ void ArcherEnemy::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void ArcherEnemy::fIdleInit()
 {
     //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
-
+    mStayTimer = 0;
 }
 
 void ArcherEnemy::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mStayTimer -= elapsedTime_;
-    if (mStayTimer > 0.0f) return;
+    mStayTimer += elapsedTime_;
+    if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
     fChangeState(DivedState::Move);
 }
@@ -253,7 +254,7 @@ void ArcherEnemy::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void ArcherEnemy::fMoveApproachInit()
 {
-
+    mStayTimer = 0.0f;
 }
 
 void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -271,11 +272,21 @@ void ArcherEnemy::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& Grap
     if (LengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
         fChangeState(DivedState::Leave);
+        return;
+    }
+
+    //一定時間移動したら待機状態に遷移
+    mStayTimer += elapsedTime_;
+    if (mStayTimer >= MOVE_TIME)
+    {
+        fChangeState(DivedState::Idle);
+        mStayTimer = 0;
     }
 }
 
 void ArcherEnemy::fMoveLeaveInit()
 {
+    mStayTimer = 0.0f;
 }
 
 
@@ -297,7 +308,6 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 
         if (fabs(dot) > DirectX::XMConvertToRadians(10.0f))
         {
-            DirectX::XMVECTOR q;
             float cross{ (vToPlayer.x * front.z) - (vToPlayer.z * front.x) };
             if (cross > 0)
             {
@@ -322,6 +332,15 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     if (LengthFromPlayer > AT_LONGEST_DISTANCE)
     {
         fChangeState(DivedState::Approach);
+        return;
+    }
+
+    //一定時間移動したら待機状態に遷移
+    mStayTimer += elapsedTime_;
+    if (mStayTimer >= MOVE_TIME)
+    {
+        fChangeState(DivedState::Idle);
+        mStayTimer = 0;
     }
 }
 
