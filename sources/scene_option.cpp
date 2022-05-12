@@ -179,7 +179,7 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	auto r_render = [&](std::string gui, Element& e, SpriteBatch* s, const DirectX::XMFLOAT2& add_pos)
+	auto r_render = [&](std::string gui, Element& e, SpriteBatch* s, const DirectX::XMFLOAT2& add_pos, float glow_horizon = 0, float glow_vertical = 0)
 	{
 #ifdef USE_IMGUI
 		ImGui::Begin("option");
@@ -193,11 +193,16 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::End();
 #endif // USE_IMGUI
 		s->begin(graphics.get_dc().Get());
-		s->render(graphics.get_dc().Get(), e.position + add_pos, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		s->render(graphics.get_dc().Get(), e.position + add_pos, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
 		s->end(graphics.get_dc().Get());
 	};
 	//--back--//
-	r_render("back", back, sprite_back.get(), add_position);
+	ImGui::Begin("glow_vertical");
+	static float glow_vertical = {};
+	ImGui::DragFloat("glow_vertical", &glow_vertical, 0.01f);
+	ImGui::End();
+
+	r_render("back", back, sprite_back.get(), add_position, 0, glow_vertical);
 	//--frame--//
 	r_render("frame", frame, sprite_frame.get(), add_position);
 	//--icon--//

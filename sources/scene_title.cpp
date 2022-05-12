@@ -145,6 +145,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	logo_parameters.frame_y = 0;
 	logo_parameters.start_anim = false;
 	logo_parameters.reset_timer = 0.0f;
+	logo_parameters.glow_horizon = 0.0f;
 
 	//--slashing post effect--//
 	slashing_power = 0;
@@ -221,9 +222,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (logo_parameters.frame_y >= FRAMW_COUNT_Y - 1)
 	{
 		logo_parameters.reset_timer += elapsed_time;
+		logo_parameters.glow_horizon -= logo_parameters.reset_timer * 0.1f;
+		logo_parameters.glow_horizon = (std::max)(logo_parameters.glow_horizon, -12.0f);
+
 		if (logo_parameters.reset_timer > 2.0f)
 		{
 			logo_parameters.reset_timer = 0.0f;
+			logo_parameters.glow_horizon = 0.0f;
 
 			frame_x = 0;
 			logo_parameters.timer = 0;
@@ -495,7 +500,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 
-	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e)
+	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e, float glow_horizon = 0, float glow_vertical = 0)
 	{
 		//--sprite_string--//
 #ifdef USE_IMGUI
@@ -509,7 +514,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		ImGui::End();
 #endif // USE_IMGUI
 		batch->begin(graphics.get_dc().Get());
-		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
 		batch->end(graphics.get_dc().Get());
 	};
 	auto r_font_render = [&](std::string name, StepFontElement& e)
@@ -530,7 +535,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	//--logo_parameters--//
 	r_sprite_render("animation", logo_parameters.sprite_animation.get(), logo_parameters.animation);
-	r_sprite_render("logo", logo_parameters.sprite_logo.get(), logo_parameters.logo);
+	r_sprite_render("logo", logo_parameters.sprite_logo.get(), logo_parameters.logo, logo_parameters.glow_horizon);
 
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
@@ -585,7 +590,11 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (tutorial_tab.display)
 	{
-		r_sprite_render("frame", tutorial_tab.sprite_frame.get(), tutorial_tab.frame);
+		ImGui::Begin("glow_vertical");
+		static float glow_vertical = {};
+		ImGui::DragFloat("glow_vertical", &glow_vertical, 0.01f);
+		ImGui::End();
+		r_sprite_render("frame", tutorial_tab.sprite_frame.get(), tutorial_tab.frame, 0, glow_vertical);
 		r_sprite_render("tab selecterL", sprite_selecter.get(), tutorial_tab.selecterL);
 		r_sprite_render("tab selecterR", sprite_selecter.get(), tutorial_tab.selecterR);
 

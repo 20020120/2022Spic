@@ -10,6 +10,7 @@
 //
 //==============================================================================================================================
 #include "sprite.hlsli"
+#include "constants.hlsli"
 
 Texture2D color_map : register(t0);
 SamplerState point_sampler_state : register(s0);
@@ -20,6 +21,40 @@ float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 color = color_map.Sample(anisotropic_sampler_state, pin.texcoord);
     float alpha = color.a;
+
+    //float base = 0.3;
+    //if (pin.texcoord.y < base)
+    //{
+    //    color.rgb += threshold.x * (base - pin.texcoord.y);
+    //}
+
+    // ‰¡‚Éü‚ð‘–‚ç‚¹‚é
+    float3 glow_horizon_color = { 0.2, 0.2, 0.2 };
+    float glow_horizon_interval = 0.5f;
+    float glow_horizon_thickness = 1.5; // ‘‚¦‚é‚Ù‚Ç×‚¢
+    float horizon_sin_v = sin(pin.texcoord.x * glow_horizon_thickness + (threshold.x - 0.5f) * glow_horizon_interval);
+    float horizon_steped = smoothstep(1, horizon_sin_v * horizon_sin_v, 0.99);
+    color.rgb += glow_horizon_color * horizon_steped;
+
+    // c‚Éü‚ð‘–‚ç‚¹‚é
+    if (threshold.y < 0)
+    {
+        // ‘¾‚¢•û
+        float3 glow_vertical_color = { 0.2, 0.2, 0.2 };
+        float glow_vertical_interval = 5.0f;
+        float glow_vertical_thickness = 3.0;
+        float vertical_sin_v = sin(pin.texcoord.y * glow_vertical_thickness + (threshold.y - 0.5f) * glow_vertical_interval);
+        float vertical_steped = smoothstep(1, vertical_sin_v * vertical_sin_v, 0.99);
+        color.rgb -= glow_vertical_color * vertical_steped;
+
+        // ×‚¢•û
+        glow_vertical_thickness = 4.5;
+        vertical_sin_v = sin(pin.texcoord.y * glow_vertical_thickness + (threshold.y - 2.0f) * glow_vertical_interval);
+        vertical_steped = smoothstep(1, vertical_sin_v * vertical_sin_v, 0.99);
+        color.rgb -= glow_vertical_color * vertical_steped;
+    }
+
+
 #if 0
     // Inverse gamma process
     const float GAMMA = 2.2;

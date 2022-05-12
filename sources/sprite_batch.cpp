@@ -39,6 +39,15 @@ SpriteBatch::SpriteBatch(ID3D11Device* device, const wchar_t* filename, size_t m
         hr = device->CreateBuffer(&buffer_desc, &subresource_data, vertex_buffer.GetAddressOf());
         _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
     }
+    // 定数バッファの作成
+    {
+        D3D11_BUFFER_DESC buffer_desc{};
+        buffer_desc.ByteWidth = sizeof(SpriteConstants);
+        buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+        buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        hr = device->CreateBuffer(&buffer_desc, nullptr, constant_buffer.GetAddressOf());
+        _ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
+    }
 
     // 入力レイアウトオブジェクトの生成
     D3D11_INPUT_ELEMENT_DESC input_element_desc[]
@@ -66,7 +75,8 @@ SpriteBatch::~SpriteBatch()
 }
 
 void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
-    float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle/*degree*/)
+    float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a,
+    float angle/*degree*/, float glow_horizon, float glow_vertical)
 {
     // スクリーン（ビューポート）のサイズを取得する
     D3D11_VIEWPORT viewport{};
@@ -120,19 +130,26 @@ void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float positi
     vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { 0, 1 } });
     vertices.push_back({ { x1, y1 , 0 }, { color_r, color_g, color_b, color_a }, { 1, 0 } });
     vertices.push_back({ { x3, y3 , 0 }, { color_r, color_g, color_b, color_a }, { 1, 1 } });
+
+
+    // 定数バッファの更新
+    SpriteConstants data{ {glow_horizon, glow_vertical, 0, 0} };
+    dc->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
+    dc->PSSetConstantBuffers(2, 1, constant_buffer.GetAddressOf());
 }
 
 void SpriteBatch::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position,
-    DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle)
+    DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, float glow_horizon, float glow_vertical)
 {
-    render(dc, position.x, position.y, scale.x, scale.y, pivot.x, pivot.y, color.x, color.y, color.z, color.w, angle);
+    render(dc, position.x, position.y, scale.x, scale.y, pivot.x, pivot.y, color.x,
+        color.y, color.z, color.w, angle, glow_horizon, glow_vertical);
 }
 
 // 追加する引数変数sx, sy, sw, shはテクセル座標系における矩形の左上座標(sx, sy)とサイズ(sw, sh)とする
 // テクセル座標系からテクスチャ座標系への変換をおこなう
 void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y,
     float pivot_x, float pivot_y, float color_r, float color_g, float color_b, float color_a, float angle,
-    float texpos_x, float texpos_y, float texsize_w, float texsize_h)
+    float texpos_x, float texpos_y, float texsize_w, float texsize_h, float glow_horizon, float glow_vertical)
 {
     // スクリーン（ビューポート）のサイズを取得する
     D3D11_VIEWPORT viewport{};
@@ -201,16 +218,22 @@ void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float positi
         vertices.push_back({ { x0, y0 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v0 } });
         vertices.push_back({ { x2, y2 , 0 }, { color_r, color_g, color_b, color_a }, { u0, v1 } });
     }
+
+    // 定数バッファの更新
+    SpriteConstants data{ {glow_horizon, glow_vertical, 0, 0} };
+    dc->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
+    dc->PSSetConstantBuffers(2, 1, constant_buffer.GetAddressOf());
 }
 
 void SpriteBatch::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale,
-    DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle, DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize)
+    DirectX::XMFLOAT2 pivot, DirectX::XMFLOAT4 color, float angle,
+    DirectX::XMFLOAT2 texpos, DirectX::XMFLOAT2 texsize, float glow_horizon, float glow_vertical)
 {
     render(dc, position.x, position.y, scale.x, scale.y, pivot.x, pivot.y,
-        color.x, color.y, color.z, color.w, angle, texpos.x, texpos.y, texsize.x, texsize.y);
+        color.x, color.y, color.z, color.w, angle, texpos.x, texpos.y, texsize.x, texsize.y, glow_horizon, glow_vertical);
 }
 
-void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y)
+void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float position_y, float scale_x, float scale_y, float glow_horizon, float glow_vertical)
 {
     // スクリーン（ビューポート）のサイズを取得する
     D3D11_VIEWPORT viewport{};
@@ -251,11 +274,17 @@ void SpriteBatch::render(ID3D11DeviceContext* dc, float position_x, float positi
     vertices.push_back({ { x2, y2 , 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, { u0, v1 } });
     vertices.push_back({ { x1, y1 , 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, { u1, v0 } });
     vertices.push_back({ { x3, y3 , 0 }, { 1.0f, 1.0f, 1.0f, 1.0f }, { u1, v1 } });
+
+    // 定数バッファの更新
+    SpriteConstants data{ {glow_horizon, glow_vertical, 0, 0} };
+    dc->UpdateSubresource(constant_buffer.Get(), 0, 0, &data, 0, 0);
+    dc->PSSetConstantBuffers(2, 1, constant_buffer.GetAddressOf());
+
 }
 
-void SpriteBatch::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale)
+void SpriteBatch::render(ID3D11DeviceContext* dc, DirectX::XMFLOAT2 position, DirectX::XMFLOAT2 scale, float glow_horizon, float glow_vertical)
 {
-    render(dc, position.x, position.y, scale.x, scale.y);
+    render(dc, position.x, position.y, scale.x, scale.y, glow_horizon, glow_vertical);
 }
 
 void SpriteBatch::begin(ID3D11DeviceContext* dc)

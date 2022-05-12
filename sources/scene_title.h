@@ -143,6 +143,8 @@ private:
         int frame_y = 0;
         bool start_anim = false;
         float reset_timer = 0.0f;
+
+        float glow_horizon = 0;
     };
     LogoParameters logo_parameters;
 
