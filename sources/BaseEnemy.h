@@ -37,8 +37,7 @@ public:
     void fTurnToTarget(float elapsedTime_,float RotSpeed_,DirectX::XMFLOAT3 Target_);
     void fTurnToPlayerXYZ(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
-    void fBaseDeathInit();
-    void fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    
     //--------------------<セッター関数>--------------------//
     virtual void fSetStun(bool Arg_);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);

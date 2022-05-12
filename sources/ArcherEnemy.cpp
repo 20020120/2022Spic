@@ -39,7 +39,15 @@ void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
     elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
+
+    //HP‚ª‚È‚­‚È‚Á‚½ŽžŽ€–S‚³‚¹‚é
+    if(mCurrentHitPoint <= 0.0f)
+    {
+        fDie();
+    }
 }
+
+
 
 void ArcherEnemy::fUpdateAttackCapsule()
 {

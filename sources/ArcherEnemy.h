@@ -101,6 +101,8 @@ private:
     //ƒXƒ^ƒ“
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+
    
    
     //****************************************************************

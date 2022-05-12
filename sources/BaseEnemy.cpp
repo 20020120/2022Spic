@@ -69,7 +69,11 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         mInvincibleTime = InvincibleTime_;
         ret = true;
     }
-    
+    //HP‚ª‚È‚­‚È‚Á‚½ŽžŽ€–S‚³‚¹‚é
+    if (mCurrentHitPoint <= 0.0f)
+    {
+        fDie();
+    }
     return ret;
 }
 
@@ -208,15 +212,6 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     mPosition += (velocity * elapsedTime_);
 }
 
-void BaseEnemy::fBaseDeathInit()
-{
-    fDie();
-}
-
-void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-{
-
-}
 
 void BaseEnemy::fSetStun(bool Arg_)
 {
