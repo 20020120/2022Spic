@@ -45,6 +45,13 @@ public:
         float PlayerCapsuleRadius_,             // プレイヤーのカプセルの情報
         AddDamageFunc Func_
     );
+
+    // 敵の攻撃とプレイヤーのカウンターの当たり判定
+    bool fCalcEnemiesAttackVsPlayerCounter(
+        DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
+        DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
+        float PlayerCapsuleRadius_);             // プレイヤーのカプセルの情報)
+    
     // プレイヤーの回り込み攻撃と敵の当たり判定
     void fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_);
 
@@ -59,6 +66,7 @@ public:
     //--------------------<セッター関数>--------------------//
     void fSetIsPlayerChainTime(bool IsChain_);//プレイヤーがチェイン状態であるかどうかをエネミーが受け取る関数
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
+    void fSetPlayerSearch(bool Arg_); // プレイヤーがチェイン攻撃中にTrue
 
 public:
     //--------------------<ImGui>--------------------//

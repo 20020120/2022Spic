@@ -29,7 +29,7 @@ public:
     virtual void fUpdateAttackCapsule() = 0;
     virtual void fDie();
 
-    void fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    [[nodiscard]]float fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     virtual void fRender(GraphicsPipeline& Graphics_);
     virtual bool  fDamaged(int Damage_, float InvincibleTime_);
     void fUpdateVernierEffectPos();
@@ -43,6 +43,7 @@ public:
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
     void fSetIsLockOnOfChain(bool RockOn_);
+    void fSetIsPlayerSearch(bool Arg_);
 
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]] bool fGetAttack() const;
@@ -57,6 +58,7 @@ public:
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;
+
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -94,6 +96,8 @@ protected:
     virtual void fRegisterFunctions() = 0;
     void fChangeState(const char* Tag_);
     bool mIsLockOnOfChain = false;
+
+    bool mIsPlayerSearch{}; // チェイン攻撃でロックオンされてるかどうか
 protected:
     // 攻撃の当たり判定
     Capsule mAttackCapsule{};

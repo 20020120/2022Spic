@@ -145,6 +145,35 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayer(DirectX::XMFLOAT3 PlayerCapsulePoi
     return false;
 }
 
+bool EnemyManager::fCalcEnemiesAttackVsPlayerCounter(DirectX::XMFLOAT3 PlayerCapsulePointA_,
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_)
+{
+    //--------------------<ƒvƒŒƒCƒ„[‚Æ“G‚ÌUŒ‚‚Ì“–‚½‚è”»’è>--------------------//
+
+    for (const auto enemy : mEnemyVec)
+    {
+        // “–‚½‚è”»’è‚ð‚·‚é‚©Šm”F
+        if (enemy->fComputeAndGetIntoCamera())
+        {
+            if (enemy->fGetAttack())
+            {
+                Capsule capsule = enemy->fGetAttackCapsule();
+
+                const bool result = Collision::capsule_vs_capsule(
+                    PlayerCapsulePointA_, PlayerCapsulePointB_, PlayerCapsuleRadius_,
+                    capsule.mTop, capsule.mBottom, capsule.mRadius);
+
+                // “–‚½‚Á‚Ä‚¢‚½‚ç
+                if (result)
+                {
+                    return  true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void EnemyManager::fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_)
 {
     
@@ -192,7 +221,10 @@ BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
     fSort(func);
     for(const auto enemy :mEnemyVec)
     {
-        if(enemy->fComputeAndGetIntoCamera())
+        if (enemy->fGetStun()) continue;;
+
+
+        if (enemy->fComputeAndGetIntoCamera())
         {
             // ‚±‚Ì“G‚©‚ç‚Ì‹——£‚ðŒvŽZ‚·‚é
             for(const auto enemy2:mEnemyVec)
@@ -260,6 +292,14 @@ void EnemyManager::fSetPlayerPosition(DirectX::XMFLOAT3 Position_)
     for(const auto& enemy:mEnemyVec)
     {
         enemy->fSetPlayerPosition(Position_);
+    }
+}
+
+void EnemyManager::fSetPlayerSearch(bool Arg_)
+{
+    for (const auto& enemy : mEnemyVec)
+    {
+        enemy->fSetIsPlayerSearch(Arg_);
     }
 }
 

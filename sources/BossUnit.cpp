@@ -28,15 +28,22 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_)
 
 void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
     mBeam.fUpdate();
     mWarningLine.fUpdate();
 
-    mLifeTimer -= elapsedTime_;
-    if(mLifeTimer<0.0f)
+    if (!mIsPlayerSearch && !mIsStun)
+    {
+        mLifeTimer -= elapsedTime_;
+    }
+
+    if (mLifeTimer < 0.0f)
     {
         fDie();
     }
+
+
+    fGuiMenu();
 }
 
 void BossUnit::fUpdateAttackCapsule()
@@ -188,6 +195,10 @@ void BossUnit::fGuiMenu()
     ImGui::Text("OnPlayer:");
     ImGui::SameLine();
     ImGui::Text(mOnPlayer ? "true" : "false");
+
+    ImGui::Checkbox("PlayerSearch", &mIsPlayerSearch);
+    ImGui::Checkbox("Stun", &mIsStun);
+    ImGui::DragFloat("LifeTime", &mLifeTimer);
 
     ImGui::End();
 #endif

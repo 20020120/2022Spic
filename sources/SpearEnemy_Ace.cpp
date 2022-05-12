@@ -18,7 +18,7 @@ SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_)
 
 void SpearEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
     fUpdateAttackCapsule();
 }
 

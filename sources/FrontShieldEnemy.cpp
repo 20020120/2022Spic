@@ -23,7 +23,7 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)
 
 void ShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
     fUpdateAttackCapsule(); // 攻撃用のカプセル位置を更新
 }
 

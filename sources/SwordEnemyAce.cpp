@@ -18,7 +18,7 @@ SwordEnemy_Ace::~SwordEnemy_Ace()
 
 void SwordEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
-    fBaseUpdate(elapsedTime_,Graphics_);
+    elapsedTime_=fBaseUpdate(elapsedTime_,Graphics_);
     mIsHit = false;
 }
 

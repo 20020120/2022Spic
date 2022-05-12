@@ -37,7 +37,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_)
 void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     //--------------------<XVˆ—>--------------------//
-    fBaseUpdate(elapsedTime_, Graphics_);
+    elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
 }
 
 void ArcherEnemy::fUpdateAttackCapsule()
