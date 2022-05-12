@@ -2,6 +2,7 @@
 #include"BaseEnemy.h"
 #include"EnemyFileSystem.h"
 #include"EnemiesEditor.h"
+#include"practical_entities.h"
 #include<vector>
 
 
@@ -12,7 +13,7 @@
 // 敵の管理クラス
 //
 //****************************************************************
-class EnemyManager final
+class EnemyManager final :public PracticalEntities
 {
     //****************************************************************
     //
@@ -21,7 +22,7 @@ class EnemyManager final
     //****************************************************************
 public:
     EnemyManager() = default;
-    ~EnemyManager();
+    ~EnemyManager() override;
 
     void fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_);
     void fUpdate(GraphicsPipeline & graphics_,float elapsedTime_, AddBulletFunc Func_);
@@ -135,6 +136,11 @@ private:
     DirectX::XMFLOAT3 mPlayerPosition{};
 
     int mUniqueCount{};
+
+    // カメラシェイク
+    float mCameraShakeTime{};
+    const float mkOneShakeSec{ 0.15f };
+
 
     //****************************************************************
     //

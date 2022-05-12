@@ -22,6 +22,10 @@ public:
     void set_max_sway_y(float v) { max_sway_y = v; }
     void set_seed_shifting_factor(float v) { seed_shifting_factor = v; }
     const DirectX::XMFLOAT4X4 get_shake_matrix() const { return shake_matrix; }
+
+
+
+    // –ˆƒtƒŒ[ƒ€ˆê‰ñ‚Ì‚İŒÄ‚Ño‚·‚±‚Æ
 private:
     //--------< •Ï” >--------//
     float max_skew = 0.00f;		// unit is degrees angle.
@@ -34,4 +38,5 @@ private:
                                       0, 1, 0, 0,
                                       0, 0, 1, 0,
                                       0, 0, 0, 1 };
+    
 };

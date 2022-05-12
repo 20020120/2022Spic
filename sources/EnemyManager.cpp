@@ -53,6 +53,14 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
         //mWaveTimer += elapsedTime_;
     }
 
+    // カメラシェイク
+    if(mCameraShakeTime>0.0f)
+    {
+        camera_shake->shake(graphics_, elapsedTime_);
+    }
+    mCameraShakeTime -= elapsedTime_;
+    mCameraShakeTime = (std::max)(0.0f, mCameraShakeTime);
+
     //--------------<プレイヤーがチェイン中はエネミーの行動をすべて停止させる>-------------//
     if(mIsPlayerChainTime)
     {
@@ -413,6 +421,8 @@ void EnemyManager::fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_
         else
         {
             mRemoveVec.emplace_back(enemy);
+            // 死んでいる敵がいたら振る時間を加算
+            mCameraShakeTime += mkOneShakeSec;
         }
     }
 

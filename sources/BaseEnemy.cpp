@@ -88,6 +88,7 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_,float elapsedTime_)
     mIsAlive = false;
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
 
+    mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 2.0f);
     // カメラシェイク
     camera_shake->reset(Graphics_);
 }
