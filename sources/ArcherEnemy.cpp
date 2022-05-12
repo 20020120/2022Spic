@@ -43,7 +43,7 @@ void ArcherEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     //HP‚ª‚È‚­‚È‚Á‚½ŽžŽ€–S‚³‚¹‚é
     if(mCurrentHitPoint <= 0.0f)
     {
-        fDie();
+        fDie(Graphics_,elapsedTime_);
     }
 }
 
@@ -457,7 +457,7 @@ void ArcherEnemy::fGuiMenu()
     ImGui::Checkbox("Attack", &mAttack_flg);
     if (ImGui::Button("dameged", { 70.0f,30.0f }))
     {
-        fDamaged(1, 0.6f);
+       // fDamaged(1, 0.6f);
     }
 #endif
 

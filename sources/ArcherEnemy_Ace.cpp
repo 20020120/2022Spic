@@ -449,7 +449,7 @@ void ArcherEnemy_Ace::fGuiMenu()
     ImGui::Checkbox("Attack", &mAttack_flg);
     if (ImGui::Button("dameged", { 70.0f,30.0f }))
     {
-        fDamaged(1, 0.6f);
+        //fDamaged(1, 0.6f);
     }
 #endif
 

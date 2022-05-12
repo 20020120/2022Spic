@@ -27,11 +27,11 @@ public:
 
     virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
     virtual void fUpdateAttackCapsule() = 0;
-    virtual void fDie();
+    virtual void fDie(GraphicsPipeline& Graphics_, float elaspedTime_);
 
     [[nodiscard]]float fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     virtual void fRender(GraphicsPipeline& Graphics_);
-    virtual bool  fDamaged(int Damage_, float InvincibleTime_);
+    virtual bool  fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_);
     void fUpdateVernierEffectPos();
     void fTurnToPlayer(float elapsedTime_,float RotSpeed_);
     void fTurnToTarget(float elapsedTime_,float RotSpeed_,DirectX::XMFLOAT3 Target_);
@@ -106,10 +106,11 @@ protected:
 private:
     skeleton::bone mVenierBone{};
 
+protected:
     //--------------------<エフェクト>--------------------//
     std::unique_ptr<Effect> mVernierEffect{ nullptr };
     inline static const char* mkVernierPath = "./resources/Effect/sluster_enemy2.efk";
-
+private:
     std::unique_ptr<Effect> mBombEffect{ nullptr };
     inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";
 

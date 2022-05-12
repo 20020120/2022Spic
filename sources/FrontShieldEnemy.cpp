@@ -123,7 +123,7 @@ void ShieldEnemy::fUpdateAttackCapsule()
 {
 }
 
-bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
+bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_,GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //シールド効果がON状態且つ、正面から攻撃された場合は攻撃をはじくアニメーションへ遷移
     if( is_shield  &&fJudge_in_view() )
@@ -146,7 +146,7 @@ bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_)
     if (mCurrentHitPoint <= 0)
     {
         //fChangeState(DivedState::Die);
-        fDie();
+        fDie(Graphics_, elapsedTime_);
     }
     return ret;
 }

@@ -49,7 +49,8 @@ public:
     void fRegisterFunctions() override; // ステートを登録
     void fUpdateAttackCapsule() override;
 
-    bool fDamaged(int Damage_, float InvincibleTime_) ;
+    bool fDamaged(int Damage_, float InvincibleTime_, 
+        GraphicsPipeline& Graphics_, float elapsedTime_) ;
 
 private:
     bool fJudge_in_view() const;

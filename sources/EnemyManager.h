@@ -36,7 +36,9 @@ public:
         DirectX::XMFLOAT3 PlayerCapsulePointA_,// プレイヤーのカプセルの情報
         DirectX::XMFLOAT3 PlayerCapsulePointB_,// プレイヤーのカプセルの情報
         float PlayerCapsuleRadius_,            // プレイヤーのカプセルの情報
-        int PlayerAttackPower_                 // プレイヤーの攻撃力
+        int PlayerAttackPower_   ,              // プレイヤーの攻撃力
+        GraphicsPipeline& Graphics_,
+        float elapsedTime_
     );
     // 敵の攻撃とプレイヤーの当たり判定
     bool fCalcEnemiesAttackVsPlayer(

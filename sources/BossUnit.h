@@ -15,7 +15,7 @@ class BossUnit final : public BaseEnemy
         inline static constexpr const char* AttackBegin = "AttackBegin";
         inline static constexpr const char* AttackBeam = "AttackBeam";
         inline static constexpr const char* Stun = "Stun";
-        inline static constexpr const char* Die = "Die";
+       
     };
 
     enum AnimationName
@@ -40,7 +40,7 @@ public:
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-    bool fDamaged(int Damage_, float InvincibleTime_) override;
+   
     void fSetStun(bool Arg_) override;
 protected:
     void fRegisterFunctions() override;

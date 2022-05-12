@@ -159,7 +159,7 @@ public:
     ~LastBoss() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-    void fDie() override;
+    
     void fSetStun(bool Arg_) override;
      
     //--------------------<ƒ^ƒŒƒbƒg‚ÌŠÖ”>--------------------//

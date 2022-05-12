@@ -156,7 +156,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     //ƒNƒŠƒA‰‰o’†‚¶‚á‚È‚¢‚Æ‚«
     if (during_clear == false)
     {
-        ExecFuncUpdate(elapsed_time, sky_dome, enemies);
+        ExecFuncUpdate(elapsed_time, sky_dome, enemies,graphics);
         switch (behavior_state)
         {
         case Player::Behavior::Normal:

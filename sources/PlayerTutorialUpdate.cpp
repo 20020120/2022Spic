@@ -5,7 +5,7 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies);
+    ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies,graphics);
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
@@ -152,7 +152,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
 }
 
 
-void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
     switch (behavior_state)
     {
@@ -161,7 +161,7 @@ void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::
         (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
         break;
     case Player::Behavior::Chain:
-        (this->*player_chain_activity)(elapsed_time, enemies);
+        (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
         break;

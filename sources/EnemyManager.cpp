@@ -84,7 +84,8 @@ void EnemyManager::fFinalize()
 }
 
 int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
-    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_)
+    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_,
+    GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     //--------------------<ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Æ“G‚Ì“–‚½‚è”»’è>--------------------//
       // UŒ‚‚ª‰½‘Ì‚Ì“G‚É“–‚½‚Á‚½‚©
@@ -104,7 +105,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                if(enemy->fDamaged(PlayerAttackPower_, 2.3f))
+                if(enemy->fDamaged(PlayerAttackPower_, 2.3f,Graphics_,elapsedTime_))
                 {
                     hitCounts++;
                 }

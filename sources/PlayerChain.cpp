@@ -154,7 +154,8 @@ void Player::transition_chain_search()
 	player_chain_activity = &Player::chain_search_update;
 }
 
-void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
+void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
+	GraphicsPipeline& graphics_)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain");
@@ -353,7 +354,8 @@ void Player::transition_chain_lockon_begin()
 	player_chain_activity = &Player::chain_lockon_begin_update;
 }
 
-void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
+void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
+	GraphicsPipeline& Graphics_)
 {
 	if (model->end_of_animation())
 	{
@@ -484,7 +486,7 @@ void Player::transition_chain_lockon()
 	player_chain_activity = &Player::chain_lockon_update;
 }
 
-void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
+void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> enemies,GraphicsPipeline& Graphics_)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("lockon"); ImGui::End();
@@ -597,7 +599,7 @@ void Player::transition_chain_move()
 	player_chain_activity = &Player::chain_move_update;
 }
 
-void Player::chain_move_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
+void Player::chain_move_update(float elapsed_time, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("move"); ImGui::End();
@@ -631,7 +633,7 @@ void Player::transition_chain_attack()
 	player_chain_activity = &Player::chain_attack_update;
 }
 
-void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> enemies)
+void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> enemies,GraphicsPipeline& Graphics_)
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("chain"); ImGui::Text("attack"); ImGui::End();
@@ -649,7 +651,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			for (const auto& enemy : enemies)
 			{
 				if (!enemy->fIsLockOnOfChain()) continue; // ダメージを与えるのはロックオンされた敵のみ
-				enemy->fDamaged(100, 0.3f);
+				enemy->fDamaged(100, 0.3f,Graphics_,elapsed_time);
 				enemy->fSetIsLockOnOfChain(false);
 			}
 

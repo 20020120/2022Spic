@@ -41,7 +41,7 @@ public:
     ~SwordEnemy_Ace() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-    void fDie() override;
+
 private:
     void fRegisterFunctions() override;
     float mWaitTimer{};
@@ -71,7 +71,7 @@ private:
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
-    bool fDamaged(int Damage_, float InvincibleTime_) override;
+    bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fSetStun(bool Arg_) override;
 private:
     bool mIsHit{};

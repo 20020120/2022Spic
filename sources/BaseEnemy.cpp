@@ -50,6 +50,10 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mpModel->update_animation(mAnimPara, elapsedTime_);
 
     
+    if (mCurrentHitPoint <= 0.0f)
+    {
+        fDie(Graphics_,elapsedTime_);
+    }
     return elapsedTime_;
 }
 
@@ -62,7 +66,7 @@ void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
     mpModel->render(Graphics_.get_dc().Get(), mAnimPara, world, color,mDissolve);
 }
 
-bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
+bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     bool ret{ false };
     if(mInvincibleTime<=0.0f)
@@ -72,17 +76,20 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_)
         ret = true;
     }
     //HP���Ȃ��Ȃ��������S������
-    if (mCurrentHitPoint <= 0.0f)
+    if (mCurrentHitPoint <= 0)
     {
-        fDie();
+        fDie(Graphics_, elapsedTime_);
     }
     return ret;
 }
 
-void BaseEnemy::fDie()
+void BaseEnemy::fDie(GraphicsPipeline& Graphics_,float elapsedTime_)
 {
     mIsAlive = false;
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
+
+    // カメラシェイク
+    camera_shake->reset(Graphics_);
 }
 
 
@@ -213,20 +220,6 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     const auto velocity = Math::Normalize(Math::GetFront(mOrientation)) * MoveSpeed_;
     mPosition += (velocity * elapsedTime_);
 }
-
-<<<<<<< Updated upstream
-=======
-void BaseEnemy::fBaseDeathInit()
-{
-    fDie();
-    mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 1.0f);
-}
-
-void BaseEnemy::fBaseDeathUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
-{
-}
->>>>>>> Stashed changes
-
 
 void BaseEnemy::fSetStun(bool Arg_)
 {

@@ -36,10 +36,6 @@ void SpearEnemy_Ace::fUpdateAttackCapsule()
                           mAttackCapsule.mBottom, up);
 }
 
-void SpearEnemy_Ace::fDie()
-{
-    BaseEnemy::fDie();
-}
 
 void SpearEnemy_Ace::fRegisterFunctions()
 {

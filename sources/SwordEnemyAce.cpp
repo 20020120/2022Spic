@@ -27,10 +27,6 @@ void SwordEnemy_Ace::fUpdateAttackCapsule()
     throw std::logic_error("Not implemented");
 }
 
-void SwordEnemy_Ace::fDie()
-{
-    BaseEnemy::fDie();
-}
 
 void SwordEnemy_Ace::fRegisterFunctions()
 {
@@ -254,7 +250,7 @@ void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     }
 }
 
-bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
+bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time, GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     bool ret = false;
     if (mInvincibleTime <= 0.0f)
@@ -267,10 +263,7 @@ bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time)
             ret = true;
         }
     }
-    if (mCurrentHitPoint <= 0)
-    {
-        fDie();
-    }
+   
     return ret;
 }
 

@@ -98,10 +98,6 @@ void LastBoss::fUpdateAttackCapsule()
     throw std::logic_error("Not implemented");
 }
 
-void LastBoss::fDie()
-{
-    fChangeState(DivideState::DragonDieStart);
-}
 
 void LastBoss::fSetStun(bool arg)
 {

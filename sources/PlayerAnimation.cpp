@@ -55,7 +55,7 @@ void Player::TransitionTitleAnimationReadyIdle()
     //タイトルはメッシュを隠さないから0にしておく
     threshold_mesh = 0.0f;
 }
-void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_)
 {
     switch (behavior_state)
     {
@@ -64,7 +64,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<B
         (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
-        (this->*player_chain_activity)(elapsed_time, enemies);
+        (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
         break;

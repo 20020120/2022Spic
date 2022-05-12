@@ -39,14 +39,11 @@ void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 
     if (mLifeTimer < 0.0f)
     {
-        fChangeState(DivideState::Die);
+        mIsAlive = false;
+        mVernierEffect->stop(effect_manager->get_effekseer_manager());
     }
 
-    if(mCurrentHitPoint<=0)
-    {
-        fChangeState(DivideState::Die);
-    }
-
+    
 
     fGuiMenu();
 }
@@ -54,11 +51,6 @@ void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 void BossUnit::fUpdateAttackCapsule()
 {
     throw std::logic_error("Not implemented");
-}
-
-bool BossUnit::fDamaged(int damage, float invincible_time)
-{
-    return BaseEnemy::fDamaged(damage, invincible_time);
 }
 
 void BossUnit::fSetStun(bool arg)
@@ -160,20 +152,6 @@ void BossUnit::fRegisterFunctions()
             tuple));
     }
 
-    {
-        InitFunc ini = [=]()->void
-        {
-            fBaseDeathInit();
-        };
-        UpdateFunc up = [=](float elapsedTime_,
-            GraphicsPipeline& Graphics_)->void
-        {
-            fBaseDeathUpdate(elapsedTime_, Graphics_);
-        };
-        auto tuple = std::make_tuple(ini, up);
-        mFunctionMap.insert(std::make_pair(DivideState::Die,
-            tuple));
-    }
 
     fChangeState(DivideState::Start);
 }
