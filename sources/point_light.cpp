@@ -12,14 +12,14 @@ PointLights::PointLights(GraphicsPipeline& graphics)
         light_sources[i] = std::make_unique<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\point_light\\point_light.fbx");
     }
 	// パラメータ設定
-	set_all_parameters(0, { -4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(1, { -4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(2, { 4.5f,4.0f,0.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(3, { 4.5f,4.0f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(4, { 22.3f,21.9f,37.4f,0 },  { 1,1,1,1 }, 4.0f, 3.4f);
-	set_all_parameters(5, { 3,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
-	set_all_parameters(6, { 5,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
-	set_all_parameters(7, { 7,1,30,0 }, { FLT_MAX, FLT_MAX,FLT_MAX,1 }, 5.0f, 1.0f);
+	set_all_parameters(0, { -4.5f,3.3f,0.8f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(1, { -4.5f,3.3f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(2, { 4.2f,3.3f,0.8f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(3, { 4.2f,3.3f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(4, { 22.271f,22.049f,37.301f,0 },  { 1,1,1,1 }, 5.3f, 4.0f);
+	set_all_parameters(5, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(6, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);
+	set_all_parameters(7, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);
 }
 
 PointLights::~PointLights() {}
@@ -28,7 +28,7 @@ void PointLights::render(GraphicsPipeline& graphics, float elapsed_time)
 {
 	// モデルの描画
 	static DirectX::XMFLOAT3  angle = { 0,0,0 };
-	static DirectX::XMFLOAT3  scale = { 0.0003f,0.0f,0.0003f };
+	static DirectX::XMFLOAT3  scale = { 0.001f,0.0f,0.006f };
 
 #ifdef USE_IMGUI
 	ImGui::Begin("point light");

@@ -53,8 +53,8 @@ private:
     std::unique_ptr<Bloom> bloom_effect;
     struct BloomConstants
     {
-        float bloom_extraction_threshold = 0.8f;
-        float blur_convolution_intensity = 4.0f;
+        float bloom_extraction_threshold = 1.5f;
+        float blur_convolution_intensity = 7.0f;
 
         float bloom_options[2];
     };
@@ -127,8 +127,23 @@ private:
         StepFontElement back;
         StepFontElement yes;
         StepFontElement no;
+
+        Element frame;
+        std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
     };
     TutorialTabParameters tutorial_tab;
+
+    struct LogoParameters
+    {
+        std::unique_ptr<SpriteBatch> sprite_logo{ nullptr };
+        Element logo;
+        std::unique_ptr<SpriteBatch> sprite_animation{ nullptr };
+        Element animation;
+        float timer = 0;
+        int frame_y = 0;
+        bool start_anim = false;
+    };
+    LogoParameters logo_parameters;
 
     //--slashing post effect--//
     static constexpr float SLASHING_MAX = 0.06f;
@@ -144,6 +159,8 @@ private:
     static constexpr float AXIS_WAIT_TIME = 0.2f;
     bool can_axis = true;
     float axis_wait_timer = 0;
+
+    bool can_play_se[3] = { false, false, false };
 
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);

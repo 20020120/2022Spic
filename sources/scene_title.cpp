@@ -107,7 +107,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	tutorial_tab.back.s = L"Aボタンで戻る";
 	tutorial_tab.back.position = { 685, 435 };
-	tutorial_tab.back.scale = { 0.5f,0.5f };
+	tutorial_tab.back.scale = { 0.6f,0.6f };
 
 	tutorial_tab.yes.s = L"はい";
 	tutorial_tab.yes.position = { 625, 315 };
@@ -116,6 +116,34 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	tutorial_tab.no.s = L"いいえ";
 	tutorial_tab.no.position = { 615, 370 };
 	tutorial_tab.no.scale = { 0.7f,0.7f };
+
+	tutorial_tab.sprite_frame   = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_back.png", 1);
+	tutorial_tab.frame.texsize  = { static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Width),
+		                            static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Height) };
+	tutorial_tab.frame.position = { 333.0f, 33.5f };
+	tutorial_tab.frame.scale    = { 1.0f, 1.0f };
+
+
+	for (auto& play : can_play_se)
+	{
+		play = false;
+	}
+
+	//--logo_parameters--//
+	logo_parameters.sprite_logo = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_logo.png", 1);
+	logo_parameters.logo.texsize = { static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Width),
+								     static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Height) };
+	logo_parameters.logo.position = { 100.0f, -3.0f };
+	logo_parameters.logo.scale    = { 1.0f, 1.0f };
+
+	logo_parameters.sprite_animation = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_anime.png", 1);
+	logo_parameters.animation.texsize  = logo_parameters.logo.texsize;
+	logo_parameters.animation.position = logo_parameters.logo.position;
+	logo_parameters.animation.scale    = logo_parameters.logo.scale;
+
+	logo_parameters.timer = 0;
+	logo_parameters.frame_y = 0;
+	logo_parameters.start_anim = false;
 
 	//--slashing post effect--//
 	slashing_power = 0;
@@ -141,13 +169,59 @@ void SceneTitle::uninitialize()
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	//--logo_parameters--//
+	const int FRAMW_COUNT_X = 7;
+	const int FRAMW_COUNT_Y = 4;
+	static float logo_animation_speed = 0.03f;
+	// 1.0秒待つ
+	if (logo_parameters.timer > 1.0f) { logo_parameters.start_anim = true; }
+
+	int frame_x;
+	if (!logo_parameters.start_anim) frame_x = 0;
+	else frame_x = static_cast<int>(logo_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+#ifdef USE_IMGUI
+	ImGui::Begin("title");
+	if (ImGui::TreeNode("logo animation"))
+	{
+		ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+		ImGui::Text("timer:%f", logo_parameters.timer);
+		ImGui::Text("frame_x:%d", frame_x);
+		ImGui::Text("frame_y:%d", logo_parameters.frame_y);
+		if (ImGui::Button("restart"))
+		{
+			logo_parameters.timer = 0;
+			frame_x = 0;
+			logo_parameters.frame_y = 0;
+		}
+		ImGui::TreePop();
+	}
+	ImGui::End();
+#endif // USE_IMGUI
+	if (frame_x >= FRAMW_COUNT_X)
+	{
+		// 位置行下のアニメーションへ
+		if (logo_parameters.frame_y < FRAMW_COUNT_Y - 1)
+		{
+			logo_parameters.timer = 0;
+			++logo_parameters.frame_y;
+		}
+	}
+	else
+	{
+		// アニメーション
+		if (logo_parameters.start_anim)
+		{
+			logo_parameters.animation.texpos.x = frame_x * logo_parameters.animation.texsize.x;
+			logo_parameters.animation.texpos.y = logo_parameters.frame_y * logo_parameters.animation.texsize.y;
+		}
+		logo_parameters.timer += elapsed_time;
+	}
+
 	static float bgm_volume = 2.0f;
 	static float se_volume = 2.0f;
 
-	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_volume_se(SE_INDEX::SELECT, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
-	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
-
+	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	//----<3D関連>----//
 	// cameraManager
@@ -173,7 +247,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	auto r_up = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 	{
-		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f))
+		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
 		{
 			audio_manager->play_se(SE_INDEX::SELECT);
 			this->state = state;
@@ -185,7 +259,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	};
 	auto r_down = [&](int state, DirectX::XMFLOAT2 arrival_pos1, DirectX::XMFLOAT2 arrival_pos2)
 	{
-		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f))
+		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f)|| (can_axis && game_pad->get_axis_RY() < -0.5f))
 		{
 			audio_manager->play_se(SE_INDEX::SELECT);
 			this->state = state;
@@ -206,7 +280,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			{
 				auto r_up_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
 				{
-					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f))
+					if ((game_pad->get_button_down() & GamePad::BTN_UP) || (can_axis && game_pad->get_axis_LY() > 0.5f) || (can_axis && game_pad->get_axis_RY() > 0.5f))
 					{
 						audio_manager->play_se(SE_INDEX::SELECT);
 						have_tutorial_state = state;
@@ -218,7 +292,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				};
 				auto r_down_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
 				{
-					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f))
+					if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (can_axis && game_pad->get_axis_LY() < -0.5f)|| (can_axis && game_pad->get_axis_RY() < -0.5f))
 					{
 						audio_manager->play_se(SE_INDEX::SELECT);
 						have_tutorial_state = state;
@@ -317,6 +391,22 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::End();
 #endif // USE_IMGUI
 
+	// SE
+	if (!can_play_se[0] && slashing_wait_timer > 0.7f)
+	{
+		audio_manager->play_se(SE_INDEX::DRAW_SWORD);
+		can_play_se[0] = true;
+	}
+	if (!can_play_se[1] && slashing_wait_timer > 2.0f)
+	{
+		audio_manager->play_se(SE_INDEX::RETURN_SWORD);
+		can_play_se[1] = true;
+	}
+	if (!can_play_se[2] && slashing_wait_timer > 4.3f)
+	{
+		audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+		can_play_se[2] = true;
+	}
 	// 閃光が走る
 	if (slashing_wait_timer > 4.3f)
 	{
@@ -390,6 +480,44 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
 	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 
+	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e)
+	{
+		//--sprite_string--//
+#ifdef USE_IMGUI
+		ImGui::Begin("title");
+		if (ImGui::TreeNode(gui_name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		batch->begin(graphics.get_dc().Get());
+		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
+		batch->end(graphics.get_dc().Get());
+	};
+	auto r_font_render = [&](std::string name, StepFontElement& e)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin("title");
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+	};
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+	//--logo_parameters--//
+	r_sprite_render("animation", logo_parameters.sprite_animation.get(), logo_parameters.animation);
+	r_sprite_render("logo", logo_parameters.sprite_logo.get(), logo_parameters.logo);
+
+
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
 	// シャドウマップの破棄
@@ -424,40 +552,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
 	//-------<2Dパート>--------//
-	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	auto r_sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e)
-	{
-		//--sprite_string--//
-#ifdef USE_IMGUI
-		ImGui::Begin("title");
-		if (ImGui::TreeNode(gui_name.c_str()))
-		{
-			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
-			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
-			ImGui::TreePop();
-		}
-		ImGui::End();
-#endif // USE_IMGUI
-		batch->begin(graphics.get_dc().Get());
-		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
-		batch->end(graphics.get_dc().Get());
-	};
-	auto r_font_render = [&](std::string name, StepFontElement& e)
-	{
-#ifdef USE_IMGUI
-		ImGui::Begin("title");
-		if (ImGui::TreeNode(name.c_str()))
-		{
-			ImGui::DragFloat2("pos", &e.position.x);
-			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
-			ImGui::ColorEdit4("color", &e.color.x);
-			ImGui::TreePop();
-		}
-		ImGui::End();
-#endif // USE_IMGUI
-		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
-	};
-
+	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	//--sprite_flash--//
 	r_sprite_render("flash", sprite_flash.get(), flash);
 	//--sprite_selecter--//
@@ -473,9 +568,9 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
-
 	if (tutorial_tab.display)
 	{
+		r_sprite_render("frame", tutorial_tab.sprite_frame.get(), tutorial_tab.frame);
 		r_sprite_render("tab selecterL", sprite_selecter.get(), tutorial_tab.selecterL);
 		r_sprite_render("tab selecterR", sprite_selecter.get(), tutorial_tab.selecterR);
 
