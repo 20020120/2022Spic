@@ -96,7 +96,6 @@ private:
     std::unique_ptr<Constants<BloomConstants>> bloom_constants;
     //// スキンメッシュの実体
     //std::shared_ptr<SkinnedMesh> sky_dome;
-    std::unique_ptr<Effect> test_effect;
     //****************************************************************
     //
     // スピック開始後追加した変数

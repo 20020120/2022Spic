@@ -40,8 +40,6 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	bloom_constants = std::make_unique<Constants<BloomConstants>>(graphics.get_device().Get());
 	// モデルのロード
 	sky_dome = std::make_unique<SkyDome>(graphics);
-	// effect
-	test_effect = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\enemy_vernier.efk");
 
 	//--------------------<弾の管理クラスを初期化>--------------------//
 	BulletManager& mBulletManager = BulletManager::Instance();
@@ -94,6 +92,9 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[3].position = { 295.0f,516.0f };
 	tutorial_text_element[4].position = { 277.0f,566.0f };
 
+	audio_manager->stop_all_bgm();
+	audio_manager->play_bgm(BGM_INDEX::TITLE);
+
 }
 
 void TutorialScene::uninitialize()
@@ -106,6 +107,11 @@ void TutorialScene::uninitialize()
 
 void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	static float bgm_volume = 2.0f;
+	static float se_volume = 0.2f;
+
+	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+
 	TutorialUpdate(graphics, elapsed_time);
 
 	// option
@@ -265,89 +271,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	effect_manager->update(elapsed_time);
 
-	// effect demo
-#ifdef USE_IMGUI
-	{
-		ImGui::Begin("effect");
-		if (ImGui::Button("play_effect"))
-		{
-			test_effect->play(effect_manager->get_effekseer_manager(), { 0,1,0 }, 3);
-		}
-		if (ImGui::Button("stop_effect"))
-		{
-			test_effect->stop(effect_manager->get_effekseer_manager());
-		}
-		{
-			static DirectX::XMFLOAT3 pos{};
-			ImGui::DragFloat3("position", &pos.x, 0.1f);
-			test_effect->set_position(effect_manager->get_effekseer_manager(), pos);
-			static DirectX::XMFLOAT3 scale{ 1,1,1 };
-			ImGui::DragFloat3("scale", &scale.x, 0.1f);
-			test_effect->set_scale(effect_manager->get_effekseer_manager(), scale);
-		}
-		ImGui::End();
-	}
-#endif // USE_IMGUI
-	// camera shake demo
-#ifdef USE_IMGUI
-	static bool is_shake = false;
-	ImGui::Begin("camera_shake");
-	if (ImGui::Checkbox("shake", &is_shake))
-	{
-		camera_shake->reset(graphics);
-	}
-	if (is_shake) camera_shake->shake(graphics, elapsed_time);
-	ImGui::End();
-#endif // USE_IMGUI
-	// hit_stop demo
-#ifdef USE_IMGUI
-	{
-		ImGui::Begin("hit_stop");
-		if (ImGui::Button("stop")) { hit_stop->damage_hit_stop(); }
-		ImGui::End();
-	}
-#endif // USE_IMGUI
 
-
-	// audio デモ
-	static float bgm_volume = 0.2f;
-	static float se_volume = 0.2f;
-	static bool is_open_button = { false };
-	static bool display_audio_imgui = { false };
-#ifdef USE_IMGUI
-	imgui_menu_bar("contents", "audio", display_audio_imgui);
-	if (display_audio_imgui)
-	{
-		if (ImGui::Begin("sound"))
-		{
-			if (ImGui::TreeNode("BGM"))
-			{
-				ImGui::DragFloat("bgm_volume", &bgm_volume, 0.1f, 0.0f, 3.0f);
-				//if (!is_open_button)
-				{
-					//if (ImGui::Button("play bgm")) { audio_manager->play_bgm(BGM_INDEX::ENDING); is_open_button = true; }
-					if (ImGui::Button("play TITLE bgm")) { audio_manager->play_bgm(BGM_INDEX::TITLE); is_open_button = true; }
-				}
-				//else
-				{
-					//if (ImGui::Button("stop bgm")) { audio_manager->stop_bgm(BGM_INDEX::ENDING); is_open_button = false; }
-				}
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("SE"))
-			{
-				ImGui::DragFloat("se_volume", &se_volume, 0.1f, 0.0f, 3.0f);
-				if (ImGui::Button("play se")) { audio_manager->play_se(SE_INDEX::DECISION); }
-				//if (ImGui::Button("play item_get se")) { audio_manager->play_se(SE_INDEX::GET); }
-				ImGui::TreePop();
-			}
-			ImGui::End();
-		}
-	}
-#endif
 	//audio_manager->set_volume_bgm(BGM_INDEX::ENDING, bgm_volume);
-	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume);
-	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume);
 
 
 	//****************************************************************
