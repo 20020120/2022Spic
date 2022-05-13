@@ -3,6 +3,7 @@
 #include"post_effect.h"
 #include"BulletManager.h"
 #include "CannonballBullet.h"
+#include "DragonBreath.h"
 #include "EnemyManager.h"
 //****************************************************************
 // 
@@ -840,6 +841,10 @@ void LastBoss::fDragonBreathShotInit()
 
 void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    auto p = mPosition;
+    p.y += 30.0f;
+    mfAddBullet(new DragonBreath(Graphics_, p, 60.0f, mPlayerPosition));
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::DragonIdle);
