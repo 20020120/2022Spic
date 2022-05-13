@@ -650,7 +650,7 @@ void Player::BodyCapsule()
 
         charge_capsule_param.start = pos;
         charge_capsule_param.end = end;
-        charge_capsule_param.rasius = 2.5f;
+        charge_capsule_param.rasius = 3.0f;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
