@@ -29,7 +29,7 @@
                 "MaxHp": 100,
                 "AttackPower": 0,
                 "InvincibleTime": 0.0,
-                "BodyCapsuleRad": 20.0,
+                "BodyCapsuleRad": 40.0,
                 "AttackCapsuleRad": 0.0,
                 "StunTime": 0.0
             }

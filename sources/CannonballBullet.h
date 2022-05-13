@@ -9,6 +9,6 @@ public:
     void fUpdate(float elapsedTime_) override;
 
 private:
-    const float mkGravity{ 0.98f * 60.0f };
+    const float mkGravity{ 0.98f * 20.0f };
     std::unique_ptr<Effect> mpBombEffect{ nullptr };
 };

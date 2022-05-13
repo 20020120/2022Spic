@@ -161,7 +161,8 @@ void LastBoss::fChangeShipToHumanInit()
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
 }
 
-void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
@@ -177,7 +178,8 @@ void LastBoss::fHumanIdleInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_idle);
 }
 
-void LastBoss::fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fHumanIdleUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
 {
    // 条件に応じて攻撃手段を分岐させる
 
@@ -185,29 +187,80 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     //--------------------<アニメーションが終了したら>--------------------//
 
+     // 体力が９割を下回ったら以下きめの必殺技
+    if (!mFirstSp && fComputePercentHp() < 0.9f)
+    {
+        fChangeState(DivideState::HumanSpAway);
+        mFirstSp = true;
+        return;
+    }
+    // 体力が５割を下回ったら必殺技
+    if (!mSecondSp && fComputePercentHp() <= 0.5f)
+    {
+        fChangeState(DivideState::HumanSpAway);
+        mSecondSp = true;
+        return;
+    }
+
+    // ステージの限界値を反映
+    if(fLimitStageHuman(elapsedTime_))
+    {
+        return;
+    }
+
     // プレイヤーとの距離が近かったら範囲爆発攻撃を多くする
     const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
+    // 遠い
+    if (Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer*10.0f)
+    {
+        // さらに距離が遠かったら
+        if (randNumber <= 3)
+        {
+            fChangeState(DivideState::HumanRush);
+            return;
+        }
+    }
+
     if(Math::Length(mPlayerPosition-mPosition)>mkDistanceToPlayer)
     {
-        if(randNumber<3)
+        if(randNumber>=8)
         {
             fChangeState(DivideState::HumanBlowAttack);
+            return;
+        }
+        else  if(randNumber>=5)
+        {
+            fChangeState(DivideState::HumanAllShot);
+            return;
+        }
+        else if(randNumber>=4)
+        {
+            fChangeState(DivideState::HumanRush);
+            return;
         }
         else
         {
-            fChangeState(DivideState::HumanAllShot);
+            fChangeState(DivideState::HumanIdle);
+            return;
         }
     }
     else
     {
-        if (randNumber >= 3)
+        if (randNumber > 6)
         {
             fChangeState(DivideState::HumanBlowAttack);
+            return;
+        }
+        else if(randNumber>4)
+        {
+            fChangeState(DivideState::HumanAllShot);
+            return;
         }
         else
         {
-            fChangeState(DivideState::HumanAllShot);
+            fChangeState(DivideState::HumanIdle);
+            return;
         }
     }
 }
@@ -233,6 +286,11 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
 
+    fTurnToPlayer(elapsedTime_, 10.0f);
+
+    // 着弾基準点を設定
+    DirectX::XMFLOAT3 position{ mPlayerPosition };
+
     //--------------------<銃口の向きに発射>--------------------//
     mTimer += elapsedTime_;
     if (mTimer < mkHumanAllShotEnd&& mTimer > mkHumanAllShotBegin)
@@ -241,18 +299,44 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
         DirectX::XMFLOAT3 up{};
         DirectX::XMFLOAT3 leftPosition{};
         DirectX::XMFLOAT4X4 leftRotMat{};
-
+        
         mpModel->fech_by_bone(mAnimPara, Math::calc_world_matrix(mScale,
             mOrientation, mPosition), mTurretBoneLeft, leftPosition,
             up, leftRotMat);
         const DirectX::XMFLOAT3 leftFront  = 
               { leftRotMat._31,leftRotMat._32, leftRotMat._33 };
 
+        // ボーンから着弾点までのベクトル
+
+        // ボーンとのなす角を算出
+        DirectX::XMFLOAT3 v = leftPosition - position;
+        v.y = 0.0f;
+        v = Math::Normalize(v);
+        const DirectX::XMFLOAT3 front = 
+            Math::Normalize(mPlayerPosition - mPosition);
+        float dot = Math::Dot(v, front);
+
+        // ターゲットの位置を基準とした乱数で着弾点を決める
+        const std::uniform_real_distribution<float> RandTargetAdd(-70.0f, -30.0f);
+        const std::uniform_int_distribution<int> switcher(0, 1);
+
+        DirectX::XMFLOAT3 bulletPosition{};
+
+        bulletPosition.x = RandTargetAdd(mt) * switcher(mt) == 0 ? 1.0f : -1.0f;
+        bulletPosition.z = RandTargetAdd(mt) * switcher(mt) == 0 ? 1.0f : -1.0f;
+        bulletPosition += position;
+
+        const DirectX::XMFLOAT3 bulletVec{
+          Math::Normalize(bulletPosition - leftPosition) };
+
+        const float bulletSpeed = Math::Length(mPlayerPosition - mPosition);
+
+
         // 一定間隔で発射
         if (mShotTimer <= 0.0f)
         {
-            mfAddBullet(new CannonballBullet(Graphics_,leftFront ,
-                100.0f, leftPosition));
+            mfAddBullet(new CannonballBullet(Graphics_,bulletVec ,
+               180.0f, leftPosition));
             mShotTimer = mkHumanAllShotDelay;
         }
         else
@@ -272,21 +356,32 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
 void LastBoss::fHumanBlowAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
+    mIsAttack = true;
+    mAttackCapsule.mRadius = 0.0f;
 }
 
 void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    const DirectX::XMFLOAT3 capsuleLength{ 0.0f,20.0f,0.0f };
+    mAttackCapsule.mRadius += elapsedTime_ * 20.0f;
+    mAttackCapsule.mTop = mPosition + capsuleLength;
+    mAttackCapsule.mBottom = mPosition - capsuleLength;
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
-       // if(const auto num = RandTargetAdd(mt); num<2)
+        if (const auto num = RandTargetAdd(mt); num < 2)
         {
             fChangeState(DivideState::HumanMove);
+            mIsAttack = false;
+            mAttackCapsule.mRadius = 0.0f;
         }
-        //else
-        //{
-        //    fChangeState(DivideState::HumanIdle);
-        //}
+        else
+        {
+            fChangeState(DivideState::HumanIdle);
+            mIsAttack = false;
+            mAttackCapsule.mRadius = 0.0f;
+        }
     }
 }
 
@@ -314,11 +409,20 @@ void LastBoss::fHumanRushInit()
     mMoveEnd = mPlayerPosition;
     mMoveBegin = mPosition;
     mMoveThreshold = 0.0f;
+    mpModel->play_animation(mAnimPara, AnimationName::human_move);
 }
 
 void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    constexpr float maxRadius = DirectX::XMConvertToRadians(15.0f);
+    const float limitLength = Math::Length(mMoveBegin - mMoveEnd);
+    const float currentLength = Math::Length(mPosition - mMoveBegin);
+
+    // 終了条件
+    if (currentLength > limitLength * 1.2f)
+    {
+        fChangeState(DivideState::HumanIdle);
+        return;
+    }
 
     // プレイヤーの方向に移動するベクトルを作成する
 
@@ -338,11 +442,11 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mMoveThreshold += elapsedTime_ * 0.5f;
 
 
-    DirectX::XMFLOAT3 prePosition = mPosition;
+    const DirectX::XMFLOAT3 prePosition = mPosition;
     // スプライン曲線でベクトルを取得
     mPosition=Math::fBezierCurve(mMoveBegin, mMoveEnd, endPoint,mMoveThreshold);
 
-    DirectX::XMFLOAT3 subVec = Math::Normalize(mPosition - prePosition);
+    const DirectX::XMFLOAT3 subVec = Math::Normalize(mPosition - prePosition);
 
     fTurnToTarget(elapsedTime_, 10.0f, mPosition + subVec);
 

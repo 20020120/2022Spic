@@ -475,7 +475,10 @@ void LastBoss::fGuiMenu()
     }
 
     ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
+    float v = Math::Length(mPosition);
+    ImGui::DragFloat("Length", &v);
 
+    ImGui::RadioButton("FarRand", Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer);
     ImGui::End();
 #endif
 }
@@ -530,6 +533,18 @@ void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_) const
     }
 
 
+}
+
+bool LastBoss::fLimitStageHuman(float elapsedTime_)
+{
+    // もしステージの端を超えたら
+    if (Math::Length(mPosition) < mkLimitStage)
+    {
+        return false;
+    }
+
+    fChangeState(DivideState::HumanRush);
+    return true;
 }
 
 

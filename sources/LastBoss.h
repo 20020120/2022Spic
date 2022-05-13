@@ -179,6 +179,9 @@ private:
     void fChangeHumanToDragon();
 
     void fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_) const;
+
+    // à⁄ìÆêßå¿
+    bool fLimitStageHuman(float elapsedTime_);
 private:
     //****************************************************************
     // 
@@ -247,6 +250,8 @@ private:
     DirectX::XMFLOAT3 mMoveBegin{};
     DirectX::XMFLOAT3 mMoveEnd{};
     float mMoveThreshold{};
+    bool mFirstSp{ false };
+    bool mSecondSp{ false };
 
     //****************************************************************
     // 
@@ -261,14 +266,15 @@ private:
     const float mkPercentToDragon{ 0.2f }; // ÉhÉâÉSÉìå`ë‘Ç…ëJà⁄Ç∑ÇÈëÃóÕÇÃäÑçá
 
     const float mkWaitHeartEffect = 0.5f;
-    const float mkHumanAllShotDelay{ 0.15f };
+    const float mkHumanAllShotDelay{ 0.1f };
     const float mkHumanAllShotEnd{ 1.3f };
     const float mkHumanAllShotBegin{ 0.3f };
    
     const float mkHumanSpWaitTime{ 15.0f };
     const float mkHumanSpBeamTime{ 5.0f };
     const float mkSpChargeTime = 7.0f;
-    const float mkDistanceToPlayer{ 20.0f };
+    const float mkDistanceToPlayer{ 80.0f };
+    const float mkLimitStage{ 300.0f };
 private:
 
     //****************************************************************
@@ -284,18 +290,29 @@ private:
     void fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     // êÌäÕÇÃçUåÇ
     void fShipAttackInit();
-    void fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fShipAttackUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
     // êÌäÕÇÃç≈å„ÇÃçUåÇÅiÇ±ÇÍÇëœÇ¶ÇÍÇŒéüÇ÷Åj
     void fShipBeamStartInit();
-    void fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fShipBeamStartUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
     void fShipBeamChargeInit();
-    void fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fShipBeamChargeUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
     void fShipBeamShootInit();
-    void fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fShipBeamShootUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
     void fShipBeamEndInit();
-    void fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fShipBeamEndUpdate(float elapsedTime_, 
+        GraphicsPipeline& Graphics_);
+
     void fChangeShipToHumanInit();
-    void fChangeShipToHumanUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
+    void fChangeShipToHumanUpdate(float elapsedTime_,
+        GraphicsPipeline& Graphics_);
 
     //--------------------<êlå^>--------------------//
     void fHumanIdleInit();

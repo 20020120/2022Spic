@@ -13,6 +13,14 @@ CannonballBullet::CannonballBullet(GraphicsPipeline& Graphics_,
         Graphics_,
         effect_manager->get_effekseer_manager(),
         "./resources/Effect/bomb_2.efk");
+
+    // “–‚½‚è”»’è•ë‘å‚«‚³‚ðŒˆ’è
+    mBulletData.mRadius = 10.0f;
+    mBulletData.mDamage = 2;
+    mBulletData.mLengthFromPositionA = 1.0f;
+    mBulletData.mLengthFromPositionB = 1.0f;
+    mBulletData.mInvincible_time = 0.5f;
+
 }
 
 CannonballBullet::~CannonballBullet()
@@ -28,7 +36,7 @@ void CannonballBullet::fUpdate(float elapsed_time)
     mVelocity.y -= (mkGravity*elapsed_time);
     mPosition += (mVelocity * elapsed_time);
 
-    if(mPosition.y<=0.0f)
+    if(mPosition.y<=-5.0f)
     {
         mIsAlive = false;
     }

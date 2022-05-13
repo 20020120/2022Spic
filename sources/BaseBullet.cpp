@@ -10,6 +10,7 @@ BaseBullet::BaseBullet(GraphicsPipeline& Graphics_, const char* FileName_,
         FileName_);
     mpEffect->play(effect_manager->get_effekseer_manager(), EffectPosition_,13.0f);
     mIsAlive = true;
+
 }
 
 void BaseBullet::fUpdate(float elapsedTime_)
@@ -28,7 +29,6 @@ bool BaseBullet::fGetIsAlive() const
 void BaseBullet::setCapsuleData()
 {
     DirectX::XMFLOAT3 up = Math::GetUp(mOrientation);
-    mBulletData.mRadius = mBulletData.mRadius;
     mBulletData.mPointA = mPosition + (up * mBulletData.mLengthFromPositionA);
     mBulletData.mPointB = mPosition - (up * mBulletData.mLengthFromPositionB);
 }
