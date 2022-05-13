@@ -169,6 +169,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             LockOn();
             //カメラリセット
             CameraReset();
+            if (is_behind_avoidance == false)
+            {
+                PlayerJustification(elapsed_time, position);
+                if (target_enemy != nullptr)
+                {
+                    PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                }
+            }
             break;
         case Player::Behavior::Chain:
 
@@ -181,11 +189,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         //プレイヤーのパラメータの変更
         InflectionParameters(elapsed_time);
 
-        PlayerJustification(elapsed_time, position);
-        if (target_enemy != nullptr)
-        {
-            PlayerEnemyJustification(elapsed_time,position,1.2f,target_enemy->fGetPosition(),target_enemy->fGetBodyCapsule().mRadius);
-        }
         if (is_awakening)
         {
             for (int i = 0; i < 2; ++i)
@@ -260,6 +263,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::Checkbox("is_awakening", &is_awakening);
                 ImGui::Checkbox("start_dash_effect", &start_dash_effect);
                 ImGui::Checkbox("end_dash_effect", &end_dash_effect);
+                ImGui::Checkbox("is_push_lock_on_button", &end_dash_effect);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
@@ -1064,9 +1068,11 @@ void Player::LockOn()
                     is_lock_on = true;
                     //攻撃の加速の設定
                     //SetAccelerationVelocity();
+                    is_push_lock_on_button = true;
                 }
                 else
                 {
+                    is_push_lock_on_button = false;
                     if (is_behind_avoidance == false)
                     {
                         is_lock_on = false;
