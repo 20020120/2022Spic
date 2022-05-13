@@ -40,8 +40,13 @@ void LastBoss::Turret::fRender(GraphicsPipeline& graphics_,
         trans._43
 
     };
-    mpModel->render(graphics_.get_dc().Get(), Turret::mAnimPara, 
-        trans, { 1.0f,1.0f,1.0f,1.0f });
+    mpModel->render(graphics_.get_dc().Get(), Turret::mAnimPara,
+        trans, { 1.0f,1.0f,1.0f,1.0f }, mDissolve);
+}
+
+void LastBoss::Turret::fSetDissolve(float Dissolve_)
+{
+    mDissolve = Dissolve_;
 }
 
 DirectX::XMFLOAT3 LastBoss::Turret::fGetPosition() const
@@ -82,5 +87,10 @@ void LastBoss::SecondGun::fRender(GraphicsPipeline& graphics_, const DirectX::XM
     DirectX::XMStoreFloat4x4(&trans, matrix);
 
     mpModel->render(graphics_.get_dc().Get(), SecondGun::mAnimPara,
-        ParentWorld_, { 1.0f,1.0f,1.0f,1.0f });
+        ParentWorld_, { 1.0f,1.0f,1.0f,1.0f },mDissolve);
+}
+
+void LastBoss::SecondGun::fSetDissolve(float Dissolve_)
+{
+    mDissolve = Dissolve_;
 }

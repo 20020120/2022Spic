@@ -18,6 +18,7 @@ class LastBoss final : public BaseEnemy
 public:
     enum class Mode // ボスのモード
     {
+        None,          // 何もなし（存在しない）
         Ship,          // 戦艦（ダメージは受けない）
         Human,         // 人型（体力の100%~20%）
         HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
@@ -67,6 +68,9 @@ private:
         inline static const char* DragonIdle = "DragonIdle"; // 待機
         inline static const char* DragonDieStart = "DragonDieStart"; // 死亡
         inline static const char* DragonDieEnd = "DragonDieEnd"; // 死亡
+
+        inline static const char* DragonHideStart= "DragonHideStart"; // 消える
+        inline static const char* DragonAppear= "DragonAppear"; // 現れる
     };
 
     enum  AnimationName {
@@ -126,7 +130,7 @@ private:
         void fRender(GraphicsPipeline& graphics_, 
                      const DirectX::XMFLOAT4X4& ParentWorld_,
                      const DirectX::XMFLOAT3& Position_);
-
+        void fSetDissolve(float Dissolve_);
 
         DirectX::XMFLOAT3 fGetPosition()const;
     private:
@@ -134,6 +138,7 @@ private:
         std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
         DirectX::XMFLOAT3 mPosition;
+        float mDissolve{};
     };
   
     //--------------------<第二砲身のクラス>--------------------//
@@ -145,9 +150,12 @@ private:
         void fRender(GraphicsPipeline& graphics_,
             const DirectX::XMFLOAT4X4& ParentWorld_,
             const DirectX::XMFLOAT3& Position_);
+
+        void fSetDissolve(float Dissolve_);
     private:
         std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
+        float mDissolve;
     };
 
 
@@ -275,6 +283,8 @@ private:
     const float mkSpChargeTime = 7.0f;
     const float mkDistanceToPlayer{ 80.0f };
     const float mkLimitStage{ 300.0f };
+    const float mkTimerBlow{ 0.8f };
+    const float mkDragonHideTime{ 0.5f };
 private:
 
     //****************************************************************
@@ -373,7 +383,15 @@ private:
     //--------------------<ドラゴン>--------------------//
     void fDragonIdleInit();
     void fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-    
+
+    // ディゾルブで消える
+    void fDragonFastBreathStartInit();
+    void fDragonFastBreathStartUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
+
+    // 現れる
+    void fDragonBreathAppearInit();
+    void fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     //--------------------<ドラゴン死亡エフェクト>--------------------//
     void fDragonDieStartInit();
     void fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);

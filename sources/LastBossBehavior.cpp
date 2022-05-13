@@ -358,14 +358,22 @@ void LastBoss::fHumanBlowAttackInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
     mIsAttack = true;
     mAttackCapsule.mRadius = 0.0f;
+    mTimer = 0.0f;
 }
 
 void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    const DirectX::XMFLOAT3 capsuleLength{ 0.0f,20.0f,0.0f };
-    mAttackCapsule.mRadius += elapsedTime_ * 20.0f;
-    mAttackCapsule.mTop = mPosition + capsuleLength;
-    mAttackCapsule.mBottom = mPosition - capsuleLength;
+
+    mTimer += elapsedTime_;
+
+    if (mTimer > mkTimerBlow)
+    {
+        constexpr DirectX::XMFLOAT3 capsuleLength{ 0.0f,20.0f,0.0f };
+        mAttackCapsule.mRadius += elapsedTime_ * 50.0f;
+        mAttackCapsule.mTop = mPosition + capsuleLength;
+        mAttackCapsule.mBottom = mPosition - capsuleLength;
+    }
+
 
     if(mpModel->end_of_animation(mAnimPara))
     {
@@ -698,13 +706,118 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fDragonIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_hide);
+    mTimer = 0.0f;
+    mCurrentMode = Mode::Dragon;
 }
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     
 }
+
+void LastBoss::fDragonFastBreathStartInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_hide);
+    mTimer = mkDragonHideTime;
+    mDissolve = 0.0f;
+    mpSecondGunRight->fSetDissolve(mDissolve);
+    mpSecondGunLeft->fSetDissolve (mDissolve);
+    mpTurretLeft->fSetDissolve(mDissolve);
+    mpTurretRight->fSetDissolve(mDissolve);
+}
+
+void LastBoss::fDragonFastBreathStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    
+    mTimer -= elapsedTime_;
+    mDissolve += elapsedTime_ * 1.2f;
+    mpSecondGunRight->fSetDissolve(mDissolve);
+    mpSecondGunLeft->fSetDissolve(mDissolve);
+    if(mTimer<0.0f)
+    {
+        // ディゾルブ終了
+        fChangeState(DivideState::DragonAppear);
+        mDissolve = 1.0f;
+        mpSecondGunRight->fSetDissolve(mDissolve);
+        mpSecondGunLeft->fSetDissolve(mDissolve);
+        mpTurretLeft->fSetDissolve(mDissolve);
+        mpTurretRight->fSetDissolve(mDissolve);
+    }
+}
+
+void LastBoss::fDragonBreathAppearInit()
+{
+    // 位置を移動させる
+
+    int areaSeed{};
+    // ステージを四分割して今どこにいるか判定（下図はエリア番号）
+
+    /////////////////////////
+    //         |           //
+    //     0   |     1     //
+    //         |           //
+    //---------|-----------//
+    //         |           //
+    //     2   |     3     //
+    //         |           //
+    /////////////////////////
+
+    if(mPosition.x>0.0f)
+    {
+        areaSeed++;
+    }
+    if(mPosition.z<0.0f)
+    {
+        areaSeed += 2;
+    }
+
+    std::vector<int> vec{};
+    vec.reserve(3);
+    for(int i=0;i<4;++i)
+    {
+        if (i == areaSeed) continue;;
+        vec.emplace_back(i);
+    }
+    const std::uniform_int_distribution<int> RandTargetAdd(0, 2);
+
+    // 目標地点のインデックスを取得
+    const int areaIndex = vec.at(RandTargetAdd(mt));
+
+    float rad = DirectX::XMConvertToRadians(45.0f);
+    switch (areaIndex)
+    {
+    case 0:
+        mPosition = { -cosf(rad),0.0f,sinf(rad) };
+        break;
+    case 1 :
+        mPosition = { cosf(rad),0.0f,sinf(rad) };
+        break;
+    case 2:
+        mPosition = { -cosf(rad),0.0f,-sinf(rad) };
+        break;
+    case 3:
+        mPosition = { cosf(rad),0.0f,-sinf(rad) };
+        break;
+    default: ;
+    }
+
+    mPosition *= (mkLimitStage * 0.5f * 0.7f);
+
+    mDissolve = 1.0f;
+
+    }
+
+void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 10.0f);
+    mDissolve -= elapsedTime_ * 1.3f;
+    if(mDissolve<0.0f)
+    {
+        fChangeState(DivideState::DragonIdle);
+    }
+}
+
 
 void LastBoss::fDragonDieStartInit()
 {

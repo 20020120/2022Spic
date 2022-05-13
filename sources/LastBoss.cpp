@@ -101,7 +101,7 @@ void LastBoss::fUpdateAttackCapsule()
 
 void LastBoss::fSetStun(bool arg)
 {
-    BaseEnemy::fSetStun(arg);
+    //BaseEnemy::fSetStun(arg);
 }
 
 void LastBoss::fRegisterFunctions()
@@ -387,6 +387,32 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::DragonIdle, tuple));
     }
 
+    // ドラドンブレス前に消える
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonFastBreathStartInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonFastBreathStartUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonHideStart, tuple));
+    }
+    // ドラゴン：現れる
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBreathAppearInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBreathAppearUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonAppear, tuple));
+    }
 
     // ドラゴン：死亡
     {
@@ -471,8 +497,31 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::HumanRush);
         }
+        if (ImGui::Button("DragonHide"))
+        {
+            fChangeState(DivideState::DragonHideStart);
+        }
         ImGui::TreePop();
     }
+
+
+    if(ImGui::TreeNode("Area"))
+    {
+        int areaSeed{};
+        if (mPosition.x > 0.0f)
+        {
+            areaSeed++;
+        }
+        if (mPosition.z < 0.0f)
+        {
+            areaSeed += 2;
+        }
+
+        ImGui::DragInt("areaSeed", &areaSeed);
+
+        ImGui::TreePop();
+    }
+
 
     ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
     float v = Math::Length(mPosition);
