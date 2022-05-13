@@ -47,7 +47,6 @@ public:
 
     // 終了処理
     void fFinalize();
-
     // クリア処理
     void fWaveClear();
     // ウェーブ開始
@@ -55,7 +54,7 @@ public:
 
 
     //--------------------<ゲッター関数>--------------------//
-    [[nodiscard]]  EnemyManager* fGetEnemyManager() ;
+    [[nodiscard]] EnemyManager* fGetEnemyManager();
 
     //--------------------<セッター関数>--------------------//
     void fSetStartGame(bool Arg_);
