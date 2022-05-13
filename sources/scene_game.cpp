@@ -531,16 +531,6 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	};
 
 
-	if (is_game_over)
-	{
-		fonts->yu_gothic->Begin(graphics.get_dc().Get());
-		r_font_render(game_over_text);
-		r_font_render(back_title);
-		r_font_render(again);
-		fonts->yu_gothic->End(graphics.get_dc().Get());
-		r_sprite_render(sprite_selecter.get(), selecter1);
-		r_sprite_render(sprite_selecter.get(), selecter2);
-	}
     // font demo
 #if 0
 	{
@@ -625,7 +615,18 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	minimap->render(graphics, p_pos,p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
+	if (is_game_over)
+	{
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render(game_over_text);
+		r_font_render(back_title);
+		r_font_render(again);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+		r_sprite_render(sprite_selecter.get(), selecter1);
+		r_sprite_render(sprite_selecter.get(), selecter2);
+	}
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
+
 }
 
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
