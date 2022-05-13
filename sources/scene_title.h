@@ -54,7 +54,7 @@ private:
     struct BloomConstants
     {
         float bloom_extraction_threshold = 1.5f;
-        float blur_convolution_intensity = 7.0f;
+        float blur_convolution_intensity = 6.5f;
 
         float bloom_options[2];
     };

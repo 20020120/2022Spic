@@ -111,12 +111,20 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         clear_wait_timer -= elapsedTime_;
         if (clear_wait_timer < 0)
         {
-            mWaveState = WaveState::Clear;
-            //----------------------------------
-            // TODO:藤岡が書いたところ6
-            //----------------------------------
-            transition_reduction();
-            //---ここまで--//
+            if (current_stage != STAGE_IDENTIFIER::BOSS) // クリア演出へ
+            {
+                mWaveState = WaveState::Clear;
+                //----------------------------------
+                // TODO:藤岡が書いたところ6
+                //----------------------------------
+                transition_reduction();
+                //---ここまで--//
+            }
+            else // ゲームクリア
+            {
+                SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
+                return;
+            }
         }
     }
 
@@ -291,7 +299,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         {
             // クリア演出終了、次のステージへ
             mWaveState = WaveState::Game;
-            mCurrentWave++;
+            mCurrentWave = current_stage;
             fStartWave();
         }
     }
@@ -342,7 +350,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     if (ImGui::Button("NextWave"))
     {
         mWaveState = WaveState::Game;
-        mCurrentWave++;
+        mCurrentWave = current_stage;
         fStartWave();
     }
     if(ImGui::Button("StartGame"))
@@ -398,12 +406,7 @@ void WaveManager::update_reduction(float elapsed_time)
     // 選択状態に遷移
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
     {
-        if (current_stage != STAGE_IDENTIFIER::BOSS) { transition_selection(); }
-        else // ゲームクリア
-        {
-            SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
-            return;
-        }
+        transition_selection();
     }
 }
 
