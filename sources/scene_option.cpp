@@ -89,6 +89,7 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	if (game_pad->get_button_down() & GamePad::BTN_START)
 	{
+		audio_manager->play_se(SE_INDEX::SELECT);
 		switching = true;
 		return;
 	}
@@ -124,14 +125,14 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 	switch (state)
 	{
 	case IconType::VOLUME:
-		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { state = IconType::GAME; }
+		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { audio_manager->play_se(SE_INDEX::SELECT); state = IconType::GAME; }
 		break;
 	case IconType::GAME:
-		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { state = IconType::TRANSITION; }
-		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { state = IconType::VOLUME; }
+		if (game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER) { audio_manager->play_se(SE_INDEX::SELECT); state = IconType::TRANSITION; }
+		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { audio_manager->play_se(SE_INDEX::SELECT); state = IconType::VOLUME; }
 		break;
 	case IconType::TRANSITION:
-		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { state = IconType::GAME; }
+		if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER) { audio_manager->play_se(SE_INDEX::SELECT); state = IconType::GAME; }
 		break;
 	}
 	// frameˆÚ“®
@@ -159,7 +160,14 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 		DirectX::XMFLOAT2 radius = icon_elements.at((IconType)i).texsize * icon_elements.at((IconType)i).scale * DirectX::XMFLOAT2(0.5f, 0.5f);
 		if (Collision::hit_check_rect(cursor.position, { 10,10 }, icon_elements.at((IconType)i).position, radius))
 		{
-			if (game_pad->get_button_down() & GamePad::BTN_B) { if (state != IconType::TRANSITION) state = IconType(i); }
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				if (state != IconType::TRANSITION)
+				{
+					audio_manager->play_se(SE_INDEX::SELECT);
+					state = IconType(i);
+				}
+			}
 		}
 	}
 

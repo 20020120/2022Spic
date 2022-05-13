@@ -33,12 +33,14 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case 0: // game
 		if ((game_pad->get_button_down() & GamePad::BTN_DOWN) || (game_pad->get_axis_LY() < -0.5f))
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = 1;
 			selecterL_arrival_pos = { 375.0f, title.position.y };
 			selecterR_arrival_pos = { 930.0f, title.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
+			audio_manager->play_se(SE_INDEX::DECISION);
 			Option::set_switching(true);
 			return;
 		}
@@ -46,12 +48,14 @@ void TransitionIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case 1: // title
 		if ((game_pad->get_button_down() & GamePad::BTN_UP) || (game_pad->get_axis_LY() > 0.5f))
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = 0;
 			selecterL_arrival_pos = { 375.0f, game.position.y };
 			selecterR_arrival_pos = { 930.0f, game.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_B)
 		{
+			audio_manager->play_se(SE_INDEX::DECISION);
 			Option::set_validity(false);
 			SceneManager::scene_switching(new SceneLoading(new SceneTitle()));
 			return;

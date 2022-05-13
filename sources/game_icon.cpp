@@ -161,6 +161,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if ((game_pad->get_button() & GamePad::BTN_LEFT) && interval_LX > INTERVAL)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			interval_LX = 0;
 			size_t index = scales.size();
 			if (index > 1) { scales.pop_back(); }
@@ -168,6 +169,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if ((game_pad->get_button() & GamePad::BTN_RIGHT) && interval_LX > INTERVAL)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			interval_LX = 0;
 			size_t index = scales.size();
 			if (index < MAX_SCALE_COUNT)
@@ -187,6 +189,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		float selecter_posL[2] = { 730.0f,900.0f }; float selecter_posR[2] = { 855.0f, 1055.0f };
 		if (game_pad->get_button_down() & GamePad::BTN_LEFT)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			if (!setup[type])
 			{
 				setup[type] = true;
@@ -197,6 +200,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_RIGHT)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			if (setup[type])
 			{
 				setup[type] = false;
@@ -212,6 +216,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case ChoicesType::SHAKE:
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = ChoicesType::VIBRATION;
 			selecterL_arrival_pos = { 255.0f, vibration.position.y };
 			selecterR_arrival_pos = { 640.0f, vibration.position.y };
@@ -222,6 +227,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case ChoicesType::VIBRATION:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = ChoicesType::SHAKE;
 			selecterL_arrival_pos = { 290.0f, shake.position.y };
 			selecterR_arrival_pos = { 600.0f, shake.position.y };
@@ -238,12 +244,14 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case ChoicesType::OMISSION:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = ChoicesType::VIBRATION;
 			selecterL_arrival_pos = { 360.0f, vibration.position.y };
 			selecterR_arrival_pos = { 745.0f, vibration.position.y };
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = ChoicesType::SENSITIVITY;
 			selecterL_arrival_pos = { 410.0f, sensitivity.position.y };
 			selecterR_arrival_pos = { 680.0f, sensitivity.position.y };
@@ -254,6 +262,7 @@ void GameIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case ChoicesType::SENSITIVITY:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = ChoicesType::OMISSION;
 			selecterL_arrival_pos = { 385.0f, omission.position.y };
 			selecterR_arrival_pos = { 705.0f, omission.position.y };
@@ -388,6 +397,7 @@ void GameIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 			{
 				if (game_pad->get_button_down() & GamePad::BTN_B)
 				{
+					audio_manager->play_se(SE_INDEX::SELECT);
 					float selecter_arrival_pos_y[BUTTON_COUNT]  = { shake.position.y, vibration.position.y, omission.position.y };
 					float selecterL_arrival_pos_x[BUTTON_COUNT] = { 290.0f, 255.0f, 280.0f };
 					float selecterR_arrival_pos_x[BUTTON_COUNT] = { 600.0f, 640.0f, 600.0f };

@@ -99,9 +99,6 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	static float bgm_volume = 2.0f;
-	static float se_volume = 0.2f;
-
 	// ボスのBGM切り替え
 	//if (!bgm_switches[0] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_BATTLESHIP)
 	//{
@@ -121,6 +118,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//{
 	//	audio_manager->stop_all_bgm();
 	//	audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+	// bgm_switches[2] = true;
+	//}
+
 
 	if (is_game_over)
 	{
@@ -164,6 +164,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				audio_manager->play_se(SE_INDEX::DECISION);
 				SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
 			}
 			break;
@@ -171,6 +172,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				audio_manager->play_se(SE_INDEX::DECISION);
 				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::TYPE1, 2.0f);
 			}
 			break;
@@ -178,14 +180,11 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			break;
 		}
 	}
-	//	bgm_switches[2] = true;
-	//}
 
-	audio_manager->set_volume_bgm(BGM_INDEX::GAME, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_BATTLESHIP, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_HUMANOID, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_volume_bgm(BGM_INDEX::BOSS_DRAGON, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_volume_se(SE_INDEX::DECISION, se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
+	const float bgm_volume = 2.0f;
+	const float se_volume = 0.2f;
+	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	//ゲームオーバーの時は止める
 	if (is_game_over) return;
@@ -199,6 +198,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (game_pad->get_button_down() & GamePad::BTN_START)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			option->initialize();
 			option->set_validity(true);
 			return;
@@ -432,6 +432,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (is_shake) camera_shake->shake(graphics, elapsed_time);
 	ImGui::End();
 #endif // USE_IMGUI
+
 	// hit_stop demo
 #ifdef USE_IMGUI
 	{
@@ -441,41 +442,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 #endif // USE_IMGUI
 
-
-	// audio デモ
-	static bool is_open_button = { false };
-	static bool display_audio_imgui = { false };
-#ifdef USE_IMGUI
-	imgui_menu_bar("contents", "audio", display_audio_imgui);
-	if (display_audio_imgui)
-	{
-		if (ImGui::Begin("sound"))
-		{
-			if (ImGui::TreeNode("BGM"))
-			{
-				ImGui::DragFloat("bgm_volume", &bgm_volume, 0.1f, 0.0f, 3.0f);
-				//if (!is_open_button)
-				{
-					if (ImGui::Button("play bgm")) { audio_manager->play_bgm(BGM_INDEX::GAME); is_open_button = true; }
-					if (ImGui::Button("play TITLE bgm")) { audio_manager->play_bgm(BGM_INDEX::TITLE); is_open_button = true; }
-				}
-				//else
-				{
-					if (ImGui::Button("stop bgm")) { audio_manager->stop_bgm(BGM_INDEX::GAME); is_open_button = false; }
-				}
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("SE"))
-			{
-				ImGui::DragFloat("se_volume", &se_volume, 0.1f, 0.0f, 3.0f);
-				if (ImGui::Button("play se")) { audio_manager->play_se(SE_INDEX::DECISION); }
-				//if (ImGui::Button("play item_get se")) { audio_manager->play_se(SE_INDEX::GET); }
-				ImGui::TreePop();
-			}
-			ImGui::End();
-		}
-	}
-#endif
 
 	//****************************************************************
 	//

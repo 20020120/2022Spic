@@ -132,12 +132,14 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if ((game_pad->get_button() & GamePad::BTN_LEFT) && interval_LX > INTERVAL)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			interval_LX = 0;
 			if (!scales[type].empty()) { scales[type].pop_back(); }
 			save_volumes();
 		}
 		if ((game_pad->get_button() & GamePad::BTN_RIGHT) && interval_LX > INTERVAL)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			interval_LX = 0;
 			float positions[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
 			size_t index = scales[type].size();
@@ -159,6 +161,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case BarType::MASTER:
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = BarType::BGM;
 			selecterL_arrival_pos.y = selecterR_arrival_pos.y = bgm.position.y;
 		}
@@ -168,11 +171,13 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case BarType::BGM:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = BarType::MASTER;
 			selecterL_arrival_pos.y = selecterR_arrival_pos.y = master.position.y;
 		}
 		if (game_pad->get_button_down() & GamePad::BTN_DOWN)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = BarType::SE;
 			selecterL_arrival_pos.y = selecterR_arrival_pos.y = se.position.y;
 		}
@@ -182,6 +187,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 	case BarType::SE:
 		if (game_pad->get_button_down() & GamePad::BTN_UP)
 		{
+			audio_manager->play_se(SE_INDEX::SELECT);
 			state = BarType::BGM;
 			selecterL_arrival_pos.y = bgm.position.y;
 			selecterR_arrival_pos.y = bgm.position.y;
@@ -302,6 +308,8 @@ void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 			float selecter_arrival_pos_y[BAR_COUNT] = { master.position.y, bgm.position.y, se.position.y };
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
+				audio_manager->play_se(SE_INDEX::SELECT);
+
 				state = BarType(o);
 				selecterL_arrival_pos.y = selecterR_arrival_pos.y = selecter_arrival_pos_y[o];
 
