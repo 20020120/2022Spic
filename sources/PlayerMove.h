@@ -44,7 +44,7 @@ public:
 protected:
     //敵をロックオンしたかどうか
     bool is_lock_on{ false };
-    //ロックオンボタンを押していたらtrue
+    //敵がカメラ内にいない状態でロックオンボタンを押していたらtrue
     bool is_push_lock_on_button{ false };
     //ターゲット
     DirectX::XMFLOAT3 target{};
