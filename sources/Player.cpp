@@ -182,7 +182,10 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         InflectionParameters(elapsed_time);
 
         PlayerJustification(elapsed_time, position);
-
+        if (target_enemy != nullptr)
+        {
+            PlayerEnemyJustification(elapsed_time,position,1.2f,target_enemy->fGetPosition(),target_enemy->fGetBodyCapsule().mRadius);
+        }
         if (is_awakening)
         {
             for (int i = 0; i < 2; ++i)
