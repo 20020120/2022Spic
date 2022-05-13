@@ -165,6 +165,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
 
+	audio_manager->play_se(SE_INDEX::OPEN_FIRE);
+
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//スレッドの管理を放棄
@@ -243,7 +245,9 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		logo_parameters.glow_horizon -= logo_parameters.reset_timer * 0.1f;
 		logo_parameters.glow_horizon = (std::max)(logo_parameters.glow_horizon, -12.0f);
 
-		if (logo_parameters.reset_timer > 2.0f)
+		const float RESET_TIME = 5.0f;
+
+		if (logo_parameters.reset_timer > RESET_TIME)
 		{
 			logo_parameters.reset_timer = 0.0f;
 			logo_parameters.glow_horizon = 0.0f;

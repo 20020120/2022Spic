@@ -38,7 +38,8 @@ public:
 
 private:
     std::shared_ptr<SkinnedMesh> model;
-    std::shared_ptr<SkinnedMesh> model1;
+    std::shared_ptr<SkinnedMesh> field;
+    float field_glow_time = 0.0f;
 
 
     static float purple_threshold;
