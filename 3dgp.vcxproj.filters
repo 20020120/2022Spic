@@ -510,6 +510,9 @@
     <ClCompile Include="sources\JointCamera.cpp">
       <Filter>Sources\camera</Filter>
     </ClCompile>
+    <ClCompile Include="sources\DragonBreath.cpp">
+      <Filter>Sources\bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -841,6 +844,9 @@
     </ClInclude>
     <ClInclude Include="sources\BossUnit.h">
       <Filter>Sources\character\enemy\06_BossUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\DragonBreath.h">
+      <Filter>Sources\bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

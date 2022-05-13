@@ -706,7 +706,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fDragonIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::dragon_hide);
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
     mTimer = 0.0f;
     mCurrentMode = Mode::Dragon;
 }
@@ -813,6 +813,34 @@ void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& G
     fTurnToPlayer(elapsedTime_, 10.0f);
     mDissolve -= elapsedTime_ * 1.3f;
     if(mDissolve<0.0f)
+    {
+        fChangeState(DivideState::DragonBreathCharge);
+    }
+}
+
+void LastBoss::fDragonBreathChargeInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_ready);
+}
+
+void LastBoss::fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 10.0f);
+
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::DragonBreathShot);
+    }
+}
+
+void LastBoss::fDragonBreathShotInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_start);
+}
+
+void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    if(mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::DragonIdle);
     }

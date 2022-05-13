@@ -209,6 +209,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\BossUnit.cpp" />
     <ClCompile Include="sources\CannonballBullet.cpp" />
+    <ClCompile Include="sources\DragonBreath.cpp" />
     <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
@@ -321,6 +322,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="sources\BossUnit.h" />
     <ClInclude Include="sources\CannonballBullet.h" />
+    <ClInclude Include="sources\DragonBreath.h" />
     <ClInclude Include="sources\ShieldEnemy_Ace.h" />
     <ClInclude Include="sources\ArcherEnemy.h" />
     <ClInclude Include="sources\ArcherEnemy_Ace.h" />

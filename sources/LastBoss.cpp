@@ -413,6 +413,32 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::DragonAppear, tuple));
     }
+    // ブレス溜める
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBreathChargeInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBreathChargeUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonBreathCharge, tuple));
+    }
+    // ブレス発射
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBreathShotInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBreathShotUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonBreathShot, tuple));
+    }
 
     // ドラゴン：死亡
     {

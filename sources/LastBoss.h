@@ -71,6 +71,8 @@ private:
 
         inline static const char* DragonHideStart= "DragonHideStart"; // 消える
         inline static const char* DragonAppear= "DragonAppear"; // 現れる
+        inline static const char* DragonBreathCharge= "DragonBreathCharge"; // 溜める
+        inline static const char* DragonBreathShot= "DragonBreathShot"; // 発射
     };
 
     enum  AnimationName {
@@ -261,6 +263,10 @@ private:
     bool mFirstSp{ false };
     bool mSecondSp{ false };
 
+    // ブレス
+    int mDragonBreathCount{};
+
+
     //****************************************************************
     // 
     // 定数
@@ -391,6 +397,13 @@ private:
     // 現れる
     void fDragonBreathAppearInit();
     void fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonBreathChargeInit();
+    void fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonBreathShotInit();
+    void fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
 
     //--------------------<ドラゴン死亡エフェクト>--------------------//
     void fDragonDieStartInit();
