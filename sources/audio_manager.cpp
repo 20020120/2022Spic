@@ -175,6 +175,18 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/attack_sword.wav", SE_INDEX::ATTACK_SWORD, 0.1f);
 	register_se(L"resources/Audios/SE/enemy_emergence.wav", SE_INDEX::ENEMY_EMERGENCE, 0.1f);
 	register_se(L"resources/Audios/SE/shot_bow.wav", SE_INDEX::SHOT_BOW, 0.1f);
+	register_se(L"resources/Audios/SE/cannon.wav", SE_INDEX::CANNON, 0.1f);
+	register_se(L"resources/Audios/SE/heart_beat.wav", SE_INDEX::HEART_BEAT, 0.1f);
+	register_se(L"resources/Audios/SE/open_fire.wav", SE_INDEX::OPEN_FIRE, 0.1f);
+	register_se(L"resources/Audios/SE/transform1.wav", SE_INDEX::TRANSFORM1, 0.1f);
+	register_se(L"resources/Audios/SE/transform2.wav", SE_INDEX::TRANSFORM2, 0.1f);
+	register_se(L"resources/Audios/SE/transform3.wav", SE_INDEX::TRANSFORM3, 0.1f);
+	register_se(L"resources/Audios/SE/transform4.wav", SE_INDEX::TRANSFORM4, 0.1f);
+	register_se(L"resources/Audios/SE/transform5.wav", SE_INDEX::TRANSFORM5, 0.1f);
+	register_se(L"resources/Audios/SE/transform6.wav", SE_INDEX::TRANSFORM6, 0.1f);
+	register_se(L"resources/Audios/SE/boss_beam.wav", SE_INDEX::BOSS_BEAM, 0.1f);
+	register_se(L"resources/Audios/SE/dragon_roar.wav", SE_INDEX::DRAGON_ROAR, 0.1f);
+	register_se(L"resources/Audios/SE/enemy_explosion.wav", SE_INDEX::ENEMY_EXPLOSION, 0.1f);
 
 }
 

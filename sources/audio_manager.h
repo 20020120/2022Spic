@@ -20,14 +20,26 @@ enum class BGM_INDEX
 
 enum class SE_INDEX
 {
-    SELECT,         //選択音
-    DECISION,       //決定音
-    DRAW_SWORD,     //剣を抜く音
-    RETURN_SWORD,   //剣を鞘に戻す
-    SWING_SWORD,    //攻撃(当たっていない)
-    ATTACK_SWORD,   //攻撃(当たっている)
-    ENEMY_EMERGENCE,//敵出現
-    SHOT_BOW,       //弓攻撃
+    SELECT,             //選択音
+    DECISION,           //決定音
+    DRAW_SWORD,         //剣を抜く音
+    RETURN_SWORD,       //剣を鞘に戻す
+    SWING_SWORD,        //攻撃(当たっていない)
+    ATTACK_SWORD,       //攻撃(当たっている)
+    ENEMY_EMERGENCE,    //敵出現
+    SHOT_BOW,           //弓攻撃
+    CANNON,             //砲台音
+    HEART_BEAT,         //心臓の鼓動音
+    OPEN_FIRE,          //焚火
+    TRANSFORM1,         //ボス変形候補1
+    TRANSFORM2,         //ボス変形候補2
+    TRANSFORM3,         //ボス変形候補3
+    TRANSFORM4,         //ボス変形候補4
+    TRANSFORM5,         //ボス変形候補5
+    TRANSFORM6,         //ボス変形候補6
+    BOSS_BEAM,          //ボスビーム攻撃
+    DRAGON_ROAR,        //ドラゴンボス咆哮
+    ENEMY_EXPLOSION,    //敵撃破音
 
     SE_COUNT
 };
