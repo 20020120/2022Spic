@@ -1,9 +1,58 @@
 #pragma once
 
+#include <cereal/cereal.hpp>
+
 #include "EnemyManager.h"
 #include "sprite_dissolve.h"
 #include "sprite_batch.h"
 #include "practical_entities.h"
+
+
+class WaveFile
+{
+private:
+    //--------<constructor/destructor>--------//
+    WaveFile() {}
+    ~WaveFile() {}
+    //--------< 構造体 >--------//
+    struct WaveSource
+    {
+        //--------< 変数 >--------//
+        int stage_to_start = 0;
+        //--------< 関数 >--------//
+        void initialize()
+        {
+            stage_to_start = 0;
+        }
+        // シリアライズ
+        template<class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(
+                cereal::make_nvp("stage_to_start", stage_to_start)
+            );
+        }
+    };
+    //--------< 変数 >--------//
+    WaveSource source;
+    const char* file_name = "./resources/Data/stage_to_start.json";
+public:
+    //--------< singleton >--------//
+    static WaveFile& get_instance()
+    {
+        static WaveFile instance;
+        return instance;
+    }
+    //--------< 関数 >--------//
+    void load();
+    void save();
+    //--------<getter/setter>--------//
+    // stage_to_start
+    int get_stage_to_start() const { return source.stage_to_start; }
+    void set_stage_to_start(int s) { source.stage_to_start = s; }
+};
+
+
 
 //****************************************************************
 //
@@ -47,8 +96,6 @@ public:
 
     // 終了処理
     void fFinalize();
-    // クリア処理
-    void fWaveClear();
     // ウェーブ開始
     void fStartWave();
 
@@ -57,7 +104,6 @@ public:
     [[nodiscard]] EnemyManager* fGetEnemyManager();
 
     //--------------------<セッター関数>--------------------//
-    void fSetStartGame(bool Arg_);
 
     //--------------------<ImGui>--------------------//
     void fGuiMenu();
