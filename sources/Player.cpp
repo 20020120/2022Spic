@@ -169,6 +169,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             LockOn();
             //カメラリセット
             CameraReset();
+            if (is_behind_avoidance == false)
+            {
+                PlayerJustification(elapsed_time, position);
+                if (target_enemy != nullptr)
+                {
+                    PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                }
+            }
             break;
         case Player::Behavior::Chain:
 
@@ -181,11 +189,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         //プレイヤーのパラメータの変更
         InflectionParameters(elapsed_time);
 
-        PlayerJustification(elapsed_time, position);
-        if (target_enemy != nullptr)
-        {
-            PlayerEnemyJustification(elapsed_time,position,1.2f,target_enemy->fGetPosition(),target_enemy->fGetBodyCapsule().mRadius);
-        }
         if (is_awakening)
         {
             for (int i = 0; i < 2; ++i)
@@ -260,6 +263,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::Checkbox("is_awakening", &is_awakening);
                 ImGui::Checkbox("start_dash_effect", &start_dash_effect);
                 ImGui::Checkbox("end_dash_effect", &end_dash_effect);
+                ImGui::Checkbox("is_push_lock_on_button", &is_push_lock_on_button);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
@@ -650,7 +654,7 @@ void Player::BodyCapsule()
 
         charge_capsule_param.start = pos;
         charge_capsule_param.end = end;
-        charge_capsule_param.rasius = 2.5f;
+        charge_capsule_param.rasius = 3.0f;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
@@ -723,6 +727,18 @@ void Player::SetTarget( BaseEnemy* target_enemies)
     //{
     //    target_enemy = nullptr;
     //}
+    //ロックオンボタンを押したとき
+    if (game_pad->get_trigger_L())
+    {
+        //カメラ内にいる敵がいないなら(target_enemiesがnullptrの時はカメラのカリングに入っていない)
+        if (target_enemies == nullptr)
+        {
+            //ロックオンボタンを押しているフラグをon
+            is_push_lock_on_button = true;
+        }
+    }
+    //押されていなかったらoff
+    else is_push_lock_on_button = false;
     if (target_enemy != nullptr)
     {
         //ターゲットしている敵が死んでいるかスタンしていたら
@@ -1032,7 +1048,8 @@ void Player::LockOn()
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
-        if (target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
+        //ロックオンボタンを押していないときにしか絶対入らない
+        if (is_push_lock_on_button == false && target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             //敵の位置を補完のゴールターゲットに入れる
 #if 0

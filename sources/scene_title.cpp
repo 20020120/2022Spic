@@ -88,41 +88,42 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	else /*チュートリアルデータなし*/ { have_tutorial_state = -1; }
 
 	//--tutorial tab--//
-	tutorial_tab.display = false;
+	{
+		tutorial_tab.display = false;
 
-	tutorial_tab.selecterL.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	tutorial_tab.selecterL.position = { 587, 335 };
-	tutorial_tab.selecterL.scale = { 0.2f,0.1f };
+		tutorial_tab.selecterL.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+		tutorial_tab.selecterL.position = { 587, 335 };
+		tutorial_tab.selecterL.scale = { 0.2f,0.1f };
 
-	tutorial_tab.selecterR.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	tutorial_tab.selecterR.position = { 692, 335 };
-	tutorial_tab.selecterR.scale = { 0.2f,0.1f };
+		tutorial_tab.selecterR.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
+		tutorial_tab.selecterR.position = { 692, 335 };
+		tutorial_tab.selecterR.scale = { 0.2f,0.1f };
 
-	tutorial_tab.arrival_posL = tutorial_tab.selecterL.position;
-	tutorial_tab.arrival_posR = tutorial_tab.selecterR.position;
+		tutorial_tab.arrival_posL = tutorial_tab.selecterL.position;
+		tutorial_tab.arrival_posR = tutorial_tab.selecterR.position;
 
-	tutorial_tab.headline.s = L"チュートリアルを行いますか？";
-	tutorial_tab.headline.position = { 465, 235 };
-	tutorial_tab.headline.scale = { 0.7f,0.7f };
+		tutorial_tab.headline.s = L"チュートリアルを行いますか？";
+		tutorial_tab.headline.position = { 465, 235 };
+		tutorial_tab.headline.scale = { 0.7f,0.7f };
 
-	tutorial_tab.back.s = L"Aボタンで戻る";
-	tutorial_tab.back.position = { 685, 435 };
-	tutorial_tab.back.scale = { 0.6f,0.6f };
+		tutorial_tab.back.s = L"Aボタンで戻る";
+		tutorial_tab.back.position = { 685, 435 };
+		tutorial_tab.back.scale = { 0.6f,0.6f };
 
-	tutorial_tab.yes.s = L"はい";
-	tutorial_tab.yes.position = { 625, 315 };
-	tutorial_tab.yes.scale = { 0.7f,0.7f };
+		tutorial_tab.yes.s = L"はい";
+		tutorial_tab.yes.position = { 625, 315 };
+		tutorial_tab.yes.scale = { 0.7f,0.7f };
 
-	tutorial_tab.no.s = L"いいえ";
-	tutorial_tab.no.position = { 615, 370 };
-	tutorial_tab.no.scale = { 0.7f,0.7f };
+		tutorial_tab.no.s = L"いいえ";
+		tutorial_tab.no.position = { 615, 370 };
+		tutorial_tab.no.scale = { 0.7f,0.7f };
 
-	tutorial_tab.sprite_frame   = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_back.png", 1);
-	tutorial_tab.frame.texsize  = { static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Width),
-		                            static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Height) };
-	tutorial_tab.frame.position = { 333.0f, 33.5f };
-	tutorial_tab.frame.scale    = { 1.0f, 1.0f };
-
+		tutorial_tab.sprite_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_back.png", 1);
+		tutorial_tab.frame.texsize = { static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Width),
+										static_cast<float>(tutorial_tab.sprite_frame->get_texture2d_desc().Height) };
+		tutorial_tab.frame.position = { 333.0f, 33.5f };
+		tutorial_tab.frame.scale = { 1.0f, 1.0f };
+	}
 
 	for (auto& play : can_play_se)
 	{
@@ -130,30 +131,39 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	}
 
 	//--logo_parameters--//
-	logo_parameters.sprite_logo = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_logo.png", 1);
-	logo_parameters.logo.texsize = { static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Width),
-								     static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Height) };
-	logo_parameters.logo.position = { 100.0f, -3.0f };
-	logo_parameters.logo.scale    = { 1.0f, 1.0f };
+	{
+		logo_parameters.sprite_logo = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_logo.png", 1);
+		logo_parameters.logo.texsize = { static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Width),
+										 static_cast<float>(logo_parameters.sprite_logo->get_texture2d_desc().Height) };
+		logo_parameters.logo.position = { 100.0f, -3.0f };
+		logo_parameters.logo.scale = { 1.0f, 1.0f };
 
-	logo_parameters.sprite_animation = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_anime.png", 1);
-	logo_parameters.animation.texsize  = logo_parameters.logo.texsize;
-	logo_parameters.animation.position = logo_parameters.logo.position;
-	logo_parameters.animation.scale    = logo_parameters.logo.scale;
+		logo_parameters.sprite_animation = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_anime.png", 1);
+		logo_parameters.animation.texsize = logo_parameters.logo.texsize;
+		logo_parameters.animation.position = logo_parameters.logo.position;
+		logo_parameters.animation.scale = logo_parameters.logo.scale;
 
-	logo_parameters.timer = 0;
-	logo_parameters.frame_y = 0;
-	logo_parameters.start_anim = false;
-	logo_parameters.reset_timer = 0.0f;
-	logo_parameters.glow_horizon = 0.0f;
-
+		logo_parameters.timer = 0;
+		logo_parameters.frame_y = 0;
+		logo_parameters.start_anim = false;
+		logo_parameters.reset_timer = 0.0f;
+		logo_parameters.glow_horizon = 0.0f;
+	}
 	//--slashing post effect--//
-	slashing_power = 0;
-	slashing_wait_timer = 0;
+	{
+		slashing_power = 0;
+		slashing_wait_timer = 0;
+	}
+	// has_stageNo_json
+	{
+		std::filesystem::path path = "./resources/Data/stage_to_start.json";
+		if (std::filesystem::exists(path.c_str())) /*ウェーブデータあり*/ { has_stageNo_json = true; }
+		else /*ウェーブデータなし*/ { has_stageNo_json = false; }
+	}
 
+	//--audio--//
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
-
 
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
@@ -171,12 +181,20 @@ void SceneTitle::uninitialize()
 
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
+	//-- audio volume --//
+	const float BGM_VOLUME = 2.0f;
+	const float SE_VOLUME = 2.0f;
+
+	audio_manager->set_all_volume_bgm(BGM_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_all_volume_se(SE_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
+
 	//--logo_parameters--//
 	const int FRAMW_COUNT_X = 7;
 	const int FRAMW_COUNT_Y = 4;
-	static float logo_animation_speed = 0.03f;
-	// 1.0秒待つ
-	if (logo_parameters.timer > 2.0f) { logo_parameters.start_anim = true; }
+	const float LOGO_ANIMATION_WAIT_TIME = 2.0f;
+	static float logo_animation_speed    = 0.03f;
+
+	if (logo_parameters.timer > LOGO_ANIMATION_WAIT_TIME) { logo_parameters.start_anim = true; }
 
 	int frame_x;
 	if (!logo_parameters.start_anim) frame_x = 0;
@@ -235,13 +253,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			logo_parameters.frame_y = 0;
 		}
 	}
-
-
-	static float bgm_volume = 2.0f;
-	static float se_volume = 2.0f;
-
-	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
-	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	//----<3D関連>----//
 	// cameraManager

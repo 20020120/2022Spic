@@ -167,6 +167,8 @@ private:
 
     float glow_vertical = {};
 
+    bool has_stageNo_json = false;
+
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_load_ready;
