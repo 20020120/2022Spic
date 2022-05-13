@@ -297,19 +297,38 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŽžŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ðI‚í‚é
-        if (is_update_animation == false &&(is_enemy_hit || attack_time >= 1.0f))
+#if 0
+    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    {
+        is_charge = false;
+        attack_time = 0;
+        is_update_animation = true;
+    }
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+
+        //if (length > 5.0f)ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
+    }
+#else
+    if (is_update_animation == false)
+    {
+        if (is_enemy_hit || attack_time >= 1.0f)
         {
             is_charge = false;
             attack_time = 0;
             is_update_animation = true;
         }
-        else
-        {
-            float length{ Math::calc_vector_AtoB_length(position,target) };
+    }
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
+    }
 
-            //if (length > 5.0f)ChargeAcceleration(elapsed_time);
-            SetAccelerationVelocity();
-        }
+#endif // 0
     if (model->end_of_animation())
     {
         //—P—\ŽžŠÔ‚ð’´‚¦‚½‚ç‘Ò‹@‚É‘JˆÚ
@@ -368,6 +387,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŽžŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ðI‚í‚é
 
+#if 0
     if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
     {
         is_charge = false;
@@ -380,6 +400,24 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         //if (length > 5.0f) ChargeAcceleration(elapsed_time);
         SetAccelerationVelocity();
     }
+#else
+    if (is_update_animation == false)
+    {
+        if (is_enemy_hit || attack_time >= 1.0f)
+        {
+            is_charge = false;
+            attack_time = 0;
+            is_update_animation = true;
+        }
+    }
+    else
+    {
+        float length{ Math::calc_vector_AtoB_length(position,target) };
+        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
+    }
+
+#endif // 0
 
     if (model->end_of_animation())
     {
