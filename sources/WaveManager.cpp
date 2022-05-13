@@ -17,6 +17,10 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
     //----------------------------------
     // TODO:藤岡が書いたところ2
     //----------------------------------
+    // ステージのロード
+    WaveFile::get_instance().load();
+    current_stage = static_cast<STAGE_IDENTIFIER>(WaveFile::get_instance().get_stage_to_start());
+
     // ステージ情報の登録
     DirectX::XMFLOAT2 stage_points[STAGE_IDENTIFIER::STAGE_COUNT] =
     {
@@ -131,11 +135,10 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     switch (mWaveState)
     {
     case WaveState::Start:
-        // ゲーム開始演出が終了したかどうか
+        // 一番最初はクリア演出なしでステージ開始するからここでウェーブ開始(ゲーム中最初の一回しか入らない)
         if (mStartGame)
         {
-            mWaveState = WaveState::Game;
-            mEnemyManager.fStartWave(0);
+            fStartWave();
             mStartGame = false;
         }
         break;
@@ -200,37 +203,21 @@ void WaveManager::fFinalize()
     mEnemyManager.fFinalize();
 }
 
-void WaveManager::fWaveClear()
-{
-    if(mEnemyManager.fGetClearWave())
-    {
-        if (mCurrentWave % 3 == 2)
-        {
-            // ３ウェーブごとにクリアシーンに遷移する
-            clear_flg = true;
-        }
-        else
-        {
-            // クリアしたら
-            mCurrentWave++;
-            fStartWave();
-        }
-    }
-}
-
 void WaveManager::fStartWave()
 {
+    mWaveState = WaveState::Game;
+    mCurrentWave = current_stage;
+
+    // ファイルにセーブ
+    WaveFile::get_instance().set_stage_to_start(mCurrentWave);
+    WaveFile::get_instance().save();
+
     mEnemyManager.fStartWave(mCurrentWave);
 }
 
  EnemyManager* WaveManager::fGetEnemyManager()
 {
     return &mEnemyManager;
-}
-
-void WaveManager::fSetStartGame(bool Arg_)
-{
-    mStartGame = Arg_;
 }
 
 void WaveManager::fGuiMenu()
@@ -241,44 +228,29 @@ void WaveManager::fGuiMenu()
     if (mOpenGui)
     {
         ImGui::Begin("WaveManager");
-        if (ImGui::Button("StartGame"))
-        {
-            fSetStartGame(true);
-        }
-
+        ImGui::Text("mCurrentWave:%d", mCurrentWave);
         //----------------------------------
         // TODO:藤岡が書いたところ8
         //----------------------------------
         if (ImGui::Button("ClearGame"))
         {
-            mWaveState = WaveState::Clear;
-            transition_reduction();
+            clear_flg = true;
         }
         //---ここまで--//
 
         ImGui::Text("State ");
         ImGui::SameLine();
-        switch (mWaveState) {
-        case WaveState::Start:
-            ImGui::Text("Start");
-            break;
-        case WaveState::Game:
-            ImGui::Text("Game");
-            break;
-        case WaveState::Clear:
-            ImGui::Text("Clear");
-            break;
-        default:
-
-            break;
+        switch (mWaveState)
+        {
+        case WaveState::Start: ImGui::Text("Start"); break;
+        case WaveState::Game:  ImGui::Text("Game");  break;
+        case WaveState::Clear: ImGui::Text("Clear"); break;
+        default: break;
         }
 
         ImGui::End();
-
     }
 #endif
-
-
 }
 
 void WaveManager::fClearUpdate(float elapsedTime_)
@@ -298,8 +270,6 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         if (Math::equal_check(player_icon.threshold, 1.0f, 0.1f))
         {
             // クリア演出終了、次のステージへ
-            mWaveState = WaveState::Game;
-            mCurrentWave = current_stage;
             fStartWave();
         }
     }
@@ -326,7 +296,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     }
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
-    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP" };
+    const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS" };
     {
         static int elem = current_stage;
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
@@ -349,13 +319,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     ImGui::Begin("ClearProto");
     if (ImGui::Button("NextWave"))
     {
-        mWaveState = WaveState::Game;
-        mCurrentWave = current_stage;
         fStartWave();
-    }
-    if(ImGui::Button("StartGame"))
-    {
-        fSetStartGame(true);
     }
     ImGui::End();
 #endif
@@ -552,7 +516,7 @@ void WaveManager::update_selection(float elapsed_time)
     {
         ImGui::Separator();
         int elem = stage_details[current_stage].journeys.at(route_state);
-        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS_BATTLESHIP"};
+        const char* elems_names[STAGE_IDENTIFIER::STAGE_COUNT] = { "S_1_1", "S_2_1", "S_2_2", "S_3_1", "S_3_2", "S_3_3", "BOSS"};
         const char* elem_name = (elem >= 0 && elem < STAGE_IDENTIFIER::STAGE_COUNT) ? elems_names[elem] : "Unknown";
         ImGui::SliderInt("candidate stage", &elem, 0, STAGE_IDENTIFIER::STAGE_COUNT - 1, elem_name);
         ImGui::Separator();
@@ -590,6 +554,39 @@ void WaveManager::update_enlargement(float elapsed_time)
     player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;
 
     if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.1f)) { close = true; }
+}
+
+
+void WaveFile::load()
+{
+    std::filesystem::path path = file_name;
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
+    {
+        std::ifstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONInputArchive o_archive(ifs);
+            o_archive(source);
+        }
+    }
+    else
+    {
+        source.initialize();
+    }
+}
+
+void WaveFile::save()
+{
+    std::filesystem::path path = file_name;
+    path.replace_extension(".json");
+    std::ofstream ifs(path);
+    if (ifs)
+    {
+        cereal::JSONOutputArchive o_archive(ifs);
+        o_archive(source);
+    }
 }
 
 //---ここまで--//
