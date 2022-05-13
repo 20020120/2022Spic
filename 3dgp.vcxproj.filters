@@ -178,6 +178,9 @@
     <Filter Include="Sources\character\enemy\06_BossUnit">
       <UniqueIdentifier>{9d391b03-84a3-4f32-b351-f0686e6144bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\character\enemy\07_BossRushUnit">
+      <UniqueIdentifier>{ff03cba2-2bab-49ab-802c-24e4307c963d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui\imgui.cpp">
@@ -513,6 +516,9 @@
     <ClCompile Include="sources\DragonBreath.cpp">
       <Filter>Sources\bullet</Filter>
     </ClCompile>
+    <ClCompile Include="sources\BossRushUnit.cpp">
+      <Filter>Sources\character\enemy\07_BossRushUnit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -847,6 +853,9 @@
     </ClInclude>
     <ClInclude Include="sources\DragonBreath.h">
       <Filter>Sources\bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\BossRushUnit.h">
+      <Filter>Sources\character\enemy\07_BossRushUnit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

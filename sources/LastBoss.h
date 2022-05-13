@@ -69,10 +69,21 @@ private:
         inline static const char* DragonDieStart = "DragonDieStart"; // 死亡
         inline static const char* DragonDieEnd = "DragonDieEnd"; // 死亡
 
+        // ブレス
         inline static const char* DragonHideStart= "DragonHideStart"; // 消える
         inline static const char* DragonAppear= "DragonAppear"; // 現れる
         inline static const char* DragonBreathCharge= "DragonBreathCharge"; // 溜める
         inline static const char* DragonBreathShot= "DragonBreathShot"; // 発射
+
+        // 突進
+        inline static const char* DragonRushHide = "DragonRushHide"; // 消える
+        inline static const char* DragonRushAppear = "DragonRushAppear"; // 現れる
+
+        // ビーム
+        inline static const char* DragonBeamStart = "DragonBeamStart"; // ため
+        inline static const char* DragonBeamCharge = "DragonBeamCharge"; // ため
+        inline static const char* DragonBeamShoot = "DragonBeamCharge"; // ため
+
     };
 
     enum  AnimationName {
@@ -265,7 +276,7 @@ private:
 
     // ブレス
     int mDragonBreathCount{};
-
+    bool mIsShotBreath{};
 
     //****************************************************************
     // 
@@ -376,8 +387,6 @@ private:
     void fHumanSpDamageUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
-
-
     //--------------------<人型の死亡エフェクト>--------------------//
     void fHumanDieStartInit();
     void fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
@@ -403,6 +412,14 @@ private:
 
     void fDragonBreathShotInit();
     void fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonRushHideInit();
+    void fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonRushAppearInit();
+    void fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonBeamStartInit();
 
 
     //--------------------<ドラゴン死亡エフェクト>--------------------//

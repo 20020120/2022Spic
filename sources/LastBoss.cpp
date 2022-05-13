@@ -440,6 +440,34 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::DragonBreathShot, tuple));
     }
 
+    // “ËiÁ‚¦‚é
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonRushHideInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonRushHideUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonRushHide, tuple));
+    }
+
+    // “ËiŒ»‚ê‚é
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonRushAppearInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonRushAppearUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonRushAppear, tuple));
+    }
+
     // ƒhƒ‰ƒSƒ“FŽ€–S
     {
         InitFunc ini = [=]()->void
@@ -527,6 +555,10 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::DragonHideStart);
         }
+        if (ImGui::Button("DragonRush"))
+        {
+            fChangeState(DivideState::DragonRushHide);
+        }
         ImGui::TreePop();
     }
 
@@ -547,7 +579,6 @@ void LastBoss::fGuiMenu()
 
         ImGui::TreePop();
     }
-
 
 
     ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);

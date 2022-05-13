@@ -710,6 +710,7 @@ void LastBoss::fDragonIdleInit()
     mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
     mTimer = 0.0f;
     mCurrentMode = Mode::Dragon;
+    mDragonBreathCount = 0;
 }
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -837,15 +838,78 @@ void LastBoss::fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& G
 void LastBoss::fDragonBreathShotInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_start);
+    mDragonBreathCount++;
+    mTimer = 0.0f;
+    mIsShotBreath = false;
 }
 
 void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    auto p = mPosition;
-    p.y += 30.0f;
-    mfAddBullet(new DragonBreath(Graphics_, p, 60.0f, mPlayerPosition));
+    if(mIsShotBreath==false)
+    {
+        auto p = mPosition;
+        p.y += 30.0f;
+        mfAddBullet(new DragonBreath(Graphics_, p, 60.0f, mPlayerPosition));
+        mIsShotBreath = true;
+    }
+    
 
     if(mpModel->end_of_animation(mAnimPara))
+    {
+        // 確率でもう一度撃つ（最大三回）
+        const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+        const int randNumber = RandTargetAdd(mt);
+        if (std::pow(mDragonBreathCount, 2) < randNumber)
+        {
+            fChangeState(DivideState::DragonHideStart);
+        }
+        else
+        {
+            fChangeState(DivideState::DragonIdle);
+        }
+        
+    }
+}
+
+void LastBoss::fDragonRushHideInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_hide);
+    mDissolve = 0.0f;
+}
+
+void LastBoss::fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mDissolve += elapsedTime_;
+    mpSecondGunLeft->fSetDissolve(mDissolve);
+    mpSecondGunRight->fSetDissolve(mDissolve);
+    mpTurretLeft->fSetDissolve(mDissolve);
+    mpTurretRight->fSetDissolve(mDissolve);
+
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::DragonRushAppear);
+        // ロックオンされないように遠くに移動させる
+        mPosition = { 0.0f,500.0f,0.0f };
+    }
+
+}
+
+void LastBoss::fDragonRushAppearInit()
+{
+    mPosition = { 0.0f,0.0f,0.0f };
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
+    mDissolve = 1.0f;
+}
+
+void LastBoss::fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mDissolve -= elapsedTime_;
+    mpSecondGunLeft->fSetDissolve(mDissolve);
+    mpSecondGunRight->fSetDissolve(mDissolve);
+    mpTurretLeft->fSetDissolve(mDissolve);
+    mpTurretRight->fSetDissolve(mDissolve);
+    mPosition = { 0.0f,0.0f,0.0f };
+    if(mDissolve<0.0f)
     {
         fChangeState(DivideState::DragonIdle);
     }
