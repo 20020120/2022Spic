@@ -878,7 +878,7 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
         mIsShotBreath = true;
     }
     
-
+    return;
     if(mpModel->end_of_animation(mAnimPara))
     {
         // 確率でもう一度撃つ（最大三回）
