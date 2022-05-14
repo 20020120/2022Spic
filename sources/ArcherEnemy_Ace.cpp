@@ -26,6 +26,8 @@ ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
     fParamInitialize();
     fRegisterFunctions();
     mfAddFunc = BulletManager::Instance().fGetAddFunction();
+    mVernierEffect->stop(effect_manager->get_effekseer_manager());
+
 }
 
 
@@ -210,7 +212,7 @@ void ArcherEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 
 void ArcherEnemy_Ace::fIdleInit()
 {
-    //mpSkinnedMesh->play_animation(IDLE, true, 0.1f);
+    mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     mStayTimer = 0;
 }
 

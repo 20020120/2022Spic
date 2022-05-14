@@ -10,6 +10,8 @@ SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_,
     mScale = { 0.05f,0.05f,0.05f };
     mpSpearBoneBottom = mpModel->get_bone_by_name("spear_ctr");
     mpSpearBoneTop = mpModel->get_bone_by_name("spear_top_ctr");
+    mVernierEffect->stop(effect_manager->get_effekseer_manager());
+
 }
 
 SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_)

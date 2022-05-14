@@ -12,7 +12,6 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
 {
     ShieldEnemy::fRegisterFunctions();
     // ƒ{[ƒ“‚ð‰Šú‰»
-    mSwordBone = mpModel->get_bone_by_name("hand_r_joint");
     mScale = { 0.05f,0.05f,0.05f };
     is_shield = false;
 }

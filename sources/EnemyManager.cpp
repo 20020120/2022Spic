@@ -5,7 +5,9 @@
 #include"NormalEnemy.h"
 #include"ChaseEnemy.h"
 #include"ArcherEnemy.h"
+#include"ArcherEnemy_Ace.h"
 #include"FrontShieldEnemy.h"
+#include"ShieldEnemy_Ace.h"
 #include"MiddleBoss.h"
 #include"SwordEnemy.h"
 #include"SpearEnemy.h"
@@ -369,8 +371,19 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     }
     break;
     case EnemyType::Archer_Ace:
+    {
+        BaseEnemy* enemy = new ArcherEnemy_Ace(graphics_,
+            Source_.mEmitterPoint,
+            mEditor.fGetParam(Source_.mType));
+        mEnemyVec.emplace_back(enemy);
+    }
         break;
     case EnemyType::Shield_Ace:
+    {
+        BaseEnemy* enemy = new ShieldEnemy_Ace(graphics_,
+            Source_.mEmitterPoint, param);
+        mEnemyVec.emplace_back(enemy);
+    }
         break;
     case EnemyType::Sword_Ace:
     {
@@ -686,9 +699,15 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     mCashEnemyVec.emplace_back(enemy);
     enemy = new ArcherEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+    enemy = new ShieldEnemy(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new ArcherEnemy_Ace(graphics_);
+    mCashEnemyVec.emplace_back(enemy);
+    enemy = new ShieldEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
     enemy = new SpearEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);

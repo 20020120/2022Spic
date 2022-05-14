@@ -7,6 +7,7 @@ SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLO
     SwordEnemy_Ace::fRegisterFunctions();
     // ƒ{[ƒ“‚ð‰Šú‰»
     mScale = { 0.05f,0.05f,0.05f };
+    mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_)

@@ -10,7 +10,11 @@ BaseBullet::BaseBullet(GraphicsPipeline& Graphics_, const char* FileName_,
         FileName_);
     mpEffect->play(effect_manager->get_effekseer_manager(), EffectPosition_,13.0f);
     mIsAlive = true;
+}
 
+BaseBullet::~BaseBullet()
+{
+    mpEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void BaseBullet::fUpdate(float elapsedTime_)

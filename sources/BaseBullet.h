@@ -18,7 +18,7 @@ public:
     // 
     //****************************************************************
     BaseBullet(GraphicsPipeline& Graphics_, const char* EffectFileName_,DirectX::XMFLOAT3 EffectPosition_);
-    ~BaseBullet() override = default;
+    ~BaseBullet() override;
 
     virtual void fUpdate(float elapsedTime_);
 
