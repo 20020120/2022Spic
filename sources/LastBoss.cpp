@@ -9,7 +9,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const EnemyParamPack& ParamPack_,
     EnemyManager* pEnemyManager_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/boss_animation_third.fbx",
+        "./resources/Models/Enemy/boss_animation_fifth.fbx",
         ParamPack_, EmitterPoint_),mpEnemyManager(pEnemyManager_)
 {
     // タレットのモデルを初期化
@@ -51,6 +51,20 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     mLeftBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
     mLeftBeam.fSetRadius(3.0f);
     mRightBeam.fSetRadius(3.0f);
+
+    // ラッシュする敵を登録
+    DirectX::XMFLOAT3 entryPos{ 0.0f,500.0f,0.0f };
+    auto  enemy = new BossRushUnit(Graphics_,entryPos);
+    pEnemyManager_->fAddRushBoss(enemy);
+    mRushVec.emplace_back(enemy);
+
+    auto  enemy1 = new BossRushUnit(Graphics_,entryPos);
+    pEnemyManager_->fAddRushBoss(enemy1);
+    mRushVec.emplace_back(enemy1);
+
+    auto  enemy2 = new BossRushUnit(Graphics_,entryPos);
+    pEnemyManager_->fAddRushBoss(enemy2);
+    mRushVec.emplace_back(enemy2);
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
@@ -453,7 +467,19 @@ void LastBoss::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::DragonRushHide, tuple));
     }
-
+    // 突進待機
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonRushWaitInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonRushWaitUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonRushWait ,tuple));
+    }
     // 突進現れる
     {
         InitFunc ini = [=]()->void
@@ -466,6 +492,60 @@ void LastBoss::fRegisterFunctions()
         };
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::DragonRushAppear, tuple));
+    }
+
+    // ビーム前に移動
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBeamMoveInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBeamMoveUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonMoveStart, tuple));
+    }
+    // ビーム前に移動
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBeamStartInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBeamStartUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonBeamStart, tuple));
+    }
+
+    // ビームため
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBeamChargeInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBeamChargeUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonBeamCharge, tuple));
+    }
+    // ビーム発射
+    {
+        InitFunc ini = [=]()->void
+        {
+            fDragonBeamShotInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fDragonBeamShotUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::DragonBeamShoot, tuple));
     }
 
     // ドラゴン：死亡
@@ -559,6 +639,10 @@ void LastBoss::fGuiMenu()
         {
             fChangeState(DivideState::DragonRushHide);
         }
+        if (ImGui::Button("DragonBeam"))
+        {
+            fChangeState(DivideState::DragonMoveStart);
+        }
         ImGui::TreePop();
     }
 
@@ -580,6 +664,13 @@ void LastBoss::fGuiMenu()
         ImGui::TreePop();
     }
 
+    if(ImGui::Button("RushUnit"))
+    {
+        for (auto rush : mRushVec)
+        {
+            rush->fStartAppear({ 0.0f,0.0f,0.0f });
+        }
+    }
 
     ImGui::SliderFloat("MoveThreshold", &mMoveThreshold, 0.0f, 1.0f);
     float v = Math::Length(mPosition);

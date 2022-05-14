@@ -223,6 +223,11 @@ BaseEnemy* EnemyManager::fGetNearestStunEnemy()
 
 }
 
+void EnemyManager::fAddRushBoss(BossRushUnit* enemy)
+{
+    mEnemyVec.emplace_back(enemy);
+}
+
 BaseEnemy* EnemyManager::fGetNearestEnemyPosition()
 {
     auto func = [](const BaseEnemy* A_, const BaseEnemy* B_)->bool

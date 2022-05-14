@@ -4,6 +4,7 @@
 #include"BaseEnemy.h"
 #include "Common.h"
 #include"LaserBeam.h"
+#include"BossRushUnit.h"
 //****************************************************************
 // 
 // ラストボス
@@ -77,12 +78,15 @@ private:
 
         // 突進
         inline static const char* DragonRushHide = "DragonRushHide"; // 消える
+        inline static const char* DragonRushWait = "DragonRushWait"; // 待機
         inline static const char* DragonRushAppear = "DragonRushAppear"; // 現れる
 
         // ビーム
+        inline static const char* DragonMoveStart = "DragonMoveStart"; // 移動
         inline static const char* DragonBeamStart = "DragonBeamStart"; // ため
         inline static const char* DragonBeamCharge = "DragonBeamCharge"; // ため
-        inline static const char* DragonBeamShoot = "DragonBeamCharge"; // ため
+        inline static const char* DragonBeamShoot = "DragonBeamShoot"; // 発射
+        inline static const char* DragonBeamEnd = "DragonBeamEnd";     // 終了
 
     };
 
@@ -99,6 +103,9 @@ private:
         human_beam_shoot,
         human_beam_end,
         human_bullet,
+        human_rush_ready,
+        human_rush_start,
+        human_rush_idle,
         human_shockwave,
         human_damage,
         human_die,
@@ -125,7 +132,6 @@ private:
         human_to_dragon_quick,
         dragon_to_human_quick,
     };
-
     enum class AttackKind // 乱数から抽出する攻撃の種類
     {
         //--------------------<人型>--------------------//
@@ -278,6 +284,14 @@ private:
     int mDragonBreathCount{};
     bool mIsShotBreath{};
 
+    // 召喚＆突進
+    std::vector<BossRushUnit*> mRushVec{};
+
+    // ビーム
+    float mDragonMoveThreshold{ 0.0f };
+    float mBeamStartRadian{};
+    float mAddRadian{};
+
     //****************************************************************
     // 
     // 定数
@@ -302,6 +316,8 @@ private:
     const float mkLimitStage{ 300.0f };
     const float mkTimerBlow{ 0.8f };
     const float mkDragonHideTime{ 0.5f };
+    const float mkDragonRushWaitTime{ 4.0f };
+    const float mkDragonBeamChargeTime{ 3.0f };
 private:
 
     //****************************************************************
@@ -416,11 +432,28 @@ private:
     void fDragonRushHideInit();
     void fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fDragonRushWaitInit();
+    void fDragonRushWaitUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     void fDragonRushAppearInit();
     void fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
-    void fDragonBeamStartInit();
+    //--------------------<ビーム>--------------------//
+    void fDragonBeamMoveInit();
+    void fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    void fDragonBeamStartInit();
+    void fDragonBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonBeamChargeInit();
+    void fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+
+    void fDragonBeamShotInit();
+    void fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
+    void fDragonBeamEndInit();
+    void fDragonBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     //--------------------<ドラゴン死亡エフェクト>--------------------//
     void fDragonDieStartInit();

@@ -496,6 +496,17 @@ void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Gr
     }
 }
 
+void LastBoss::fHumanSpAttackSummonInit()
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fHumanSpAttackSummonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    throw std::logic_error("Not implemented");
+}
+
+
 void LastBoss::fHumanSpAttackWaitInit()
 {
     mTimer = 0.0f;
@@ -715,7 +726,21 @@ void LastBoss::fDragonIdleInit()
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    
+    const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
+    const int randNumber = RandTargetAdd(mt);
+
+    if(randNumber>6)
+    {
+        fChangeState(DivideState::DragonIdle);
+    }
+    else if (randNumber > 3)
+    {
+        fChangeState(DivideState::DragonRushHide);
+    }
+    else
+    {
+        fChangeState(DivideState::DragonIdle);
+    }
 }
 
 void LastBoss::fDragonFastBreathStartInit()
@@ -887,16 +912,61 @@ void LastBoss::fDragonRushHideUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::DragonRushAppear);
+        fChangeState(DivideState::DragonRushWait);
         // ロックオンされないように遠くに移動させる
         mPosition = { 0.0f,500.0f,0.0f };
     }
 
 }
 
+void LastBoss::fDragonRushWaitInit()
+{
+    mTimer = mkDragonRushWaitTime;
+}
+
+void LastBoss::fDragonRushWaitUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+
+    mTimer -= elapsedTime_;
+    // 一秒ごとに出現させる
+    if(mTimer<=3.5f&&mRushVec[0]->fGetIsStart()==false)
+    {
+        constexpr float rad = { DirectX::XMConvertToRadians(0.0f) };
+        constexpr float length = 200.0f * 0.7f;
+        mRushVec[0]->fStartAppear(
+            {
+                cosf(rad) * length,0.0f,sinf(rad) * length
+            });
+    }
+    if (mTimer <= 2.0f && mRushVec[1]->fGetIsStart() == false)
+    {
+        constexpr float rad = { DirectX::XMConvertToRadians(120.0f) };
+        constexpr float length = 200.0f * 0.7f;
+        mRushVec[1]->fStartAppear(
+            {
+                cosf(rad)*length,0.0f,sinf(rad)*length
+            });
+    }
+    if (mTimer <= 0.5f && mRushVec[2]->fGetIsStart() == false)
+    {
+        constexpr float rad = { DirectX::XMConvertToRadians(240.0f) };
+        constexpr float length = 200.0f * 0.7f;
+        mRushVec[2]->fStartAppear(
+            {
+                cosf(rad) * length,0.0f,sinf(rad) * length
+            });
+    }
+
+    if(mTimer<-2.0f)
+    {
+        fChangeState(DivideState::DragonRushAppear);
+    }
+}
+
 void LastBoss::fDragonRushAppearInit()
 {
     mPosition = { 0.0f,0.0f,0.0f };
+    mOrientation = { 0.0f,0.0f,0.0f,1.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
     mDissolve = 1.0f;
 }
@@ -915,6 +985,91 @@ void LastBoss::fDragonRushAppearUpdate(float elapsedTime_, GraphicsPipeline& Gra
     }
 }
 
+void LastBoss::fDragonBeamMoveInit()
+{
+    mDragonMoveThreshold = 0.0f;
+    mMoveBegin = mPosition;
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
+}
+
+void LastBoss::fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+   // 中央まで移動
+    mDragonMoveThreshold += elapsedTime_;
+    mPosition = Math::lerp(mMoveBegin, { 0.0f,0.0f,0.0f }, mDragonMoveThreshold);
+
+    if(mDragonMoveThreshold >=1.0f)
+    {
+        fChangeState(DivideState::DragonBeamStart);
+    }
+
+}
+
+void LastBoss::fDragonBeamStartInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_ready);
+}
+
+void LastBoss::fDragonBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 10.0f);
+    if(mpModel->end_of_animation(mAnimPara))
+    {
+        fChangeState(DivideState::DragonBeamCharge);
+    }
+}
+
+void LastBoss::fDragonBeamChargeInit()
+{
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_charge);
+    mTimer = mkDragonBeamChargeTime;
+}
+
+void LastBoss::fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    fTurnToPlayer(elapsedTime_, 10.0f);
+    mTimer -= elapsedTime_;
+    if (mTimer < 0.0f)
+    {
+        fChangeState(DivideState::DragonBeamShoot);
+    }
+}
+void LastBoss::fDragonBeamShotInit()
+{
+    // 現在の各祖を求める
+
+    auto front = Math::Normalize(Math::GetFront(mOrientation));
+    DirectX::XMFLOAT3 worldFront = { 0.0f,0.0f,1.0f };
+    float dot = Math::Dot(front, worldFront);
+    mBeamStartRadian = acosf(dot);
+    mAddRadian = 0.0f;
+}
+
+void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
+
+    const float radian = mBeamStartRadian + mAddRadian;
+
+    const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
+    fTurnToTarget(elapsedTime_, 10.0f, beamFront);
+
+    if (mAddRadian >= DirectX::XMConvertToRadians(360.0f))
+    {
+        fChangeState(DivideState::DragonIdle);
+    }
+}
+
+
+void LastBoss::fDragonBeamEndInit()
+{
+    throw std::logic_error("Not implemented");
+}
+
+void LastBoss::fDragonBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    throw std::logic_error("Not implemented");
+}
 
 void LastBoss::fDragonDieStartInit()
 {

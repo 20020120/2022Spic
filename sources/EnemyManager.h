@@ -3,6 +3,7 @@
 #include"EnemyFileSystem.h"
 #include"EnemiesEditor.h"
 #include"practical_entities.h"
+#include"BossRushUnit.h"
 #include<vector>
 
 
@@ -61,6 +62,9 @@ public:
     // スタン中の敵のうちプレイヤーにもっとも近いものを返す（いなければnull）
     BaseEnemy* fGetNearestStunEnemy();
 
+
+// 敵を追加する
+    void fAddRushBoss(BossRushUnit* enemy);
 public:
     //--------------------<ゲッター関数>--------------------//
     [[nodiscard]]  BaseEnemy* fGetNearestEnemyPosition();
