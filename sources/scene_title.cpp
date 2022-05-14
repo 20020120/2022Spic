@@ -26,6 +26,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	// cameraManager
 	cameraManager = std::make_unique<CameraManager>();
 	cameraManager->RegisterCamera(new TitleCamera(player.get()));
+	cameraManager->RegisterCamera(new JointCamera());
+
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Title));
 	// shadow_map
 	shadow_map = std::make_unique<ShadowMap>(graphics);
@@ -425,6 +427,40 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::DragFloat("speed", &speed, 0.1f);
 	ImGui::End();
 #endif // USE_IMGUI
+
+	// joint camera test
+	// JointCamera にチェンジしたフレームと同じフレームから JointCamera 中ずっとeyeとfocusをジョイントから取り出してセットしてほしい
+	// cameraManager->GetCurrentCamera()->set_eye(eye);　cameraManager->GetCurrentCamera()->set_target(focus);　をするのは
+	// JointCameraの時だけにしないとバグるのでそれ用のbool型変数用意してほしい(validity_joint_camera) falseにするの忘れずに!!
+	// 下のImgui参考にしてください(static ローカルはメンバ変数に)
+	// JointCamera生成方法はヘッダーの enum class CameraTypes 、上のコンストラクタ参照(Registerする順番enum classと同じで)
+	// JointCameraはplayerにnullptr入れてるのでJointCameraにチェンジした瞬間playerがnullptrで落ちる可能性あり
+
+	static bool validity_joint_camera = false;
+	static DirectX::XMFLOAT3 eye{ 0,1,-30 };
+	static DirectX::XMFLOAT3 focus{};
+#ifdef USE_IMGUI
+	ImGui::Begin("joint camera");
+	if (ImGui::Button("change joint camera"))
+	{
+		cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Joint));
+		validity_joint_camera = true;
+	}
+	if (ImGui::Button("change title camera"))
+	{
+		cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Title));
+		validity_joint_camera = false;
+	}
+	ImGui::DragFloat3("eye", &eye.x, 0.1f);
+	ImGui::DragFloat3("focus", &focus.x, 0.1f);
+	ImGui::End();
+#endif // USE_IMGUI
+	if (validity_joint_camera)
+	{
+		cameraManager->GetCurrentCamera()->set_eye(eye);
+		cameraManager->GetCurrentCamera()->set_target(focus);
+	}
+
 
 	// SE
 	if (!can_play_se[0] && slashing_wait_timer > 0.7f)

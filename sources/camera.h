@@ -154,4 +154,17 @@ private:
 
     bool cameraReset{ true };
 };
+
+
+
+class JointCamera : public Camera
+{
+public:
+    JointCamera() : Camera(nullptr) {}
+    ~JointCamera() {}
+
+    void Initialize(GraphicsPipeline& graphics);
+    void Update(float elapsedTime);
+};
+
 #endif

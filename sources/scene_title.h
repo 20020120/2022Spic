@@ -43,6 +43,7 @@ public:
     enum class CameraTypes
     {
         Title,
+        Joint,
     };
 private:
     // shadowmap

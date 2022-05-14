@@ -32,6 +32,7 @@ public:
     void set_target(const DirectX::XMFLOAT3& t) { target = t; }
     const DirectX::XMFLOAT3& get_target() { return target; }
     // eye
+    void set_eye(const DirectX::XMFLOAT3& e) { eye = e; }
     const DirectX::XMFLOAT3& get_eye() { return eye; }
     // angle
     void set_angle(const DirectX::XMFLOAT3& a) { angle = a; }
