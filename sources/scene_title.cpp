@@ -9,6 +9,7 @@
 #include "scene_manager.h"
 #include "ModelCashe.h"
 #include"SceneTutorial.h"
+#include "WaveManager.h"
 
 bool SceneTitle::is_load_ready = false;
 
@@ -48,6 +49,13 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	fire_effect2->play(effect_manager->get_effekseer_manager(), fire_pos_2, 0.45f);
 
 	//-------<2Dパート>--------//
+	// has_stageNo_json
+	{
+		std::filesystem::path path = "./resources/Data/stage_to_start.json";
+		if (std::filesystem::exists(path.c_str())) /*ウェーブデータあり*/ { has_stageNo_json = true; }
+		else /*ウェーブデータなし*/ { has_stageNo_json = false; }
+	}
+
 	//--flash--//
 	sprite_flash = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_slash.png", 1);
 	flash.position = { 1280,360 };
@@ -57,11 +65,13 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//--selecter--//
 	sprite_selecter    = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\selecter.png", 2);
 	selecter1.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	selecter1.position = { 990.0f, 545.0f };
+	if (has_stageNo_json) selecter1.position = { 990.0f, 545.0f };
+	else selecter1.position = { 990.0f, 565.0f };
 	selecter1.scale    = { 0.2f, 0.1f };
 
 	selecter2.texsize  = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
-	selecter2.position = { 1167.0f, 545.0f };
+	if (has_stageNo_json) selecter2.position = { 1167.0f, 545.0f };
+	else selecter2.position = { 1167.0f, 565.0f };
 	selecter2.scale    = { 0.2f, 0.1f };
 
 	arrival_pos1 = selecter1.position;
@@ -69,7 +79,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	//--font--//
 	beginning.s = L"初めから";
-	beginning.position = { 1032, 522 };
+	if (has_stageNo_json) beginning.position = { 1032, 522 };
+	else beginning.position = { 1032, 545 };
 	beginning.scale = { 0.7f,0.7f };
 
 	succession.s = L"続きから";
@@ -77,7 +88,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	succession.scale = { 0.7f,0.7f };
 
 	exit.s = L"ゲーム終了";
-	exit.position = { 1025, 630 };
+	if (has_stageNo_json) exit.position = { 1025, 630 };
+	else exit.position = { 1025, 605 };
 	exit.scale = { 0.7f,0.7f };
 
 	now_loading.position = { 15,675 };
@@ -156,13 +168,6 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 		slashing_power = 0;
 		slashing_wait_timer = 0;
 	}
-	// has_stageNo_json
-	{
-		std::filesystem::path path = "./resources/Data/stage_to_start.json";
-		if (std::filesystem::exists(path.c_str())) /*ウェーブデータあり*/ { has_stageNo_json = true; }
-		else /*ウェーブデータなし*/ { has_stageNo_json = false; }
-	}
-
 	//--audio--//
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
@@ -362,6 +367,10 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				// 決定
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
+					// ステージ番号0から
+					WaveFile::get_instance().set_stage_to_start(0);
+					WaveFile::get_instance().save();
+
 					audio_manager->play_se(SE_INDEX::DECISION);
 					player->StartTitleAnimation();
 					tutorial_tab.display = false;
@@ -370,7 +379,9 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			}
 			else
 			{
-				r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+				if (has_stageNo_json) r_down(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+				else r_down(2, { 980.0f, 627.0f }, { 1190.0f, 627.0f });
+
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
 					if (have_tutorial_state >= 0) /* チュートリアルデータがあるのでタブ操作 */
@@ -380,6 +391,10 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 					}
 					else
 					{
+						// ステージ番号0から
+						WaveFile::get_instance().set_stage_to_start(0);
+						WaveFile::get_instance().save();
+
 						audio_manager->play_se(SE_INDEX::DECISION);
 						player->StartTitleAnimation();
 						return;
@@ -401,7 +416,8 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 			break;
 
 		case 2: // exit
-			r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+			if (has_stageNo_json) r_up(1, { 990.0f, 595.0f }, { 1167.0f, 595.0f });
+			else r_up(0, { 990.0f, 565.0f }, { 1167.0f, 565.0f });
 			if (game_pad->get_button_down() & GamePad::BTN_B)
 			{
 				audio_manager->play_se(SE_INDEX::DECISION);
@@ -634,7 +650,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	step_string(elapsed_time, L"ロード中...", now_loading, 2.0f, true);
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	r_font_render("beginning", beginning);
-	r_font_render("succession", succession);
+	if(has_stageNo_json) r_font_render("succession", succession);
 	r_font_render("exit", exit);
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
