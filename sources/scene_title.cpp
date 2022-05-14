@@ -435,7 +435,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	// 下のImgui参考にしてください(static ローカルはメンバ変数に)
 	// JointCamera生成方法はヘッダーの enum class CameraTypes 、上のコンストラクタ参照(Registerする順番enum classと同じで)
 	// JointCameraはplayerにnullptr入れてるのでJointCameraにチェンジした瞬間playerがnullptrで落ちる可能性あり
-
+	// JointCameraが終わったら元のカメラに戻すのも忘れずにお願いします
 	static bool validity_joint_camera = false;
 	static DirectX::XMFLOAT3 eye{ 0,1,-30 };
 	static DirectX::XMFLOAT3 focus{};
