@@ -507,6 +507,9 @@
     <ClCompile Include="sources\BossUnit.cpp">
       <Filter>Sources\character\enemy\06_BossUnit</Filter>
     </ClCompile>
+    <ClCompile Include="sources\JointCamera.cpp">
+      <Filter>Sources\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">

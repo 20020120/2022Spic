@@ -209,6 +209,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="sources\BossUnit.cpp" />
     <ClCompile Include="sources\CannonballBullet.cpp" />
+    <ClCompile Include="sources\JointCamera.cpp" />
     <ClCompile Include="sources\ShieldEnemy_Ace.cpp" />
     <ClCompile Include="sources\ArcherEnemy.cpp" />
     <ClCompile Include="sources\ArcherEnemy_Ace.cpp" />
