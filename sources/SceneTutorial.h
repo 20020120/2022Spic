@@ -145,14 +145,17 @@ private:
         //スピード
         float speed{ 25.0f };
     };
-    StepFontElement tutorial_text_element[7];
+    StepFontElement tutorial_text_element[8];
+    //チュートリアルの説明の最後まで表示されたかどうか
+    bool end_tutorial_text{ false };
+    float end_tutorial_text_timer{ 0.0f };
 
     bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
     bool is_end_text{ false };
 
     struct TutorialCheckText
     {
-        DirectX::XMFLOAT2 position{ 103.0f,79.8f };
+        DirectX::XMFLOAT2 position{ 103.0f,192.5f };
         DirectX::XMFLOAT2 scale{ 0.7f,0.7f };
         float angle;
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
@@ -164,7 +167,7 @@ private:
     //チェックボックスの画像
     struct CheckMarkParm
     {
-        DirectX::XMFLOAT2 pos{ 32.0f,76.0f };
+        DirectX::XMFLOAT2 pos{ 32.0f,190.2f };
         DirectX::XMFLOAT2 scale{ 0.2f,0.2f };
         float threshold{1.0f};
         bool is_threshold{ false };
@@ -192,4 +195,23 @@ private:
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
     };
     ChangeSceneTxt change_scene_txt;
+
+private:
+    float glow_vertical = {};
+
+    struct Element
+    {
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT2 pivot{};
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 texpos{};
+        DirectX::XMFLOAT2 texsize{};
+    };
+    //文字のフレーム
+    std::unique_ptr<SpriteBatch> sprite_tutorial_frame{ nullptr };
+    //フレームのパラメータ
+    Element frame_pram;
+
 };

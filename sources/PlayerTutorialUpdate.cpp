@@ -464,6 +464,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             charge_time = 0;
             is_charge = false;
             TransitionTutorialMove();
@@ -471,6 +472,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
         //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
         else
         {
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             charge_time = 0;
             is_charge = false;
             TransitionTutoriaIdle();
@@ -488,10 +490,26 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             //ƒ`ƒ…[ƒgƒŠƒAƒ‹‚ªUŒ‚‚È‚ç
             if (tutorial_state == TutorialState::AttackTutorial) is_next_tutorial = true;
             TransitionTutorialAttack1(attack_animation_blends_speeds.y);
         }
+        if (is_lock_on == false && charge_change_direction_count > 0)
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                charge_change_direction_count--;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+                ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
+                charge_point = Math::calc_designated_point(position, movevec, 100.0f);
+                SetAccelerationVelocity();
+                charge_time = 0;
+                //TransitionCharge();
+            }
+        }
+
     }
     if (is_awakening)
     {
