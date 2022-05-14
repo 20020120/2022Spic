@@ -71,17 +71,26 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	selecter2.scale = { 0.2f,0.2f };
 	selecter2.texsize = { static_cast<float>(sprite_selecter->get_texture2d_desc().Width), static_cast<float>(sprite_selecter->get_texture2d_desc().Height) };
 
+	sprite_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_back.png", 1);
+	game_over_pram.texsize = { static_cast<float>(sprite_back->get_texture2d_desc().Width),
+										static_cast<float>(sprite_back->get_texture2d_desc().Height) };
+	game_over_pram.position = { 206.5f,44.0f };
+	game_over_pram.scale = { 1.46f ,0.59f };
+	brack_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png", 1);
+	brack_back_pram.texsize = { static_cast<float>(brack_back->get_texture2d_desc().Width),
+										static_cast<float>(brack_back->get_texture2d_desc().Height) };
+	brack_back_pram.color = { 1.0f,1.0f,1.0f,0.0f };
+
 	//font
 	game_over_text.s = L"ゲームオーバー";
 	game_over_text.position = { 553.1f,124.3f };
 	game_over_text.scale = { 1.0f,1.0f };
 	back_title.s = L"タイトルに戻る";
-	back_title.position = { 365.6f,236.7f };
-	back_title.scale = { 1.0f,1.0f };
 	again.s = L"再挑戦";
 	again.position = { 751.6f,236.7f };
 	again.scale = { 1.0f,1.0f };
-
+	game_clear_text.s = L"ゲームクリア";
+	game_clear_text.position = { 552.0f,127.0f };
 
 	for (auto& bgm_switch : bgm_switches) { bgm_switch = false; }
 
@@ -120,74 +129,24 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//	audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
 	// bgm_switches[2] = true;
 	//}
-
-
-	if (is_game_over)
+	if (is_game_clear == false && is_game_over == false)
 	{
-		// スティックを傾け続けたら少し間をおいて入力を許可する
-		if (!can_axis)
-		{
-			axis_wait_timer += elapsed_time;
-			if (axis_wait_timer > AXIS_WAIT_TIME)
-			{
-				axis_wait_timer = 0;
-				can_axis = true;
-			}
-		}
-		auto r_right_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
-		{
-			if ((game_pad->get_button_down() & GamePad::BTN_RIGHT) || (can_axis && game_pad->get_axis_LX() > 0.5f))
-			{
-				audio_manager->play_se(SE_INDEX::SELECT);
-				game_over_state = state;
-				selecter1.position = arrival_posL;
-				selecter2.position = arrival_posR;
-
-				can_axis = false;
-			}
-		};
-		auto r_left_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
-		{
-			if ((game_pad->get_button_down() & GamePad::BTN_LEFT) || (can_axis && game_pad->get_axis_LX() < -0.5f))
-			{
-				audio_manager->play_se(SE_INDEX::SELECT);
-				game_over_state = state;
-				selecter1.position = arrival_posL;
-				selecter2.position = arrival_posR;
-				can_axis = false;
-			}
-		};
-
-		switch (game_over_state)
-		{
-		case 0://タイトルに戻る
-			r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
-			if (game_pad->get_button_down() & GamePad::BTN_B)
-			{
-				audio_manager->play_se(SE_INDEX::DECISION);
-				SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
-			}
-			break;
-		case 1://再挑戦
-			r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
-			if (game_pad->get_button_down() & GamePad::BTN_B)
-			{
-				audio_manager->play_se(SE_INDEX::DECISION);
-				SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::TYPE1, 2.0f);
-			}
-			break;
-		default:
-			break;
-		}
+		brack_back_pram.color.w = 0;
+		is_set_black = false;
 	}
 
+	//ゲームクリアになったら
+	GameClearAct(elapsed_time);
+	//ゲームオーバーになったら
+	GameOverAct(elapsed_time);
 	const float bgm_volume = 2.0f;
 	const float se_volume = 0.2f;
 	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
-	//ゲームオーバーの時は止める
+	//ゲームオーバー,ゲームクリアの時は止める
 	if (is_game_over) return;
+	if (is_game_clear) return;
 	// option
 	if (option->get_validity())
 	{
@@ -356,6 +315,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 		ImGui::Begin("game_over");
 		ImGui::Checkbox("is_game_over", &is_game_over);
+		ImGui::Checkbox("is_set_black", &is_set_black);
 		if (is_game_over)
 		{
 			if (ImGui::TreeNode("game_over_text"))
@@ -384,6 +344,35 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 				ImGui::DragFloat2("selecter2_scale", &selecter2.scale.x, 0.1f);
 				ImGui::TreePop();
 			}
+		}
+		ImGui::End();
+
+		ImGui::Begin("igame_clear");
+		ImGui::Checkbox("is_game_clear", &is_game_clear);
+		ImGui::Checkbox("is_set_black", &is_set_black);
+		if (is_game_clear)
+		{
+			if (ImGui::TreeNode("game_clear_text"))
+			{
+				ImGui::DragFloat2("pos", &game_clear_text.position.x);
+				ImGui::DragFloat2("scale", &game_clear_text.scale.x);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("selecter"))
+			{
+				ImGui::DragFloat2("selecter1_pos", &selecter1.position.x, 0.1f);
+				ImGui::DragFloat2("selecter1_scale", &selecter1.scale.x, 0.1f);
+				ImGui::DragFloat2("selecter2_pos", &selecter2.position.x, 0.1f);
+				ImGui::DragFloat2("selecter2_scale", &selecter2.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("back_title"))
+			{
+				ImGui::DragFloat2("pos", &back_title.position.x, 0.1f);
+				ImGui::DragFloat2("scale", &back_title.scale.x, 0.1f);
+				ImGui::TreePop();
+			}
+
 		}
 		ImGui::End();
 #endif
@@ -495,6 +484,25 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize);
 		batch->end(graphics.get_dc().Get());
 	};
+	auto sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e, float glow_horizon = 0, float glow_vertical = 0)
+	{
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+		//--sprite_string--//
+#ifdef USE_IMGUI
+		ImGui::Begin("title");
+		if (ImGui::TreeNode(gui_name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
+			ImGui::DragFloat4("color", &e.color.x, 0.01f);
+			ImGui::TreePop();
+	}
+		ImGui::End();
+#endif // USE_IMGUI
+		batch->begin(graphics.get_dc().Get());
+		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
+		batch->end(graphics.get_dc().Get());
+};
 
 
     // font demo
@@ -581,15 +589,42 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	minimap->render(graphics, p_pos,p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
+	if (is_game_clear)
+	{
+		glow_vertical -= elapsed_time * 0.2f;
+		sprite_render("back", brack_back.get(), brack_back_pram, 0, glow_vertical);
+		//画面が黒くなったら
+		if (is_set_black)
+		{
+			sprite_render("frame", sprite_back.get(), game_over_pram, 0, glow_vertical);
+
+			fonts->yu_gothic->Begin(graphics.get_dc().Get());
+			r_font_render(game_clear_text);
+			r_font_render(back_title);
+			fonts->yu_gothic->End(graphics.get_dc().Get());
+			r_sprite_render(sprite_selecter.get(), selecter1);
+			r_sprite_render(sprite_selecter.get(), selecter2);
+		}
+
+	}
 	if (is_game_over)
 	{
-		fonts->yu_gothic->Begin(graphics.get_dc().Get());
-		r_font_render(game_over_text);
-		r_font_render(back_title);
-		r_font_render(again);
-		fonts->yu_gothic->End(graphics.get_dc().Get());
-		r_sprite_render(sprite_selecter.get(), selecter1);
-		r_sprite_render(sprite_selecter.get(), selecter2);
+		glow_vertical -= elapsed_time * 0.2f;
+
+		sprite_render("back", brack_back.get(), brack_back_pram, 0, glow_vertical);
+		//画面が黒くなったら
+		if (is_set_black)
+		{
+			sprite_render("frame", sprite_back.get(), game_over_pram, 0, glow_vertical);
+
+			fonts->yu_gothic->Begin(graphics.get_dc().Get());
+			r_font_render(game_over_text);
+			r_font_render(back_title);
+			r_font_render(again);
+			fonts->yu_gothic->End(graphics.get_dc().Get());
+			r_sprite_render(sprite_selecter.get(), selecter1);
+			r_sprite_render(sprite_selecter.get(), selecter2);
+		}
 	}
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 
@@ -611,4 +646,119 @@ void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_tim
 	//--元のビューポートに戻す--//
 	shadow_map->deactivate_shadowmap(graphics);
 #endif // SHADOW_MAP
+}
+
+void SceneGame::GameOverAct(float elapsed_time)
+{
+	if (is_game_over)
+	{
+		//ここでタイトルに戻るの位置を決めているのは
+		//ゲームクリアの時にも同じものを使うから
+		back_title.position = { 365.6f,236.7f };
+		back_title.scale = { 1.0f,1.0f };
+
+		//画面ヲ徐々に黒くする
+		if (brack_back_pram.color.w > 0.7f)
+		{
+			is_set_black = true;
+			brack_back_pram.color.w = 0.7f;
+		}
+		if (is_set_black == false)
+		{
+			brack_back_pram.color.w += 1.0f * elapsed_time;
+			//セレクターの初期化
+			selecter1.position = { 328.0f,267.3f };
+			selecter2.position = { 637.1f,267.3f };
+		}
+		// スティックを傾け続けたら少し間をおいて入力を許可する
+		if (!can_axis)
+		{
+			axis_wait_timer += elapsed_time;
+			if (axis_wait_timer > AXIS_WAIT_TIME)
+			{
+				axis_wait_timer = 0;
+				can_axis = true;
+			}
+		}
+		auto r_right_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+		{
+			if ((game_pad->get_button_down() & GamePad::BTN_RIGHT) || (can_axis && game_pad->get_axis_LX() > 0.5f))
+			{
+				audio_manager->play_se(SE_INDEX::SELECT);
+				game_over_state = state;
+				selecter1.position = arrival_posL;
+				selecter2.position = arrival_posR;
+
+				can_axis = false;
+			}
+		};
+		auto r_left_tutorial = [&](int state, DirectX::XMFLOAT2 arrival_posL, DirectX::XMFLOAT2 arrival_posR)
+		{
+			if ((game_pad->get_button_down() & GamePad::BTN_LEFT) || (can_axis && game_pad->get_axis_LX() < -0.5f))
+			{
+				audio_manager->play_se(SE_INDEX::SELECT);
+				game_over_state = state;
+				selecter1.position = arrival_posL;
+				selecter2.position = arrival_posR;
+				can_axis = false;
+			}
+		};
+		//画面が黒くなってからしか動かないように
+		if (is_set_black)
+		{
+			switch (game_over_state)
+			{
+			case 0://タイトルに戻る
+				r_right_tutorial(1, { 710.5f,267.3f }, { 911.8f,267.3f });
+				if (game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					audio_manager->play_se(SE_INDEX::DECISION);
+					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				}
+				break;
+			case 1://再挑戦
+				r_left_tutorial(0, { 328.0f,267.3f }, { 637.1f,267.3f });
+				if (game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					audio_manager->play_se(SE_INDEX::DECISION);
+					SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
+void SceneGame::GameClearAct(float elapsed_time)
+{
+	if (is_game_clear)
+	{
+		//ここでタイトルに戻るの位置を決めているのは
+	   //ゲームオーバーの時にも同じものを使うから
+		back_title.position = { 529.7f,246.3f };
+		back_title.scale = { 1.0f,1.0f };
+		//セレクターの位置を入れる
+		selecter1.position = { 495.3f,277.1f };
+		selecter2.position = { 801.5f,277.1f };
+
+		//画面ヲ徐々に黒くする
+		if (brack_back_pram.color.w > 0.7f)
+		{
+			is_set_black = true;
+			brack_back_pram.color.w = 0.7f;
+		}
+		if (is_set_black == false) brack_back_pram.color.w += 1.0f * elapsed_time;
+
+		if (is_set_black)
+		{
+			if (game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				audio_manager->play_se(SE_INDEX::DECISION);
+				SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+			}
+		}
+	}
+
 }

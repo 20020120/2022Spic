@@ -72,6 +72,8 @@ private:
     static constexpr int MAX_HEALTH = 50;
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
+    //突進の進行方向変換回数
+    static constexpr int CHARGE_DIRECTION_COUNT = 3;
     //攻撃1撃目の猶予時間
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.7f;
     //攻撃2撃目の猶予時間
@@ -123,6 +125,8 @@ private:
     float charge_time{ 0 };
     //突進中の時間をどれだけ増やすか
     float charge_add_time{ 1.0f };
+    //突進中の進行方向変換回数
+    int charge_change_direction_count{ CHARGE_DIRECTION_COUNT };
     //攻撃の時間
     float attack_time{ 0 };
     //攻撃中の時間をどれだけ増やすか

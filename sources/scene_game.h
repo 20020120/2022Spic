@@ -102,7 +102,6 @@ private:
     float tunnel_alpha = 0.0f;
     std::unique_ptr<Tunnel> tunnel{ nullptr };
 private:
-    bool is_game_over{ false };
     struct StepFontElement
     {
         std::wstring s = L"";
@@ -138,11 +137,34 @@ private:
     static constexpr float AXIS_WAIT_TIME = 0.2f;
 
     //---------ゲームオーバー--------//
-    StepFontElement game_over_text;    // ゲームオーバー
-    StepFontElement back_title;    // タイトルにもどる
-    StepFontElement again;   // 再挑戦
+    void GameOverAct(float elapsed_time);
+    bool is_game_over{ false };
+
+    float glow_vertical = {};
+
+    // ゲームオーバー
+    StepFontElement game_over_text;
+    // タイトルにもどる
+    StepFontElement back_title;
+    // 再挑戦
+    StepFontElement again;
     int game_over_state{ 0 };
+    //ゲームオーバーの文字の後ろに出てるフレーム
+    std::unique_ptr<SpriteBatch> sprite_back{ nullptr };
+    //フレームのパラメータ
+    Element game_over_pram;
+    //画面を黒くする
+    std::unique_ptr<SpriteBatch> brack_back{ nullptr };
+    //画面黒くするパラメータ
+    Element brack_back_pram;
+    //黒くなり切ったかどうか
+    bool is_set_black{ false };
+
 
     //---------ゲームクリア-----------//
+    void GameClearAct(float elapsed_time);
+    bool is_game_clear{ false };
+    // ゲームクリア
+    StepFontElement game_clear_text;
 
 };

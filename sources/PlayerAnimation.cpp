@@ -196,7 +196,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     charge_time += charge_add_time * elapsed_time;
     //ChargeAcceleration(elapsed_time);
     //攻撃の加速の設定
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     SetAccelerationVelocity();
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
@@ -211,6 +210,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             charge_time = 0;
             is_charge = false;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             TransitionMove();
         }
         //移動入力がなかったら待機に遷移
@@ -218,6 +218,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             charge_time = 0;
             is_charge = false;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             TransitionIdle();
         }
         Awaiking();
@@ -232,7 +233,22 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
+            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             TransitionAttackType1(attack_animation_blends_speeds.y);
+        }
+        if (is_lock_on == false && charge_change_direction_count > 0)
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                charge_change_direction_count--;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+                ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
+                charge_point = Math::calc_designated_point(position, movevec, 100.0f);
+                SetAccelerationVelocity();
+                charge_time = 0;
+                //TransitionCharge();
+            }
         }
     }
     if (is_awakening)
@@ -751,7 +767,7 @@ void Player::TransitionChargeInit()
    //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //加速のレート
     lerp_rate = 1.0f;
     //アニメーションをしていいかどうか
@@ -779,6 +795,7 @@ void Player::TransitionCharge(float blend_seconds)
     //デバッグ用
     animation_speed = attack_animation_speeds.x;
 #endif // 0
+    //charge_point = Math::calc_designated_point(position, forward, 60.0f);
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //加速のレート

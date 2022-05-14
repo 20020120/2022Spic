@@ -314,6 +314,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             float length_radius = Math::calc_vector_AtoB_length(p, {0,0,0});//‹——£(”¼Œa)
             ImGui::DragFloat("l", &length_radius);
 
+            ImGui::DragFloat3("charge_point",&charge_point.x);
             ImGui::End();
         }
     }

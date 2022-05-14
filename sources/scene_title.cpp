@@ -173,6 +173,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
 
 	audio_manager->play_se(SE_INDEX::OPEN_FIRE);
+	audio_manager->set_volume_se(SE_INDEX::OPEN_FIRE, 0.1f);
 
 	//スレッド開始
 	std::thread thread(loading_thread, graphics.get_device().Get());
@@ -193,6 +194,7 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	//-- audio volume --//
 	const float BGM_VOLUME = 2.0f;
 	const float SE_VOLUME = 2.0f;
+
 
 	audio_manager->set_all_volume_bgm(BGM_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(SE_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
