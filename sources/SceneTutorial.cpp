@@ -78,6 +78,10 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
 
+	sprite_tutorial_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\back.png", 1);
+	frame_pram.position = { 0.0f,0.0f };
+	frame_pram.scale = { 0.75f,0.3f };
+	frame_pram.texsize = { static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Width),static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Height) };
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
@@ -86,12 +90,16 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
 	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとスタンしている敵をロックオンして\n一度に攻撃することができます";
 	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります。";
+	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
 
-	tutorial_text_element[0].position = { 304.0f,556.0f };
-	tutorial_text_element[1].position = { 307.0f,595.0f };
-	tutorial_text_element[2].position = { 309.0f,573.0f };
-	tutorial_text_element[3].position = { 295.0f,516.0f };
-	tutorial_text_element[4].position = { 277.0f,566.0f };
+	tutorial_text_element[0].position = { 166.0f,44.0f };
+	tutorial_text_element[1].position = { 124.0f,69.0f };
+	tutorial_text_element[2].position = { 124.0f,50.0f };
+	tutorial_text_element[3].position = { 68.0f,53.0f };
+	tutorial_text_element[4].position = { 22.0f,72.0f };
+	tutorial_text_element[5].position = { 74.0f,47.0f };
+	tutorial_text_element[6].position = { 121.0f,49.0f };
+	tutorial_text_element[7].position = { 297.0f,69.0f };
 
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
@@ -374,7 +382,6 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 			});
 	}
 
-	TutorialRender(graphics, elapsed_time);
 
 	/*-----!!!ここから下にオブジェクトの描画はしないで!!!!-----*/
 
@@ -416,6 +423,7 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
+	TutorialRender(graphics, elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 
 }
@@ -640,8 +648,13 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		break;
 	case TutorialScene::TutorialState::FreePractice:
+		end_tutorial_text_timer += 1.0f * elapsed_time;
 		tutorial_check_text = L"自由に練習する";
 		tutorial_skip_text = L"チュートリアル終了";
+		//チュートリアル終了の文字の位置を再設定
+		change_scene_txt.position = { 116.7f,282.0f };
+		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
+		if (end_tutorial_text_timer > 10.0f) end_tutorial_text = true;
 		break;
 	default:
 		break;
@@ -667,7 +680,28 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_time)
 {
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	if (tutorial_state != TutorialState::FreePractice)
+	auto sprite_render = [&](std::string gui_name, SpriteBatch* batch, Element& e, float glow_horizon = 0, float glow_vertical = 0)
+	{
+		graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+		//--sprite_string--//
+#ifdef USE_IMGUI
+		ImGui::Begin("title");
+		if (ImGui::TreeNode(gui_name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
+			ImGui::DragFloat4("color", &e.color.x, 0.01f);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		batch->begin(graphics.get_dc().Get());
+		batch->render(graphics.get_dc().Get(), e.position, e.scale, e.pivot, e.color, e.angle, e.texpos, e.texsize, glow_horizon, glow_vertical);
+		batch->end(graphics.get_dc().Get());
+
+	};
+
+	if (end_tutorial_text == false)
 	{
 		//ここで-1してるのは1から始まっているから
 		if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_end_text = true;
@@ -687,6 +721,10 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 #endif // USE_IMGUI
 			fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
 		};
+		glow_vertical -= elapsed_time * 0.2f;
+
+		sprite_render("frame", sprite_tutorial_frame.get(), frame_pram, 0, glow_vertical);
+
 
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
 		r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
