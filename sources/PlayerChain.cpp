@@ -270,7 +270,12 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				transition_chain_lockon_begin();
+				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/
+				{
+					transition_chain_search(); /*リセット*/
+					transition_normal_behavior();
+				}
+				else { transition_chain_lockon_begin(); }
 			}
 		}
 	}
@@ -325,7 +330,12 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				transition_chain_lockon_begin();
+				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/
+				{
+					transition_chain_search(); /*リセット*/
+					transition_normal_behavior();
+				}
+				else { transition_chain_lockon_begin(); }
 			}
 		}
 	}

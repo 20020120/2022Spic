@@ -219,23 +219,28 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (player->GetIsAwakening())
 		{
-				player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
+				player->AwakingAddCombo
+				(
+					enemyManager->fCalcPlayerAttackVsEnemies
+					(
 					player->GetSwordCapsuleParam(0).start,
 					player->GetSwordCapsuleParam(0).end,
 					player->GetSwordCapsuleParam(0).rasius,
 					player->GetPlayerPower(),
 					graphics,
 					elapsed_time
-				));
-
-				player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
+					),
+					enemyManager->fCalcPlayerAttackVsEnemies
+					(
 					player->GetSwordCapsuleParam(1).start,
 					player->GetSwordCapsuleParam(1).end,
 					player->GetSwordCapsuleParam(1).rasius,
 					player->GetPlayerPower(),
 					graphics,
 					elapsed_time
-				));
+					)
+				);
+
 		}
 		else
 		{

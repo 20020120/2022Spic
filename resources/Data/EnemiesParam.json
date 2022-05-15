@@ -115,10 +115,10 @@
             "key": "TutorialNoMove",
             "value": {
                 "MaxHp": 1,
-                "AttackPower": 0,
+                "AttackPower": 1,
                 "InvincibleTime": 0.0,
                 "BodyCapsuleRad": 0.0,
-                "AttackCapsuleRad": 0.0,
+                "AttackCapsuleRad": 3.0,
                 "StunTime": 20.0
             }
         }

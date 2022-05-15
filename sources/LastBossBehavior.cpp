@@ -129,11 +129,12 @@ void LastBoss::fShipBeamShootInit()
 
 void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_,2.0f);
     mLaserThreshold += elapsedTime_ * 20.0f;
     mBeam.fSetLengthThreshold(mLaserThreshold);
 
     // TODO : ここで激しいカメラシェイク
-    mTimer -= elapsedTime_;
+    mTimer -= elapsedTime_;\
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::ShipBeamEnd);
@@ -357,6 +358,7 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
 void LastBoss::fHumanBlowAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
+    mpAllAttackEffect->play(effect_manager->get_effekseer_manager(), mPosition, 5.0f);
     mIsAttack = true;
     mAttackCapsule.mRadius = 0.0f;
     mTimer = 0.0f;
@@ -492,7 +494,7 @@ void LastBoss::fHumanSpAttackAwayUpdate(float elapsedTime_, GraphicsPipeline& Gr
     if(mAwayLerp>=1.0f)
     {
         fChangeState(DivideState::HumanSpWait);
-        fSpawnChildUnit(Graphics_, 1);
+        fSpawnChildUnit(Graphics_, 6);
     }
 }
 
@@ -522,7 +524,7 @@ void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_,
         fChangeState(DivideState::HumanSpOver);
     }
 
-    if(mpEnemyManager->fGetEnemyCounts()<=1)
+    if(mpEnemyManager->fGetEnemyCounts()<=4)
     {
         fChangeState(DivideState::HumanSpDamage);
     }
@@ -726,6 +728,8 @@ void LastBoss::fDragonIdleInit()
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    if (mpModel->end_of_animation(mAnimPara) == false) return;;
+
     const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
 
@@ -739,7 +743,7 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     }
     else
     {
-        fChangeState(DivideState::DragonIdle);
+        fChangeState(DivideState::DragonBeamStart);
     }
 }
 

@@ -287,6 +287,34 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         TutorialAwaiking();
         break;
     }
+    case Player::TutorialState::FreePractice:
+    {
+        is_next_tutorial = false;
+        execution_timer = 0;
+
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
+        break;
+    }
+
+        break;
     default:
         break;
     }
@@ -402,6 +430,34 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         TutorialAwaiking();
         break;
     }
+    case Player::TutorialState::FreePractice:
+    {
+        is_next_tutorial = false;
+        execution_timer = 0;
+
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
+        break;
+    }
+
+        break;
     default:
         break;
     }
@@ -439,7 +495,7 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
 
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 0.2f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 1.0f))
     {
         //回避中かどうかの設定
         is_avoidance = false;
@@ -467,7 +523,6 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
     //ChargeAcceleration(elapsed_time);
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     SetAccelerationVelocity();
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
@@ -579,18 +634,28 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     attack_time += attack_add_time * elapsed_time;
     //敵に当たったか時間が2秒たったら加速を終わる
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    if (is_update_animation == false)
     {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            attack_time = 0;
+            is_update_animation = true;
+        }
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
 
-        //if (length > 5.0f)ChargeAcceleration(elapsed_time);
-        if (length > 5.0f)SetAccelerationVelocity();
     }
     if (model->end_of_animation())
     {
@@ -640,16 +705,27 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
     attack_time += attack_add_time * elapsed_time;
     //敵に当たったか時間が2秒たったら加速を終わる
 
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    if (is_update_animation == false)
     {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-        if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            attack_time = 0;
+            is_update_animation = true;
+        }
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
     }
 
     if (model->end_of_animation())
@@ -657,17 +733,26 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             TransitionTutorialCharge(attack_animation_blends_speeds.x);
         }
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
             charge_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             TransitionTutorialMove();
         }
         //移動入力がなかったら待機に遷移
         else
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             charge_time = 0;
             TransitionTutoriaIdle();
         }
@@ -846,7 +931,7 @@ void Player::TransitionTutorialChargeInit()
     //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //加速のレート
@@ -955,6 +1040,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
 #endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間

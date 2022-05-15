@@ -27,7 +27,9 @@ float4 main(PsInput PsInput_) : SV_TARGET
 	{
 		outPutColor = lerp(0.0f, 0.25f, 1.0f - PsInput_.Texcoord.y);
 	}
-	outPutColor.xyz *= 10.0f;
-	
+	outPutColor.xyz *= 3.0f;
+	// ÉuÉãÅ[ÉÄÇ≈ñ\ëñÇµÇ»Ç¢ÇÊÇ§Ç…ã≠êß
+    outPutColor.xyz = min(outPutColor.xyz, 6.0);
+
 	return outPutColor;
 }

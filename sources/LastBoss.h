@@ -292,6 +292,9 @@ private:
     float mBeamStartRadian{};
     float mAddRadian{};
 
+    // 全体攻撃エフェクト
+    std::unique_ptr<Effect> mpAllAttackEffect{ nullptr };
+
     //****************************************************************
     // 
     // 定数

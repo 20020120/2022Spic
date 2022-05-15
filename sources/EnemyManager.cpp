@@ -79,6 +79,9 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     fSpawn(graphics_);
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
+
+    //--------------------<ボスが敵を召喚する>--------------------//
+    fCreateBossUnit(graphics_);
 }
 
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
@@ -417,8 +420,7 @@ case EnemyType::Tutorial_NoMove:
     mEnemyVec.emplace_back(enemy);
 }
     break;
-case EnemyType::Boss_Unit:
-    fCreateBossUnit(graphics_, mPlayerPosition);
+case EnemyType::Boss_Unit:\
     break;
     default:;
     }
@@ -452,6 +454,15 @@ void EnemyManager::fEnemiesRender(GraphicsPipeline& graphics_)
     for (const auto enemy : mEnemyVec)
     {
         enemy->fRender(graphics_);
+    }
+}
+
+void EnemyManager::fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_)
+{
+    if(mIsReserveBossUnit==false)
+    {
+        mIsReserveBossUnit = true;
+        mUnitEntryPointVec = Vec_;
     }
 }
 
@@ -740,14 +751,21 @@ void EnemyManager::fDeleteCash()
 
 
 
-void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
-    const DirectX::XMFLOAT3& Position_)
+void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
 {
-    BaseEnemy* enemy = new BossUnit(Graphics_,
-        Position_,
-        mEditor.fGetParam(EnemyType::Boss_Unit),
-        BulletManager::Instance().fGetAddFunction());
-    mEnemyVec.emplace_back(enemy);
+    if (mIsReserveBossUnit == false) return;
+
+    for(const auto unit:mUnitEntryPointVec)
+    {
+        BaseEnemy* enemy = new BossUnit(Graphics_,
+            unit,
+            mEditor.fGetParam(EnemyType::Boss_Unit),
+            BulletManager::Instance().fGetAddFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
+
+    mIsReserveBossUnit = false;
+    mUnitEntryPointVec.clear();
 }
 
 void EnemyManager::fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -769,6 +787,29 @@ void EnemyManager::fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline&
 
             mTutorialTimer = 0.0f;
             mEnemyVec.emplace_back(new TutorialEnemy_NoAttack(Graphics_, pos, mEditor.fGetParam(EnemyType::Tutorial_NoMove)));
+        }
+    }
+}
+
+void EnemyManager::fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    // 敵の数が一定以下じゃないとダメ
+    constexpr int maxEnemies{ 7 };
+
+    if (mEnemyVec.size() < maxEnemies)
+    {
+
+        mTutorialTimer += elapsedTime_;
+        if (mTutorialTimer > mkSeparateTutorial)
+        {
+            std::mt19937 mt{ std::random_device{}() };
+            const std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
+            const int randNumber1 = RandTargetAdd(mt);
+            const int randNumber2 = RandTargetAdd(mt);
+            DirectX::XMFLOAT3 pos{ randNumber1 * 10.0f,0.0f,randNumber2 * 10.0f };
+
+            mTutorialTimer = 0.0f;
+            mEnemyVec.emplace_back(new TutorialEnemy(Graphics_, pos, mEditor.fGetParam(EnemyType::Tutorial_NoMove)));
         }
     }
 }

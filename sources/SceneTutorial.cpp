@@ -82,6 +82,18 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	frame_pram.position = { 0.0f,0.0f };
 	frame_pram.scale = { 0.75f,0.3f };
 	frame_pram.texsize = { static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Width),static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Height) };
+
+	brack_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png", 1);
+	brack_back_pram.texsize = { static_cast<float>(brack_back->get_texture2d_desc().Width),
+										static_cast<float>(brack_back->get_texture2d_desc().Height) };
+	brack_back_pram.color.w = 0.7f;
+
+	sprite_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\title\\title_back.png", 1);
+	sprite_frame_parm.texsize = { static_cast<float>(sprite_frame->get_texture2d_desc().Width),
+										static_cast<float>(sprite_frame->get_texture2d_desc().Height) };
+	sprite_frame_parm.scale = { 1.74f,1.10f };
+	sprite_frame_parm.position = { 118.0f,-17.2f };
+
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
@@ -122,7 +134,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 
 	TutorialUpdate(graphics, elapsed_time);
-
+	//画像のチュートリアル中は進まない
+	if (sprite_tutorial) return;
 	// option
 	if (option->get_validity())
 	{
@@ -192,23 +205,27 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		if (player->GetIsAwakening())
 		{
-			player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
-				player->GetSwordCapsuleParam(0).start,
-				player->GetSwordCapsuleParam(0).end,
-				player->GetSwordCapsuleParam(0).rasius,
-				player->GetPlayerPower(),
-				graphics,
-				elapsed_time
-				));
-
-			player->AddCombo(enemyManager->fCalcPlayerAttackVsEnemies(
-				player->GetSwordCapsuleParam(1).start,
-				player->GetSwordCapsuleParam(1).end,
-				player->GetSwordCapsuleParam(1).rasius,
-				player->GetPlayerPower(),
-				graphics,
-				elapsed_time
-			));
+			player->AwakingAddCombo
+			(
+				enemyManager->fCalcPlayerAttackVsEnemies
+				(
+					player->GetSwordCapsuleParam(0).start,
+					player->GetSwordCapsuleParam(0).end,
+					player->GetSwordCapsuleParam(0).rasius,
+					player->GetPlayerPower(),
+					graphics,
+					elapsed_time
+				),
+				enemyManager->fCalcPlayerAttackVsEnemies
+				(
+					player->GetSwordCapsuleParam(1).start,
+					player->GetSwordCapsuleParam(1).end,
+					player->GetSwordCapsuleParam(1).rasius,
+					player->GetPlayerPower(),
+					graphics,
+					elapsed_time
+				)
+			);
 		}
 		else
 		{
@@ -582,7 +599,23 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
+
+		//画像のチュートリアルのパラメータ設定
+		sprite_tutorial_text.position = { 265.0f,392.0f };
+		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます";
 		if (is_next)
+		{
+			//ジャスト回避の説明をする
+			sprite_tutorial = true;
+			//タイマーを進める
+			sprite_tutorial_timer += 1.0f * elapsed_time;
+			if (sprite_tutorial_timer > 1.0f && game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				end_sprite_tutorial = true;
+			}
+		}
+		//画像のチュートリアルが終わったら
+		if (end_sprite_tutorial)
 		{
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
@@ -599,6 +632,10 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 				check_mark_parm.threshold = 1.0f;
 				//ディゾルブしていいかどうかのフラグを初期化
 				check_mark_parm.is_threshold = false;
+				//画像の説明のフラグを初期化
+				sprite_tutorial = false;
+				end_sprite_tutorial = false;
+				sprite_tutorial_timer = 0.0f;
 			}
 		}
 
@@ -640,7 +677,21 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Aボタンを押して覚醒";
+		sprite_tutorial_text.position = { 359.0f,408.0f };
+		sprite_tutorial_text.s = L"覚醒状態の時は敵がスタンしていない場合でも\nロックオンをしチェイン攻撃を行うことができます";
 		if (is_next)
+		{
+			//ジャスト回避の説明をする
+			sprite_tutorial = true;
+			//タイマーを進める
+			sprite_tutorial_timer += 1.0f * elapsed_time;
+			if (sprite_tutorial_timer > 1.0f && game_pad->get_button_down() & GamePad::BTN_B)
+			{
+				end_sprite_tutorial = true;
+			}
+		}
+
+		if (end_sprite_tutorial)
 		{
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
@@ -657,6 +708,11 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 				check_mark_parm.threshold = 1.0f;
 				//ディゾルブしていいかどうかのフラグを初期化
 				check_mark_parm.is_threshold = false;
+				//画像の説明のフラグを初期化
+				sprite_tutorial = false;
+				end_sprite_tutorial = false;
+				sprite_tutorial_timer = 0.0f;
+
 			}
 		}
 
@@ -665,13 +721,15 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::FreePractice:
+		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		end_tutorial_text_timer += 1.0f * elapsed_time;
 		tutorial_check_text = L"自由に練習する";
 		tutorial_skip_text = L"チュートリアル終了";
 		//チュートリアル終了の文字の位置を再設定
 		change_scene_txt.position = { 116.7f,282.0f };
+		check_mark_parm.threshold = 1.0f;
 
-		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+		enemyManager->fSpawnTutorial(elapsed_time, graphics);
 
 		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
 		if (end_tutorial_text_timer > 10.0f) end_tutorial_text = true;
@@ -720,27 +778,27 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		batch->end(graphics.get_dc().Get());
 
 	};
+	auto r_font_render = [&](std::string name, StepFontElement& e)
+	{
+#ifdef USE_IMGUI
+		ImGui::Begin(name.c_str());
+		if (ImGui::TreeNode(name.c_str()))
+		{
+			ImGui::DragFloat2("pos", &e.position.x);
+			ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
+			ImGui::ColorEdit4("color", &e.color.x);
+			ImGui::TreePop();
+		}
+		ImGui::End();
+#endif // USE_IMGUI
+		fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
+	};
 
 	if (end_tutorial_text == false)
 	{
 		//ここで-1してるのは1から始まっているから
 		if (StepString(elapsed_time, tutorial_text_element[static_cast<int>(tutorial_state) - 1])) is_end_text = true;
 		else is_end_text = false;
-		auto r_font_render = [&](std::string name, StepFontElement& e)
-		{
-#ifdef USE_IMGUI
-			ImGui::Begin(name.c_str());
-			if (ImGui::TreeNode(name.c_str()))
-			{
-				ImGui::DragFloat2("pos", &e.position.x);
-				ImGui::DragFloat2("scale", &e.scale.x, 0.1f);
-				ImGui::ColorEdit4("color", &e.color.x);
-				ImGui::TreePop();
-			}
-			ImGui::End();
-#endif // USE_IMGUI
-			fonts->yu_gothic->Draw(e.s, e.position, e.scale, e.color, e.angle, TEXT_ALIGN::UPPER_LEFT, e.length);
-		};
 		glow_vertical -= elapsed_time * 0.2f;
 
 		sprite_render("frame", sprite_tutorial_frame.get(), frame_pram, 0, glow_vertical);
@@ -810,6 +868,18 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
 	check_mark->end(graphics.get_dc().Get());
 
+	//画像のチュートリアルの時
+	if (sprite_tutorial)
+	{
+		glow_vertical -= elapsed_time * 0.2f;
+
+		sprite_render("back", brack_back.get(), brack_back_pram, 0);
+		sprite_render("sprite_frame", sprite_frame.get(), sprite_frame_parm, 0, glow_vertical);
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render("sprite_tutorial_text", sprite_tutorial_text);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+
+	}
 
 }
 
