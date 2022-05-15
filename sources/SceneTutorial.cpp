@@ -672,7 +672,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		change_scene_txt.position = { 116.7f,282.0f };
 		check_mark_parm.threshold = 1.0f;
 
-		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+		enemyManager->fSpawnTutorial(elapsed_time, graphics);
 
 		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
 		if (end_tutorial_text_timer > 10.0f) end_tutorial_text = true;

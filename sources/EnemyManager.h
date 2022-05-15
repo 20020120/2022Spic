@@ -99,6 +99,7 @@ public:
 
      // チュートリアルで呼び出す関数
     void fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_);
+    void fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics_);
 
 private:
     //--------------------<敵と関連する処理>--------------------//
