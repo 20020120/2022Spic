@@ -30,8 +30,9 @@ StraightBullet::StraightBullet(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 In
 
 void StraightBullet::fUpdate(float elapsed_time)
 {
+
     mPosition += (mVelocity);
     mLifeTime -= elapsed_time;
-    mIsAlive = mLifeTime <= 0.0f;
+    mIsAlive = mLifeTime >= 0.0f;
     BaseBullet::fUpdate(elapsed_time);
 }

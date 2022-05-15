@@ -83,7 +83,27 @@ void Effect::set_rotation_axis(Effekseer::Manager* effekseer_manager, const Dire
 
 void Effect::set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT4 orientation)
 {
-    effekseer_manager->GetBaseMatrix(effekseer_handle);
+    //クォータニオン→回転行列
+    auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
+        DirectX::XMFLOAT4 o)
+    {
+        q._11 = 1.0f - 2.0f * o.y * o.y - 2.0f * o.z * o.z;
+        q._12 = 2.0f * o.x * o.y + 2.0f * o.w * o.z;
+        q._13 = 2.0f * o.x * o.z - 2.0f * o.w * o.y;
+
+        q._21 = 2.0f * o.x * o.y - 2.0f * o.w * o.z;
+        q._22 = 1.0f - 2.0f * o.x * o.x - 2.0f * o.z * o.z;
+        q._23 = 2.0f * o.y * o.z + 2.0f * o.w * o.x;
+
+        q._31 = 2.0f * o.x * o.z + 2.0f * o.w * o.y;
+        q._32 = 2.0f * o.y * o.z - 2.0f * o.w * o.x;
+        q._33 = 1.0f - 2.0f * o.x * o.x - 2.0f * o.y * o.y;
+    };
+    DirectX::XMFLOAT4X4 r_mat;
+
+    transformQuaternionToRotMat(r_mat, orientation);
+    static float ang = 0;
+   set_posture(effekseer_manager, r_mat, ang);
 }
 
 void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3& orient)
