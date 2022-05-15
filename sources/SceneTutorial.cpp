@@ -174,6 +174,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+
 	enemyManager->fSetPlayerPosition(player->GetPosition());
 	mBulletManager.fUpdate(elapsed_time);
 
@@ -475,6 +477,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 	}
 
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+
 	switch (tutorial_state)
 	{
 	case TutorialScene::TutorialState::MoveTutorial:
@@ -547,6 +551,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 		}
 
+		// 敵がわいてくる
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
@@ -595,6 +602,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 		}
 
+		// 敵がわいてくる
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
@@ -623,6 +633,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 		}
 
+		// 敵がわいてくる
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
@@ -646,6 +659,10 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 				check_mark_parm.is_threshold = false;
 			}
 		}
+
+		// 敵がわいてくる
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+
 		break;
 	case TutorialScene::TutorialState::FreePractice:
 		end_tutorial_text_timer += 1.0f * elapsed_time;
@@ -653,6 +670,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_skip_text = L"チュートリアル終了";
 		//チュートリアル終了の文字の位置を再設定
 		change_scene_txt.position = { 116.7f,282.0f };
+
+		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
+
 		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
 		if (end_tutorial_text_timer > 10.0f) end_tutorial_text = true;
 		break;

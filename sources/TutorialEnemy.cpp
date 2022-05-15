@@ -99,7 +99,7 @@ void TutorialEnemy_NoAttack::fIdleUpdate(float elapsedTime_, GraphicsPipeline& G
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::Move);
+        fChangeState(DivideState::Idle);
     }
 }
 

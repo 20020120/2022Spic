@@ -96,6 +96,10 @@ public:
     // ボスから呼び出す
     void fCreateBossUnit(GraphicsPipeline& Graphics_,
         const DirectX::XMFLOAT3& Position_);
+
+     // チュートリアルで呼び出す関数
+    void fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_);
+
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
@@ -145,6 +149,9 @@ private:
     float mCameraShakeTime{};
     const float mkOneShakeSec{ 0.15f };
 
+    // チュートリアル
+    float mTutorialTimer{};
+    const float mkSeparateTutorial{ 1.0f };
 
     //****************************************************************
     //

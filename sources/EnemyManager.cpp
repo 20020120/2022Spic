@@ -749,3 +749,26 @@ void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
         BulletManager::Instance().fGetAddFunction());
     mEnemyVec.emplace_back(enemy);
 }
+
+void EnemyManager::fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    // “G‚Ì”‚ªˆê’èˆÈ‰º‚¶‚á‚È‚¢‚Æƒ_ƒ
+    constexpr int maxEnemies{ 7 };
+
+    if (mEnemyVec.size() < maxEnemies)
+    {
+
+        mTutorialTimer += elapsedTime_;
+        if (mTutorialTimer > mkSeparateTutorial)
+        {
+            std::mt19937 mt{ std::random_device{}() };
+            const std::uniform_int_distribution<int> RandTargetAdd(-5, 5);
+            const int randNumber1 = RandTargetAdd(mt);
+            const int randNumber2 = RandTargetAdd(mt);
+            DirectX::XMFLOAT3 pos{ randNumber1 * 10.0f,0.0f,randNumber2 * 10.0f };
+
+            mTutorialTimer = 0.0f;
+            mEnemyVec.emplace_back(new TutorialEnemy_NoAttack(Graphics_, pos, mEditor.fGetParam(EnemyType::Tutorial_NoMove)));
+        }
+    }
+}
