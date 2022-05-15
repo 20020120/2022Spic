@@ -99,6 +99,9 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     float2 rgb_shift_target_point;
     float rgb_shift_zoom_power;
     float post_effect_pad12;
+    // wipe
+    float wipe_threshold;
+    float3 post_effect_pad13;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)

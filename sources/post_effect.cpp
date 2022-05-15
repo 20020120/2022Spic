@@ -33,6 +33,7 @@ PostEffect::PostEffect(ID3D11Device* device)
 		create_ps_from_cso(device, "shaders/dash_blur_ps.cso", pixel_shaders[11].GetAddressOf());
 		create_ps_from_cso(device, "shaders/lockon_ps.cso", pixel_shaders[12].GetAddressOf());
 		create_ps_from_cso(device, "shaders/zoom_RGB_shift.cso", pixel_shaders[13].GetAddressOf());
+		create_ps_from_cso(device, "shaders/wipe_ps.cso", pixel_shaders[14].GetAddressOf());
 	}
 	// 定数バッファ
 	effect_constants = std::make_unique<Constants<PostEffectConstants>>(device);
@@ -66,7 +67,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL", "ZOOM_RGB_SHIFT" };
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL", "ZOOM_RGB_SHIFT", "WIPE"};
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -391,6 +392,24 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 13);
 			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::WIPE))
+			{
+#ifdef USE_IMGUI
+				std::string ss = "wipe " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat("wipe_threshold", &effect_constants_for_preservation.wipe_threshold, 0.001f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 14);
+			}
 		}
 	}
 }
@@ -475,4 +494,11 @@ void PostEffect::boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, floa
 	effect_constants_for_preservation.rgb_shift_target_point = screen_pos;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::ZOOM_RGB_SHIFT);
+}
+
+void PostEffect::wipe_effect(float threshold)
+{
+	effect_constants_for_preservation.wipe_threshold = threshold;
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::WIPE);
 }
