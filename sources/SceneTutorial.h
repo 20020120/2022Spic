@@ -175,6 +175,32 @@ private:
     CheckMarkParm check_mark_parm;
     std::unique_ptr<SpriteDissolve> check_mark{ nullptr };
     std::unique_ptr<SpriteBatch> check_box{ nullptr };
+    //別枠で画像を表示してる時にtrueになる
+    bool sprite_tutorial{ false };
+    //画像のチュートリアルが終わったらtrue
+    bool end_sprite_tutorial{ false };
+    //画像チュートリアル用のタイマー
+    float sprite_tutorial_timer{ 0.0f };
+    struct Element
+    {
+        DirectX::XMFLOAT2 position{};
+        DirectX::XMFLOAT2 scale{ 1, 1 };
+        DirectX::XMFLOAT2 pivot{};
+        DirectX::XMFLOAT4 color{ 1,1,1,1 };
+        float angle{};
+        DirectX::XMFLOAT2 texpos{};
+        DirectX::XMFLOAT2 texsize{};
+    };
+
+    //画面を黒くする
+    std::unique_ptr<SpriteBatch> brack_back{ nullptr };
+    //画面黒くするパラメータ
+    Element brack_back_pram;
+    //画像のチュートリアルの後ろに出てるフレーム
+    std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
+    Element sprite_frame_parm;
+
+    StepFontElement sprite_tutorial_text;
 private:
     //シーン変更するときの変数
     float change_scene_timer{ 0 };
@@ -199,16 +225,6 @@ private:
 private:
     float glow_vertical = {};
 
-    struct Element
-    {
-        DirectX::XMFLOAT2 position{};
-        DirectX::XMFLOAT2 scale{ 1, 1 };
-        DirectX::XMFLOAT2 pivot{};
-        DirectX::XMFLOAT4 color{ 1,1,1,1 };
-        float angle{};
-        DirectX::XMFLOAT2 texpos{};
-        DirectX::XMFLOAT2 texsize{};
-    };
     //文字のフレーム
     std::unique_ptr<SpriteBatch> sprite_tutorial_frame{ nullptr };
     //フレームのパラメータ
