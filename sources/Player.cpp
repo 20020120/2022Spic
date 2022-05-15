@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentieth.fbx",false,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfirst.fbx",false,60.0f);
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
