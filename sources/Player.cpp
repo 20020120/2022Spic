@@ -938,6 +938,20 @@ void Player::AddCombo(int count)
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
+void Player::AwakingAddCombo(int hit_count1, int hit_count2)
+{
+    if (hit_count1 != 0 || hit_count2 != 0)
+    {
+        combo_count += static_cast<float>(hit_count1 + hit_count2);
+        //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ÉQÅ[ÉWè¡îÔÇÃìÀêiíÜÇ…ìñÇΩÇ¡ÇΩêîÇï€ë∂
+        is_enemy_hit = true;
+
+    }
+    else is_enemy_hit = false;
+    combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
+
+}
+
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
     if (behavior_state == Behavior::Chain && during_chain_attack()) return;
@@ -1059,7 +1073,6 @@ void Player::AvoidanceAcceleration(float elapsed_time)
         velocity.y = Math::clamp(velocity.y, -35.0f, 35.0f);
         velocity.z = Math::clamp(velocity.z, -35.0f, 35.0f);
 }
-
 
 void Player::ChargeAcceleration(float elapse_time)
 {

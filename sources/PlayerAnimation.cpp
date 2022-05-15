@@ -330,18 +330,26 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 #else
     if (is_update_animation == false)
     {
-        if (is_enemy_hit || attack_time >= 1.0f)
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             is_charge = false;
             attack_time = 0;
             is_update_animation = true;
         }
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
-        SetAccelerationVelocity();
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionIdle();
+        }
+
     }
 
 #endif // 0
@@ -419,18 +427,25 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 #else
     if (is_update_animation == false)
     {
-        if (is_enemy_hit || attack_time >= 1.0f)
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             is_charge = false;
             attack_time = 0;
             is_update_animation = true;
         }
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
-        SetAccelerationVelocity();
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionIdle();
+        }
     }
 
 #endif // 0
@@ -890,6 +905,8 @@ void Player::TransitionAttackType2(float blend_seconds)
 #endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
+        //ロックオンしてない場合のターゲットの設定
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間
@@ -952,7 +969,7 @@ void Player::TransitionSpecialSurge()
     //攻撃中かどうかの設定
     is_attack = true;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 10.0f);
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //ゲージ消費の突進の移動速度を設定
     SpecialSurgeAcceleration();
     //コンボカウントの消費

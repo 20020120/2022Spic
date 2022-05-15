@@ -341,6 +341,8 @@ public:
     void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
     void AddCombo(int count);
+    //覚醒状態の時は２つ当たり判定があるから引数が２つ
+    void AwakingAddCombo(int hit_count1, int hit_count2);
     //--------------------<敵からダメージを受ける>--------------------//
     void DamagedCheck(int damage, float InvincibleTime);
     void TutorialDamagedCheck(int damage, float InvincibleTime);
@@ -651,7 +653,9 @@ private:
         //チェイン攻撃
         ChainAttackTutorial,
         //覚醒
-        AwaikingTutorial
+        AwaikingTutorial,
+        //自由時間
+        FreePractice,
     };
     TutorialState tutorial_state{ TutorialState::MoveTutorial };
 private:

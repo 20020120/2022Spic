@@ -670,6 +670,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_skip_text = L"チュートリアル終了";
 		//チュートリアル終了の文字の位置を再設定
 		change_scene_txt.position = { 116.7f,282.0f };
+		check_mark_parm.threshold = 1.0f;
 
 		enemyManager->fSpawnTutorial_NoAttack(elapsed_time, graphics);
 

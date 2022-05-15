@@ -287,6 +287,31 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         TutorialAwaiking();
         break;
     }
+    case Player::TutorialState::FreePractice:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //‰ñ”ğ‚É‘JˆÚ
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //‚»‚¤‚¶‚á‚È‚©‚Á‚½‚ç•’Ê‚Ì‰ñ”ğ
+            else TransitionTutorialAvoidance();
+
+        }
+        //“ËiŠJn‚É‘JˆÚ
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
+        break;
+    }
+
+        break;
     default:
         break;
     }
@@ -402,6 +427,31 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         TutorialAwaiking();
         break;
     }
+    case Player::TutorialState::FreePractice:
+    {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //‰ñ”ğ‚É‘JˆÚ
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //‚»‚¤‚¶‚á‚È‚©‚Á‚½‚ç•’Ê‚Ì‰ñ”ğ
+            else TransitionTutorialAvoidance();
+
+        }
+        //“ËiŠJn‚É‘JˆÚ
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+        TutorialAwaiking();
+        break;
+    }
+
+        break;
     default:
         break;
     }
@@ -467,7 +517,6 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
     //ChargeAcceleration(elapsed_time);
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
     SetAccelerationVelocity();
     //“ËiŠÔ‚ğ’´‚¦‚½‚ç‚»‚ê‚¼‚ê‚Ì‘JˆÚ‚É‚Æ‚Ô
     if (charge_time > CHARGE_MAX_TIME)
@@ -579,18 +628,28 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ğI‚í‚é
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    if (is_update_animation == false)
     {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            attack_time = 0;
+            is_update_animation = true;
+        }
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
 
-        //if (length > 5.0f)ChargeAcceleration(elapsed_time);
-        if (length > 5.0f)SetAccelerationVelocity();
     }
     if (model->end_of_animation())
     {
@@ -640,16 +699,27 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ğI‚í‚é
 
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
+    if (is_update_animation == false)
     {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-        if (length > 5.0f) ChargeAcceleration(elapsed_time);
+        SetAccelerationVelocity();
+        if (is_enemy_hit)
+        {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            is_charge = false;
+            attack_time = 0;
+            is_update_animation = true;
+        }
+        else if (attack_time >= 2.0f)
+        {
+            is_charge = false;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            attack_time = 0;
+            TransitionTutoriaIdle();
+        }
     }
 
     if (model->end_of_animation())
@@ -657,17 +727,26 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
         {
             attack_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             TransitionTutorialCharge(attack_animation_blends_speeds.x);
         }
         //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
             charge_time = 0;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             TransitionTutorialMove();
         }
         //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
         else
         {
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
             charge_time = 0;
             TransitionTutoriaIdle();
         }
