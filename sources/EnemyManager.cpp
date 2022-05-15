@@ -79,6 +79,9 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     fSpawn(graphics_);
     // ImGuiのメニュー
     fGuiMenu(graphics_,Func_);
+
+    //--------------------<ボスが敵を召喚する>--------------------//
+    fCreateBossUnit(graphics_);
 }
 
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
@@ -417,8 +420,7 @@ case EnemyType::Tutorial_NoMove:
     mEnemyVec.emplace_back(enemy);
 }
     break;
-case EnemyType::Boss_Unit:
-    fCreateBossUnit(graphics_, mPlayerPosition);
+case EnemyType::Boss_Unit:\
     break;
     default:;
     }
@@ -452,6 +454,15 @@ void EnemyManager::fEnemiesRender(GraphicsPipeline& graphics_)
     for (const auto enemy : mEnemyVec)
     {
         enemy->fRender(graphics_);
+    }
+}
+
+void EnemyManager::fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_)
+{
+    if(mIsReserveBossUnit==false)
+    {
+        mIsReserveBossUnit = true;
+        mUnitEntryPointVec = Vec_;
     }
 }
 
@@ -740,14 +751,21 @@ void EnemyManager::fDeleteCash()
 
 
 
-void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_,
-    const DirectX::XMFLOAT3& Position_)
+void EnemyManager::fCreateBossUnit(GraphicsPipeline& Graphics_)
 {
-    BaseEnemy* enemy = new BossUnit(Graphics_,
-        Position_,
-        mEditor.fGetParam(EnemyType::Boss_Unit),
-        BulletManager::Instance().fGetAddFunction());
-    mEnemyVec.emplace_back(enemy);
+    if (mIsReserveBossUnit == false) return;
+
+    for(const auto unit:mUnitEntryPointVec)
+    {
+        BaseEnemy* enemy = new BossUnit(Graphics_,
+            unit,
+            mEditor.fGetParam(EnemyType::Boss_Unit),
+            BulletManager::Instance().fGetAddFunction());
+        mEnemyVec.emplace_back(enemy);
+    }
+
+    mIsReserveBossUnit = false;
+    mUnitEntryPointVec.clear();
 }
 
 void EnemyManager::fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_)

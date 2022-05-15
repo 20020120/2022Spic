@@ -65,6 +65,11 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     auto  enemy2 = new BossRushUnit(Graphics_,entryPos);
     pEnemyManager_->fAddRushBoss(enemy2);
     mRushVec.emplace_back(enemy2);
+
+    //エフェクトを初期化
+    mpAllAttackEffect = std::make_unique<Effect>(Graphics_,
+        effect_manager->get_effekseer_manager(),
+        "./resources/Effect/boss_wave.efk");
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
@@ -711,9 +716,11 @@ void LastBoss::fChangeHumanToDragon()
     }
 }
 
-void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_) const
+void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_) const
 {
     // ユニットを召喚する
+    std::vector<DirectX::XMFLOAT3> vec{};
+    vec.reserve(Amounts_);
 
     // 定数
     constexpr DirectX::XMFLOAT3 SummonCenterPosition = { 0.0f,0.0f,0.0f };
@@ -726,10 +733,11 @@ void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_,int Amounts_) const
         const float rot = DirectX::XMConvertToRadians(peaceOfRotation * static_cast<float>(i));
         const DirectX::XMFLOAT3 unitPosition
         = { cosf(rot),0.0f,sinf(rot) };
-        mpEnemyManager->fCreateBossUnit(Graphics_,
-            SummonCenterPosition + unitPosition);
+
+        vec.emplace_back(SummonCenterPosition+unitPosition);
     }
 
+    mpEnemyManager->fReserveBossUnit(vec);
 
 }
 

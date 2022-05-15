@@ -94,8 +94,7 @@ public:
     void fDeleteCash(); // キャッシュを削除
 
     // ボスから呼び出す
-    void fCreateBossUnit(GraphicsPipeline& Graphics_,
-        const DirectX::XMFLOAT3& Position_);
+    void fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_);
 
      // チュートリアルで呼び出す関数
     void fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_);
@@ -107,6 +106,8 @@ private:
     void fSpawn(EnemySource Source_, GraphicsPipeline& graphics_);
     void fEnemiesUpdate(GraphicsPipeline& Graphics_,float elapsedTime_); // 敵の更新処理
     void fEnemiesRender(GraphicsPipeline& graphics_); // 敵の描画処理
+
+    void fCreateBossUnit(GraphicsPipeline& Graphics_);
 
     //--------------------<敵をソートする>--------------------//
     void fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_);
@@ -154,6 +155,9 @@ private:
     float mTutorialTimer{};
     const float mkSeparateTutorial{ 1.0f };
 
+    // ボスがユニットを召喚
+    bool mIsReserveBossUnit{};
+    std::vector<DirectX::XMFLOAT3> mUnitEntryPointVec{};
     //****************************************************************
     //
     // 定数
