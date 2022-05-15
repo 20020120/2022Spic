@@ -46,6 +46,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
 	cameraManager->RegisterCamera(new ClearCamera(player.get()));
+	cameraManager->RegisterCamera(new JointCamera());
+
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
@@ -136,7 +138,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 
 	//ゲームクリアになったら
-	GameClearAct(elapsed_time);
+	GameClearAct(elapsed_time,graphics);
 	//ゲームオーバーになったら
 	GameOverAct(elapsed_time);
 	const float bgm_volume = 2.0f;
@@ -586,8 +588,10 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
 	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos,p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
-
+    if (during_clear == false && is_game_clear == false)
+	{
+		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+	}
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (is_game_clear)
 	{
@@ -731,10 +735,25 @@ void SceneGame::GameOverAct(float elapsed_time)
 	}
 }
 
-void SceneGame::GameClearAct(float elapsed_time)
+void SceneGame::GameClearAct(float elapsed_time,GraphicsPipeline& graphics)
 {
 	if (is_game_clear)
 	{
+		//プレイヤーのクリア用の更新処理
+		const auto enemyManager = mWaveManager.fGetEnemyManager();
+		cameraManager->Update(elapsed_time);
+		player->PlayerClearUpdate(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+
+		if (set_joint_camera == false)
+		{
+			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Joint));
+			set_joint_camera = true;
+		}
+		if (set_joint_camera)
+		{
+			cameraManager->GetCurrentCamera()->set_eye(player->GetEnentCameraJoint());
+			cameraManager->GetCurrentCamera()->set_target(player->GetEnentCameraEye());
+		}
 		//ここでタイトルに戻るの位置を決めているのは
 	   //ゲームオーバーの時にも同じものを使うから
 		back_title.position = { 529.7f,246.3f };
@@ -742,21 +761,24 @@ void SceneGame::GameClearAct(float elapsed_time)
 		//セレクターの位置を入れる
 		selecter1.position = { 495.3f,277.1f };
 		selecter2.position = { 801.5f,277.1f };
-
-		//画面ヲ徐々に黒くする
-		if (brack_back_pram.color.w > 0.7f)
+		//プレイヤーのクリアモーションが終わってからしか動かないようにする
+		if (player->GetEndClearMotion())
 		{
-			is_set_black = true;
-			brack_back_pram.color.w = 0.7f;
-		}
-		if (is_set_black == false) brack_back_pram.color.w += 1.0f * elapsed_time;
-
-		if (is_set_black)
-		{
-			if (game_pad->get_button_down() & GamePad::BTN_B)
+			//画面ヲ徐々に黒くする
+			if (brack_back_pram.color.w > 0.7f)
 			{
-				audio_manager->play_se(SE_INDEX::DECISION);
-				SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				is_set_black = true;
+				brack_back_pram.color.w = 0.7f;
+			}
+			if (is_set_black == false) brack_back_pram.color.w += 1.0f * elapsed_time;
+
+			if (is_set_black)
+			{
+				if (game_pad->get_button_down() & GamePad::BTN_B)
+				{
+					audio_manager->play_se(SE_INDEX::DECISION);
+					SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::TYPE1, 2.0f);
+				}
 			}
 		}
 	}

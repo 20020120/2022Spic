@@ -631,6 +631,19 @@ void Player::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    if (model->end_of_animation())
+    {
+        TransitionNamelessMotionIdle();
+    }
+}
+
+void Player::NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (model->end_of_animation())
+    {
+        //クリアモーションが終わったことを伝える
+        is_end_clear_motion = true;
+    }
 }
 
 void Player::Awaiking()
@@ -1052,6 +1065,23 @@ void Player::TransitionDying()
 
 }
 
+void Player::TransitionNamelessMotionIdle()
+{
+    PostEffect::clear_post_effect();
+    //攻撃中かどうかの設定
+    is_attack = false;
+    velocity = {};
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションに設定
+    model->play_animation(AnimationClips::NamelessMotionIdle, false, true);
+    //更新関数に切り替え
+    player_activity = &Player::NamelessMotionIdleUpdate;
+
+}
+
 void Player::TransitionStartMothin()
 {
     //攻撃中かどうかの設定
@@ -1070,6 +1100,9 @@ void Player::TransitionStartMothin()
 
 void Player::TransitionNamelessMotion()
 {
+    PostEffect::wipe_effect(0.15f);
+    //クリア用モーションが始まったらからtrueにする
+    is_start_cleear_motion = true;
     //攻撃中かどうかの設定
     is_attack = false;
     velocity = {};

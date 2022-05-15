@@ -244,7 +244,7 @@ private:
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
 
-    skeleton::bone player_bones[8];
+    skeleton::bone player_bones[9];
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
@@ -440,7 +440,7 @@ private:
     //ダメージ受けたとき
     void DamageUpdate(float elapsed_time, SkyDome* sky_dome);
     //人型に戻る
-    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome) ;
+    void TransformHumUpdate(float elapsed_time, SkyDome* sky_dome);
     //飛行機モード
     void TransformWingUpdate(float elapsed_time, SkyDome* sky_dome);
     //覚醒状態に変形するときの更新
@@ -463,8 +463,6 @@ private:
     bool is_dying_update{ false };
     //モーション
     void StartMothinUpdate(float elapsed_time, SkyDome* sky_dome);
-    //モーション
-    void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
 
 
     void Awaiking();//覚醒状態のON,OFF
@@ -513,15 +511,34 @@ private:
     void TransitionDie();
     //死亡中
     void TransitionDying();
+
 public:
     //スタートモーション
     void TransitionStartMothin();
-    //モーション二つ目
-    void TransitionNamelessMotion();
     //ステージ移動に遷移
     void TransitionStageMove();
 
+    //クリアに関すること
+private:
+    //モーション
+    void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
+    void NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    void TransitionNamelessMotionIdle();
+    //クリアモーションに遷移
+    void TransitionNamelessMotion();
+    //クリア用モーションが終わったらtrue
+    bool is_end_clear_motion{ false };
+    //クリア用モーションが始まったらtrue
+    bool is_start_cleear_motion{ false };
 
+    DirectX::XMFLOAT3 event_camera_eye{ 0,3.4f,0.0f };
+    DirectX::XMFLOAT3 event_camera_joint{};
+public:
+    DirectX::XMFLOAT3 GetEnentCameraEye() { return event_camera_eye; }
+    DirectX::XMFLOAT3 GetEnentCameraJoint() { return event_camera_joint; }
+    bool GetEndClearMotion() { return is_end_clear_motion; }
+    bool GetStartClearMotion() { return is_start_cleear_motion; }
+    void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
 private:
     //--------<藤岡パート>--------//
     //関数ポインタ

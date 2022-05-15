@@ -29,6 +29,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[5] = model->get_bone_by_name("largeblade_R_top_joint");
     player_bones[6] = model->get_bone_by_name("shortsword_joint");
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
+    player_bones[8] = model->get_bone_by_name("camera_joint");
 }
 
 Player::~Player()
@@ -42,10 +43,27 @@ void Player::Initialize()
 
 void Player::UpdateTitle(float elapsed_time)
 {
+
     orientation = { 0.0f,1.0f,0.0f,0.002f };
     ExecFuncUpdate(elapsed_time);
     GetPlayerDirections();
     model->update_animation(elapsed_time);
+    if (is_dying_update == false)
+    {
+        //覚醒状態の時は
+        if (is_awakening)
+        {
+            //モデルを映す
+            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+        }
+        else
+        {
+            //モデルを消す
+            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+        }
+    }
+    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+
     //薄くしておく
     emissive_color.w = 0.7f;
 #ifdef USE_IMGUI
@@ -143,8 +161,129 @@ void Player::UpdateTitle(float elapsed_time)
 //このアップデートの中に書いていたらExecFuncUpdate関数で
 //どの関数が呼ばれていても確実に通る
 //アニメーションごとに動きを変えたいならそのアニメーションの時にしか呼ばれない関数で書く
+
+void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    //カメラのジョイントの位置を更新し続ける
+    DirectX::XMFLOAT3 up = {};
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
+    //プレイヤーの位置は原点に移動
+    position = { 0,0,0 };
+
+    //クリア用モーションがまだ始まってなかったら
+    if (is_start_cleear_motion == false)
+    {
+        TransitionNamelessMotion();
+    }
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
+    model->update_animation(elapsed_time * animation_speed);
+    //隠しているメッシュは表示させる
+    threshold_mesh = 0.0f;
+    //カメラのメッシュは非表示
+    threshold_camera_mesh = 1.0f;
+#ifdef USE_IMGUI
+    static bool display_scape_imgui;
+    imgui_menu_bar("Player", "Player", display_scape_imgui);
+    if (display_scape_imgui)
+    {
+        if (ImGui::Begin("Player"))
+        {
+            if (ImGui::TreeNode("transform"))
+            {
+                ImGui::DragFloat3("position", &position.x);
+                ImGui::DragFloat3("scale", &scale.x, 0.001f);
+                ImGui::DragFloat4("orientation", &orientation.x);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerDirection"))
+            {
+                ImGui::DragFloat3("forward", &forward.x);
+                ImGui::DragFloat3("right", &right.x);
+                ImGui::DragFloat3("up", &up.x);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("speed"))
+            {
+                ImGui::DragFloat3("velocity", &velocity.x);
+                ImGui::DragFloat3("acceleration_velocity", &acceleration_velocity.x);
+                ImGui::DragFloat("max_speed", &move_speed);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerFlags"))
+            {
+                ImGui::Checkbox("is_avoidance", &is_avoidance);
+                ImGui::Checkbox("is_behind_avoidance", &is_behind_avoidance);
+                ImGui::Checkbox("camera_reset", &camera_reset);
+                ImGui::Checkbox("is_lock_on", &is_lock_on);
+                ImGui::Checkbox("is_camera_lock_on", &is_camera_lock_on);
+                ImGui::Checkbox("is_enemy_hit", &is_enemy_hit);
+                ImGui::Checkbox("is_awakening", &is_awakening);
+                ImGui::Checkbox("start_dash_effect", &start_dash_effect);
+                ImGui::Checkbox("end_dash_effect", &end_dash_effect);
+                ImGui::Checkbox("is_push_lock_on_button", &is_push_lock_on_button);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("CapsuleParam"))
+            {
+                if (ImGui::TreeNode("BodyCapsuleParam"))
+                {
+                    ImGui::DragFloat3("capsule_parm.start", &body_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &body_capsule_param.end.x, 0.1f);
+                    ImGui::DragFloat("body_capsule_param.rasius", &body_capsule_param.rasius, 0.1f);
+                    ImGui::TreePop();
+                }
+                if (ImGui::TreeNode("just_avoidance_capsule_param"))
+                {
+                    ImGui::DragFloat3("capsule_parm.start", &just_avoidance_capsule_param.start.x, 0.1f);
+                    ImGui::DragFloat3("capsule_parm.end", &just_avoidance_capsule_param.end.x, 0.1f);
+                    ImGui::DragFloat("just_avoidance_capsule_param.rasius", &just_avoidance_capsule_param.rasius, 0.1f);
+                    ImGui::TreePop();
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("easing"))
+            {
+                ImGui::DragFloat("avoidance_easing_time", &avoidance_easing_time, 0.1f);
+                ImGui::DragFloat("avoidance_boost_time", &avoidance_boost_time, 0.1f);
+                ImGui::DragFloat("leverage", &leverage, 0.1f);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("PlayerGameParm"))
+            {
+                ImGui::DragInt("player_health", &player_health);
+                ImGui::DragFloat("combo", &combo_count);
+                ImGui::DragFloat("attack_time", &attack_time);
+
+                ImGui::DragFloat("duration_combo_timer", &duration_combo_timer);
+                ImGui::DragInt("player_attack_power", &player_attack_power);
+                ImGui::DragFloat("invincible_timer", &invincible_timer);
+                ImGui::TreePop();
+            }
+
+            if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
+            if (ImGui::Button("TransitionIdle")) TransitionIdle();
+
+            ImGui::DragFloat("threshold", &threshold, 0.01f, 0, 1.0f);
+            ImGui::DragFloat("threshold_mesh", &threshold_mesh, 0.01f, 0, 1.0f);
+            ImGui::DragFloat("glow_time", &glow_time);
+            ImGui::DragFloat4("emissive_color", &emissive_color.x, 0.1f);
+            DirectX::XMFLOAT3 p{ position.x,position.y + step_offset_y,position.z };
+            float length_radius = Math::calc_vector_AtoB_length(p, { 0,0,0 });//距離(半径)
+            ImGui::DragFloat("l", &length_radius);
+
+            ImGui::DragFloat3("event_camera_eye", &event_camera_eye.x,0.1f);
+            ImGui::DragFloat("animation_speed", &animation_speed,0.1f);
+            ImGui::DragFloat("threshold_camera_mesh", &threshold_camera_mesh,0.1f);
+            ImGui::End();
+        }
+    }
+#endif // USE_IMGUI
+
+}
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+
+
 #ifdef USE_IMGUI
     ImGui::Begin("chain");
     if(ImGui::Button("transition chain behavior"))
@@ -204,9 +343,24 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
+        if (is_dying_update == false)
+        {
+            //覚醒状態の時は
+            if (is_awakening)
+            {
+                //モデルを映す
+                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            }
+            else
+            {
+                //モデルを消す
+                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            }
+        }
 
     }
         if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
+        threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
 #if 0
     if (is_lock_on)
@@ -328,21 +482,6 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     glow_time += 1.0f * elapsed_time;
     if (glow_time >= 3.0f) glow_time = 0;
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    if (is_dying_update == false)
-    {
-        //覚醒状態の時は
-        if (is_awakening)
-        {
-            //モデルを映す
-            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-        }
-        else
-        {
-            //モデルを消す
-            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
-        }
-    }
-    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
     SkinnedMesh::mesh_tuple armor_r_mdl = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple armor_l_mdl = std::make_tuple("armor_L_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple wing_r_mdl = std::make_tuple("wing_R_mdl", threshold_mesh);
@@ -365,7 +504,10 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
     //クリア演出中じゃないとき
-    if(during_clear == false)player_config->render(graphics.get_dc().Get());
+    if (during_clear == false && is_start_cleear_motion == false)
+    {
+        player_config->render(graphics.get_dc().Get());
+    }
 }
 
 void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
@@ -375,6 +517,7 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
     graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
     //覚醒状態の時は
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+    threshold_camera_mesh = Math::clamp(threshold_camera_mesh, 0.0f, 1.0f);
     SkinnedMesh::mesh_tuple armor_r_mdl = std::make_tuple("armor_R_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple armor_l_mdl = std::make_tuple("armor_L_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple wing_r_mdl = std::make_tuple("wing_R_mdl", threshold_mesh);
@@ -383,8 +526,9 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
     SkinnedMesh::mesh_tuple largeblade_l_mdl = std::make_tuple("largeblade_L_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple prestarmor_mdl = std::make_tuple("prestarmor_mdl", threshold_mesh);
     SkinnedMesh::mesh_tuple backpack_mdl = std::make_tuple("backpack_mdl", threshold_mesh);
+    SkinnedMesh::mesh_tuple camera_mdl = std::make_tuple("camera_mesh", threshold_camera_mesh);
 
-    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl);
+    model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 }
 
 void Player::LerpCameraTarget(float elapsed_time)

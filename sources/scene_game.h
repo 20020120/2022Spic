@@ -54,6 +54,7 @@ public:
     {
         Game,
         Tunnel,
+        Joint,
         BossPerformance,
     };
 private:
@@ -162,7 +163,9 @@ private:
 
 
     //---------ゲームクリア-----------//
-    void GameClearAct(float elapsed_time);
+    void GameClearAct(float elapsed_time, GraphicsPipeline& graphics);
+    //イベントカメラのセット
+    bool set_joint_camera{ false };
     bool is_game_clear{ false };
     // ゲームクリア
     StepFontElement game_clear_text;

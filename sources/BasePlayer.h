@@ -22,6 +22,7 @@ protected:
     DirectX::XMFLOAT3 scale{ 1.0f,1.0f,1.0f };
     float threshold;
     float threshold_mesh{ 1.0f };
+    float threshold_camera_mesh{ 1.0f };
     float glow_time;
     DirectX::XMFLOAT4 emissive_color{ 1.0f,1.0f,1.0f,0.9f };
 protected:

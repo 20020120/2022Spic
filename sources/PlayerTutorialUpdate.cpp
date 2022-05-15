@@ -5,6 +5,7 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+
     ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies,graphics);
     switch (behavior_state)
     {
@@ -54,6 +55,22 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     player_config->update(graphics, elapsed_time);
 
     if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
+    if (is_dying_update == false)
+    {
+        //ŠoÁó‘Ô‚Ì‚Í
+        if (is_awakening)
+        {
+            //ƒ‚ƒfƒ‹‚ğ‰f‚·
+            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+        }
+        else
+        {
+            //ƒ‚ƒfƒ‹‚ğÁ‚·
+            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+        }
+    }
+    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
