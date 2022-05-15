@@ -289,6 +289,9 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::FreePractice:
     {
+        is_next_tutorial = false;
+        execution_timer = 0;
+
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             //回避に遷移
@@ -429,6 +432,9 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::FreePractice:
     {
+        is_next_tutorial = false;
+        execution_timer = 0;
+
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             //回避に遷移
@@ -925,7 +931,7 @@ void Player::TransitionTutorialChargeInit()
     //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 60.0f);
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //加速のレート
@@ -1034,6 +1040,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
 #endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
+    charge_point = Math::calc_designated_point(position, forward, 100.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間
