@@ -81,8 +81,8 @@ private:
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
     //後ろに回り込める距離
-    static constexpr float  BEHIND_LANGE_MAX = 35.0f;
-    static constexpr float  BEHIND_LANGE_MIN = 10.0f;
+    static constexpr float  BEHIND_LANGE_MAX = 45.0f;
+    static constexpr float  BEHIND_LANGE_MIN = 5.0f;
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 100.0f;
     //回避の時のアニメーションスピード
@@ -310,14 +310,17 @@ public:
     CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
     {
+        //もし突進中なら突進中の当たり判定を返す
         if (is_charge)
         {
             return charge_capsule_param;
         }
+        //覚醒状態なら引数で受け取った値を渡す
         if (is_awakening)
         {
             return sword_capsule_param[i];
         }
+        //普通の剣の位置を渡す
         return sword_capsule_param[0];
     }
     float GetStunRadius() { return sphere_radius; }

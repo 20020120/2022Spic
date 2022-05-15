@@ -10,7 +10,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     switch (behavior_state)
     {
     case Player::Behavior::Normal:
-        player_attack_power = 3;
         //回り込み回避よりも進んでいたら切り替えれる
         if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
         {
@@ -864,9 +863,19 @@ void Player::TransitionTutorialCharge(float blend_second)
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingCharge, false, true, blend_second);
+    if (is_awakening)
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 1;
+        model->play_animation(AnimationClips::AwakingCharge, false, true, blend_second);
+    }
     //通常状態の時の突進アニメーションに設定
-    else model->play_animation(AnimationClips::Charge, false, true, blend_second);
+    else
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 1;
+        model->play_animation(AnimationClips::Charge, false, true, blend_second);
+    }
     //攻撃中かどうかの設定
     is_attack = true;
     //突進中かどうかの設定
@@ -889,9 +898,19 @@ void Player::TransitionTutorialCharge(float blend_second)
 void Player::TransitionTutorialAttack1(float blend_second)
 {
     //覚醒状態の時の１撃目のアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_second);
+    if (is_awakening)
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 4;
+        model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_second);
+    }
     //通常状態の時の１撃目のアニメーションに設定
-    else model->play_animation(AnimationClips::AttackType1, false, true, blend_second);
+    else
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 2;
+        model->play_animation(AnimationClips::AttackType1, false, true, blend_second);
+    }
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーションスピードの設定
@@ -912,9 +931,19 @@ void Player::TransitionTutorialAttack1(float blend_second)
 void Player::TransitionTutorialAttack2(float blend_second)
 {
     //覚醒状態の時の２撃目のアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_second);
+    if (is_awakening)
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 6;
+        model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_second);
+    }
     //通常状態の時の２撃目のアニメーションに設定
-    else model->play_animation(AnimationClips::AttackType2, false, true, blend_second);
+    else
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 4;
+        model->play_animation(AnimationClips::AttackType2, false, true, blend_second);
+    }
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
@@ -941,9 +970,19 @@ void Player::TransitionTutorialAttack2(float blend_second)
 void Player::TransitionTutorialAttack3(float blend_second)
 {
     //覚醒状態の時の３撃目のアニメーションに設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_second);
+    if (is_awakening)
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 9;
+        model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_second);
+    }
     //通常状態の時の３撃目ののアニメーションに設定
-    else model->play_animation(AnimationClips::AttackType3, false, true, blend_second);
+    else
+    {
+        //プレイヤーの攻撃力
+        player_attack_power = 5;
+        model->play_animation(AnimationClips::AttackType3, false, true, blend_second);
+    }
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定

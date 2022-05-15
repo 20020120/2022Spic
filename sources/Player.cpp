@@ -299,7 +299,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
-            player_attack_power = 3;
             if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
             {
                 transition_chain_behavior();
@@ -418,6 +417,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::Checkbox("start_dash_effect", &start_dash_effect);
                 ImGui::Checkbox("end_dash_effect", &end_dash_effect);
                 ImGui::Checkbox("is_push_lock_on_button", &is_push_lock_on_button);
+                ImGui::Checkbox("is_charge", &is_charge);
+                ImGui::Checkbox("is_attack", &is_attack);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
@@ -473,7 +474,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
     }
 #endif // USE_IMGUI
-    debug_figure->create_capsule(just_avoidance_capsule_param.start, just_avoidance_capsule_param.end, just_avoidance_capsule_param.rasius, { 1.0f,1.0f,1.0f,1.0f });
 }
 
 
@@ -724,7 +724,7 @@ void Player::TutorialInflectionParameters(float elpased_time)
 {
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
-    //攻撃力の変動
+    //攻撃力の変動(今は使ってない)
     InflectionPower(elpased_time);
     //コンボの変動
     InflectionCombo(elpased_time);
@@ -744,7 +744,7 @@ void Player::InflectionPower(float elapsed_time)
     //覚醒状態かどうか
     if (is_awakening)
     {
-        player_attack_power = player_attack_power * 2;
+        //player_attack_power *= 2;
         //player_attack_power = Math::clamp(player_attack_power, MIN_PLAYER_ATTACK_POWER, MAX_PLAYER_ATTACK_POWER * 2);
     }
     else
@@ -800,7 +800,7 @@ void Player::BodyCapsule()
 
         charge_capsule_param.start = pos;
         charge_capsule_param.end = end;
-        charge_capsule_param.rasius = 3.0f;
+        charge_capsule_param.rasius = 4.0f;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
