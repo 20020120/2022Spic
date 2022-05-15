@@ -411,7 +411,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
     case EnemyType::Count: break;
 case EnemyType::Tutorial_NoMove:
 {
-    BaseEnemy* enemy = new TutorialEnemy_NoMove(graphics_,
+    BaseEnemy* enemy = new TutorialEnemy_NoAttack(graphics_,
         Source_.mEmitterPoint,
         mEditor.fGetParam(Source_.mType));
     mEnemyVec.emplace_back(enemy);
@@ -720,7 +720,7 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     mCashEnemyVec.emplace_back(enemy);
     enemy = new LastBoss(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-    enemy = new TutorialEnemy_NoMove(graphics_);
+    enemy = new TutorialEnemy_NoAttack(graphics_);
     mCashEnemyVec.emplace_back(enemy);
 }
 
