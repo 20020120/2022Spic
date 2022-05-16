@@ -98,7 +98,30 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 										static_cast<float>(sprite_frame->get_texture2d_desc().Height) };
 	sprite_frame_parm.scale = { 1.74f,1.10f };
 	sprite_frame_parm.position = { 118.0f,-17.2f };
+	//コントローラーの画像
+	{
+		controller_base = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\base.png", 1);
+		controller_pram.texsize = { static_cast<float>(controller_base->get_texture2d_desc().Width),
+										static_cast<float>(controller_base->get_texture2d_desc().Height) };
+		controller_pram.position = { 1014.4f,259.6f };
+		controller_pram.scale = { 0.3f,0.3f };
 
+		controller_keys[ControllerSprite::A] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a.png", 1);
+		controller_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 1);
+		controller_keys[ControllerSprite::X] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\x.png", 1);
+		controller_keys[ControllerSprite::Y] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\y.png", 1);
+		controller_keys[ControllerSprite::RB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rb.png", 1);
+		controller_keys[ControllerSprite::RT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rt.png", 1);
+		controller_keys[ControllerSprite::LB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lb.png", 1);
+		controller_keys[ControllerSprite::LT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lt.png", 1);
+		controller_keys[ControllerSprite::RightStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\right_stick.png", 1);
+		controller_keys[ControllerSprite::LeftStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\left_stick.png", 1);
+		controller_keys[ControllerSprite::Cross] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\cross.png", 1);
+		controller_keys[ControllerSprite::Menu] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\menu.png", 1);
+		controller_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back.png", 1);
+		controller_back_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Width),
+										static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Height) };
+	}
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
@@ -118,6 +141,8 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[6].position = { 121.0f,49.0f };
 	tutorial_text_element[7].position = { 297.0f,69.0f };
 
+	tutorial_count_text.s = L"あと３回";
+
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
 
@@ -126,7 +151,6 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 void TutorialScene::uninitialize()
 {
 	BulletManager& mBulletManager = BulletManager::Instance();
-
 	mWaveManager.fFinalize();
 	mBulletManager.fFinalize();
 }
@@ -505,6 +529,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	switch (tutorial_state)
 	{
 	case TutorialScene::TutorialState::MoveTutorial:
+		button_priset = BottunPriset::MoveTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Lスティックで移動させる";
 		if (is_next)
@@ -528,6 +553,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
+		button_priset = BottunPriset::AvoidanceTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
 		if (is_next)
@@ -552,6 +578,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
+		button_priset = BottunPriset::LockOnTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LTボタンでロックオンする";
 		if (is_next)
@@ -579,6 +606,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
+		button_priset = BottunPriset::AttackTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Bボタンを押して攻撃";
 		if (is_next)
@@ -605,6 +633,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
+		button_priset = BottunPriset::BehindAvoidanceTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
@@ -655,6 +684,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
+		button_priset = BottunPriset::ChainAttackTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
@@ -687,6 +717,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
+		button_priset = BottunPriset::AwaikingTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Aボタンを押して覚醒";
 		sprite_tutorial_text.position = { 359.0f,408.0f };
@@ -847,6 +878,20 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		r_font_render("tutorial_text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
 
+		sprite_render("controller_base", controller_base.get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::A_)sprite_render("controller_base", controller_keys[ControllerSprite::A].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::B_)sprite_render("controller_base", controller_keys[ControllerSprite::B].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::X_)sprite_render("controller_base", controller_keys[ControllerSprite::X].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Y_)sprite_render("controller_base", controller_keys[ControllerSprite::Y].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RT_)sprite_render("controller_base", controller_keys[ControllerSprite::RT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RB_)sprite_render("controller_base", controller_keys[ControllerSprite::RB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LT_)sprite_render("controller_base", controller_keys[ControllerSprite::LT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LB_)sprite_render("controller_base", controller_keys[ControllerSprite::LB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RightStick_)sprite_render("controller_base", controller_keys[ControllerSprite::RightStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
+		sprite_render("controller_back", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI

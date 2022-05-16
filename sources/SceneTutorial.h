@@ -1,4 +1,5 @@
 #pragma once
+#include<vector>
 #include "Scene.h"
 #include "camera.h"
 #include "CameraManager.h"
@@ -25,6 +26,37 @@
 #include "BulletManager.h"
 #include "tunnel.h"
 #include "sprite_dissolve.h"
+
+//コントローラーの画像のボタンのプリセットbit演算では_を最後に付ける
+enum class BottunPriset : uint16_t
+{
+    A_ = (1 << 0),
+    B_ = (1 << 1),
+    X_ = (1 << 2),
+    Y_ = (1 << 3),
+    RB_ = (1 << 4),
+    RT_ = (1 << 5),
+    LB_ = (1 << 6),
+    LT_ = (1 << 7),
+    RightStick_ = (1 << 8),
+    LeftStick_ = (1 << 9),
+    Cross_ = (1 << 10),
+    Menu_ = (1 << 11),
+    Back_ = (1 << 12),
+
+    MoveTutorialPriset = RightStick_ | LeftStick_,
+    AvoidanceTutorialPriset = RB_ | RT_,
+    LockOnTutorialPriset = LT_,
+    AttackTutorialPriset = B_,
+    BehindAvoidanceTutorialPriset = RB_ | RT_,
+    ChainAttackTutorialPriset = LB_,
+    AwaikingTutorialPriset = A_,
+};
+
+inline bool operator&(BottunPriset lhs, BottunPriset rhs)
+{
+    return static_cast<uint16_t>(lhs) & static_cast<uint16_t>(rhs);
+}
 
 class TutorialScene : public Scene, public PracticalEntities
 {
@@ -129,7 +161,7 @@ private:
     //説明文用の構造体
     struct StepFontElement
     {
-        std::wstring s = L"UI";
+        std::wstring s = L"";
         DirectX::XMFLOAT2 position{};
         DirectX::XMFLOAT2 scale{ 0.7f, 0.7f };
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
@@ -236,5 +268,32 @@ private:
     std::unique_ptr<SpriteBatch> sprite_tutorial_frame{ nullptr };
     //フレームのパラメータ
     Element frame_pram;
+private:
+    //コントローラーのボタンの画像
+    enum ControllerSprite
+    {
+        A,//Aボタン
+        B,//Bボタン
+        X,//Xボタン
+        Y,//Yボタン
+        RT,//RTボタン
+        RB,//RBボタン
+        LT,//LTボタン
+        LB,//LBボタン
+        RightStick,//RightStickボタン
+        LeftStick,//LeftStickボタン
+        Cross,//十字ボタン
+        Menu,//メニューボタン
+        Back,//バックボタン
+
+        End
+    };
+    BottunPriset button_priset = BottunPriset::MoveTutorialPriset;
+    //コントローラーの画像
+    std::unique_ptr<SpriteBatch> controller_base{ nullptr };
+    std::unique_ptr<SpriteBatch> controller_keys[ControllerSprite::End]{ nullptr };
+    //コントローラーの画像のパラメータ
+    Element controller_pram;
+    Element controller_back_pram;
 
 };
