@@ -90,6 +90,8 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
 
     mBombEffect->play(effect_manager->get_effekseer_manager(), mPosition, 2.0f);
+
+    if (mIsStun) mStunEffect->stop(effect_manager->get_effekseer_manager());
     // カメラシェイク
     camera_shake->reset(Graphics_);
 }

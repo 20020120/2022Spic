@@ -219,6 +219,7 @@ void ArcherEnemy_Ace::fIdleInit()
 void ArcherEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mStayTimer += elapsedTime_;
+    fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
     fChangeState(DivedState::Move);
