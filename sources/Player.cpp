@@ -496,6 +496,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
+}
+
+void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
+{
+    graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
     //ÉNÉäÉAââèoíÜÇ∂Ç·Ç»Ç¢Ç∆Ç´
     if (during_clear == false && is_start_cleear_motion == false)
     {

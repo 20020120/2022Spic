@@ -593,6 +593,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
 	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
+	player->ConfigRender(graphics, elapsed_time);
     if (during_clear == false && is_game_clear == false)
 	{
 		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());

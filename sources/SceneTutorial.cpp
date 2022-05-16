@@ -439,7 +439,7 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
-
+	player->ConfigRender(graphics, elapsed_time);
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	TutorialRender(graphics, elapsed_time);
