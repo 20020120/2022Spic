@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfirst.fbx",false,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentysecond.fbx",false,60.0f);
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -30,6 +30,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[6] = model->get_bone_by_name("shortsword_joint");
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
     player_bones[8] = model->get_bone_by_name("camera_joint");
+    player_bones[9] = model->get_bone_by_name("camera_focus_joint");
     //エフェクト
     player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
@@ -159,6 +160,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
     //カメラのジョイントの位置を更新し続ける
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
     //プレイヤーの位置は原点に移動
     position = { 0,0,0 };
 

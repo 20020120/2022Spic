@@ -58,6 +58,8 @@ private:
         TitleAnimationStartIdle,//タイトルモーション3
         TitleAnimationEnd,//タイトルモーション4
         TitleAnimationEndIdle,//タイトルモーション5
+        AwaikingScene,//チュートリアルの覚醒のときに流す
+        AwaikingSceneIdle
     };
 public:
     void Initialize()override;
@@ -256,7 +258,7 @@ private:
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
 
-    skeleton::bone player_bones[9];
+    skeleton::bone player_bones[10];
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
