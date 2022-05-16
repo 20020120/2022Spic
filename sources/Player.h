@@ -516,10 +516,10 @@ private:
     void TransitionOpportunity();
     //ダメージ受けたときに遷移
     void TransitionDamage();
-    //人型に変形に遷移
-    void TransitionTransformHum();
     //飛行機モードに遷移
     void TransitionTransformWing();
+    //人型に変形に遷移
+    void TransitionTransformHum();
     //覚醒状態に遷移
     void TransitionAwaking();
     //通常状態に遷移
@@ -540,7 +540,8 @@ public:
     void TransitionStartMothin();
     //ステージ移動に遷移
     void TransitionStageMove();
-
+    //ステージ遷移終了
+    void TransitionStageMoveEnd();
     //クリアに関すること
 private:
     //モーション

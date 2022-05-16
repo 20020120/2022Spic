@@ -290,10 +290,17 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     ImGui::Text("search_time:%f", search_time);
     ImGui::End();
 #endif // USE_IMGUI
-    //クリア演出中じゃないとき
-    if (during_clear == false)
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
+    //クリア演出中
+    if (during_clear)
     {
-        ExecFuncUpdate(elapsed_time, sky_dome, enemies,graphics);
+        //モデルを映す
+        if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+
+    }
+    //クリア演出中じゃないとき
+    else
+    {
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
@@ -356,8 +363,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
 
     }
-        if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
-        threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+
+    if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
+    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
 #if 0
     if (is_lock_on)
