@@ -177,7 +177,7 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/shot_bow.wav", SE_INDEX::SHOT_BOW, 0.1f);
 	register_se(L"resources/Audios/SE/cannon.wav", SE_INDEX::CANNON, 0.1f);
 	register_se(L"resources/Audios/SE/heart_beat.wav", SE_INDEX::HEART_BEAT, 0.1f);
-	register_se(L"resources/Audios/SE/open_fire.wav", SE_INDEX::OPEN_FIRE, 0.1f);
+	register_se(L"resources/Audios/SE/open_fire.wav", SE_INDEX::OPEN_FIRE, 0.1f, LOOP_INFINITY);
 	register_se(L"resources/Audios/SE/transform1.wav", SE_INDEX::TRANSFORM1, 0.1f);
 	register_se(L"resources/Audios/SE/transform2.wav", SE_INDEX::TRANSFORM2, 0.1f);
 	register_se(L"resources/Audios/SE/transform3.wav", SE_INDEX::TRANSFORM3, 0.1f);
@@ -272,7 +272,14 @@ void AudioManager::set_all_volume_se(float volume)
 {
 	for (int i = 0; i < static_cast<int>(SE_INDEX::SE_COUNT); i++)
 	{
-		set_volume_se(static_cast<SE_INDEX>(i), volume);
+		if(i == static_cast<int>(SE_INDEX::OPEN_FIRE))
+		{
+			set_volume_se(SE_INDEX::OPEN_FIRE, volume * 0.03f);
+		}
+		else
+		{
+			set_volume_se(static_cast<SE_INDEX>(i), volume);
+		}
 	}
 }
 
