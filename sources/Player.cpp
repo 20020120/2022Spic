@@ -1234,6 +1234,7 @@ void Player::LockOn()
                     //まだロックオンしていなかったらカメラに渡す用の変数にtrueを入れる
                     if (is_lock_on == false)
                     {
+                        audio_manager->play_se(SE_INDEX::ROCK_ON);
                         //ターゲットに入れる(最初の一回だけ)
                         //old_target = end_target;
                         target_lerp_rate = 0;
@@ -1336,6 +1337,7 @@ void Player::TutorialLockOn()
                     //まだロックオンしていなかったらカメラに渡す用の変数にtrueを入れる
                     if (is_lock_on == false)
                     {
+                        audio_manager->play_se(SE_INDEX::ROCK_ON);
                         //ターゲットに入れる(最初の一回だけ)
                         //old_target = end_target;
                         target_lerp_rate = 0;

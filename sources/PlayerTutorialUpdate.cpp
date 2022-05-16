@@ -268,6 +268,25 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     }
     case Player::TutorialState::ChainAttackTutorial:
     {
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        {
+            //回避に遷移
+            float length{ Math::calc_vector_AtoB_length(position, target) };
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionTutorialBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionTutorialAvoidance();
+
+        }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionTutorialChargeInit();
+        }
+
         break;
     }
     case Player::TutorialState::AwaikingTutorial:
@@ -538,6 +557,9 @@ void Player::TutorialChargeinitUpdate(float elapsed_time, SkyDome* sky_dome, std
 
 void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    //エフェクトの位置，回転設定
+    player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(), position);
+    player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
     start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
     //ChargeAcceleration(elapsed_time);
@@ -592,6 +614,8 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             {
                 audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
                 audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+                //エフェクト再生
+                player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 charge_change_direction_count--;
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
@@ -693,6 +717,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
     }
     if (model->end_of_animation())
     {
+
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
@@ -766,6 +791,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     if (model->end_of_animation())
     {
+
         if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -1008,6 +1034,8 @@ void Player::TransitionTutorialChargeInit()
 void Player::TransitionTutorialCharge(float blend_second)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+    //エフェクト再生
+    player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
@@ -1079,6 +1107,7 @@ void Player::TransitionTutorialAttack1(float blend_second)
 void Player::TransitionTutorialAttack2(float blend_second)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
     //覚醒状態の時の２撃目のアニメーションに設定
     if (is_awakening)
     {
@@ -1120,6 +1149,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
 void Player::TransitionTutorialAttack3(float blend_second)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
     //覚醒状態の時の３撃目のアニメーションに設定
     if (is_awakening)
     {

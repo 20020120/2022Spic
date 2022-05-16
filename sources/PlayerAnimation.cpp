@@ -197,6 +197,9 @@ void Player::ChargeInitUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    //エフェクトの位置，回転設定
+    player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(), position);
+    player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
     start_dash_effect = false;
     charge_time += charge_add_time * elapsed_time;
     //ChargeAcceleration(elapsed_time);
@@ -205,6 +208,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         end_dash_effect = true;
         velocity.x *= 0.2f;
@@ -247,6 +252,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
+                //エフェクト再生
+                player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
                 audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
 
@@ -375,7 +382,6 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 #endif // 0
     if (model->end_of_animation())
     {
-        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
@@ -475,7 +481,6 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 
     if (model->end_of_animation())
     {
-        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
 
         if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
         {
@@ -861,6 +866,8 @@ void Player::TransitionChargeInit()
 void Player::TransitionCharge(float blend_seconds)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+    //エフェクト再生
+    player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
