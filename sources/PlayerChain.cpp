@@ -326,7 +326,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		if (is_stun && !setup_search_time) // ƒXƒ^ƒ“‚µ‚½“G‚ª‚¢‚éŽž‚¾‚¯ŒvŽZ
 		{
 			const int MAX_FLUCTUATION_COUNT = 6;
-			const float MAX_SEARCH_TIME = 3.0f;
+			const float MAX_SEARCH_TIME = 1.5f;
 			const float MIN_SEARCH_TIME = 0.5f;
 
 			stun_enemy_count = (std::min)(stun_enemy_count, MAX_FLUCTUATION_COUNT);
@@ -406,8 +406,8 @@ void Player::transition_chain_lockon_begin()
 {
 	is_chain_attack = true;
 
-	if (is_awakening) { model->play_animation(AwakingChargeInit); }
-	else { model->play_animation(ChargeInit); }
+	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
+	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
 }
 

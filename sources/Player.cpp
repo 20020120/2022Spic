@@ -282,6 +282,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     {
         transition_chain_behavior();
     }
+    ImGui::Text("search_time:%f", search_time);
     ImGui::End();
 #endif // USE_IMGUI
     //ƒNƒŠƒA‰‰o’†‚¶‚á‚È‚¢‚Æ‚«
