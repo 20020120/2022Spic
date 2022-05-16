@@ -24,7 +24,7 @@ extern ImWchar glyphRangesJapanese[];
 CONST LONG SCREEN_WIDTH{ 1280 };
 CONST LONG SCREEN_HEIGHT{ 720 };
 CONST BOOL FULLSCREEN{ FALSE };
-CONST LPCWSTR APPLICATION_NAME{ L"X3DGP" };
+CONST LPCWSTR APPLICATION_NAME{ L"ˆê‹@“¢‘M" };
 
 
 class framework : public PracticalEntities
