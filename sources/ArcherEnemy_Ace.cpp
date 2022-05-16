@@ -442,7 +442,7 @@ void ArcherEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     }
 }
 
-void ArcherEnemy_Ace::fSetStun(bool Arg_)
+void ArcherEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
     if (mIsStun)

@@ -53,9 +53,9 @@ void BossUnit::fUpdateAttackCapsule()
     throw std::logic_error("Not implemented");
 }
 
-void BossUnit::fSetStun(bool arg)
+void BossUnit::fSetStun(bool Arg_, bool IsJust_)
 {
-    BaseEnemy::fSetStun(arg);
+    mIsStun = Arg_;
     if (mIsStun)
     {
         fResetLaser();

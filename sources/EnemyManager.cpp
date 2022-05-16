@@ -420,7 +420,7 @@ case EnemyType::Tutorial_NoMove:
     mEnemyVec.emplace_back(enemy);
 }
     break;
-case EnemyType::Boss_Unit:\
+case EnemyType::Boss_Unit:
     break;
     default:;
     }

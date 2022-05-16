@@ -39,7 +39,7 @@ public:
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
     
     //--------------------<セッター関数>--------------------//
-    virtual void fSetStun(bool Arg_);
+    virtual void fSetStun(bool Arg_, bool IsJust_ = false);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
     void fSetAttack(bool Arg_);
     void fSetIsLockOnOfChain(bool RockOn_);

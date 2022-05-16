@@ -118,7 +118,7 @@ void LastBoss::fUpdateAttackCapsule()
 }
 
 
-void LastBoss::fSetStun(bool arg)
+void LastBoss::fSetStun(bool Arg_, bool IsJust_)
 {
     //BaseEnemy::fSetStun(arg);
 }

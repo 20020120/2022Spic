@@ -189,7 +189,7 @@ public:
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
     
-    void fSetStun(bool Arg_) override;
+    void fSetStun(bool Arg_, bool IsJust_) override;
      
     //--------------------<タレットの関数>--------------------//
     skeleton::bone mShipFace{}; // タレットのボーンの位置

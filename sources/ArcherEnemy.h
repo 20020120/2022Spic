@@ -102,7 +102,7 @@ private:
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
-    void fSetStun(bool Arg_) override;
+    void fSetStun(bool Arg_, bool IsJust_ = false) override;
    
 private:  
     //****************************************************************

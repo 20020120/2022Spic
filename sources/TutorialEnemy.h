@@ -52,16 +52,16 @@ private:
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
-    void fSetStun(bool Arg_) override;
+    void fSetStun(bool Arg_, bool IsJust_) override;
 };
 
-inline void TutorialEnemy_NoAttack::fSetStun(bool arg)
+inline void TutorialEnemy_NoAttack::fSetStun(bool Arg_, bool IsJust_)
 {
-    if(arg)
+    if(Arg_)
     {
         fChangeState(DivideState::Stun);
     }
-    mIsStun = arg;
+    mIsStun = Arg_;
 }
 
 
@@ -124,16 +124,16 @@ private:
     void fStunInit();
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
-    void fSetStun(bool Arg_) override;
+    void fSetStun(bool Arg_, bool IsJust_) override;
 };
 
-inline void TutorialEnemy::fSetStun(bool arg)
+inline void TutorialEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
-    if (arg)
+    if (Arg_)
     {
         fChangeState(DivideState::Stun);
     }
-    mIsStun = arg;
+    mIsStun = Arg_;
 }
 
 
