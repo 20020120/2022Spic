@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <memory>
 #include "SwordTrail.h"
 #include "Player.h"
 
@@ -248,30 +249,42 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					reticles.clear();
+
 					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
-
-				for (int i = 0; i < enemies.size(); ++i)
+				else
 				{
-					bool registered = false;
-					for (auto index : chain_lockon_enemy_indexes)
+					for (int i = 0; i < enemies.size(); ++i)
 					{
-						if (index == i) // 一度登録したインデックスは登録しない
+						bool registered = false;
+						for (auto index : chain_lockon_enemy_indexes)
 						{
-							registered = true;
-							break;
+							if (index == i) // 一度登録したインデックスは登録しない
+							{
+								registered = true;
+								break;
+							}
+						}
+						if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
+						{
+							chain_lockon_enemy_indexes.emplace_back(i); // 登録
+							LockOnSuggest enemy_suggest; // サジェスト登録
+							enemy_suggest.position = enemies.at(i)->fGetPosition();
+							lockon_suggests.emplace_back(enemy_suggest);
+
+							enemies.at(i)->fSetIsLockOnOfChain(true);
+							// reticle生成
+							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
 						}
 					}
-					if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
+					// reticleの更新
+					for (size_t index = 0; index < reticles.size(); ++index)
 					{
-						chain_lockon_enemy_indexes.emplace_back(i); // 登録
-						LockOnSuggest enemy_suggest; // サジェスト登録
-						enemy_suggest.position = enemies.at(i)->fGetPosition();
-						lockon_suggests.emplace_back(enemy_suggest);
-
-						enemies.at(i)->fSetIsLockOnOfChain(true);
+						reticles.at(index)->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+						reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
 					}
 				}
 			}
@@ -308,30 +321,42 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				/*キャンセルがあれがここへ*/
 				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
 				{
+					reticles.clear();
+
 					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
-
-				for (int i = 0; i < enemies.size(); ++i)
+				else
 				{
-					bool registered = false;
-					for (auto index : chain_lockon_enemy_indexes)
+					for (int i = 0; i < enemies.size(); ++i)
 					{
-						if (index == i) // 一度登録したインデックスは登録しない
+						bool registered = false;
+						for (auto index : chain_lockon_enemy_indexes)
 						{
-							registered = true;
-							break;
+							if (index == i) // 一度登録したインデックスは登録しない
+							{
+								registered = true;
+								break;
+							}
+						}
+						if (!registered && enemies.at(i)->fGetStun() && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+						{
+							chain_lockon_enemy_indexes.emplace_back(i); // 登録
+							LockOnSuggest enemy_suggest; // サジェスト登録
+							enemy_suggest.position = enemies.at(i)->fGetPosition();
+							lockon_suggests.emplace_back(enemy_suggest);
+
+							enemies.at(i)->fSetIsLockOnOfChain(true);
+							// reticle生成
+							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
 						}
 					}
-					if (!registered && enemies.at(i)->fGetStun() && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+					// reticleの更新
+					for (size_t index = 0; index < reticles.size(); ++index)
 					{
-						chain_lockon_enemy_indexes.emplace_back(i); // 登録
-						LockOnSuggest enemy_suggest; // サジェスト登録
-						enemy_suggest.position = enemies.at(i)->fGetPosition();
-						lockon_suggests.emplace_back(enemy_suggest);
-
-						enemies.at(i)->fSetIsLockOnOfChain(true);
+						reticles.at(index)->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+						reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
 					}
 				}
 			}
@@ -584,6 +609,13 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	}
 #endif // CHAIN_DEBUG
 
+	// reticleの更新
+	for (size_t index = 0; index < reticles.size(); ++index)
+	{
+		reticles.at(index)->update(Graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+		reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
+	}
+
 	// 軌跡
 	if (is_awakening)
 	{
@@ -655,6 +687,8 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				enemy->fSetIsLockOnOfChain(false);
 			}
 
+
+			reticles.clear();
 			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
 			transition_chain_search(); /*リセット*/ transition_normal_behavior();

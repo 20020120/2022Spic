@@ -506,6 +506,11 @@ void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
     {
         player_config->render(graphics.get_dc().Get());
     }
+
+    for (const auto& reticle : reticles)
+    {
+        reticle->render(graphics.get_dc().Get());
+    }
 }
 
 void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
