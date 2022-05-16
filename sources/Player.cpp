@@ -727,6 +727,8 @@ void Player::InflectionParameters(float elapsed_time)
     StunSphere();
     //無敵時間の減少
     invincible_timer -= 1.0f * elapsed_time;
+    //回り込み回避のクールタイム
+    behaind_avoidance_cool_time -= 1.0f * elapsed_time;
 }
 
 void Player::TutorialInflectionParameters(float elpased_time)
@@ -745,6 +747,8 @@ void Player::TutorialInflectionParameters(float elpased_time)
     StunSphere();
     //無敵時間の減少
     invincible_timer -= 1.0f * elpased_time;
+    //回り込み回避のクールタイム
+    behaind_avoidance_cool_time -= 1.0f * elpased_time;
 }
 
 void Player::InflectionPower(float elapsed_time)

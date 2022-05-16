@@ -83,7 +83,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
             TransitionBehindAvoidance();
         }
@@ -112,7 +112,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
             TransitionBehindAvoidance();
         }
@@ -170,6 +170,8 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //BehindAvoidanceMove(elapsed_time);
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,1.0f))
     {
+        if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
+        else   behaind_avoidance_cool_time = 0.5f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;
