@@ -287,6 +287,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							enemies.at(i)->fSetIsLockOnOfChain(true);
 							// reticle生成
 							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
+
+							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
 					}
 					// reticleの更新
@@ -301,6 +303,9 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			{
 				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/
 				{
+					reticles.clear();
+
+					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
@@ -375,6 +380,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 							enemies.at(i)->fSetIsLockOnOfChain(true);
 							// reticle生成
 							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
+
+							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
 					}
 					// reticleの更新
@@ -389,6 +396,9 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			{
 				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/
 				{
+					reticles.clear();
+
+					chain_cancel = true;
 					transition_chain_search(); /*リセット*/
 					transition_normal_behavior();
 				}
@@ -409,6 +419,8 @@ void Player::transition_chain_lockon_begin()
 	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
+
+	audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
 }
 
 void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
@@ -630,6 +642,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	if (transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
 	{
 		assert(transit_index != 0 && "意図していない挙動になっています");
+		audio_manager->play_se(SE_INDEX::AVOIDANCE);
 		transition_chain_attack(); // 攻撃ステートへ
 	}
 #endif // CHAIN_DEBUG
