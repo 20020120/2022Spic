@@ -10,6 +10,7 @@
 #include"graphics_pipeline.h"
 #include "Common.h"
 #include"game_icon.h"
+#include "effect.h"
 
 class Player :public BasePlayer, private PlayerMove
 {
@@ -68,6 +69,9 @@ public:
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
 private:
+    std::unique_ptr<Effect> player_behind_effec;
+
+private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 50;
     //突進時間
@@ -84,7 +88,7 @@ private:
     static constexpr float  BEHIND_LANGE_MAX = 45.0f;
     static constexpr float  BEHIND_LANGE_MIN = 5.0f;
     //コンボの最大数
-    static constexpr float MAX_COMBO_COUNT = 100.0f;
+    static constexpr float MAX_COMBO_COUNT = 30.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
     //突進開始の時のアニメーションスピード

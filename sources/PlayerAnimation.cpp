@@ -160,17 +160,16 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //behind_timer += 2.0f * elapsed_time;
-
+    player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
     //BehindAvoidanceMove(elapsed_time);
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,1.0f))
     {
+        player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
         //ジャスト回避のフラグを初期化
         is_just_avoidance = false;
-        //ロックオンしている敵をスタンさせる
-        if(target_enemy != nullptr)target_enemy->fSetStun(true);
         TransitionIdle();
     }
     else
@@ -754,7 +753,24 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
-    if (is_just_avoidance_capsul) is_just_avoidance = true;
+    if (is_just_avoidance_capsul)
+    {
+        //ロックオンしている敵をスタンさせる
+        if (target_enemy != nullptr)
+        {
+            target_enemy->fSetStun(true, true);
+        }
+        is_just_avoidance = true;
+    }
+    else
+    {
+        if (target_enemy != nullptr)
+        {
+            //ロックオンしている敵をスタンさせる
+            target_enemy->fSetStun(true);
+        }
+    }
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), position);
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;

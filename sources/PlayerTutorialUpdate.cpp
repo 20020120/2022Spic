@@ -495,8 +495,11 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
 
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
+
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 1.0f))
     {
+        player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
@@ -504,6 +507,10 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
         //もしチュートリアルが回り込み回避なら
         if (tutorial_state == TutorialState::BehindAvoidanceTutorial) is_next_tutorial = true;
         TransitionTutoriaIdle();
+    }
+    else
+    {
+        is_lock_on = true;
     }
     UpdateBehindAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
@@ -888,7 +895,24 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
-    if (is_just_avoidance_capsul) is_just_avoidance = true;
+    if (is_just_avoidance_capsul)
+    {
+        //ロックオンしている敵をスタンさせる
+        if (target_enemy != nullptr)
+        {
+            target_enemy->fSetStun(true,true);
+        }
+        is_just_avoidance = true;
+    }
+    else
+    {
+        if (target_enemy != nullptr)
+        {
+            //ロックオンしている敵をスタンさせる
+            target_enemy->fSetStun(true);
+        }
+    }
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), position);
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -912,8 +936,6 @@ void Player::TransitionTutorialBehindAvoidance()
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    //ロックオンしている敵をスタンさせる
-    target_enemy->fSetStun(true);
     //背後に回り込むときの関数に切り替える
     player_tutorial_activity = &Player::TutorialBehindAvoidanceUpdate;;
 }
