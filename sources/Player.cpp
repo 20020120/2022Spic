@@ -31,9 +31,9 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
     player_bones[8] = model->get_bone_by_name("camera_joint");
     //エフェクト
-    player_behind_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
+    player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
-
+    player_slash_hit_effec      = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
 }
 
 Player::~Player()
