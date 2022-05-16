@@ -24,7 +24,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         CameraReset();
         break;
     case Player::Behavior::Chain:
-
         break;
     default:
         break;
@@ -251,7 +250,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -273,7 +272,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -296,7 +295,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -322,7 +321,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -394,7 +393,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -416,7 +415,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -439,7 +438,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -465,7 +464,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             //‰ñ”ğ‚É‘JˆÚ
             float length{ Math::calc_vector_AtoB_length(position, target) };
             //Œã‚ë‚É‰ñ‚è‚ß‚é‹——£‚È‚ç‰ñ‚è‚İ‚æ‚¤‚ÌUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
             {
                 TransitionTutorialBehindAvoidance();
             }
@@ -529,13 +528,19 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
 
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 1.0f))
     {
+        if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
+        else         behaind_avoidance_cool_time = 0.5f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;
         is_behind_avoidance = false;
         is_just_avoidance = false;
         //‚à‚µƒ`ƒ…[ƒgƒŠƒAƒ‹‚ª‰ñ‚è‚İ‰ñ”ğ‚È‚ç
-        if (tutorial_state == TutorialState::BehindAvoidanceTutorial) is_next_tutorial = true;
+        if (tutorial_state == TutorialState::BehindAvoidanceTutorial)
+        {
+            tutorial_action_count--;
+            if(tutorial_action_count <= 0)is_next_tutorial = true;
+        }
         TransitionTutoriaIdle();
     }
     else
@@ -567,7 +572,9 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     //“ËiŠÔ‚ğ’´‚¦‚½‚ç‚»‚ê‚¼‚ê‚Ì‘JˆÚ‚É‚Æ‚Ô
     if (charge_time > CHARGE_MAX_TIME)
     {
+
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+        PostEffect::clear_post_effect();
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
@@ -597,6 +604,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
         if (is_enemy_hit)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+            PostEffect::clear_post_effect();
             end_dash_effect = true;
             //“G‚É“–‚½‚Á‚ÄUŒ‚ƒ{ƒ^ƒ“(“Ëiƒ{ƒ^ƒ“)‚ğ‰Ÿ‚µ‚½‚çˆêŒ‚–Ú
             is_charge = false;

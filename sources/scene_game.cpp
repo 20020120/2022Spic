@@ -192,7 +192,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			if (Math::equal_check(tunnel_alpha, 0.0f, 0.01f))
 			{
 				cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
-				player->TransitionIdle();
+				player->TransitionStageMoveEnd();
 				tunnel_alpha = 0.0f;
 				during_clear = false;
 			}
@@ -288,11 +288,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-	if (player->GetEndDashEffect())
-	{
-		post_effect->clear_post_effect();
-		player->SetEndDashEffect(false);
-	}
 
 
 	enemy_hp_gauge->update(graphics, elapsed_time);

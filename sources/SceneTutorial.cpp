@@ -77,6 +77,11 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	change_scene_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
+	arrow_mark = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\arrow_mark.png", 1);
+	arrow_mark_pram.position = { 300.8f,288.6f };
+	arrow_mark_pram.scale = { 0.5f,0.5f };
+	arrow_mark_pram.angle = 45.0f;
+	arrow_mark_pram.texsize = { static_cast<float>(arrow_mark->get_texture2d_desc().Width),static_cast<float>(arrow_mark->get_texture2d_desc().Height) };
 
 	sprite_tutorial_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\back.png", 1);
 	frame_pram.position = { 0.0f,0.0f };
@@ -93,7 +98,30 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 										static_cast<float>(sprite_frame->get_texture2d_desc().Height) };
 	sprite_frame_parm.scale = { 1.74f,1.10f };
 	sprite_frame_parm.position = { 118.0f,-17.2f };
+	//コントローラーの画像
+	{
+		controller_base = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\base.png", 1);
+		controller_pram.texsize = { static_cast<float>(controller_base->get_texture2d_desc().Width),
+										static_cast<float>(controller_base->get_texture2d_desc().Height) };
+		controller_pram.position = { 1014.4f,259.6f };
+		controller_pram.scale = { 0.3f,0.3f };
 
+		controller_keys[ControllerSprite::A] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a.png", 1);
+		controller_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 1);
+		controller_keys[ControllerSprite::X] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\x.png", 1);
+		controller_keys[ControllerSprite::Y] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\y.png", 1);
+		controller_keys[ControllerSprite::RB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rb.png", 1);
+		controller_keys[ControllerSprite::RT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rt.png", 1);
+		controller_keys[ControllerSprite::LB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lb.png", 1);
+		controller_keys[ControllerSprite::LT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lt.png", 1);
+		controller_keys[ControllerSprite::RightStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\right_stick.png", 1);
+		controller_keys[ControllerSprite::LeftStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\left_stick.png", 1);
+		controller_keys[ControllerSprite::Cross] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\cross.png", 1);
+		controller_keys[ControllerSprite::Menu] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\menu.png", 1);
+		controller_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back.png", 1);
+		controller_back_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Width),
+										static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Height) };
+	}
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
@@ -113,6 +141,8 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[6].position = { 121.0f,49.0f };
 	tutorial_text_element[7].position = { 297.0f,69.0f };
 
+	tutorial_count_text.s = L"あと３回";
+
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
 
@@ -121,7 +151,6 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 void TutorialScene::uninitialize()
 {
 	BulletManager& mBulletManager = BulletManager::Instance();
-
 	mWaveManager.fFinalize();
 	mBulletManager.fFinalize();
 }
@@ -274,11 +303,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-	if (player->GetEndDashEffect())
-	{
-		post_effect->clear_post_effect();
-		player->SetEndDashEffect(false);
-	}
 
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
@@ -498,10 +522,14 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	}
 
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
+	std::wstring count_text_first = L"あと";
+	std::wstring count_text_count = std::to_wstring(player->GetTutorialCount());
+	std::wstring count_text_last = L"回";
 
 	switch (tutorial_state)
 	{
 	case TutorialScene::TutorialState::MoveTutorial:
+		button_priset = BottunPriset::MoveTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Lスティックで移動させる";
 		if (is_next)
@@ -525,6 +553,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		break;
 	case TutorialScene::TutorialState::AvoidanceTutorial:
+		button_priset = BottunPriset::AvoidanceTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"RB,RT,ボタンを押して回避する";
 		if (is_next)
@@ -549,6 +578,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::LockOnTutorial:
+		button_priset = BottunPriset::LockOnTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LTボタンでロックオンする";
 		if (is_next)
@@ -576,6 +606,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::AttackTutorial:
+		button_priset = BottunPriset::AttackTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Bボタンを押して攻撃";
 		if (is_next)
@@ -583,6 +614,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
 			{
+				//回数を設定
+				player->SetTutorialCount(3);
 				//次のステートに設定
 				tutorial_state = TutorialState::BehindAvoidanceTutorial;
 				//次に進むフラグの初期化
@@ -600,9 +633,11 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
+		button_priset = BottunPriset::BehindAvoidanceTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
-
+		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
+		tutorial_count_text.position = { 800.0f,120.0f };
 		//画像のチュートリアルのパラメータ設定
 		sprite_tutorial_text.position = { 265.0f,392.0f };
 		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます";
@@ -623,6 +658,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
 			{
+				//回数を設定
+				player->SetTutorialCount(3);
 				//次のステートに設定
 				tutorial_state = TutorialState::ChainAttackTutorial;
 				//次に進むフラグの初期化
@@ -647,8 +684,10 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::ChainAttackTutorial:
+		button_priset = BottunPriset::ChainAttackTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
+		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
 		if (is_next)
 		{
 			Judea_timer += 1.0f * elapsed_time;
@@ -678,10 +717,36 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 
 		break;
 	case TutorialScene::TutorialState::AwaikingTutorial:
+		button_priset = BottunPriset::AwaikingTutorialPriset;
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"Aボタンを押して覚醒";
 		sprite_tutorial_text.position = { 359.0f,408.0f };
 		sprite_tutorial_text.s = L"覚醒状態の時は敵がスタンしていない場合でも\nロックオンをしチェイン攻撃を行うことができます";
+		arrow_rate += 1.0f * elapsed_time;
+		if (arrow_move_change)
+		{
+			if (arrow_rate > 1.0f)
+			{
+				arrow_rate = 0.0f;
+				arrow_move_change = false;
+			}
+			else
+			{
+				arrow_mark_pram.position = Math::lerp({ 339.5f,255.0f }, { 300.8f,288.6f }, arrow_rate);
+			}
+		}
+		else
+		{
+			if (arrow_rate > 1.0f)
+			{
+				arrow_rate = 0.0f;
+				arrow_move_change = true;
+			}
+			else
+			{
+				arrow_mark_pram.position = Math::lerp({ 300.8f,288.6f }, { 339.5f,255.0f }, arrow_rate);
+			}
+		}
 		if (is_next)
 		{
 			//ジャスト回避の説明をする
@@ -771,6 +836,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		if (ImGui::TreeNode(gui_name.c_str()))
 		{
 			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
+			ImGui::DragFloat("angle", &e.angle, 0.1f);
 			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
 			ImGui::DragFloat4("color", &e.color.x, 0.01f);
 			ImGui::TreePop();
@@ -812,6 +878,20 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		r_font_render("tutorial_text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
 
+		sprite_render("controller_base", controller_base.get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::A_)sprite_render("controller_base", controller_keys[ControllerSprite::A].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::B_)sprite_render("controller_base", controller_keys[ControllerSprite::B].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::X_)sprite_render("controller_base", controller_keys[ControllerSprite::X].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Y_)sprite_render("controller_base", controller_keys[ControllerSprite::Y].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RT_)sprite_render("controller_base", controller_keys[ControllerSprite::RT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RB_)sprite_render("controller_base", controller_keys[ControllerSprite::RB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LT_)sprite_render("controller_base", controller_keys[ControllerSprite::LT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LB_)sprite_render("controller_base", controller_keys[ControllerSprite::LB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RightStick_)sprite_render("controller_base", controller_keys[ControllerSprite::RightStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
+		sprite_render("controller_back", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI
@@ -872,6 +952,17 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
 	check_mark->end(graphics.get_dc().Get());
 
+	//回り込み回避の時とチェイン攻撃の時にしかうつさない
+	if (tutorial_state == TutorialState::BehindAvoidanceTutorial || tutorial_state == TutorialState::ChainAttackTutorial)
+	{
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render("tutorial_count_text",tutorial_count_text);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+	}
+	if (tutorial_state == TutorialState::AwaikingTutorial)
+	{
+		sprite_render("arrow_mark", arrow_mark.get(), arrow_mark_pram, 0);
+	}
 	//画像のチュートリアルの時
 	if (sprite_tutorial)
 	{

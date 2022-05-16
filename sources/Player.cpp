@@ -164,6 +164,9 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
     //プレイヤーの位置は原点に移動
     position = { 0,0,0 };
 
+    //イベントシーンの黒の枠
+    wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
+
     //クリア用モーションがまだ始まってなかったら
     if (is_start_cleear_motion == false)
     {
@@ -287,10 +290,17 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     ImGui::Text("search_time:%f", search_time);
     ImGui::End();
 #endif // USE_IMGUI
-    //クリア演出中じゃないとき
-    if (during_clear == false)
+    ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
+    //クリア演出中
+    if (during_clear)
     {
-        ExecFuncUpdate(elapsed_time, sky_dome, enemies,graphics);
+        //モデルを映す
+        if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+
+    }
+    //クリア演出中じゃないとき
+    else
+    {
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
@@ -353,8 +363,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
 
     }
-        if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
-        threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+
+    if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
+    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
 #if 0
     if (is_lock_on)
@@ -724,6 +735,8 @@ void Player::InflectionParameters(float elapsed_time)
     StunSphere();
     //無敵時間の減少
     invincible_timer -= 1.0f * elapsed_time;
+    //回り込み回避のクールタイム
+    behaind_avoidance_cool_time -= 1.0f * elapsed_time;
 }
 
 void Player::TutorialInflectionParameters(float elpased_time)
@@ -742,6 +755,8 @@ void Player::TutorialInflectionParameters(float elpased_time)
     StunSphere();
     //無敵時間の減少
     invincible_timer -= 1.0f * elpased_time;
+    //回り込み回避のクールタイム
+    behaind_avoidance_cool_time -= 1.0f * elpased_time;
 }
 
 void Player::InflectionPower(float elapsed_time)
@@ -935,12 +950,18 @@ void Player::AddCombo(int count)
         is_enemy_hit = true;
 
 #endif // 0
+        audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+
         combo_count += static_cast<float>(count);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
 
     }
-    else is_enemy_hit = false;
+    else
+    {
+        //audio_manager->play_se(SE_INDEX::SWING_SWORD);
+        is_enemy_hit = false;
+    }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
@@ -948,12 +969,17 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2)
 {
     if (hit_count1 != 0 || hit_count2 != 0)
     {
+        audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
 
     }
-    else is_enemy_hit = false;
+    else
+    {
+       // audio_manager->play_se(SE_INDEX::SWING_SWORD);
+        is_enemy_hit = false;
+    }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
 }

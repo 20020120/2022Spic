@@ -83,7 +83,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //後ろに回り込める距離なら回り込みようのUpdate
-        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
             TransitionBehindAvoidance();
         }
@@ -112,7 +112,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
     {
         //後ろに回り込める距離なら回り込みようのUpdate
-        if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
         {
             TransitionBehindAvoidance();
         }
@@ -170,6 +170,8 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //BehindAvoidanceMove(elapsed_time);
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,1.0f))
     {
+        if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
+        else   behaind_avoidance_cool_time = 0.5f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //回避中かどうかの設定
         is_avoidance = false;
@@ -211,7 +213,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-        end_dash_effect = true;
+        PostEffect::clear_post_effect();
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
@@ -239,7 +241,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (is_enemy_hit)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-            end_dash_effect = true;
+            PostEffect::clear_post_effect();
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity.x *= 0.2f;
@@ -562,37 +564,13 @@ void Player::DamageUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::TransformHumUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
     if (model->end_of_animation())
     {
-        //移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
-        {
-            TransitionMove();
-        }
-        else
-        {
-            TransitionIdle();
-        }
-        //回避に遷移
-        float length{ Math::calc_vector_AtoB_length(position, target) };
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
-            {
-                TransitionBehindAvoidance();//プロト段階では回り込み回避は消しておく
-            }
-            //そうじゃなかったら普通の回避
-            else TransitionAvoidance();
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionChargeInit();
-        }
-
+        //クリア演出中なら解除する
+        if (during_clear) during_clear = false;
+        TransitionIdle();
     }
-    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
 void Player::TransformWingUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -644,19 +622,34 @@ void Player::InvAwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::StageMoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    model->update_animation(elapsed_time);
+    if (model->end_of_animation())
+    {
+        TransitionWingDashStart();
+    }
 }
 
 void Player::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    if (model->end_of_animation())
+    {
+        TransitionWingDashIdle();
+    }
+
 }
 
 void Player::WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    position.y = Math::lerp(position.y, 2.0f, 1.0f * elapsed_time);
 }
 
 void Player::WingDashEndUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    position.y = Math::lerp(position.y, 0.0f, 1.0f * elapsed_time);
+
+    if (model->end_of_animation())
+    {
+        TransitionTransformHum();
+    }
 }
 
 void Player::DieUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -684,6 +677,11 @@ void Player::StartMothinUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    if (wipe_parm < 0.15f)
+    {
+        wipe_parm += 0.2f * elapsed_time;
+        PostEffect::wipe_effect(wipe_parm);
+    }
     if (model->end_of_animation())
     {
         TransitionNamelessMotionIdle();
@@ -694,8 +692,18 @@ void Player::NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
+        if (is_end_clear_motion == false)
+        {
+            wipe_parm -= 0.2f * elapsed_time;
+            PostEffect::wipe_effect(wipe_parm);
+        }
         //クリアモーションが終わったことを伝える
-        is_end_clear_motion = true;
+        if (wipe_parm < 0)
+        {
+            PostEffect::clear_post_effect();
+            wipe_parm = 0.0f;
+            is_end_clear_motion = true;
+        }
     }
 }
 
@@ -711,8 +719,6 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
-    //クリア演出中なら解除する
-    if (during_clear) during_clear = false;
     condition_state = ConditionState::Alive;
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
@@ -1142,10 +1148,24 @@ void Player::TransitionInvAwaking()
 
 void Player::TransitionWingDashStart()
 {
+    model->play_animation(AnimationClips::WingDashStart, false, true);
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    player_activity = &Player::WingDashStartUpdate;
+
 }
 
 void Player::TransitionWingDashIdle()
 {
+    model->play_animation(AnimationClips::WingDashIdle, true, true);
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    player_activity = &Player::WingDashIdleUpdate;
+
 }
 
 void Player::TransitionWingDashEnd()
@@ -1190,7 +1210,6 @@ void Player::TransitionDying()
 
 void Player::TransitionNamelessMotionIdle()
 {
-    PostEffect::clear_post_effect();
     //攻撃中かどうかの設定
     is_attack = false;
     velocity = {};
@@ -1223,7 +1242,6 @@ void Player::TransitionStartMothin()
 
 void Player::TransitionNamelessMotion()
 {
-    PostEffect::wipe_effect(0.15f);
     //クリア用モーションが始まったらからtrueにする
     is_start_cleear_motion = true;
     //攻撃中かどうかの設定
@@ -1241,9 +1259,8 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
-
     //移動のアニメーションにする(回避)
-    model->play_animation(AnimationClips::Charge, false);
+    model->play_animation(AnimationClips::TransformWing, false);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -1252,4 +1269,15 @@ void Player::TransitionStageMove()
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::StageMoveUpdate;
     during_clear = true;
+}
+
+void Player::TransitionStageMoveEnd()
+{
+    model->play_animation(AnimationClips::WingDashEnd, false, true);
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    player_activity = &Player::WingDashEndUpdate;
+
 }

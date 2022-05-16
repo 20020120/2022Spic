@@ -162,6 +162,8 @@ private:
     bool is_avoidance{ false };
     //回り込み回避かどうか
     bool is_behind_avoidance{ false };
+    //回り込み回避のクールタイム
+    float behaind_avoidance_cool_time{ 0 };
     //ジャスト回避しているかどうか
     bool is_just_avoidance{ false };
     //ジャスト回避できるカプセルに入っているかどうか
@@ -514,10 +516,10 @@ private:
     void TransitionOpportunity();
     //ダメージ受けたときに遷移
     void TransitionDamage();
-    //人型に変形に遷移
-    void TransitionTransformHum();
     //飛行機モードに遷移
     void TransitionTransformWing();
+    //人型に変形に遷移
+    void TransitionTransformHum();
     //覚醒状態に遷移
     void TransitionAwaking();
     //通常状態に遷移
@@ -538,7 +540,8 @@ public:
     void TransitionStartMothin();
     //ステージ移動に遷移
     void TransitionStageMove();
-
+    //ステージ遷移終了
+    void TransitionStageMoveEnd();
     //クリアに関すること
 private:
     //モーション
@@ -551,7 +554,8 @@ private:
     bool is_end_clear_motion{ false };
     //クリア用モーションが始まったらtrue
     bool is_start_cleear_motion{ false };
-
+    //イベントシーンの黒の枠
+    float wipe_parm{ 0.0f };
     DirectX::XMFLOAT3 event_camera_eye{ 0,3.4f,0.0f };
     DirectX::XMFLOAT3 event_camera_joint{};
 public:
@@ -645,14 +649,18 @@ private:
     bool is_next_tutorial{ false };
     //今のチュートリアルでどれだけ操作したかどうか
     float execution_timer{ 0 };
+    //今のチュートリアルで何回その行動をしたか
+    int tutorial_action_count{ 3 };
     //チュートリアルの関数ポインタを呼ぶ
     void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
     void SetIsTutorial(bool tutorial) { is_tutorial = tutorial; }
-    bool GetNextTutorial() { return is_next_tutorial; }
     void FalseNextTutorial() { is_next_tutorial = false; }
+    void SetTutorialCount(int count) { tutorial_action_count = count; }
+    bool GetNextTutorial() { return is_next_tutorial; }
+    int GetTutorialCount() { return tutorial_action_count; }
 private:
     //1が最初で大きくなっていくようにする
     enum class TutorialState
