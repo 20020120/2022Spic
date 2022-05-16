@@ -147,7 +147,7 @@ bool ShieldEnemy_Ace::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipel
     if (mCurrentHitPoint <= 0)
     {
         //fChangeState(DivedState::Die);
-        fDie(Graphics_, elapsedTime_);
+        fDie(Graphics_);
     }
     return ret;
 }

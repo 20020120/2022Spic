@@ -27,7 +27,7 @@ public:
 
     virtual void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) = 0;
     virtual void fUpdateAttackCapsule() = 0;
-    virtual void fDie(GraphicsPipeline& Graphics_, float elaspedTime_);
+    virtual void fDie(GraphicsPipeline& Graphics_);
 
     [[nodiscard]]float fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     virtual void fRender(GraphicsPipeline& Graphics_);

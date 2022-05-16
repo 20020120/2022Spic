@@ -99,17 +99,14 @@ void Effect::set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFL
         q._32 = 2.0f * o.y * o.z - 2.0f * o.w * o.x;
         q._33 = 1.0f - 2.0f * o.x * o.x - 2.0f * o.y * o.y;
     };
-    DirectX::XMFLOAT4X4 r_mat;
+    DirectX::XMFLOAT4X4 r_mat{};
 
     transformQuaternionToRotMat(r_mat, orientation);
     static float ang = 0;
    set_posture(effekseer_manager, r_mat, ang);
 }
 
-void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3& orient)
-{
 
-}
 
 //-----------------------------------------------//
 //エフェクトの回転行列を任意の回転行列に合わせる

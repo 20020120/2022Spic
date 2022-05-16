@@ -100,7 +100,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[2].tutorial_text = L"敵が視界に入っている時にLTボタンを押している間\nロックオンすることができます";
 	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
 	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
-	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとスタンしている敵をロックオンして\n一度に攻撃することができます";
+	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
 	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります。";
 	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
 
@@ -109,7 +109,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[2].position = { 124.0f,50.0f };
 	tutorial_text_element[3].position = { 68.0f,53.0f };
 	tutorial_text_element[4].position = { 22.0f,72.0f };
-	tutorial_text_element[5].position = { 74.0f,47.0f };
+	tutorial_text_element[5].position = { 30.0f,49.0f };
 	tutorial_text_element[6].position = { 121.0f,49.0f };
 	tutorial_text_element[7].position = { 297.0f,69.0f };
 
@@ -252,6 +252,9 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//プレイヤーがジャスト回避した時の範囲スタンの当たり判定
 	enemyManager->fCalcPlayerStunVsEnemyBody(player->GetPosition(), player->GetStunRadius());
+
+	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
+	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
 
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
@@ -725,6 +728,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		end_tutorial_text_timer += 1.0f * elapsed_time;
 		tutorial_check_text = L"自由に練習する";
 		tutorial_skip_text = L"チュートリアル終了";
+		change_scene_txt.color = { 1.0f,1.0f,1.0f,1.0f };
 		//チュートリアル終了の文字の位置を再設定
 		change_scene_txt.position = { 116.7f,282.0f };
 		check_mark_parm.threshold = 1.0f;
@@ -805,7 +809,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 
 
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
-		r_font_render("text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
+		r_font_render("tutorial_text", tutorial_text_element[static_cast<int>(tutorial_state) - 1]);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
 
 
