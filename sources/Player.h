@@ -551,7 +551,8 @@ private:
     bool is_end_clear_motion{ false };
     //クリア用モーションが始まったらtrue
     bool is_start_cleear_motion{ false };
-
+    //イベントシーンの黒の枠
+    float wipe_parm{ 0.0f };
     DirectX::XMFLOAT3 event_camera_eye{ 0,3.4f,0.0f };
     DirectX::XMFLOAT3 event_camera_joint{};
 public:
