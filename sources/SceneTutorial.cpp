@@ -77,6 +77,11 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	change_scene_gauge = std::make_unique<SpriteDissolve>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\skip.png",
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
+	arrow_mark = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\arrow_mark.png", 1);
+	arrow_mark_pram.position = { 300.8f,288.6f };
+	arrow_mark_pram.scale = { 0.5f,0.5f };
+	arrow_mark_pram.angle = 45.0f;
+	arrow_mark_pram.texsize = { static_cast<float>(arrow_mark->get_texture2d_desc().Width),static_cast<float>(arrow_mark->get_texture2d_desc().Height) };
 
 	sprite_tutorial_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\back.png", 1);
 	frame_pram.position = { 0.0f,0.0f };
@@ -686,6 +691,31 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_check_text = L"Aボタンを押して覚醒";
 		sprite_tutorial_text.position = { 359.0f,408.0f };
 		sprite_tutorial_text.s = L"覚醒状態の時は敵がスタンしていない場合でも\nロックオンをしチェイン攻撃を行うことができます";
+		arrow_rate += 1.0f * elapsed_time;
+		if (arrow_move_change)
+		{
+			if (arrow_rate > 1.0f)
+			{
+				arrow_rate = 0.0f;
+				arrow_move_change = false;
+			}
+			else
+			{
+				arrow_mark_pram.position = Math::lerp({ 339.5f,255.0f }, { 300.8f,288.6f }, arrow_rate);
+			}
+		}
+		else
+		{
+			if (arrow_rate > 1.0f)
+			{
+				arrow_rate = 0.0f;
+				arrow_move_change = true;
+			}
+			else
+			{
+				arrow_mark_pram.position = Math::lerp({ 300.8f,288.6f }, { 339.5f,255.0f }, arrow_rate);
+			}
+		}
 		if (is_next)
 		{
 			//ジャスト回避の説明をする
@@ -775,6 +805,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		if (ImGui::TreeNode(gui_name.c_str()))
 		{
 			ImGui::DragFloat2("pos", &e.position.x, 0.1f);
+			ImGui::DragFloat("angle", &e.angle, 0.1f);
 			ImGui::DragFloat2("scale", &e.scale.x, 0.01f);
 			ImGui::DragFloat4("color", &e.color.x, 0.01f);
 			ImGui::TreePop();
@@ -876,11 +907,16 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
 	check_mark->end(graphics.get_dc().Get());
 
+	//回り込み回避の時とチェイン攻撃の時にしかうつさない
 	if (tutorial_state == TutorialState::BehindAvoidanceTutorial || tutorial_state == TutorialState::ChainAttackTutorial)
 	{
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
 		r_font_render("tutorial_count_text",tutorial_count_text);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
+	}
+	if (tutorial_state == TutorialState::AwaikingTutorial)
+	{
+		sprite_render("arrow_mark", arrow_mark.get(), arrow_mark_pram, 0);
 	}
 	//画像のチュートリアルの時
 	if (sprite_tutorial)

@@ -199,6 +199,12 @@ private:
     //画像のチュートリアルの後ろに出てるフレーム
     std::unique_ptr<SpriteBatch> sprite_frame{ nullptr };
     Element sprite_frame_parm;
+    //ゲージをさす矢印
+    std::unique_ptr<SpriteBatch> arrow_mark{ nullptr };
+    //ゲージをさす矢印のパラメータ
+    Element arrow_mark_pram;
+    float arrow_rate{ 0 };
+    bool arrow_move_change{ false };
 
     StepFontElement sprite_tutorial_text;
     StepFontElement tutorial_count_text;
