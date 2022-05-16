@@ -142,7 +142,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//ゲームオーバーになったら
 	GameOverAct(elapsed_time);
 	const float bgm_volume = 2.0f;
-	const float se_volume = 0.2f;
+	const float se_volume = 2.0f;
 	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
