@@ -53,12 +53,12 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time, float lerp_
     {
         element.position = conversion_2D(graphics.get_dc().Get(), focus_position);
 
-        element.color.w = Math::lerp(element.color.w, 0.7f, lerp_rate * elapsed_time);
+        element.color.w = Math::lerp(element.color.w, 0.9f, lerp_rate * elapsed_time);
 
         element.scale = Math::lerp(element.scale, { 0.06f, 0.06f }, lerp_rate * elapsed_time);
 
         if (element.color.w >= 0.6f) { element.angle += 30.0f * elapsed_time; }
-        else { element.angle += 360.0f * elapsed_time; }
+        else { element.angle += 360.0f * lerp_rate * elapsed_time; }
         if (element.angle >= 360.0f) { element.angle = 0; }
     }
     else

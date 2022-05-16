@@ -545,6 +545,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
+        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
@@ -573,6 +574,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     {
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             end_dash_effect = true;
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
@@ -588,6 +590,8 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
+                audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+                audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
                 charge_change_direction_count--;
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
@@ -667,6 +671,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -676,6 +681,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
         }
         else if (attack_time >= 2.0f)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -738,6 +744,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -747,6 +754,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         }
         else if (attack_time >= 2.0f)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -806,6 +814,7 @@ void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::
 {
     if (model->end_of_animation())
     {
+        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
         //もしチュートリアルが覚醒なら
         if (tutorial_state == TutorialState::AwaikingTutorial) is_next_tutorial = true;
         //移動入力があったら移動に遷移
@@ -879,6 +888,7 @@ void Player::TransitionTutorialMove(float blend_second)
 
 void Player::TransitionTutorialAvoidance(float blend_second)
 {
+    audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z },0.3f);
     //回避中かどうかの設定
@@ -924,6 +934,8 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
+    audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
+
     if (is_just_avoidance_capsul)
     {
         //ロックオンしている敵をスタンさせる
@@ -995,6 +1007,7 @@ void Player::TransitionTutorialChargeInit()
 
 void Player::TransitionTutorialCharge(float blend_second)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
@@ -1065,6 +1078,7 @@ void Player::TransitionTutorialAttack1(float blend_second)
 
 void Player::TransitionTutorialAttack2(float blend_second)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //覚醒状態の時の２撃目のアニメーションに設定
     if (is_awakening)
     {
@@ -1105,6 +1119,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
 
 void Player::TransitionTutorialAttack3(float blend_second)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //覚醒状態の時の３撃目のアニメーションに設定
     if (is_awakening)
     {

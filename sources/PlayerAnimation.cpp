@@ -139,6 +139,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //回避のアニメーションが終わったら
     if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
     {
+
         player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         //回避中かどうかの設定
         is_avoidance = false;
@@ -204,6 +205,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
+        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         end_dash_effect = true;
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
@@ -231,6 +233,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             end_dash_effect = true;
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
@@ -244,6 +247,9 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
+                audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+                audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
                 charge_change_direction_count--;
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
@@ -345,6 +351,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -354,6 +361,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         }
         else if (attack_time >= 2.0f)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -367,6 +375,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 #endif // 0
     if (model->end_of_animation())
     {
+        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
@@ -442,6 +451,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
@@ -451,6 +461,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         }
         else if (attack_time >= 2.0f)
         {
+            audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -464,6 +475,8 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 
     if (model->end_of_animation())
     {
+        audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
+
         if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -472,7 +485,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
                 velocity.x *= 0.2f;
                 velocity.y *= 0.2f;
                 velocity.z *= 0.2f;
-                TransitionAttackType1(attack_animation_blends_speeds.x);
+                TransitionAttackType2(attack_animation_blends_speeds.x);
             }
         }
         else
@@ -592,6 +605,8 @@ void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
+        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
@@ -730,6 +745,7 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
+    audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position,0.3f);
     //回避中かどうかの設定
@@ -774,6 +790,7 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
     if (is_just_avoidance_capsul)
     {
         //ロックオンしている敵をスタンさせる
@@ -843,6 +860,7 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge(float blend_seconds)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //ダッシュポストエフェクトをかける
     start_dash_effect = true;
     //覚醒状態の時の突進アニメーションに設定
@@ -917,6 +935,8 @@ void Player::TransitionAttackType1(float blend_seconds)
 
 void Player::TransitionAttackType2(float blend_seconds)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
     //覚醒状態の時の２撃目のアニメーションに設定
     if (is_awakening)
     {
@@ -958,6 +978,8 @@ void Player::TransitionAttackType2(float blend_seconds)
 
 void Player::TransitionAttackType3(float blend_seconds)
 {
+    audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+
     //覚醒状態の時の３撃目のアニメーションに設定
     if (is_awakening)
     {

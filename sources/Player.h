@@ -598,7 +598,6 @@ private:
         if (is_tutorial)TransitionTutoriaIdle();
         else TransitionIdle();
     }
-
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
