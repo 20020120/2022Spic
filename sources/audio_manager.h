@@ -20,26 +20,40 @@ enum class BGM_INDEX
 
 enum class SE_INDEX
 {
-    SELECT,             //選択音
-    DECISION,           //決定音
-    DRAW_SWORD,         //剣を抜く音
-    RETURN_SWORD,       //剣を鞘に戻す
-    SWING_SWORD,        //攻撃(当たっていない)
-    ATTACK_SWORD,       //攻撃(当たっている)
-    ENEMY_EMERGENCE,    //敵出現
-    SHOT_BOW,           //弓攻撃
-    CANNON,             //砲台音
-    HEART_BEAT,         //心臓の鼓動音
-    OPEN_FIRE,          //焚火
-    TRANSFORM1,         //ボス変形候補1
-    TRANSFORM2,         //ボス変形候補2
-    TRANSFORM3,         //ボス変形候補3
-    TRANSFORM4,         //ボス変形候補4
-    TRANSFORM5,         //ボス変形候補5
-    TRANSFORM6,         //ボス変形候補6
-    BOSS_BEAM,          //ボスビーム攻撃
-    DRAGON_ROAR,        //ドラゴンボス咆哮
-    ENEMY_EXPLOSION,    //敵撃破音
+    SELECT,                 //選択音
+    DECISION,               //決定音
+    DRAW_SWORD,             //剣を抜く音
+    RETURN_SWORD,           //剣を鞘に戻す
+    SWING_SWORD,            //攻撃(当たっていない)
+    ATTACK_SWORD,           //攻撃(当たっている)
+    ENEMY_EMERGENCE,        //敵出現
+    SHOT_BOW,               //弓攻撃
+    CANNON,                 //砲台音
+    HEART_BEAT,             //心臓の鼓動音
+    OPEN_FIRE,              //焚火
+    TRANSFORM1,             //ボス変形候補1
+    TRANSFORM2,             //ボス変形候補2
+    TRANSFORM3,             //ボス変形候補3
+    TRANSFORM4,             //ボス変形候補4
+    TRANSFORM5,             //ボス変形候補5
+    TRANSFORM6,             //ボス変形候補6
+    BOSS_BEAM,              //ボスビーム攻撃
+    DRAGON_ROAR,            //ドラゴンボス咆哮
+    ENEMY_EXPLOSION,        //敵撃破音
+    STAN,                   //敵スタン
+    WRAPAROUND_AVOIDANCE,   //回り込み回避
+    AVOIDANCE,              //回避
+    DRAGON_BOSS_DEATH,      //ドラゴンボスの死
+    ENEMY_PRE_ATTACK_SOUND, //敵攻撃予備動作
+    ENEMY_SWORD_ATTACK,     //剣の敵の攻撃音
+    ENEMY_SHIELD_ATTACK,    //盾の敵の攻撃音
+    BOSS_CHARGE,            //ビームチャージ音
+    PLAYER_AWAKING,         //プレイヤー覚醒
+    PLAYER_DAMAGED,         //プレイヤー被ダメージ
+    FIRE_BOLL,              //火の玉を吐く
+    FIRE_BOLL_RUN,          //火の玉が走る
+    ROCK_ON,                //ロックオン時の音
+    PLAYER_RUSH,            //プレイヤー突進
 
     SE_COUNT
 };

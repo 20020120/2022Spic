@@ -11,6 +11,7 @@ public:
     ~Reticle() override {}
     //--------< ŠÖ” >--------//
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
+    void update(GraphicsPipeline& graphics, float elapsed_time, float lerp_rate);
     void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void focus(const BaseEnemy* target_enemy, bool lockon);

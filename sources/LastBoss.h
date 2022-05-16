@@ -365,6 +365,7 @@ private:
     //--------------------<lŒ^>--------------------//
     void fHumanIdleInit();
     void fHumanIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
+
     void fHumanMoveInit();
     void fHumanMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 

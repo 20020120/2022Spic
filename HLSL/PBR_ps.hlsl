@@ -256,7 +256,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     finalColor.xyz = min(finalColor.xyz, 6.0);
 
     // dissolve
-    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w * pin.color.rgb, finalColor.a * pin.color.a);
+    float4 last_color = float4(finalColor.rgb * ao_map.r * light_direction.w * pin.color.rgb, finalColor.a * pin.color.a * color_map.a);
 
     float4 dst_color  = float4(0, 0, 0, 0);
     float4 mask       = dissolve_map.Sample(sampler_states[ANISOTROPIC], pin.texcoord);

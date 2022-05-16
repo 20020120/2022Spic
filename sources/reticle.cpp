@@ -47,6 +47,25 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time)
         element.color.w = Math::lerp(element.color.w, 0.0f, LERP_RATE * elapsed_time);
     }
 }
+void Reticle::update(GraphicsPipeline& graphics, float elapsed_time, float lerp_rate)
+{
+    if (animation)
+    {
+        element.position = conversion_2D(graphics.get_dc().Get(), focus_position);
+
+        element.color.w = Math::lerp(element.color.w, 0.7f, lerp_rate * elapsed_time);
+
+        element.scale = Math::lerp(element.scale, { 0.06f, 0.06f }, lerp_rate * elapsed_time);
+
+        if (element.color.w >= 0.6f) { element.angle += 30.0f * elapsed_time; }
+        else { element.angle += 360.0f * elapsed_time; }
+        if (element.angle >= 360.0f) { element.angle = 0; }
+    }
+    else
+    {
+        element.color.w = Math::lerp(element.color.w, 0.0f, lerp_rate * elapsed_time);
+    }
+}
 
 void Reticle::render(ID3D11DeviceContext* dc)
 {

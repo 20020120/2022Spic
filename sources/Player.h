@@ -11,6 +11,7 @@
 #include "Common.h"
 #include"game_icon.h"
 #include "effect.h"
+#include "reticle.h"
 
 class Player :public BasePlayer, private PlayerMove
 {
@@ -76,6 +77,8 @@ private:
     //回避
     std::unique_ptr<Effect> player_air_registance_effec;
     float air_registance_offset_y{4.0f};
+    //チェイン攻撃のヒット
+    std::unique_ptr<Effect> player_slash_hit_effec;
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 50;
@@ -315,6 +318,8 @@ public:
     bool GetEndDashEffect() { return end_dash_effect; }
     bool GetIsAwakening() { return is_awakening; }
     bool GetIsAlive() { return is_alive; }
+    bool GetIsJustAvoidance() { return is_just_avoidance; }
+
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
@@ -614,6 +619,7 @@ private:
     std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
     std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
     std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
+    std::vector<std::unique_ptr<Reticle>> reticles; // チェイン攻撃のreticles
     bool is_chain_attack = false; // ロックオン完了から攻撃終了までtrue
     static constexpr float ROCKON_FRAME = 0.3f;
     float frame_time  = 0.0f;

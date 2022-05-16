@@ -58,7 +58,7 @@ protected:
     //--------< •Ï” >--------//
     float range{ 0.5f };
     DirectX::XMFLOAT3 eye{};
-    DirectX::XMFLOAT2 near_far = { 0.1f, 700.0f }; // x:near y:far
+    DirectX::XMFLOAT2 near_far = { 0.1f, 2000.0f }; // x:near y:far
     DirectX::XMFLOAT3 target{};
     DirectX::XMFLOAT3 angle{ 0.4f, 0, 0 };
     DirectX::XMFLOAT4 orientation;

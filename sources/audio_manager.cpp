@@ -184,9 +184,23 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/transform4.wav", SE_INDEX::TRANSFORM4, 0.1f);
 	register_se(L"resources/Audios/SE/transform5.wav", SE_INDEX::TRANSFORM5, 0.1f);
 	register_se(L"resources/Audios/SE/transform6.wav", SE_INDEX::TRANSFORM6, 0.1f);
-	register_se(L"resources/Audios/SE/boss_beam.wav", SE_INDEX::BOSS_BEAM, 0.1f);
+	register_se(L"resources/Audios/SE/boss_beam.wav", SE_INDEX::BOSS_BEAM, 0.1f, LOOP_INFINITY);
 	register_se(L"resources/Audios/SE/dragon_roar.wav", SE_INDEX::DRAGON_ROAR, 0.1f);
 	register_se(L"resources/Audios/SE/enemy_explosion.wav", SE_INDEX::ENEMY_EXPLOSION, 0.1f);
+	register_se(L"resources/Audios/SE/stan.wav", SE_INDEX::STAN, 0.1f);
+	register_se(L"resources/Audios/SE/wraparound_avoidance.wav", SE_INDEX::WRAPAROUND_AVOIDANCE, 0.1f);
+	register_se(L"resources/Audios/SE/avoidance.wav", SE_INDEX::AVOIDANCE, 0.1f);
+	register_se(L"resources/Audios/SE/dragon_boss_death.wav", SE_INDEX::DRAGON_BOSS_DEATH, 0.1f, LOOP_INFINITY);
+	register_se(L"resources/Audios/SE/enemy_Pre-attack_sound.wav", SE_INDEX::ENEMY_PRE_ATTACK_SOUND, 0.1f);
+	register_se(L"resources/Audios/SE/enemy_sword_attack.wav", SE_INDEX::ENEMY_SWORD_ATTACK, 0.1f);
+	register_se(L"resources/Audios/SE/enemy_shield_attack.wav", SE_INDEX::ENEMY_SHIELD_ATTACK, 0.1f);
+	register_se(L"resources/Audios/SE/boss_charge.wav", SE_INDEX::BOSS_CHARGE, 0.1f, LOOP_INFINITY);
+	register_se(L"resources/Audios/SE/player_awaking.wav", SE_INDEX::PLAYER_AWAKING , 0.1f);
+	register_se(L"resources/Audios/SE/player_damaged.wav", SE_INDEX::PLAYER_DAMAGED, 0.1f);
+	register_se(L"resources/Audios/SE/fire_boll.wav", SE_INDEX::FIRE_BOLL, 0.1f);
+	register_se(L"resources/Audios/SE/fire_boll_run.wav", SE_INDEX::FIRE_BOLL_RUN, 0.1f, LOOP_INFINITY);
+	register_se(L"resources/Audios/SE/rock_on.wav", SE_INDEX::ROCK_ON, 0.1f);
+	register_se(L"resources/Audios/SE/player_rush.wav", SE_INDEX::PLAYER_RUSH, 0.1f);
 
 }
 

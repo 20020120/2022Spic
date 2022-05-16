@@ -476,7 +476,6 @@ void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy
 void EnemyManager::fAllClear()
 {
     //--------------------<óvëfÇëSçÌèú>--------------------//
-
     for (const auto enemy : mEnemyVec)
     {
         // ë∂ç›ÇµÇƒÇ¢ÇÍÇŒçÌèú
@@ -827,4 +826,27 @@ LastBoss::Mode EnemyManager::fGetBossMode() const
 void EnemyManager::fSetBossMode(LastBoss::Mode Mode_) 
 {
     mCurrentMode = Mode_;
+}
+
+bool EnemyManager::fGetIsEventCamera() const
+{
+    bool result{ false };
+    switch (mCurrentMode) {
+    case LastBoss::Mode::None:break;
+    case LastBoss::Mode::Ship:break;
+    case LastBoss::Mode::ShipToHuman:
+        result = true;
+        break;
+    case LastBoss::Mode::Human: break;
+    case LastBoss::Mode::HumanToDragon:
+        result = true;
+        break;
+    case LastBoss::Mode::Dragon:break;
+    case LastBoss::Mode::DragonDie:
+        result = true;
+        break;
+    default: ;
+    }
+
+    return result;
 }
