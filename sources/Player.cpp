@@ -32,6 +32,8 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[8] = model->get_bone_by_name("camera_joint");
     //エフェクト
     player_behind_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
+    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance2.efk");
+
 }
 
 Player::~Player()
@@ -533,6 +535,7 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 }
+
 
 void Player::LerpCameraTarget(float elapsed_time)
 {

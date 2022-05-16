@@ -131,10 +131,15 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    //エフェクトの位置，回転設定
+    player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(),position);
+    player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
+
     AvoidanceAcceleration(elapsed_time);
     //回避のアニメーションが終わったら
     if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         //回避中かどうかの設定
         is_avoidance = false;
         is_behind_avoidance = false;
@@ -160,7 +165,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //behind_timer += 2.0f * elapsed_time;
-    player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
+    player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     //BehindAvoidanceMove(elapsed_time);
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,1.0f))
     {
@@ -711,6 +716,8 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
+    //エフェクト再生
+    player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position,0.3f);
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -770,7 +777,7 @@ void Player::TransitionBehindAvoidance()
             target_enemy->fSetStun(true);
         }
     }
-    player_behind_effec->play(effect_manager->get_effekseer_manager(), position);
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), {position.x,position.y + air_registance_offset_y ,position.z});
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -811,7 +818,7 @@ void Player::TransitionChargeInit()
    //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 100.0f);
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //加速のレート
     lerp_rate = 1.0f;
     //アニメーションをしていいかどうか
@@ -922,7 +929,7 @@ void Player::TransitionAttackType2(float blend_seconds)
     //攻撃の加速の設定
     //SetAccelerationVelocity();
         //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 100.0f);
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間
