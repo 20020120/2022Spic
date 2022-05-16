@@ -26,7 +26,7 @@ public:
 	static void stage_choice_post_effect(ID3D11DeviceContext* dc, float divisions);
 	static void lockon_post_effect(float scope, float alpha);
 	static void title_post_effect(float power);
-	static void boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power);
+	static void boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power, float wipe_threshold = 0);
 	static void wipe_effect(float threshold);
 
 	//--------<getter/setter>--------//
