@@ -41,8 +41,8 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     static float scale_factor = 0.88f;
     static float glow_speed = 1.0f;
-    static DirectX::XMFLOAT4 emissive_color = { 1,1,1,1 };
-    static float glow_thickness = 1.0f;
+    static DirectX::XMFLOAT4 emissive_color = { 1,1,1,5.0f };
+    static float glow_thickness = 1.5f;
 #ifdef USE_IMGUI
     ImGui::Begin("SkyDome");
     if (ImGui::TreeNode("field"))

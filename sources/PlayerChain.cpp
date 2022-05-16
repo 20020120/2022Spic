@@ -111,7 +111,7 @@ void Player::lockon_post_effect(float elapsed_time, std::function<void(float, fl
 		if (rate <= 1.0f)
 		{
 			frame_scope = 0.5f - rate * (0.5f - ROCKON_FRAME);
-			frame_alpha += elapsed_time * 0.1f;
+			frame_alpha += elapsed_time * 0.1f * 3.0f / SEARCH_TIME;
 			frame_alpha = (std::min)(frame_alpha, 0.3f);
 			effect_func(frame_scope, frame_alpha);
 			if (rate > 0.98f) { effect_clear_func(); }
@@ -150,7 +150,9 @@ void Player::transition_chain_search()
 	player_suggest.detection = true; // プレイヤーは検索には入れないので初めからtrue
 	lockon_suggests.emplace_back(player_suggest);
 
+	SEARCH_TIME = 0.5f;
 	search_time = SEARCH_TIME;
+	setup_search_time = false;
 
 #ifdef CHAIN_DEBUG
 	debug_lockon = false;
@@ -237,6 +239,13 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 	if (is_awakening) // 覚醒状態
 	{
+		if (!setup_search_time)
+		{
+			SEARCH_TIME = 0.5f;
+			search_time = SEARCH_TIME;
+			setup_search_time = true;
+		}
+
 		// 敵がいなければ通常行動に戻る
 		if (enemies.size() == 0) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }
 		// スタンしてなくてもロックオン
@@ -302,14 +311,30 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	else // 非覚醒状態
 	{
 		bool is_stun = false;
+		int stun_enemy_count = 0;
 		// スタンされた敵がいなければ通常行動に戻る
+		// スタンした敵に応じてサーチ時間を増やす
 		for (const auto& enemy : enemies)
 		{
 			if (enemy->fGetStun())
 			{
 				is_stun = true;
-				break;
+				++stun_enemy_count;
 			}
+		}
+
+		if (is_stun && !setup_search_time) // スタンした敵がいる時だけ計算
+		{
+			const int MAX_FLUCTUATION_COUNT = 6;
+			const float MAX_SEARCH_TIME = 3.0f;
+			const float MIN_SEARCH_TIME = 0.5f;
+
+			stun_enemy_count = (std::min)(stun_enemy_count, MAX_FLUCTUATION_COUNT);
+			// stun_enemy_count が 1 の時に割合0にしたいので-1
+			SEARCH_TIME += (MAX_SEARCH_TIME - MIN_SEARCH_TIME) * ((float)(stun_enemy_count - 1) / (float)(MAX_FLUCTUATION_COUNT - 1));
+			search_time = SEARCH_TIME;
+
+			setup_search_time = true;
 		}
 
 		if (!is_stun) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }

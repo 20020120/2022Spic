@@ -609,8 +609,9 @@ private:
         DirectX::XMFLOAT3 position{};
         bool detection = false;
     };
-    static constexpr int STEPS         = 3;
-    static constexpr float SEARCH_TIME = 3.0f;
+    static constexpr int STEPS = 3;
+    float SEARCH_TIME = 0.5f;
+    bool setup_search_time = false;
     float search_time = SEARCH_TIME;
     int transit_index = 0;
     std::vector<int> chain_lockon_enemy_indexes; // ロックオンされたの敵のインデックス
