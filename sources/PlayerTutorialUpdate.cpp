@@ -7,68 +7,72 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
 {
 
     ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies,graphics);
-    switch (behavior_state)
+    //イベントシーンの黒の枠
+    wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
+    if (awaiking_event == false)
     {
-    case Player::Behavior::Normal:
-        //回り込み回避よりも進んでいたら切り替えれる
-        if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
+        switch (behavior_state)
         {
-            if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+        case Player::Behavior::Normal:
+            //回り込み回避よりも進んでいたら切り替えれる
+            if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
             {
-                transition_chain_behavior();
+                if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+                {
+                    transition_chain_behavior();
+                }
             }
+            //チュートリアルがロックオンの時よりも大きければ出来る
+            if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
+            //カメラリセット
+            CameraReset();
+            break;
+        case Player::Behavior::Chain:
+            break;
+        default:
+            break;
         }
-        //チュートリアルがロックオンの時よりも大きければ出来る
-        if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
-        //カメラリセット
-        CameraReset();
-        break;
-    case Player::Behavior::Chain:
-        break;
-    default:
-        break;
-    }
 
-    //アニメーション更新処理
-    GetPlayerDirections();
-    //プレイヤーのパラメータの変更
-    TutorialInflectionParameters(elapsed_time);
+        //アニメーション更新処理
+        GetPlayerDirections();
+        //プレイヤーのパラメータの変更
+        TutorialInflectionParameters(elapsed_time);
 
-    PlayerJustification(elapsed_time, position);
+        PlayerJustification(elapsed_time, position);
 
-    if (is_awakening)
-    {
-        for (int i = 0; i < 2; ++i)
-        {
-            mSwordTrail[i].fUpdate(elapsed_time, 10);
-            mSwordTrail[i].fEraseTrailPoint(elapsed_time);
-        }
-    }
-    else
-    {
-        mSwordTrail[0].fUpdate(elapsed_time, 10);
-        mSwordTrail[0].fEraseTrailPoint(elapsed_time);
-    }
-    LerpCameraTarget(elapsed_time);
-    player_config->update(graphics, elapsed_time);
-
-    if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
-    if (is_dying_update == false)
-    {
-        //覚醒状態の時は
         if (is_awakening)
         {
-            //モデルを映す
-            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            for (int i = 0; i < 2; ++i)
+            {
+                mSwordTrail[i].fUpdate(elapsed_time, 10);
+                mSwordTrail[i].fEraseTrailPoint(elapsed_time);
+            }
         }
         else
         {
-            //モデルを消す
-            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            mSwordTrail[0].fUpdate(elapsed_time, 10);
+            mSwordTrail[0].fEraseTrailPoint(elapsed_time);
+        }
+        LerpCameraTarget(elapsed_time);
+        player_config->update(graphics, elapsed_time);
+
+        if (is_dying_update == false)
+        {
+            //覚醒状態の時は
+            if (is_awakening)
+            {
+                //モデルを映す
+                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            }
+            else
+            {
+                //モデルを消す
+                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            }
         }
     }
-    threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
-
+        threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+    if(is_update_animation)model->update_animation(elapsed_time * animation_speed);
 #ifdef USE_IMGUI
     static bool display_scape_imgui;
     imgui_menu_bar("Player", "Player", display_scape_imgui);
@@ -849,8 +853,6 @@ void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::
     if (model->end_of_animation())
     {
         audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
-        //もしチュートリアルが覚醒なら
-        if (tutorial_state == TutorialState::AwaikingTutorial) is_next_tutorial = true;
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
@@ -886,6 +888,42 @@ void Player::TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     if (model->end_of_animation())
     {
         TransitionTutoriaIdle();
+    }
+}
+
+void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    //カメラに渡す値を設定
+    DirectX::XMFLOAT3 up = {};
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
+    if (model->end_of_animation())
+    {
+        //アニメーションが終わったら遷移
+        TransitionTutorialAwaikingEventIdle();
+    }
+}
+
+void Player::TutorialAwaikingEventIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
+{
+    if (model->end_of_animation())
+    {
+        if (awaiking_event)
+        {
+            //イベント中はワイプの黒枠を消す
+            wipe_parm -= 0.2f * elapsed_time;
+            PostEffect::wipe_effect(wipe_parm);
+        }
+        if (wipe_parm < 0)
+        {
+            //ワイプが0になったらイベント終了
+            PostEffect::clear_post_effect();
+            wipe_parm = 0.0f;
+            awaiking_event = false;
+            //もしチュートリアルが覚醒なら
+            if (tutorial_state == TutorialState::AwaikingTutorial) is_next_tutorial = true;
+            TransitionTutoriaIdle();
+        }
     }
 }
 
@@ -1224,6 +1262,48 @@ void Player::TransitionTutorialInvAwaiking()
     player_tutorial_activity = &Player::TutorialInvAwaikingUpdate;
 }
 
+void Player::TransitionTutorialAwaikingEvent()
+{
+    DirectX::XMFLOAT3 up = {};
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
+    //プレイヤーの位置は原点に移動
+    position = { 0,0,0 };
+    //非表示にしてるものは表示
+    threshold_mesh = 0.0f;
+    //覚醒状態になるアニメーションに設定
+    model->play_animation(AnimationClips::AwaikingScene, false, true);
+    //覚醒状態かどうかの設定
+    is_awakening = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //イベントカメラに切り替え
+    awaiking_event = true;
+    //覚醒状態になる途中の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAwaikingEventUpdate;
+}
+
+void Player::TransitionTutorialAwaikingEventIdle()
+{
+    DirectX::XMFLOAT3 up = {};
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
+    model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
+
+    //覚醒状態になるアニメーションに設定
+    model->play_animation(AnimationClips::AwaikingSceneIdle, false, true);
+    //覚醒状態かどうかの設定
+    is_awakening = true;
+    //アニメーション速度の設定
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //覚醒状態になる途中の更新関数に切り替える
+    player_tutorial_activity = &Player::TutorialAwaikingEventIdleUpdate;
+
+}
+
 void Player::TransitionTutorialDamage()
 {
     //ダッシュエフェクトの終了
@@ -1245,12 +1325,25 @@ void Player::TransitionTutorialDamage()
 
 void Player::TutorialAwaiking()
 {
-    //ボタン入力
-    if (game_pad->get_button() & GamePad::BTN_A)
+    //チュートリアルの覚醒はイベントシーンになる
+    if (tutorial_state == TutorialState::AwaikingTutorial)
     {
-        if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
+        //ボタン入力
+        if (game_pad->get_button() & GamePad::BTN_A)
+        {
+            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaikingEvent();//イベントの覚醒
+        }
+        if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();
     }
-    if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
+    else
+    {
+        //ボタン入力
+        if (game_pad->get_button() & GamePad::BTN_A)
+        {
+            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
+        }
+        if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
+    }
 }
 
 void Player::SetTutorialDamageFunc()
