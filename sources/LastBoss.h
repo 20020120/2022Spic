@@ -21,9 +21,11 @@ public:
     {
         None,          // 何もなし（存在しない）
         Ship,          // 戦艦（ダメージは受けない）
+        ShipToHuman,   // 戦艦から人に変換
         Human,         // 人型（体力の100%~20%）
         HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
         Dragon,        // ドラゴン（体力の20%~0%）
+        DragonDie,     // ドラゴン死ぬ
     };
 
 private:
@@ -63,7 +65,7 @@ private:
         //--------------------<人型の死亡>--------------------//
         inline static const char* HumanDieStart = "HumanDieStart";   // 人型の死亡開始
         inline static const char* HumanDieMiddle = "HumanDieMiddle"; // 人型の死亡待機
-        inline static const char* HumanToDragon = "HumanToDragon";   // 人型からドラゴン
+        inline static const char* HumanToDragon = "HumanToDragon";// 人型からドラゴン
 
         //--------------------<ドラゴン>--------------------//
         inline static const char* DragonIdle = "DragonIdle"; // 待機

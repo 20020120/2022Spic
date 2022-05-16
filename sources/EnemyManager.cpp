@@ -813,3 +813,18 @@ void EnemyManager::fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics
         }
     }
 }
+
+//****************************************************************
+// 
+// É{ÉXä÷òAÇÃä÷êî
+// 
+//****************************************************************
+LastBoss::Mode EnemyManager::fGetBossMode() const
+{
+    return mCurrentMode;
+}
+
+void EnemyManager::fSetBossMode(LastBoss::Mode Mode_) 
+{
+    mCurrentMode = Mode_;
+}

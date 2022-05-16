@@ -8,6 +8,7 @@
 
 
 #include "Common.h"
+#include "LastBoss.h"
 
 //****************************************************************
 //
@@ -100,6 +101,12 @@ public:
     void fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics_);
 
+    //--------------------<ボス関連の関数>--------------------//
+    [[nodiscard]] LastBoss::Mode fGetBossMode()const;
+    void fSetBossMode(LastBoss::Mode Mode_);
+    
+
+
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
@@ -117,7 +124,6 @@ private:
 
     //--------------------<敵同士の当たり判定>--------------------//
     void fCollisionEnemyVsEnemy();
-
 
     void fLoad(const char* FileName_);
     //****************************************************************
@@ -158,6 +164,10 @@ private:
     // ボスがユニットを召喚
     bool mIsReserveBossUnit{};
     std::vector<DirectX::XMFLOAT3> mUnitEntryPointVec{};
+
+    //--------------------<ボス関連の変数>--------------------//
+    LastBoss::Mode mCurrentMode{ LastBoss::Mode::None };
+
     //****************************************************************
     //
     // 定数

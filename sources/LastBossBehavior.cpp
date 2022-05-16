@@ -134,7 +134,7 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     mBeam.fSetLengthThreshold(mLaserThreshold);
 
     // TODO : ここで激しいカメラシェイク
-    mTimer -= elapsedTime_;\
+    mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::ShipBeamEnd);
@@ -358,13 +358,15 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
 void LastBoss::fHumanBlowAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
-    mpAllAttackEffect->play(effect_manager->get_effekseer_manager(), mPosition, 5.0f);
+    mpAllAttackEffect->play(effect_manager->get_effekseer_manager(),
+        mPosition, 5.0f);
     mIsAttack = true;
     mAttackCapsule.mRadius = 0.0f;
     mTimer = 0.0f;
 }
 
-void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
+    GraphicsPipeline& Graphics_)
 {
 
     mTimer += elapsedTime_;

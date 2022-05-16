@@ -1,6 +1,5 @@
 #pragma once
 #include <random>
-
 #include"BaseEnemy.h"
 
 class TutorialEnemy_NoAttack final :public BaseEnemy
@@ -39,7 +38,7 @@ private:
     DirectX::XMFLOAT3 mWonderBegin{};
     std::mt19937 mt{ std::random_device{}() };
 private:
-    //  NoMoveは待機・スタン
+    // NoMoveは待機・スタン
     void fStartInit();
     void fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
