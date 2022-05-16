@@ -288,11 +288,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-	if (player->GetEndDashEffect())
-	{
-		post_effect->clear_post_effect();
-		player->SetEndDashEffect(false);
-	}
 
 
 	enemy_hp_gauge->update(graphics, elapsed_time);

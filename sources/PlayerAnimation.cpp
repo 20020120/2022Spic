@@ -211,7 +211,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-        end_dash_effect = true;
+        PostEffect::clear_post_effect();
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
@@ -239,7 +239,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         if (is_enemy_hit)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
-            end_dash_effect = true;
+            PostEffect::clear_post_effect();
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
             is_charge = false;
             velocity.x *= 0.2f;
