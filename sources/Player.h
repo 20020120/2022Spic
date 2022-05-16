@@ -69,8 +69,12 @@ public:
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
 private:
+    //エフェクト
+    //回り込み回避
     std::unique_ptr<Effect> player_behind_effec;
-
+    //回避
+    std::unique_ptr<Effect> player_air_registance_effec;
+    float air_registance_offset_y{4.0f};
 private:
     //プレイヤーの最大体力
     static constexpr int MAX_HEALTH = 50;

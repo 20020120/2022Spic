@@ -141,6 +141,11 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                 ImGui::DragFloat("invincible_timer", &invincible_timer);
                 ImGui::TreePop();
             }
+            if (ImGui::TreeNode("Effect"))
+            {
+                ImGui::DragFloat("air_registance_offset_y", &air_registance_offset_y);
+                ImGui::TreePop();
+            }
 
             if (ImGui::Button("TransitionStageMove")) TransitionStageMove();
             if (ImGui::Button("TransitionIdle")) TransitionIdle();
@@ -159,6 +164,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
 
             ImGui::DragFloat("execution_timer", &execution_timer);
             ImGui::Checkbox("is_next", &is_next_tutorial);
+
 
             ImGui::End();
         }
@@ -466,9 +472,14 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
 
 void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    //エフェクトの位置，回転設定
+    player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
+    player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
+
     AvoidanceAcceleration(elapsed_time);
     if (avoidance_boost_time > avoidance_easing_time&& model->end_of_animation())
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         //もしチュートリアルが回避なら
         if (tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
             //回避中かどうかの設定
@@ -581,7 +592,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
                 ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
-                charge_point = Math::calc_designated_point(position, movevec, 100.0f);
+                charge_point = Math::calc_designated_point(position, movevec, 200.0f);
                 SetAccelerationVelocity();
                 charge_time = 0;
                 //TransitionCharge();
@@ -852,6 +863,8 @@ void Player::TransitionTutorialMove(float blend_second)
 
 void Player::TransitionTutorialAvoidance(float blend_second)
 {
+    //エフェクト再生
+    player_air_registance_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z },0.3f);
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -953,7 +966,7 @@ void Player::TransitionTutorialChargeInit()
     //アニメーション速度の設定
     animation_speed = CHARGEINIT_ANIMATION_SPEED;
     //ロックオンしてない場合のターゲットの設定
-    charge_point = Math::calc_designated_point(position, forward, 100.0f);
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //加速のレート
@@ -1062,7 +1075,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
 #endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
-    charge_point = Math::calc_designated_point(position, forward, 100.0f);
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //加速のレート
     lerp_rate = 2.0f;
     //攻撃の時間
