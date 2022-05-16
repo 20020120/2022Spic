@@ -74,6 +74,7 @@ void BaseCamera::DebugGUI()
 	ImGui::Begin("Camera", false);
 	ImGui::SliderFloat3("Position", &eye.x, -20.0f, 10.0f);
 	ImGui::InputFloat3("target", &target.x);
+	ImGui::InputFloat2("near_far", &near_far.x);
 
 	ImGui::InputFloat3("forward", &forward.x);
 
