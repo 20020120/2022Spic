@@ -44,19 +44,19 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
     const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
-    DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 2;
-	radius = 20;
+    DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 1;
+	radius = 25;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
-	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 6;
+	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 8;
 	DirectX::XMStoreFloat3(&target, Target);
 
 	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
 	DirectX::XMStoreFloat3(&eye, Eye);
 
-	up = 9;
-	up1 = 9;
+	up = 12;
+	up1 = 12;
 }
 
 void GameCamera::gameUpdate(float elapsedTime)
@@ -823,7 +823,7 @@ void GameCamera::RockOnCalculateEyeVector(DirectX::XMVECTOR PlayerPosition, Dire
 
 
 	//DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp;
-	DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp * 2;
+	DirectX::XMVECTOR RockOnEyeVector = -PlayerToRockOn * 10 + PlayerUp * 1;
 	RockOnEyeVector = DirectX::XMVector3Normalize(RockOnEyeVector);
 
 #else
