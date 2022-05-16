@@ -128,10 +128,10 @@ void TutorialScene::uninitialize()
 
 void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	static float bgm_volume = 2.0f;
-	static float se_volume = 0.2f;
-
-	audio_manager->set_volume_bgm(BGM_INDEX::TITLE, bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	const float bgm_volume = 2.0f;
+	const float se_volume = 0.2f;
+	audio_manager->set_all_volume_bgm(bgm_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
+	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	TutorialUpdate(graphics, elapsed_time);
 	//画像のチュートリアル中は進まない

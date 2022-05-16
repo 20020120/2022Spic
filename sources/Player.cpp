@@ -32,7 +32,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[8] = model->get_bone_by_name("camera_joint");
     //エフェクト
     player_behind_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
-    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance2.efk");
+    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
 
 }
 
@@ -52,20 +52,8 @@ void Player::UpdateTitle(float elapsed_time)
     ExecFuncUpdate(elapsed_time);
     GetPlayerDirections();
     model->update_animation(elapsed_time);
-    if (is_dying_update == false)
-    {
-        //覚醒状態の時は
-        if (is_awakening)
-        {
             //モデルを映す
-            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-        }
-        else
-        {
-            //モデルを消す
-            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
-        }
-    }
+    threshold_mesh = 0.0f;
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
     //薄くしておく

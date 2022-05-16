@@ -247,9 +247,17 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
                 charge_change_direction_count--;
                 velocity = {};
                 DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
-                ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
-                charge_point = Math::calc_designated_point(position, movevec, 100.0f);
-                SetAccelerationVelocity();
+                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                {
+                    ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                }
+                else
+                {
+                    ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+                }
+               //SetAccelerationVelocity();
                 charge_time = 0;
                 //TransitionCharge();
             }
@@ -456,31 +464,37 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 
     if (model->end_of_animation())
     {
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
         {
-            attack_time = 0;
-            velocity.x *= 0.2f;
-            velocity.y *= 0.2f;
-            velocity.z *= 0.2f;
-            TransitionAttackType1(attack_animation_blends_speeds.x);
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                attack_time = 0;
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
+                TransitionAttackType1(attack_animation_blends_speeds.x);
+            }
         }
-        //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
-        {
-            velocity.x *= 0.2f;
-            velocity.y *= 0.2f;
-            velocity.z *= 0.2f;
-            charge_time = 0;
-            TransitionMove();
-        }
-        //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
         else
         {
-            velocity.x *= 0.2f;
-            velocity.y *= 0.2f;
-            velocity.z *= 0.2f;
-            charge_time = 0;
-            TransitionIdle();
+            //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            {
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
+                charge_time = 0;
+                TransitionMove();
+            }
+            //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
+            else
+            {
+                velocity.x *= 0.2f;
+                velocity.y *= 0.2f;
+                velocity.z *= 0.2f;
+                charge_time = 0;
+                TransitionIdle();
+            }
         }
     }
     if (is_awakening)
