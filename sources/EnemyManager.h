@@ -105,7 +105,7 @@ public:
     [[nodiscard]] LastBoss::Mode fGetBossMode()const;
     void fSetBossMode(LastBoss::Mode Mode_);
     
-
+    [[nodiscard]] bool fGetIsEventCamera()const;
 
 private:
     //--------------------<敵と関連する処理>--------------------//
@@ -167,7 +167,7 @@ private:
 
     //--------------------<ボス関連の変数>--------------------//
     LastBoss::Mode mCurrentMode{ LastBoss::Mode::None };
-
+    bool mIsBossEvent{};// イベント中
     //****************************************************************
     //
     // 定数

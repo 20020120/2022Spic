@@ -144,6 +144,7 @@ void TutorialEnemy_NoAttack::fStunUpdate(float elapsedTime_, GraphicsPipeline& G
 
     if(mTimer<=0.0f)
     {
+        mIsStun = false;
         fChangeState(DivideState::Idle);
     }
 }
@@ -361,6 +362,7 @@ void TutorialEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     if (mTimer <= 0.0f)
     {
+        mIsStun = false;
         fChangeState(DivideState::Idle);
     }
 }

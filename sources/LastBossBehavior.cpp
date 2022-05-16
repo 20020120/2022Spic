@@ -161,6 +161,7 @@ void LastBoss::fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void LastBoss::fChangeShipToHumanInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
+    mCurrentMode = Mode::ShipToHuman;
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, 
@@ -185,7 +186,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
 {
    // 条件に応じて攻撃手段を分岐させる
 
-    if (mpModel->end_of_animation(mAnimPara)) return;
+    if (!mpModel->end_of_animation(mAnimPara)) return;
 
     //--------------------<アニメーションが終了したら>--------------------//
 
@@ -220,7 +221,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         if (randNumber <= 3)
         {
             fChangeState(DivideState::HumanRush);
-            return;
+            return;\
         }
     }
 
@@ -231,12 +232,12 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
             fChangeState(DivideState::HumanBlowAttack);
             return;
         }
-        else  if(randNumber>=5)
+        else  if(randNumber>=6)
         {
             fChangeState(DivideState::HumanAllShot);
             return;
         }
-        else if(randNumber>=4)
+        else if(randNumber>=3)
         {
             fChangeState(DivideState::HumanRush);
             return;
@@ -422,7 +423,7 @@ void LastBoss::fHumanRushInit()
     mMoveEnd = mPlayerPosition;
     mMoveBegin = mPosition;
     mMoveThreshold = 0.0f;
-    mpModel->play_animation(mAnimPara, AnimationName::human_move);
+    mpModel->play_animation(mAnimPara, AnimationName::human_rush_idle);
 }
 
 void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
