@@ -6,7 +6,7 @@ Reticle::Reticle(GraphicsPipeline& graphics)
 {
     reticle = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\reticle.png", 1);
 
-    element.scale   = { 0.06f, 0.06f };
+    element.scale   = { 0.15f, 0.15f };
     element.texsize = { static_cast<float>(reticle->get_texture2d_desc().Width), static_cast<float>(reticle->get_texture2d_desc().Height) };
     element.pivot   = element.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
     element.color.w = 0.0f;
@@ -28,18 +28,23 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time)
     }
 #endif // USE_IMGUI
 
+    const float LERP_RATE = 5.0f;
+
     if (animation)
     {
         element.position = conversion_2D(graphics.get_dc().Get(), focus_position);
-        element.color.w = Math::lerp(element.color.w, 0.7f, 5.0f * elapsed_time);
 
-        if (element.color.w >= 0.4f) { element.angle += 30.0f * elapsed_time; }
+        element.color.w = Math::lerp(element.color.w, 0.7f, LERP_RATE * elapsed_time);
+
+        element.scale = Math::lerp(element.scale, { 0.06f, 0.06f }, LERP_RATE * elapsed_time);
+
+        if (element.color.w >= 0.6f) { element.angle += 30.0f * elapsed_time; }
         else { element.angle += 360.0f * elapsed_time; }
         if (element.angle >= 360.0f) { element.angle = 0; }
     }
     else
     {
-        element.color.w = Math::lerp(element.color.w, 0.0f, 5.0f * elapsed_time);
+        element.color.w = Math::lerp(element.color.w, 0.0f, LERP_RATE * elapsed_time);
     }
 }
 
@@ -55,6 +60,11 @@ void Reticle::focus(const BaseEnemy* target_enemy, bool lockon)
 {
     if (target_enemy != nullptr)
     {
+        if (lockon && !animation)
+        {
+            element.scale   = { 0.15f, 0.15f };
+            element.color.w = 0.0f;
+        }
         animation = lockon;
         focus_position = target_enemy->fGetPosition();
         offset = { 0, -26.0f };

@@ -30,6 +30,10 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[6] = model->get_bone_by_name("shortsword_joint");
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
     player_bones[8] = model->get_bone_by_name("camera_joint");
+    //エフェクト
+    player_behind_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
+    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
+
 }
 
 Player::~Player()
@@ -48,20 +52,8 @@ void Player::UpdateTitle(float elapsed_time)
     ExecFuncUpdate(elapsed_time);
     GetPlayerDirections();
     model->update_animation(elapsed_time);
-    if (is_dying_update == false)
-    {
-        //覚醒状態の時は
-        if (is_awakening)
-        {
             //モデルを映す
-            if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-        }
-        else
-        {
-            //モデルを消す
-            if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
-        }
-    }
+    threshold_mesh = 0.0f;
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
 
     //薄くしておく
@@ -504,6 +496,11 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
+}
+
+void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
+{
+    graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
     //クリア演出中じゃないとき
     if (during_clear == false && is_start_cleear_motion == false)
     {
@@ -531,6 +528,7 @@ void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color,1.5f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 }
+
 
 void Player::LerpCameraTarget(float elapsed_time)
 {

@@ -488,12 +488,16 @@ void PostEffect::title_post_effect(float power)
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::RGB_SHIFT);
 }
 
-void PostEffect::boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power)
+void PostEffect::boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power, float wipe_threshold)
 {
 	effect_constants_for_preservation.rgb_shift_zoom_power = power;
 	effect_constants_for_preservation.rgb_shift_target_point = screen_pos;
-	post_effect_count = 1;
+
+	effect_constants_for_preservation.wipe_threshold = wipe_threshold;
+
+	post_effect_count = 2;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::ZOOM_RGB_SHIFT);
+	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::WIPE);
 }
 
 void PostEffect::wipe_effect(float threshold)
