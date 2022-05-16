@@ -146,7 +146,12 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
         // ƒNƒŠƒAó‘Ô‚É‘JˆÚ
-        if (mEnemyManager.fGetClearWave()) { clear_flg = true; }
+        if (mEnemyManager.fGetClearWave()) {
+            clear_flg = true;
+            effect_manager->finalize();
+            effect_manager->initialize(Graphics_);
+
+        }
 
         break;
     case WaveState::Clear:

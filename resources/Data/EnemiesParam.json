@@ -42,30 +42,30 @@
                 "InvincibleTime": 0.4000000059604645,
                 "BodyCapsuleRad": 5.0,
                 "AttackCapsuleRad": 2.0,
-                "StunTime": 15.0
+                "StunTime": 150.0
             }
         },
         {
             "key": "Shield",
             "value": {
-                "MaxHp":30,
+                "MaxHp": 10,
                 "AttackPower": 1,
                 "InvincibleTime": 1.0,
                 "BodyCapsuleRad": 5.0,
                 "AttackCapsuleRad": 3.0,
-                "StunTime": 15.0
+                "StunTime": 20.0
             }
         },
         {
             "key": "Shield_Ace",
-          "value": {
-            "MaxHp": 30,
-            "AttackPower": 1,
-            "InvincibleTime": 1.0,
-            "BodyCapsuleRad": 5.0,
-            "AttackCapsuleRad": 3.0,
-            "StunTime": 15.0
-          }
+            "value": {
+                "MaxHp": 10,
+                "AttackPower": 1,
+                "InvincibleTime": 1.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 3.0,
+                "StunTime": 20.0
+            }
         },
         {
             "key": "Spear",
@@ -80,14 +80,14 @@
         },
         {
             "key": "Spear_Ace",
-          "value": {
-            "MaxHp": 10,
-            "AttackPower": 10,
-            "InvincibleTime": 2.0,
-            "BodyCapsuleRad": 5.0,
-            "AttackCapsuleRad": 5.0,
-            "StunTime": 20.0
-          }
+            "value": {
+                "MaxHp": 30,
+                "AttackPower": 10,
+                "InvincibleTime": 2.0,
+                "BodyCapsuleRad": 5.0,
+                "AttackCapsuleRad": 5.0,
+                "StunTime": 20.0
+            }
         },
         {
             "key": "Sword",
