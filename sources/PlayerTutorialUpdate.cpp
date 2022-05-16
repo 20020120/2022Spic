@@ -24,7 +24,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         CameraReset();
         break;
     case Player::Behavior::Chain:
-
         break;
     default:
         break;
@@ -537,7 +536,11 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
         is_behind_avoidance = false;
         is_just_avoidance = false;
         //もしチュートリアルが回り込み回避なら
-        if (tutorial_state == TutorialState::BehindAvoidanceTutorial) is_next_tutorial = true;
+        if (tutorial_state == TutorialState::BehindAvoidanceTutorial)
+        {
+            tutorial_action_count--;
+            if(tutorial_action_count <= 0)is_next_tutorial = true;
+        }
         TransitionTutoriaIdle();
     }
     else

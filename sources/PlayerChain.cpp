@@ -138,7 +138,6 @@ bool debug_lockon = false;
 bool debug_transition_chain_lockon_flg = false;
 bool attack_start = false;
 #endif // CHAIN_DEBUG
-
 void Player::transition_chain_search()
 {
 	if (!chain_lockon_enemy_indexes.empty()) chain_lockon_enemy_indexes.clear();
@@ -163,7 +162,6 @@ void Player::transition_chain_search()
 	frame_time  = 0.0f;
 	frame_scope = 0.5f;
 	frame_alpha = 0.0f;
-
 	player_chain_activity = &Player::chain_search_update;
 }
 
@@ -420,7 +418,7 @@ void Player::transition_chain_lockon_begin()
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
 
-	audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
+	audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
 }
 
 void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
@@ -642,7 +640,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	if (transit(elapsed_time, transit_index, position, speed, interpolated_way_points, play))
 	{
 		assert(transit_index != 0 && "意図していない挙動になっています");
-		audio_manager->play_se(SE_INDEX::AVOIDANCE);
+		audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
 		transition_chain_attack(); // 攻撃ステートへ
 	}
 #endif // CHAIN_DEBUG
@@ -728,7 +726,11 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 			reticles.clear();
 			is_chain_attack = false;
-			if (tutorial_state == TutorialState::ChainAttackTutorial) is_next_tutorial = true;
+			if (tutorial_state == TutorialState::ChainAttackTutorial)
+			{
+				tutorial_action_count--;
+				if (tutorial_action_count <= 0)is_next_tutorial = true;
+			}
 			transition_chain_search(); /*リセット*/ transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ

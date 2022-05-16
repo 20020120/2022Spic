@@ -649,14 +649,18 @@ private:
     bool is_next_tutorial{ false };
     //今のチュートリアルでどれだけ操作したかどうか
     float execution_timer{ 0 };
+    //今のチュートリアルで何回その行動をしたか
+    int tutorial_action_count{ 3 };
     //チュートリアルの関数ポインタを呼ぶ
     void ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies, GraphicsPipeline& Graphics_);
 public:
     //チュートリアルのステート変更
     void ChangeTutorialState(int state);
     void SetIsTutorial(bool tutorial) { is_tutorial = tutorial; }
-    bool GetNextTutorial() { return is_next_tutorial; }
     void FalseNextTutorial() { is_next_tutorial = false; }
+    void SetTutorialCount(int count) { tutorial_action_count = count; }
+    bool GetNextTutorial() { return is_next_tutorial; }
+    int GetTutorialCount() { return tutorial_action_count; }
 private:
     //1が最初で大きくなっていくようにする
     enum class TutorialState

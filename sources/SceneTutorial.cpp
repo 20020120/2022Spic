@@ -493,6 +493,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	}
 
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
+	std::wstring count_text_first = L"あと";
+	std::wstring count_text_count = std::to_wstring(player->GetTutorialCount());
+	std::wstring count_text_last = L"回";
 
 	switch (tutorial_state)
 	{
@@ -578,6 +581,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
 			{
+				//回数を設定
+				player->SetTutorialCount(3);
 				//次のステートに設定
 				tutorial_state = TutorialState::BehindAvoidanceTutorial;
 				//次に進むフラグの初期化
@@ -597,7 +602,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::BehindAvoidanceTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
-
+		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
+		tutorial_count_text.position = { 800.0f,120.0f };
 		//画像のチュートリアルのパラメータ設定
 		sprite_tutorial_text.position = { 265.0f,392.0f };
 		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます";
@@ -618,6 +624,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			Judea_timer += 1.0f * elapsed_time;
 			if (Judea_timer > 1.0f)
 			{
+				//回数を設定
+				player->SetTutorialCount(3);
 				//次のステートに設定
 				tutorial_state = TutorialState::ChainAttackTutorial;
 				//次に進むフラグの初期化
@@ -644,6 +652,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	case TutorialScene::TutorialState::ChainAttackTutorial:
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
+		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
 		if (is_next)
 		{
 			Judea_timer += 1.0f * elapsed_time;
@@ -867,6 +876,12 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	check_mark->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale, check_mark_parm.threshold);
 	check_mark->end(graphics.get_dc().Get());
 
+	if (tutorial_state == TutorialState::BehindAvoidanceTutorial || tutorial_state == TutorialState::ChainAttackTutorial)
+	{
+		fonts->yu_gothic->Begin(graphics.get_dc().Get());
+		r_font_render("tutorial_count_text",tutorial_count_text);
+		fonts->yu_gothic->End(graphics.get_dc().Get());
+	}
 	//画像のチュートリアルの時
 	if (sprite_tutorial)
 	{

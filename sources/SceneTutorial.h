@@ -129,7 +129,7 @@ private:
     //説明文用の構造体
     struct StepFontElement
     {
-        std::wstring s = L"";
+        std::wstring s = L"UI";
         DirectX::XMFLOAT2 position{};
         DirectX::XMFLOAT2 scale{ 0.7f, 0.7f };
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
@@ -201,6 +201,7 @@ private:
     Element sprite_frame_parm;
 
     StepFontElement sprite_tutorial_text;
+    StepFontElement tutorial_count_text;
 private:
     //シーン変更するときの変数
     float change_scene_timer{ 0 };
