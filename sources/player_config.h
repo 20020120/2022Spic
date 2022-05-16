@@ -32,4 +32,6 @@ private:
     Element mp_body;
     float hp_percent = 1.0f;
     float mp_percent = 1.0f;
+
+    float glow_vertical = {};
 };
