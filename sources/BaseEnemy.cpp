@@ -53,7 +53,7 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     
     if (mCurrentHitPoint <= 0.0f)
     {
-        fDie(Graphics_,elapsedTime_);
+        fDie(Graphics_);
     }
     return elapsedTime_;
 }
@@ -79,12 +79,12 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
     //HP���Ȃ��Ȃ��������S������
     if (mCurrentHitPoint <= 0)
     {
-        fDie(Graphics_, elapsedTime_);
+        fDie(Graphics_);
     }
     return ret;
 }
 
-void BaseEnemy::fDie(GraphicsPipeline& Graphics_,float elapsedTime_)
+void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
 {
     mIsAlive = false;
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
@@ -109,27 +109,8 @@ void BaseEnemy::fUpdateVernierEffectPos()
         mVenierBone, position, up, q);
 
     mVernierEffect->set_position(effect_manager->get_effekseer_manager(), position);
-    DirectX::XMFLOAT4X4 corfinate_mat = Math::conversion_coordinate_system(Math::COORDINATE_SYSTEM::RHS_YUP);
-    auto transformQuaternionToRotMat = [&](DirectX::XMFLOAT4X4& q,
-        float qx, float qy, float qz, float qw)
-    {
-        q._11 = 1.0f - 2.0f * qy * qy - 2.0f * qz * qz;
-        q._12 = 2.0f * qx * qy + 2.0f * qw * qz;
-        q._13 = 2.0f * qx * qz - 2.0f * qw * qy;
-
-        q._21 = 2.0f * qx * qy - 2.0f * qw * qz;
-        q._22 = 1.0f - 2.0f * qx * qx - 2.0f * qz * qz;
-        q._23 = 2.0f * qy * qz + 2.0f * qw * qx;
-
-        q._31 = 2.0f * qx * qz + 2.0f * qw * qy;
-        q._32 = 2.0f * qy * qz - 2.0f * qw * qx;
-        q._33 = 1.0f - 2.0f * qx * qx - 2.0f * qy * qy;
-    };
-    DirectX::XMFLOAT4X4 r_mat;
-
-    transformQuaternionToRotMat(r_mat, mOrientation.x, mOrientation.y, mOrientation.z, mOrientation.w);
-    static float ang = 0;
-    mVernierEffect->set_posture(effect_manager->get_effekseer_manager(), r_mat, ang);
+   //クォータニオン回転
+    mVernierEffect->set_quaternion(effect_manager->get_effekseer_manager(),mOrientation);
 }
 
 void BaseEnemy::fTurnToPlayer(float elapsedTime_,float RotSpeed_)
