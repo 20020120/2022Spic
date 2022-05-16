@@ -72,7 +72,7 @@ private:
     void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 public:
     bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
-    void fSetStun(bool Arg_) override;
+    void fSetStun(bool Arg_, bool IsJust_) override;
 private:
     bool mIsHit{};
     bool mIsWaitCounter{};

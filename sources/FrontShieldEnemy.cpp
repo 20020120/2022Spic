@@ -270,7 +270,7 @@ void ShieldEnemy::fDieInit()
 void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 }
-void ShieldEnemy::fSetStun(bool Arg_)
+void ShieldEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
     if (mIsStun)

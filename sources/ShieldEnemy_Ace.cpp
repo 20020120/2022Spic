@@ -272,7 +272,7 @@ void ShieldEnemy_Ace::fDieInit()
 void ShieldEnemy_Ace::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 }
-void ShieldEnemy_Ace::fSetStun(bool Arg_)
+void ShieldEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
     if (mIsStun)

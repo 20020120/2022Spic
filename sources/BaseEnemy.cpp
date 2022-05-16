@@ -223,10 +223,11 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     mPosition += (velocity * elapsedTime_);
 }
 
-void BaseEnemy::fSetStun(bool Arg_)
+void BaseEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
 }
+
 
 void BaseEnemy::fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_)
 {
