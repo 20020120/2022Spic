@@ -198,6 +198,26 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			}
 		}
 	}
+	//プレイヤーがジャスト回避したらslow
+	if (player->GetIsJustAvoidance())
+	{
+		slow = true;
+	}
+	else
+	{
+		slow_timer = 0.0f;
+		slow = false;
+	}
+	//slowがtrueなら
+	if (slow)
+	{
+		slow_timer += 1.0f * elapsed_time;
+		//タイマーが0.5秒以下なら遅くする
+		if (slow_timer < 0.5f)
+		{
+			elapsed_time *= slow_rate;
+		}
+	}
 
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
@@ -208,7 +228,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	// ↓↓↓↓↓↓↓↓↓プレイヤーの更新はこのした↓↓↓↓↓
     BaseEnemy* enemy = enemyManager->fGetNearestEnemyPosition();
-
 	Camera* c = cameraManager->GetCurrentCamera();
 
 	if (player->GetIsAlive() == false)	is_game_over = true;
@@ -217,6 +236,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// 敵とのあたり判定(当たったらコンボ加算)
 	if (player->GetIsPlayerAttack())
 	{
+		bool block = false;
 		if (player->GetIsAwakening())
 		{
 				player->AwakingAddCombo
@@ -239,6 +259,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 					graphics,
 					elapsed_time
 					)
+					, block
 				);
 
 		}
@@ -251,13 +272,15 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 				player->GetPlayerPower(),
 				graphics,
 				elapsed_time
-			));
+			)
+			,block);
 		}
 	}
     const bool isCounter= enemyManager->fCalcEnemiesAttackVsPlayerCounter(
 		player->GetJustAvoidanceCapsuleParam().start,
 		player->GetJustAvoidanceCapsuleParam().end,
 		player->GetJustAvoidanceCapsuleParam().rasius);
+
 	player->PlayerJustAvoidance(isCounter);
 
 	enemyManager->fCalcEnemiesAttackVsPlayer(player->GetBodyCapsuleParam().start,
@@ -341,6 +364,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 			ImGui::End();
 		}
 
+		ImGui::Begin("slow");
+		ImGui::Checkbox("slow", &slow);
+		ImGui::End();
 		ImGui::Begin("game_over");
 		ImGui::Checkbox("is_game_over", &is_game_over);
 		ImGui::Checkbox("is_set_black", &is_set_black);
