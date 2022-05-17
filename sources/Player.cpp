@@ -761,6 +761,8 @@ void Player::InflectionParameters(float elapsed_time)
 
 void Player::TutorialInflectionParameters(float elpased_time)
 {
+
+    TutorialPlayerAlive();
     player_config->set_hp_percent(static_cast<float>(static_cast<float>(player_health) / MAX_HEALTH));
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //攻撃力の変動(今は使ってない)
@@ -816,6 +818,25 @@ void Player::PlayerAlive()
     if (player_health <= 0 && condition_state == ConditionState::Alive)
     {
         TransitionDie();
+    }
+}
+
+void Player::TutorialPlayerAlive()
+{
+    player_health = Math::clamp(player_health, 0, MAX_HEALTH);
+    //チュートリアルの時に死んだらステート変える
+    if (player_health <= 0 && condition_state == ConditionState::Alive)
+    {
+        condition_state = ConditionState::Die;
+    }
+    //ステートが死なら回復して生存に変える
+    if (condition_state == ConditionState::Die)
+    {
+        player_health += 1;
+        if (player_health >= MAX_HEALTH)
+        {
+            condition_state = ConditionState::Alive;
+        }
     }
 }
 
@@ -995,14 +1016,11 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 
     if (invincible_timer > 0.0f)return;
     //攻撃状態ならダメージを受けない
-    if (is_attack) return;
+    if (is_attack)  damage -= ATTACK_DAMAGE_INV;
     //もし回避中じゃなかったら怯む
-    if(is_avoidance == false) TransitionDamage();
-    else
-    {
-        //回避中ならひるまずダメージが下がって受ける
-        damage = damage - 1;
-    }
+    if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
+    //ダメージが10より大きかったら怯む
+    if (damage > 10.0f) TransitionDamage();
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
@@ -1019,8 +1037,10 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
     if (behavior_state == Behavior::Chain && during_chain_attack()) return;
-    //チュートリアル中はダメージを受けない
-    damage = 0;
+    //チュートリアル中ステートが死ならダメージを食らわない
+    if (condition_state == ConditionState::Die) return;
+    //練習時間じゃなかったらダメージを食らわない
+    if (tutorial_state != TutorialState::FreePractice) damage = 0;
     //ジャスト回避
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
@@ -1028,15 +1048,13 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     if (player_health <= 0)return;
 
     if (invincible_timer > 0.0f)return;
-    //攻撃状態ならダメージを受けない
-    if (is_attack) return;
+
+    if (is_attack)  damage -= ATTACK_DAMAGE_INV;
     //もし回避中じゃなかったら怯む
-    if (is_avoidance == false) TransitionTutorialDamage();
-    else
-    {
-        //回避中ならひるまずダメージが下がって受ける
-        damage = damage - 1;
-    }
+    if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
+    //ダメージが10より大きかったら怯む
+    if (damage > 10.0f) TransitionTutorialDamage();
+
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理

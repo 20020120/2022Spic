@@ -139,7 +139,6 @@ void Player::chain_parm_reset()
 	transition_normal_behavior();
 }
 
-
 //#define CHAIN_DEBUG
 
 #ifdef CHAIN_DEBUG
@@ -701,7 +700,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			for (const auto& enemy : enemies)
 			{
 				if (!enemy->fIsLockOnOfChain()) continue; // ダメージを与えるのはロックオンされた敵のみ
-				enemy->fDamaged(100, 0.3f,Graphics_,elapsed_time);
+				enemy->fDamaged(25, 0.3f,Graphics_,elapsed_time);
 				enemy->fSetIsLockOnOfChain(false);
 			}
 
