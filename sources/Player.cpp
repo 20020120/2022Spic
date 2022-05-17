@@ -313,16 +313,16 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
-            if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
-            {
-                transition_chain_behavior();
-            }
-            //ロックオン
-            LockOn();
-            //カメラリセット
-            CameraReset();
             if (is_behind_avoidance == false)
             {
+                if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+                {
+                    transition_chain_behavior();
+                }
+                //ロックオン
+                LockOn();
+                //カメラリセット
+                CameraReset();
                 PlayerJustification(elapsed_time, position);
                 if (target_enemy != nullptr)
                 {
@@ -1020,7 +1020,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     //もし回避中じゃなかったら怯む
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (damage > 10.0f) TransitionDamage();
+    if (damage >= 10.0f) TransitionDamage();
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
@@ -1222,39 +1222,6 @@ void Player::SpecialSurgeAcceleration()
 
 void Player::LockOn()
 {
-#if 0
-    //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいたら
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
-    {
-        target = target_enemy->fGetPosition();//敵の位置を代入して
-        is_enemy = true;//trueにする
-    }
-    else is_enemy = false;
-    enemy_length = Math::calc_vector_AtoB_length(position, target);
-    //自分と敵の距離を見る
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (is_enemy && length < LOCK_ON_LANGE)
-    {
-        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
-        {
-            if (is_lock_on == false)is_camera_lock_on = true;
-            //攻撃の加速の設定
-            SetAccelerationVelocity();
-            is_lock_on = true;
-        }
-        else
-        {
-            is_lock_on = false;
-            target_count = 0;
-        }
-    }
-    else
-    {
-        is_camera_lock_on = false;
-        is_lock_on = false;
-        target_count = 0;
-    }
-#else
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
@@ -1262,19 +1229,12 @@ void Player::LockOn()
         if (is_push_lock_on_button == false && target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             //敵の位置を補完のゴールターゲットに入れる
-#if 0
-            end_target = target_enemy->fGetPosition();
-#else
             target = target_enemy->fGetPosition();
-#endif // 0
             //敵と自分の距離を求める
-#if 0
-            float length{ Math::calc_vector_AtoB_length(position,end_target) };
-#else
             float length{ Math::calc_vector_AtoB_length(position,target) };
-#endif // 0
             //敵との距離がロックオン出来る距離よりも短かい場合
-            if (length < LOCK_ON_LANGE)
+            //一定の高さより低い場合(ボスが上に行く可能性があるから)
+            if (target.y < 5.0f && length < LOCK_ON_LANGE)
             {
                 //ロックオンするボタンを押したら
                 if (game_pad->get_trigger_L())
@@ -1320,64 +1280,21 @@ void Player::LockOn()
         is_camera_lock_on = false;
     }
 
-#endif // 0
 
 }
 
 void Player::TutorialLockOn()
 {
-#if 0
-    //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいたら
-    if (target_enemy != nullptr && target_enemy->fGetIsAlive() && target_enemy->fGetIsFrustum())
-    {
-        target = target_enemy->fGetPosition();//敵の位置を代入して
-        is_enemy = true;//trueにする
-    }
-    else is_enemy = false;
-    enemy_length = Math::calc_vector_AtoB_length(position, target);
-    //自分と敵の距離を見る
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (is_enemy && length < LOCK_ON_LANGE)
-    {
-        if (game_pad->get_button() & GamePad::BTN_LEFT_SHOULDER || game_pad->get_trigger_L())
-        {
-            if (is_lock_on == false)is_camera_lock_on = true;
-            //攻撃の加速の設定
-            SetAccelerationVelocity();
-            is_lock_on = true;
-        }
-        else
-        {
-            is_lock_on = false;
-            target_count = 0;
-        }
-    }
-    else
-    {
-        is_camera_lock_on = false;
-        is_lock_on = false;
-        target_count = 0;
-    }
-#else
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
         if (is_push_lock_on_button == false && target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
-            //敵の位置を補完のゴールターゲットに入れる
-#if 0
-            end_target = target_enemy->fGetPosition();
-#else
             target = target_enemy->fGetPosition();
-#endif // 0
             //敵と自分の距離を求める
-#if 0
-            float length{ Math::calc_vector_AtoB_length(position,end_target) };
-#else
             float length{ Math::calc_vector_AtoB_length(position,target) };
-#endif // 0
             //敵との距離がロックオン出来る距離よりも短かい場合
-            if (length < LOCK_ON_LANGE)
+            if (target.y < 5.0f && length < LOCK_ON_LANGE)
             {
                 //ロックオンするボタンを押したら
                 if (game_pad->get_trigger_L())
@@ -1422,7 +1339,6 @@ void Player::TutorialLockOn()
         is_camera_lock_on = false;
     }
 
-#endif // 0
 
 }
 

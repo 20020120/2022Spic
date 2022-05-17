@@ -342,7 +342,7 @@ void GraphicsPipeline::initialize(HWND hwnd)
 		// VS
 		{
 			Microsoft::WRL::ComPtr<ID3D11VertexShader> vertex_shader;
-			// NONE SPECULAR TOON HALF_LAMBERT PBR POINT_LIGHT DEFAULT
+			// NONE SPECULAR TOON HALF_LAMBERT PBR POINT_LIGHT DEFAULT FIELD
 			create_vs_from_cso(device.Get(), "./shaders/skinned_mesh_vs.cso", vertex_shader.ReleaseAndGetAddressOf(),
 				input_layout.ReleaseAndGetAddressOf(), input_element_desc, ARRAYSIZE(input_element_desc));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::NONE, vertex_shader));
@@ -353,6 +353,7 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::POINT_LIGHT, vertex_shader));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::DEFAULT, vertex_shader));
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::LaserBeam, vertex_shader));
+			vertex_shaders.insert(std::make_pair(SHADER_TYPES::FIELD, vertex_shader));
 			// SKYMAP
 			create_vs_from_cso(device.Get(), "./shaders/skymap_vs.cso", vertex_shader.ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 			vertex_shaders.insert(std::make_pair(SHADER_TYPES::SKYMAP, vertex_shader));
@@ -385,6 +386,9 @@ void GraphicsPipeline::initialize(HWND hwnd)
 			create_ps_from_cso(device.Get(), "./shaders/LaserBeamPs.cso",
 				pixel_shader.ReleaseAndGetAddressOf());
 			pixel_shaders.insert(std::make_pair(SHADER_TYPES::LaserBeam, pixel_shader));
+			// FIELD
+			create_ps_from_cso(device.Get(), "./shaders/field_ps.cso", pixel_shader.ReleaseAndGetAddressOf());
+			pixel_shaders.insert(std::make_pair(SHADER_TYPES::FIELD, pixel_shader));
 		}
 	}
 	//----texture maps----//

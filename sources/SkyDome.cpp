@@ -15,6 +15,9 @@ SkyDome::SkyDome(GraphicsPipeline& graphics)
     model = std::make_shared<SkinnedMesh>(graphics.get_device().Get(), ".\\resources\\Models\\stage\\sky.fbx", sub_colors, true, 0.0f);
 
     field = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\stage\\field.fbx", true);
+
+    // constants
+    constants = std::make_unique<Constants<FieldConstants>>(graphics.get_device().Get());
 }
 
 SkyDome::~SkyDome()
@@ -52,6 +55,8 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
         ImGui::ColorEdit3("emissive_color", &emissive_color.x);
         ImGui::DragFloat("emissive_strength", &emissive_color.w, 0.01f);
         ImGui::DragFloat("glow_thickness", &glow_thickness, 0.01f);
+        ImGui::DragFloat2("field_resolution", &constants->data.field_resolution.x, 0.1f);
+        ImGui::Text("field_time:%.2f", constants->data.field_time);
 
         ImGui::TreePop();
     }
@@ -59,6 +64,11 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 #endif // USE_IMGUI
 
     field_glow_time += elapsed_time * glow_speed;
+
+    constants->data.field_time += elapsed_time;
+    constants->bind(graphics.get_dc().Get(), 10);
+
+    graphics.set_pipeline_preset(SHADER_TYPES::FIELD);
 
     DirectX::XMFLOAT3 field_scale = { scale.x * scale_factor, scale.y * scale_factor, scale.z * scale_factor };
     field->render(graphics.get_dc().Get(), Math::calc_world_matrix(field_scale, angle, position),

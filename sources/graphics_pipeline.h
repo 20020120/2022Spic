@@ -49,6 +49,7 @@ enum class SHADER_TYPES
 	SKYMAP,
 	DEFAULT,
 	LaserBeam,
+	FIELD,
 };
 
 class GraphicsPipeline

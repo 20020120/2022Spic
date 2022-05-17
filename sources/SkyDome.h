@@ -5,6 +5,7 @@
 #include"graphics_pipeline.h"
 #include"collision.h"
 #include"user.h"
+#include "constants.h"
 
 class SkyDome : PracticalEntities
 {
@@ -44,4 +45,14 @@ private:
 
     static float purple_threshold;
     static float red_threshold;
+
+
+    //--------< •Ï” >--------//
+    struct FieldConstants
+    {
+        float field_time;
+        DirectX::XMFLOAT2 field_resolution{ 1,1 };
+        float field_pad1;
+    };
+    std::unique_ptr<Constants<FieldConstants>> constants;
 };

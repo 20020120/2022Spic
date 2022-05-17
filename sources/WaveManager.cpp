@@ -216,7 +216,7 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
             };
             fonts->yu_gothic->Begin(dc);
             {
-                static DirectX::XMFLOAT2 pos{ 1226.0f, 634.0f };
+                static DirectX::XMFLOAT2 pos{ 1266.0f, 634.0f };
                 static DirectX::XMFLOAT2 scale{ 0.8f, 0.8f };
                 r_font_render("L", L"Lスティック  選択", pos, scale);
             }

@@ -85,13 +85,21 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         float length{ Math::calc_vector_AtoB_length(position, target) };
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            //ジャスト回避なら
+            if (is_just_avoidance_capsul)
             {
-                TransitionBehindAvoidance();
+                TransitionJustBehindAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionAvoidance();
+            else
+            {
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionAvoidance();
+            }
         }
         //突進開始に遷移
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -118,13 +126,21 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         float length{ Math::calc_vector_AtoB_length(position, target) };
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            //ジャスト回避なら
+            if (is_just_avoidance_capsul)
             {
-                TransitionBehindAvoidance();
+                TransitionJustBehindAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionAvoidance();
+            else
+            {
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionAvoidance();
+            }
         }
         //突進開始に遷移
         if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
@@ -176,7 +192,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //behind_timer += 2.0f * elapsed_time;
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     //BehindAvoidanceMove(elapsed_time);
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,1.0f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,2.0f))
     {
         if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else   behaind_avoidance_cool_time = 0.5f;
@@ -815,6 +831,13 @@ void Player::TransitionAvoidance()
 void Player::TransitionBehindAvoidance()
 {
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), {position.x,position.y + air_registance_offset_y ,position.z});
+    if (target_enemy != nullptr)
+    {
+        //ロックオンしている敵をスタンさせる
+        target_enemy->fSetStun(true);
+    }
+#if 0
     if (is_just_avoidance_capsul)
     {
         //ロックオンしている敵をスタンさせる
@@ -832,7 +855,72 @@ void Player::TransitionBehindAvoidance()
             target_enemy->fSetStun(true);
         }
     }
-    player_behind_effec->play(effect_manager->get_effekseer_manager(), {position.x,position.y + air_registance_offset_y ,position.z});
+
+#endif // 0
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
+    velocity = {};
+    //回避中かどうかの設定
+    is_avoidance = true;
+    //回り込み回避かどうか
+    is_behind_avoidance = true;
+    //覚醒状態の時の回避アニメーションの設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    //通常状態の時のアニメーションの設定
+    else model->play_animation(AnimationClips::Avoidance, false, true);
+    //後ろに回り込む座標の取得
+    BehindAvoidancePosition();
+    //回り込むときのタイマー
+    behind_timer = 0;
+    //回り込みの補完レート
+    behind_late = 0;
+    //移動速度の初期化
+    velocity = {};
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //アニメーションの速度
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //背後に回り込むときの関数に切り替える
+    player_activity = &Player::BehindAvoidanceUpdate;
+
+    velocity = {};
+    //回避中かどうかの設定
+    is_avoidance = true;
+    //回り込み回避かどうか
+    is_behind_avoidance = true;
+    //覚醒状態の時の回避アニメーションの設定
+    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+    //通常状態の時のアニメーションの設定
+    else model->play_animation(AnimationClips::Avoidance, false, true);
+    //後ろに回り込む座標の取得
+    BehindAvoidancePosition();
+    //回り込むときのタイマー
+    behind_timer = 0;
+    //回り込みの補完レート
+    behind_late = 0;
+    //移動速度の初期化
+    velocity = {};
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //アニメーションの速度
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //背後に回り込むときの関数に切り替える
+    player_activity = &Player::BehindAvoidanceUpdate;
+}
+
+void Player::TransitionJustBehindAvoidance()
+{
+    audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
+        //ロックオンしている敵をスタンさせる
+    if (target_enemy != nullptr)
+    {
+        target_enemy->fSetStun(true, true);
+    }
+    is_just_avoidance = true;
+    player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -1273,6 +1361,8 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
+    //ステージ遷移の時に回復する
+    player_health += RECOVERY_HEALTH;
     velocity = {};
     //移動のアニメーションにする()
     model->play_animation(AnimationClips::TransformWing, false);

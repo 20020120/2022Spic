@@ -138,3 +138,12 @@ cbuffer PARTICLE_CONSTANTS : register(b9)
     float4 position_on_near_plane;
     float4 eye_position;
 };
+
+
+
+cbuffer FIELD_CONSTANTS : register(b10)
+{
+    float field_time;
+    float2 field_resolution;
+    float field_pad1;
+};

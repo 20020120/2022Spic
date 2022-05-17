@@ -243,6 +243,13 @@ private:
     float arrow_rate{ 0 };
     bool arrow_move_change{ false };
 
+    //画像のチュートリアルのジャスト回避
+    std::unique_ptr<SpriteBatch> just_avoidance{ nullptr };
+    Element just_avoidance_parm;
+    //画像のチュートリアルの覚醒
+    std::unique_ptr<SpriteBatch> awaiking_chain{ nullptr };
+    Element awaiking_chain_parm;
+
     StepFontElement sprite_tutorial_text;
     StepFontElement tutorial_count_text;
 private:
@@ -305,4 +312,8 @@ private:
     //スタンしている敵がいなかったら増えていく
     float is_stun_timer{ 0 };
     bool reset_text{ false };
+private:
+    bool slow{ false };
+    float slow_timer{ 0.0f };
+    float slow_rate{ 0.05f };
 };
