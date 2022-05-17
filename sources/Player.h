@@ -258,6 +258,8 @@ private:
     bool is_update_animation{ true };
     //クリア演出中
     bool during_clear{ false };
+    //ボスの演出中
+    bool boss_camera{ false };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
@@ -308,6 +310,7 @@ private:
 public:
     void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
+    void SetBossCamera(bool boss_c) { boss_camera = boss_c; }
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }

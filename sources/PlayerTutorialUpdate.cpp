@@ -1137,7 +1137,7 @@ void Player::TransitionTutorialAttack1(float blend_second)
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 2;
+        player_attack_power = 1;
         model->play_animation(AnimationClips::AttackType1, false, true, blend_second);
     }
     //攻撃中かどうかの設定
@@ -1172,7 +1172,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 4;
+        player_attack_power =2;
         model->play_animation(AnimationClips::AttackType2, false, true, blend_second);
     }
     //攻撃中かどうかの設定
@@ -1214,7 +1214,7 @@ void Player::TransitionTutorialAttack3(float blend_second)
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 5;
+        player_attack_power = 4;
         model->play_animation(AnimationClips::AttackType3, false, true, blend_second);
     }
     //攻撃中かどうかの設定

@@ -343,9 +343,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// camera
     //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
-
-	if (mIsBossCamera == false)
-	{
+	player->SetBossCamera(mIsBossCamera);
 		player->SetCameraDirection(c->GetForward(), c->GetRight());
 		player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 		//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
@@ -355,7 +353,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->SetTarget(enemy);
 		player->SetCameraTarget(c->get_target());
 		if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-	}
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
