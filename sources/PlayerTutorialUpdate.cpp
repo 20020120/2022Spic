@@ -5,6 +5,10 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+
+    //チェイン攻撃から戻ってきたときにカメラが戻ってくるまでは止めておく
+    change_normal_timer -= 1.0f * elapsed_time;
+
     ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies,graphics);
     //イベントシーンの黒の枠
     wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
@@ -217,140 +221,142 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     {
         TransitionTutorialMove();
     }
-
-    switch (tutorial_state)
+    if (change_normal_timer < 0)
     {
-    case Player::TutorialState::MoveTutorial:
-        //MoveTutorialの時にこの時間動いていたら終わったことにする
-        if (execution_timer > 1.5f) is_next_tutorial = true;
-        break;
-    case Player::TutorialState::AvoidanceTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        switch (tutorial_state)
         {
-            TransitionTutorialAvoidance();
-        }
-        break;
-    }
-    case Player::TutorialState::LockOnTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        case Player::TutorialState::MoveTutorial:
+            //MoveTutorialの時にこの時間動いていたら終わったことにする
+            if (execution_timer > 1.5f) is_next_tutorial = true;
+            break;
+        case Player::TutorialState::AvoidanceTutorial:
         {
-            TransitionTutorialAvoidance();
-        }
-        break;
-    }
-    case Player::TutorialState::AttackTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            TransitionTutorialAvoidance();
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionTutorialChargeInit();
-        }
-        break;
-    }
-    case Player::TutorialState::BehindAvoidanceTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
+            break;
         }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        case Player::TutorialState::LockOnTutorial:
         {
-            TransitionTutorialChargeInit();
-        }
-        break;
-    }
-    case Player::TutorialState::ChainAttackTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
+            break;
         }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        case Player::TutorialState::AttackTutorial:
         {
-            TransitionTutorialChargeInit();
-        }
-
-        break;
-    }
-    case Player::TutorialState::AwaikingTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionTutorialChargeInit();
-        }
-        TutorialAwaiking();
-        break;
-    }
-    case Player::TutorialState::FreePractice:
-    {
-        is_next_tutorial = false;
-        execution_timer = 0;
-
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialChargeInit();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
+            break;
         }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        case Player::TutorialState::BehindAvoidanceTutorial:
         {
-            TransitionTutorialChargeInit();
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            break;
         }
-        TutorialAwaiking();
-        break;
-    }
+        case Player::TutorialState::ChainAttackTutorial:
+        {
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+
+            break;
+        }
+        case Player::TutorialState::AwaikingTutorial:
+        {
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            TutorialAwaiking();
+            break;
+        }
+        case Player::TutorialState::FreePractice:
+        {
+            is_next_tutorial = false;
+            execution_timer = 0;
+
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            TutorialAwaiking();
+            break;
+        }
 
         break;
-    default:
-        break;
+        default:
+            break;
+        }
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
@@ -362,138 +368,141 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     {
         TransitionTutoriaIdle();
     }
-    switch (tutorial_state)
+    if (change_normal_timer < 0)
     {
-    case Player::TutorialState::MoveTutorial:
-        execution_timer += 1.0f * elapsed_time;
-        //MoveTutorialの時にこの時間動いていたら終わったことにする
-        if (execution_timer > 1.5f) is_next_tutorial = true;
-        break;
-    case Player::TutorialState::AvoidanceTutorial:
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        switch (tutorial_state)
         {
-            TransitionTutorialAvoidance();
-        }
-        break;
-    case Player::TutorialState::LockOnTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            TransitionTutorialAvoidance();
-        }
-    }
-        break;
-    case Player::TutorialState::AttackTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            TransitionTutorialAvoidance();
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionTutorialChargeInit();
-        }
-        break;
-    }
-    case Player::TutorialState::BehindAvoidanceTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        case Player::TutorialState::MoveTutorial:
+            execution_timer += 1.0f * elapsed_time;
+            //MoveTutorialの時にこの時間動いていたら終わったことにする
+            if (execution_timer > 1.5f) is_next_tutorial = true;
+            break;
+        case Player::TutorialState::AvoidanceTutorial:
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            break;
+        case Player::TutorialState::LockOnTutorial:
         {
-            TransitionTutorialChargeInit();
-        }
-        break;
-    }
-    case Player::TutorialState::ChainAttackTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
         }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionTutorialChargeInit();
-        }
-
         break;
-    }
-    case Player::TutorialState::AwaikingTutorial:
-    {
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        case Player::TutorialState::AttackTutorial:
         {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialAvoidance();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
-        }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-        {
-            TransitionTutorialChargeInit();
-        }
-        TutorialAwaiking();
-        break;
-    }
-    case Player::TutorialState::FreePractice:
-    {
-        is_next_tutorial = false;
-        execution_timer = 0;
-
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
-        {
-            //回避に遷移
-            float length{ Math::calc_vector_AtoB_length(position, target) };
-            //後ろに回り込める距離なら回り込みようのUpdate
-            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                TransitionTutorialBehindAvoidance();
+                TransitionTutorialChargeInit();
             }
-            //そうじゃなかったら普通の回避
-            else TransitionTutorialAvoidance();
-
+            break;
         }
-        //突進開始に遷移
-        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        case Player::TutorialState::BehindAvoidanceTutorial:
         {
-            TransitionTutorialChargeInit();
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            break;
         }
-        TutorialAwaiking();
-        break;
-    }
+        case Player::TutorialState::ChainAttackTutorial:
+        {
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+
+            break;
+        }
+        case Player::TutorialState::AwaikingTutorial:
+        {
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            TutorialAwaiking();
+            break;
+        }
+        case Player::TutorialState::FreePractice:
+        {
+            is_next_tutorial = false;
+            execution_timer = 0;
+
+            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                //回避に遷移
+                float length{ Math::calc_vector_AtoB_length(position, target) };
+                //後ろに回り込める距離なら回り込みようのUpdate
+                if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+                {
+                    TransitionTutorialBehindAvoidance();
+                }
+                //そうじゃなかったら普通の回避
+                else TransitionTutorialAvoidance();
+
+            }
+            //突進開始に遷移
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                TransitionTutorialChargeInit();
+            }
+            TutorialAwaiking();
+            break;
+        }
 
         break;
-    default:
-        break;
+        default:
+            break;
+        }
     }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
@@ -1325,7 +1334,7 @@ void Player::TransitionTutorialDamage()
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //ダメージ受けたときの更新関数に切り替える
-    player_activity = &Player::DamageUpdate;
+    player_tutorial_activity = &Player::TutorialDamageUpdate;
 
 }
 
