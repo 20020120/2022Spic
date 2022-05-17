@@ -184,12 +184,6 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename,
     std::string sub_colors[2], bool triangulate, float sampling_rate)
     : SkinnedMesh(device, fbx_filename, triangulate, sampling_rate)
 {
-    std::filesystem::path cereal_filename(fbx_filename);
-    if (!std::filesystem::exists(cereal_filename.c_str()))
-    {
-        _ASSERT_EXPR(false, L"指定されたfbxファイルが存在しません");
-    }
-
     // sub color map作成
     for (size_t texture_index = 0; texture_index < 2; ++texture_index)
     {
