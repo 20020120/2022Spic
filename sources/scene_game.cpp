@@ -303,17 +303,18 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
     //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
 
-	player->SetCameraDirection(c->GetForward(), c->GetRight());
-	player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
-		[=]() { post_effect->clear_post_effect(); });
-	player->SetCameraPosition(c->get_eye());
-	player->SetTarget(enemy);
-	player->SetCameraTarget(c->get_target());
-	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-
-
+	if (mIsBossCamera == false)
+	{
+		player->SetCameraDirection(c->GetForward(), c->GetRight());
+		player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
+			[=]() { post_effect->clear_post_effect(); });
+		player->SetCameraPosition(c->get_eye());
+		player->SetTarget(enemy);
+		player->SetCameraTarget(c->get_target());
+		if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
+	}
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
@@ -545,7 +546,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<“G‚ÌŠÇ—ƒNƒ‰ƒX‚Ì•`‰æˆ—>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
-	player->Render(graphics, elapsed_time);
+	if(mIsBossCamera == false)player->Render(graphics, elapsed_time);
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
