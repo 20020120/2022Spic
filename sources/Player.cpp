@@ -483,9 +483,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 }
 
 
-bool Player::EnemiesIsSutn(std::vector<BaseEnemy*> enemies)
+bool Player::EnemiesIsStun(std::vector<BaseEnemy*> enemies)
 {
-    return false;
+    bool is_stun{ false };
+    for (auto e : enemies)
+    {
+        if (e->fGetStun()) is_stun = true;
+    }
+    return is_stun;
 }
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)

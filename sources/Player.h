@@ -69,7 +69,7 @@ public:
     //タイトル用のアップデート
     void UpdateTitle(float elapsed_time);
     //スタンしている敵がいるかどうか
-    bool EnemiesIsSutn(std::vector<BaseEnemy*> enemies);
+    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
