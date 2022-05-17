@@ -456,6 +456,9 @@ void PostEffect::dash_post_effect(ID3D11DeviceContext* dc, const DirectX::XMFLOA
 	UINT num_viewports = 1;
 	dc->RSGetViewports(&num_viewports, &viewport);
 
+	effect_constants_for_preservation.zoom_power = 0.74f;
+	effect_constants_for_preservation.focus_detail =  50;
+
 	effect_constants_for_preservation.reference_position = { conversion_2D(dc, pos).x / viewport.Width, conversion_2D(dc, pos).y / viewport.Height,0,0 };
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::DASH_BLUR);
