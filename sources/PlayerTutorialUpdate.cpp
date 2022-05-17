@@ -5,7 +5,6 @@
 
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-
     ExecFuncTutorialUpdate(elapsed_time, sky_dome, enemies,graphics);
     //イベントシーンの黒の枠
     wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);

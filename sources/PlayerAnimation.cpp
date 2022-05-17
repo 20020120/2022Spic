@@ -1187,7 +1187,7 @@ void Player::TransitionWingDashEnd()
 }
 void Player::TransitionDie()
 {
-    condition_state = ConditionState::Dye;
+    condition_state = ConditionState::Die;
     //UŒ‚’†‚©‚Ç‚¤‚©‚Ìİ’è
     is_attack = false;
     velocity = {};

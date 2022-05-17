@@ -120,6 +120,10 @@ private:
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
     //チェイン攻撃の時にコンボゲージが減る量
     static constexpr float COMBO_COUNT_SUB = 2.0f;
+    //プレイヤーが攻撃中にダメージを受けたときの減少量
+    static constexpr int ATTACK_DAMAGE_INV = 5;
+    //プレイヤーが回避中にダメージを受けたときの減少量
+    static constexpr int AVOIDANCE_DAMAGE_INV = 5;
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
@@ -277,6 +281,8 @@ private:
     void InflectionCombo(float elapsed_time);
     //死んでるかどうか
     void PlayerAlive();
+    //チュートリアルの時の死んでるかどうか
+    void TutorialPlayerAlive();
 private:
     //カプセル敵との当たり判定
     struct CapsuleParam
@@ -303,7 +309,7 @@ private:
     enum class ConditionState
     {
         Alive,//生きている
-        Dye//死んでいる
+        Die//死んでいる
     };
     //生きているかどうか
     ConditionState condition_state{ ConditionState::Alive };
