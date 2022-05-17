@@ -309,7 +309,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//プレイヤーがチェイン状態であることを敵に知らせて行動を停止させる
 	enemyManager->fSetIsPlayerChainTime(player->during_chain_attack());
-
 	//弾とプレイヤーの当たり判定
 	mBulletManager.fCalcBulletsVsPlayer(player->GetBodyCapsuleParam().start,
 		player->GetBodyCapsuleParam().end,
@@ -327,7 +326,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());

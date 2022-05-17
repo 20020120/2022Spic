@@ -516,6 +516,8 @@ private:
     void TransitionAvoidance();
     //背後に回り込む回避に遷移
     void TransitionBehindAvoidance();
+    //ジャスト回避の回り込み回避に遷移
+    void TransitionJustBehindAvoidance();
     //突進開始に遷移
     void TransitionChargeInit();
     //突進に遷移
@@ -728,6 +730,7 @@ private:
     void TransitionTutorialMove(float blend_second = 0.3f);
     void TransitionTutorialAvoidance(float blend_second = 0.3f);
     void TransitionTutorialBehindAvoidance();
+    void TransitionTutorialJustBehindAvoidance();
     void TransitionTutorialChargeInit();
     void TransitionTutorialCharge(float blend_second = 0.3f);
     void TransitionTutorialAttack1(float blend_second = 0.3f);
