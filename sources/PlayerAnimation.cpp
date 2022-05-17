@@ -78,25 +78,29 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionMove();
     }
-    //回避に遷移
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+    //チェイン攻撃から戻ってきて数秒間は移動しかできない
+    if (change_normal_timer < 0)
     {
-        //後ろに回り込める距離なら回り込みようのUpdate
-        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        //回避に遷移
+        float length{ Math::calc_vector_AtoB_length(position, target) };
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
-            TransitionBehindAvoidance();
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionAvoidance();
         }
-        //そうじゃなかったら普通の回避
-        else TransitionAvoidance();
-    }
-    //突進開始に遷移
-    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-    {
-        TransitionChargeInit();
-    }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionChargeInit();
+        }
 
-    Awaiking();
+        Awaiking();
+    }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -107,25 +111,29 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionIdle();
     }
-    //回避に遷移
-    float length{ Math::calc_vector_AtoB_length(position, target) };
-    if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+    //チェイン攻撃から戻ってきて数秒間は移動しかできない
+    if (change_normal_timer < 0)
     {
-        //後ろに回り込める距離なら回り込みようのUpdate
-        if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+        //回避に遷移
+        float length{ Math::calc_vector_AtoB_length(position, target) };
+        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
-            TransitionBehindAvoidance();
+            //後ろに回り込める距離なら回り込みようのUpdate
+            if (behaind_avoidance_cool_time < 0 && is_lock_on && length < BEHIND_LANGE_MAX && length > BEHIND_LANGE_MIN)
+            {
+                TransitionBehindAvoidance();
+            }
+            //そうじゃなかったら普通の回避
+            else TransitionAvoidance();
         }
-        //そうじゃなかったら普通の回避
-        else TransitionAvoidance();
-    }
-    //突進開始に遷移
-    if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-    {
-        TransitionChargeInit();
-    }
+        //突進開始に遷移
+        if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+        {
+            TransitionChargeInit();
+        }
 
-    Awaiking();
+        Awaiking();
+    }
     UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 

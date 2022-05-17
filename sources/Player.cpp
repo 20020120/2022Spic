@@ -281,25 +281,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 {
     //ƒ`ƒFƒCƒ“UŒ‚‚©‚ç–ß‚Á‚Ä‚«‚½‚Æ‚«‚ÉƒJƒƒ‰‚ª–ß‚Á‚Ä‚­‚é‚Ü‚Å‚ÍŽ~‚ß‚Ä‚¨‚­
     change_normal_timer -= 1.0f * elapsed_time;
-    if (change_normal_timer > 0)
-    {
-        if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
-        if (is_awakening)
-        {
-            for (int i = 0; i < 2; ++i)
-            {
-                mSwordTrail[i].fUpdate(elapsed_time, 10);
-                mSwordTrail[i].fEraseTrailPoint(elapsed_time);
-            }
-        }
-        else
-        {
-            mSwordTrail[0].fUpdate(elapsed_time, 10);
-            mSwordTrail[0].fEraseTrailPoint(elapsed_time);
-        }
-
-        return;
-    }
 
 #ifdef USE_IMGUI
     ImGui::Begin("chain");

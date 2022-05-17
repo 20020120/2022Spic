@@ -713,6 +713,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				if (tutorial_action_count <= 0)is_next_tutorial = true;
 			}
 				is_chain_attack = false;
+				change_normal_timer = 1.5f;
 				transition_chain_search(); /*ƒŠƒZƒbƒg*/
 				transition_normal_behavior();
 		}

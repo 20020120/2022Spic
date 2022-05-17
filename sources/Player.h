@@ -605,7 +605,6 @@ private:
     void transition_normal_behavior()
     {
         PostEffect::clear_post_effect();
-        change_normal_timer = 1.5f;
         behavior_state = Behavior::Normal;
         if (is_tutorial)TransitionTutoriaIdle();
         else TransitionIdle();
