@@ -346,6 +346,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ğI‚í‚é
 #if 0
@@ -444,6 +445,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
     attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ğI‚í‚é
@@ -937,7 +939,7 @@ void Player::TransitionAttackType1(float blend_seconds)
     else
     {
         //ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í
-        player_attack_power = 2;
+        player_attack_power = 1;
         model->play_animation(AnimationClips::AttackType1, false, true, blend_seconds);
     }
     //UŒ‚’†‚©‚Ç‚¤‚©‚Ìİ’è
@@ -972,7 +974,7 @@ void Player::TransitionAttackType2(float blend_seconds)
     else
     {
         //ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í
-        player_attack_power = 4;
+        player_attack_power = 2;
         model->play_animation(AnimationClips::AttackType2, false, true, blend_seconds);
     }
     //UŒ‚’†‚©‚Ç‚¤‚©‚Ìİ’è
@@ -1015,7 +1017,7 @@ void Player::TransitionAttackType3(float blend_seconds)
     else
     {
         //ƒvƒŒƒCƒ„[‚ÌUŒ‚—Í
-        player_attack_power = 5;
+        player_attack_power = 4;
         model->play_animation(AnimationClips::AttackType3, false, true, blend_seconds);
     }
     //UŒ‚’†‚©‚Ç‚¤‚©‚Ìİ’è

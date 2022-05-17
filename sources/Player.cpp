@@ -279,6 +279,13 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
 }
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    if (boss_camera)
+    {
+        velocity = {};
+        position = { 1.0f,0.0f,-160.0f };
+        is_lock_on = false;
+        return;
+    }
     //チェイン攻撃から戻ってきたときにカメラが戻ってくるまでは止めておく
     change_normal_timer -= 1.0f * elapsed_time;
 
