@@ -386,7 +386,7 @@ void ArcherEnemy_Ace::fAttackEndInit()
 
 void ArcherEnemy_Ace::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 3.5f, mPlayerPosition.z };
+    DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 1.5f, mPlayerPosition.z };
     fTurnToPlayer(elapsedTime_, ROT_SPEED);
     //’e‘•“U
     float bullet_speed = 1.0f * 0.2f;

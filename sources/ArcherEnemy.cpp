@@ -386,12 +386,12 @@ void ArcherEnemy::fAttackEndInit()
 
 void ArcherEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 3.5f, mPlayerPosition.z };
+    DirectX::XMFLOAT3 tar_pos = { mPlayerPosition.x, mPlayerPosition.y + 1.5f, mPlayerPosition.z };
     fTurnToPlayer(elapsedTime_, ROT_SPEED);
     //’e‘•“U
         float bullet_speed = 1.0f * 0.2f;
         auto straightBullet = new StraightBullet(Graphics_,
-            mPosition, Math::GetFront(mOrientation) * bullet_speed);
+            tar_pos, Math::GetFront(mOrientation) * bullet_speed);
         //ƒpƒ‰ƒ[ƒ^Ý’è
         straightBullet->fSetBulletData(0.5f, 0.5f, 0.5f, 1, 1.0f);
         //“o˜^
