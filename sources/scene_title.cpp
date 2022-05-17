@@ -510,10 +510,15 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 		if (slashing_power <= 0 && slashing_wait_timer > 5.0f)
 		{
 			slashing_power = 0.015f;
+			audio_manager->play_se(SE_INDEX::TITLE_CUT);
 		}
 		// ­‚µ‚¸‚Â‚¸‚ç‚·
 		if (slashing_wait_timer > 6.0f)
 		{
+			if (Math::equal_check(slashing_power, 0.015f, 0.001f))
+			{
+				audio_manager->play_se(SE_INDEX::TITLE_CUTTING);
+			}
 			slashing_power += elapsed_time * 0.05f;
 			slashing_power = (std::min)(slashing_power, SLASHING_MAX);
 		}
