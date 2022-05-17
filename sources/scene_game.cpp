@@ -46,7 +46,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
 	cameraManager->RegisterCamera(new ClearCamera(player.get()));
-	cameraManager->RegisterCamera(new JointCamera());
+	cameraManager->RegisterCamera(new JointCamera(graphics));
 
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
@@ -275,20 +275,46 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
+	//--------------------<ボスの方にカメラを向ける処理>--------------------//
+	if(enemyManager->fGetIsEventCamera()&&!mIsBossCamera)
+	{
+	    // まだボスのほうを向いていないとき
+		mIsBossCamera = true;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Joint));
+	}
+	if(enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+		const DirectX::XMFLOAT3 eye = enemyManager->fGetEye();
+		const DirectX::XMFLOAT3 focus = enemyManager->fGetFocus();
+
+	    // カメラがEnemyManagerを経由し555たボスによって更新される
+		cameraManager->GetCurrentCamera()->set_eye(eye);
+		cameraManager->GetCurrentCamera()->set_target(focus);
+	}
+	if (!enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+	    // カメラ処理終了
+		mIsBossCamera = false;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
+	}
+
+
 	// camera
     //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
 
-	player->SetCameraDirection(c->GetForward(), c->GetRight());
-	player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
-		[=]() { post_effect->clear_post_effect(); });
-	player->SetCameraPosition(c->get_eye());
-	player->SetTarget(enemy);
-	player->SetCameraTarget(c->get_target());
-	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-
+	if (mIsBossCamera == false)
+	{
+		player->SetCameraDirection(c->GetForward(), c->GetRight());
+		player->Update(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
+			[=]() { post_effect->clear_post_effect(); });
+		player->SetCameraPosition(c->get_eye());
+		player->SetTarget(enemy);
+		player->SetCameraTarget(c->get_target());
+		if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
+	}
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
@@ -520,7 +546,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
 	mWaveManager.fGetEnemyManager()->fRender(graphics);
-	player->Render(graphics, elapsed_time);
+	if(mIsBossCamera == false)player->Render(graphics, elapsed_time);
 	mBulletManager.fRender(graphics);
 
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEON_DWON);
@@ -637,6 +663,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
+	return;
 #ifdef SHADOW_MAP
 	Camera* c = cameraManager->GetCurrentCamera();
 	//--シャドウマップの生成--//

@@ -297,6 +297,10 @@ private:
     // 全体攻撃エフェクト
     std::unique_ptr<Effect> mpAllAttackEffect{ nullptr };
 
+    // カメラ演出に使うボーン
+    skeleton::bone mCameraEyeBone{};
+    skeleton::bone mCameraFocusBone{};
+
     //****************************************************************
     // 
     // 定数

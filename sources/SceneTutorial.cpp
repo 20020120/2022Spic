@@ -55,6 +55,8 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
 	cameraManager->RegisterCamera(new ClearCamera(player.get()));
+	cameraManager->RegisterCamera(new JointCamera(graphics));
+
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
@@ -163,6 +165,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	audio_manager->set_all_volume_se(se_volume * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	TutorialUpdate(graphics, elapsed_time);
+	//イベント中は動かない
+	if (player->GetTutorialEvent()) return;
 	//画像のチュートリアル中は進まない
 	if (sprite_tutorial) return;
 	// option
@@ -396,7 +400,7 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	//--------------------<敵の管理クラスの描画処理>--------------------//
-	mWaveManager.fGetEnemyManager()->fRender(graphics);
+	if (player->GetTutorialEvent() == false)mWaveManager.fGetEnemyManager()->fRender(graphics);
 	player->Render(graphics, elapsed_time);
 	mBulletManager.fRender(graphics);
 
@@ -412,9 +416,9 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
 	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
+	if (player->GetTutorialEvent() == false)minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
 
-	effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
+	if (player->GetTutorialEvent() == false)effect_manager->render(Camera::get_keep_view(), Camera::get_keep_projection());
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::WIREFRAME_CULL_BACK, DEPTH_STENCIL::DEON_DWON);
 	debug_figure->render_all_figures(graphics.get_dc().Get());
 
@@ -466,10 +470,10 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
-	player->ConfigRender(graphics, elapsed_time);
+	if(player->GetTutorialEvent() == false)player->ConfigRender(graphics, elapsed_time);
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
-	TutorialRender(graphics, elapsed_time);
+	if (player->GetTutorialEvent() == false)TutorialRender(graphics, elapsed_time);
 	if (option->get_validity()) { option->render(graphics, elapsed_time); }
 
 }
@@ -505,6 +509,38 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			ImGui::End();
 	}
 #endif
+	//プレイヤーのイベント中
+	if (player->GetTutorialEvent())
+	{
+		//イベント中はこっちでプレイヤーとカメラの更新処理を書いておく
+		const auto enemyManager = mWaveManager.fGetEnemyManager();
+		cameraManager->Update(elapsed_time);
+		player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
+		//もしまだジョイントカメラをセットしていなかったら
+		if (set_joint_camera == false)
+		{
+			//ここでセット
+			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Joint));
+			set_joint_camera = true;
+		}
+		if (set_joint_camera)
+		{
+			//セットされていたら位置を代入
+			cameraManager->GetCurrentCamera()->set_eye(player->GetEnentCameraJoint());
+			cameraManager->GetCurrentCamera()->set_target(player->GetEnentCameraEye());
+		}
+	}
+	else
+	{
+		//もしイベント中出なかったら
+		if (set_joint_camera)
+		{
+			//カメラをゲームのものに戻す
+			cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+			set_joint_camera = false;
+		}
+	}
+
 	//プレイヤー側の今のチュートリアルが終わってるときかつis_nextがtrueの時
 	if (player->GetNextTutorial() && is_end_text)
 	{
@@ -891,7 +927,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
-		sprite_render("controller_back", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
+		sprite_render("controller_base", controller_keys[ControllerSprite::Back].get(), controller_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI

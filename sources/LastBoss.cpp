@@ -9,7 +9,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const EnemyParamPack& ParamPack_,
     EnemyManager* pEnemyManager_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/boss_animation_fifth.fbx",
+        "./resources/Models/Enemy/boss_animation_sixth.fbx",
         ParamPack_, EmitterPoint_),mpEnemyManager(pEnemyManager_)
 {
     // タレットのモデルを初期化
@@ -69,11 +69,16 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     //エフェクトを初期化
     mpAllAttackEffect = std::make_unique<Effect>(Graphics_,
         effect_manager->get_effekseer_manager(),
-        "./resources/Effect/boss_wave.efk");
+        "./resources/Effect/boss_wave.efk"); 
+
+   // ボーンを取得
+   mCameraEyeBone = mpModel->get_bone_by_name("camera_joint");
+   mCameraFocusBone = mpModel->get_bone_by_name("camera_focus_joint");
+
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
-    : BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_animation_second.fbx")
+    : BaseEnemy(Graphics_, "./resources/Models/Enemy/boss_animation_sixth.fbx")
 {
 
     mScale = { 0.05f,0.05f,0.05f };
@@ -110,6 +115,28 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 
     mRightBeam.fUpdate();
     mLeftBeam.fUpdate();
+
+    mpEnemyManager->fSetBossMode(mCurrentMode);
+
+    // ボスにカメラを向けさせる
+    DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
+        mOrientation, mPosition);
+    DirectX::XMFLOAT3 eyePosition{};
+    DirectX::XMFLOAT3 focusPosition{};
+    DirectX::XMFLOAT3 dummyUp{};
+    // Eyeを取得
+    mpModel->fech_by_bone(mAnimPara,world, mCameraEyeBone, eyePosition, dummyUp);
+    mpModel->fech_by_bone(mAnimPara,world, mCameraFocusBone, focusPosition, dummyUp);
+    if(mpEnemyManager)
+    {
+        mpEnemyManager->fSetBossEye(eyePosition);
+        mpEnemyManager->fSetBossFocus(focusPosition);
+    }
+    else
+    {
+        throw std::logic_error("EnemyManager Not Find");
+    }
+
 }
 
 void LastBoss::fUpdateAttackCapsule()
@@ -682,6 +709,21 @@ void LastBoss::fGuiMenu()
     ImGui::DragFloat("Length", &v);
 
     ImGui::RadioButton("FarRand", Math::Length(mPlayerPosition - mPosition) > mkDistanceToPlayer);
+
+    // カメラ
+    DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale,
+        mOrientation, mPosition);
+    DirectX::XMFLOAT3 eyePosition{};
+    DirectX::XMFLOAT3 focusPosition{};
+    DirectX::XMFLOAT3 dummyUp{};
+    // Eyeを取得
+    mpModel->fech_by_bone(mAnimPara,world, mCameraEyeBone, eyePosition, dummyUp);
+    mpModel->fech_by_bone(mAnimPara,world, mCameraFocusBone, focusPosition, dummyUp);
+
+    ImGui::DragFloat3("CameraEye", &eyePosition.x);
+    ImGui::DragFloat3("CameraFocus", &focusPosition.x);
+
+
     ImGui::End();
 #endif
 }

@@ -636,7 +636,6 @@ void Player::WingDashStartUpdate(float elapsed_time, SkyDome* sky_dome)
     }
 
 }
-
 void Player::WingDashIdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     position.y = Math::lerp(position.y, 2.0f, 1.0f * elapsed_time);

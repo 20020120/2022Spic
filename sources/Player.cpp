@@ -483,6 +483,11 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 }
 
 
+bool Player::EnemiesIsSutn(std::vector<BaseEnemy*> enemies)
+{
+    return false;
+}
+
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
     glow_time += 1.0f * elapsed_time;
@@ -1412,6 +1417,5 @@ void Player::CameraReset()
     if (game_pad->get_button_down() & GamePad::BTN_X)
     {
         camera_reset = true;
-        orientation = { 0,0,0,1.0f };//期待の向きもリセットしてる(プロトでは)
     }
 }

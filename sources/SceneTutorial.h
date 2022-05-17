@@ -87,8 +87,10 @@ public:
     {
         Game,
         Tunnel,
+        Joint,
     };
 
+    bool set_joint_camera{ false };
     //1‚ªÅ‰‚Å‘å‚«‚­‚È‚Á‚Ä‚¢‚­‚æ‚¤‚É‚·‚é
     enum class TutorialState
     {

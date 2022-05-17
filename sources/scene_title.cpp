@@ -27,7 +27,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	// cameraManager
 	cameraManager = std::make_unique<CameraManager>();
 	cameraManager->RegisterCamera(new TitleCamera(player.get()));
-	cameraManager->RegisterCamera(new JointCamera());
+	cameraManager->RegisterCamera(new JointCamera(graphics));
 
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Title));
 	// shadow_map
