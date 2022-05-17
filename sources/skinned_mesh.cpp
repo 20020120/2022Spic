@@ -102,10 +102,15 @@ void fetch_bone_influences(const FbxMesh* fbx_mesh,
 //-------------------------------------------------------
 SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool triangulate, float sampling_rate)
 {
+    std::filesystem::path cereal_filename(fbx_filename);
+    if (!std::filesystem::exists(cereal_filename.c_str()))
+    {
+        _ASSERT_EXPR(false, L"指定されたfbxファイルが存在しません");
+    }
+
     // ※このコードでは与えられた変数fbx_filenameの拡張子を“cereal”に変え、そのファイルが存在する場合はシリアライズされたデータか
     // らロードする。また、存在しない場合は従来通りFBXファイルからロードする。
     // ※skinnd_meshクラスのデータ構造に変更があった場合はシリアライズされたファイルは無効になるので削除する必要がある。
-    std::filesystem::path cereal_filename(fbx_filename);
     cereal_filename.replace_extension("cereal");
     if (std::filesystem::exists(cereal_filename.c_str()))
     {
@@ -179,6 +184,12 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename,
     std::string sub_colors[2], bool triangulate, float sampling_rate)
     : SkinnedMesh(device, fbx_filename, triangulate, sampling_rate)
 {
+    std::filesystem::path cereal_filename(fbx_filename);
+    if (!std::filesystem::exists(cereal_filename.c_str()))
+    {
+        _ASSERT_EXPR(false, L"指定されたfbxファイルが存在しません");
+    }
+
     // sub color map作成
     for (size_t texture_index = 0; texture_index < 2; ++texture_index)
     {
