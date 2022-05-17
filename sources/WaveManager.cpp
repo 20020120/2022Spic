@@ -3,6 +3,7 @@
 #include "scene_title.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
+#include "post_effect.h"
 
 #define ProtoType
 
@@ -196,6 +197,41 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
                 }
             }
         }
+
+        if (clear_state == CLEAR_STATE::SELECTION)
+        {
+            auto r_font_render = [&](std::string name, std::wstring string, DirectX::XMFLOAT2& pos, DirectX::XMFLOAT2& scale)
+            {
+#ifdef USE_IMGUI
+                ImGui::Begin("WaveManager");
+                if (ImGui::TreeNode(name.c_str()))
+                {
+                    ImGui::DragFloat2("pos", &pos.x);
+                    ImGui::DragFloat2("scale", &scale.x, 0.1f);
+                    ImGui::TreePop();
+                }
+                ImGui::End();
+#endif // USE_IMGUI
+                fonts->yu_gothic->Draw(string, pos, scale, { 1,1,1,1 }, 0, TEXT_ALIGN::MIDDLE);
+            };
+            fonts->yu_gothic->Begin(dc);
+            {
+                static DirectX::XMFLOAT2 pos{ 1226.0f, 634.0f };
+                static DirectX::XMFLOAT2 scale{ 0.8f, 0.8f };
+                r_font_render("L", L"Lスティック  選択", pos, scale);
+            }
+            {
+                static DirectX::XMFLOAT2 pos{ 1265.0f, 580.0f };
+                static DirectX::XMFLOAT2 scale{ 0.8f, 0.8f };
+                r_font_render("R", L"Rスティック  移動", pos, scale);
+            }
+            {
+                static DirectX::XMFLOAT2 pos{ 1232.0f, 686.0f };
+                static DirectX::XMFLOAT2 scale{ 0.8f, 0.8f };
+                r_font_render("B", L"Bボタン  決定", pos, scale);
+            }
+            fonts->yu_gothic->End(dc);
+        }
     }
 
     //---ここまで--//
@@ -274,6 +310,7 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         player_icon.threshold = Math::lerp(player_icon.threshold, 1.5f, 2.0f * elapsedTime_);
         if (Math::equal_check(player_icon.threshold, 1.0f, 0.1f))
         {
+            PostEffect::clear_post_effect();
             // クリア演出終了、次のステージへ
             fStartWave();
         }
