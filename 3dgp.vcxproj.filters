@@ -1035,6 +1035,9 @@
     <FxCompile Include="HLSL\wipe_ps.hlsl">
       <Filter>Shaders\post_effect</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\field_ps.hlsl">
+      <Filter>Shaders\model</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\fullscreen_quad.hlsli">
