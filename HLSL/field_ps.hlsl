@@ -1,29 +1,40 @@
 #include "skinned_mesh.hlsli"
 #include "constants.hlsli"
-#include "shading_functions.hlsli"
 
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
+#define S(r,v,a) step(a/field_resolution.y,abs(v-(r)))
 
-#define BASE_COLOR 0
-#define NORMAL     1
-#define METAL      2
-#define ROUGHNESS  3
-#define AO         4
-#define Emissive   5
+static const float2 s = float2(1, 1.7320508); // 1.7320508 = sqrt(3)
 
-SamplerState sampler_states[3] : register(s0);
-Texture2D texture_maps[6] : register(t0);
+float calcHexDistance(float2 p)
+{
+    p = abs(p);
+    return max(dot(p, s * 0.5), p.x);
+}
 
-#define S(r,v,a) smoothstep(a/iResolution.y,0.,abs(v-(r)))
+float2 calcHexOffset(float2 uv)
+{
+    float4 hexCenter = round(float4(uv, uv - float2(0.5, 1.0)) / s.xyxy);
+    float4 offset = float4(uv - hexCenter.xy * s, uv - (hexCenter.zw + 0.5) * s);
+    return dot(offset.xy, offset.xy) < dot(offset.zw, offset.zw) ? offset.xy : offset.zw;
+}
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float4 color_map = texture_maps[BASE_COLOR].Sample(sampler_states[ANISOTROPIC], pin.texcoord);
+    float2 uv = (2.0 * pin.texcoord - field_resolution.xy) / field_resolution.y;
+    float2 hexInfo = calcHexOffset(uv * 100.0);
+    float speed = 0.5;
+    float a = cos(speed * (1.5 * length(uv) - field_time));
+    float h = calcHexDistance(hexInfo);
 
-    // マテリアルのアルファ値が0.1未満ならそのピクセルを破棄する
-    clip(color_map.a < 0.1f ? -1 : 1);
+    float4 fragColor = float4(0, 0, 0, 1);
 
-    return color_map;
+    fragColor.b = 1 - (S(abs(sin(h * a * 5.0)), 1.0, 1.0) + 0.3 * S(h, 0.45, 20.0) + 0.15
+        + 0.3 * smoothstep(0.5, 0.25 + 12.0 / field_resolution.y, h));
+
+    if (fragColor.r < 0.2f && fragColor.g < 0.2f && fragColor.b < 0.2f )
+    {
+        //clip(-1);
+    }
+
+    return fragColor;
 }
