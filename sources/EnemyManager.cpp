@@ -98,7 +98,7 @@ void EnemyManager::fFinalize()
 
 int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_,
-    GraphicsPipeline& Graphics_,float elapsedTime_)
+    GraphicsPipeline& Graphics_,float elapsedTime_,bool is_shield)
 {
     //--------------------<ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Æ“G‚Ì“–‚½‚è”»’è>--------------------//
       // UŒ‚‚ª‰½‘Ì‚Ì“G‚É“–‚½‚Á‚½‚©

@@ -234,7 +234,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 					player->GetSwordCapsuleParam(0).rasius,
 					player->GetPlayerPower(),
 					graphics,
-					elapsed_time
+					elapsed_time,
+					block
 					),
 					enemyManager->fCalcPlayerAttackVsEnemies
 					(
@@ -243,7 +244,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 					player->GetSwordCapsuleParam(1).rasius,
 					player->GetPlayerPower(),
 					graphics,
-					elapsed_time
+					elapsed_time,
+					block
 					)
 					, block
 				);
@@ -257,7 +259,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 				player->GetSwordCapsuleParam(0).rasius,
 				player->GetPlayerPower(),
 				graphics,
-				elapsed_time
+				elapsed_time,
+				block
 			)
 			,block);
 		}

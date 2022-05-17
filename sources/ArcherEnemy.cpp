@@ -444,9 +444,9 @@ void ArcherEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void ArcherEnemy::fSetStun(bool Arg_,bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
 }

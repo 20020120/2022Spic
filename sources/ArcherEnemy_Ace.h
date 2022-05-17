@@ -16,7 +16,7 @@ public:
     // \‘¢‘Ì
     // 
     //****************************************************************
-    struct DivedState
+    struct DivedeState
     {
         inline static const char* Start = "Start";
         inline static const char* Idle = "Idle";
@@ -110,7 +110,7 @@ private:
    // •Ï” 
    // 
    //****************************************************************
-    DivedState mNowState;
+    DivedeState mNowState;
     float mStayTimer;
     float mAttackingTime;
     bool mAttack_flg;

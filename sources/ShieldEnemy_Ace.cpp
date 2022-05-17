@@ -141,12 +141,12 @@ bool ShieldEnemy_Ace::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipel
         mInvincibleTime = InvincibleTime_;
 
         ret = true;
-        //   fChangeState(DivedState::Damaged);
+        //   fChangeState(DivedeState::Damaged);
     }
     //HP‚ªƒ[ƒ‚É‚È‚Á‚Ä‚µ‚Ü‚Á‚½‚ç
     if (mCurrentHitPoint <= 0)
     {
-        //fChangeState(DivedState::Die);
+        //fChangeState(DivedeState::Die);
         fDie(Graphics_);
     }
     return ret;
@@ -274,9 +274,9 @@ void ShieldEnemy_Ace::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 }
 void ShieldEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
 }

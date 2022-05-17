@@ -139,12 +139,12 @@ bool ShieldEnemy::fDamaged(int Damage_, float InvincibleTime_,GraphicsPipeline& 
         mInvincibleTime = InvincibleTime_;
 
         ret = true;
-     //   fChangeState(DivedState::Damaged);
+     //   fChangeState(DivedeState::Damaged);
     }
     //HP‚ªƒ[ƒ‚É‚È‚Á‚Ä‚µ‚Ü‚Á‚½‚ç
     if (mCurrentHitPoint <= 0)
     {
-        //fChangeState(DivedState::Die);
+        //fChangeState(DivedeState::Die);
         fDie(Graphics_);
     }
     return ret;

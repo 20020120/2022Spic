@@ -274,9 +274,9 @@ bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time, GraphicsPipelin
 
 void SwordEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivideState::Stun);
     }
 }

@@ -60,7 +60,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
         fSpawnUpdate(elapsedTime_, Graphics_);
     };
     FunctionTuple tuple = std::make_tuple(Ini, Up);
-    mFunctionMap.insert(std::make_pair(DivedState::Start, tuple));
+    mFunctionMap.insert(std::make_pair(DivedeState::Start, tuple));
 
     {
         //‘Ò‹@ó‘Ô‚Ì“o˜^
@@ -73,7 +73,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fIdleUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Idle, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Idle, tuple));
     }
 
     //ˆÚ“®ó‘Ô‚Ì“o˜^
@@ -87,7 +87,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fmoveUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Move, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Move, tuple));
     }
     //Ú‹ßˆÚ“®ó‘Ô‚Ì“o˜^
     {
@@ -100,7 +100,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fMoveApproachUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Approach, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Approach, tuple));
     }
     //Œã‘ŞˆÚ“®ó‘Ô‚Ì“o˜^
     {
@@ -113,7 +113,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fMoveLeaveUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Leave, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Leave, tuple));
     }
     //UŒ‚€”õó‘Ô‚Ì“o˜^
     {
@@ -126,7 +126,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fAttackBeginUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::AttackReady, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::AttackReady, tuple));
     }
     //UŒ‚‘Ò‹@‚Ì“o˜^
     {
@@ -139,7 +139,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fAttackPreActionUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::AttackIdle, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::AttackIdle, tuple));
     }
     //UŒ‚ó‘Ô‚Ì“o˜^
     {
@@ -152,7 +152,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fAttackEndUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::AttackShot, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::AttackShot, tuple));
     }
     //”íƒ_ƒó‘Ô‚Ì“o˜^
     {
@@ -165,7 +165,7 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fDamagedUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Damaged, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Damaged, tuple));
     }
     //ƒXƒ^ƒ“ó‘Ô‚Ì“o˜^
     {
@@ -178,10 +178,10 @@ void ArcherEnemy_Ace::fRegisterFunctions()
             fStunUpdate(elapsedTime_, Graphics_);
         };
         tuple = std::make_tuple(Ini, Up);
-        mFunctionMap.insert(std::make_pair(DivedState::Stun, tuple));
+        mFunctionMap.insert(std::make_pair(DivedeState::Stun, tuple));
     }
     //‰Šú‰»
-    fChangeState(DivedState::Start);
+    fChangeState(DivedeState::Start);
 
 }
 
@@ -206,7 +206,7 @@ void ArcherEnemy_Ace::fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphic
     // ˆê’èŠÔŒo‰ß‚ÅˆÚ“®‚É‘JˆÚ
     if (mStayTimer >= SPAWN_STAY_TIME)
     {
-        fChangeState(DivedState::Idle);
+        fChangeState(DivedeState::Idle);
     }
 }
 
@@ -222,7 +222,7 @@ void ArcherEnemy_Ace::fIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mStayTimer > IDLE_STAY_TIME) return;
     mStayTimer = 0.0f;
-    fChangeState(DivedState::Move);
+    fChangeState(DivedeState::Move);
 }
 
 void ArcherEnemy_Ace::fMoveInit()
@@ -243,14 +243,14 @@ void ArcherEnemy_Ace::fmoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     //ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ªUŒ‚‰Â”\‹——£ˆÈ‰º‚È‚ç—£‚ê‚Ä‚¢‚­s“®‚ğ‚Æ‚é
     if (LengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
-        fChangeState(DivedState::Leave);
+        fChangeState(DivedeState::Leave);
         return;
     }
 
     //ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ªUŒ‚‰Â”\‹——£ˆÈã‚È‚ç‹ß‚Ã‚­s“®‚ğ‚Æ‚é
     if (LengthFromPlayer > AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::Approach);
+        fChangeState(DivedeState::Approach);
     }
 
 }
@@ -268,13 +268,13 @@ void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& 
 
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::AttackReady);
+        fChangeState(DivedeState::AttackReady);
         return;
     }
 
     if (LengthFromPlayer < AT_SHORTEST_DISTANCE)
     {
-        fChangeState(DivedState::Leave);
+        fChangeState(DivedeState::Leave);
         return;
     }
 
@@ -282,7 +282,7 @@ void ArcherEnemy_Ace::fMoveApproachUpdate(float elapsedTime_, GraphicsPipeline& 
     mStayTimer += elapsedTime_;
     if (mStayTimer >= MOVE_TIME)
     {
-        fChangeState(DivedState::Idle);
+        fChangeState(DivedeState::Idle);
         mStayTimer = 0;
     }
 }
@@ -328,13 +328,13 @@ void ArcherEnemy_Ace::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Gra
     const float LengthFromPlayer = Math::calc_vector_AtoB_length(mPosition, mPlayerPosition);
     if (LengthFromPlayer > AT_SHORTEST_DISTANCE && LengthFromPlayer < AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::AttackReady);
+        fChangeState(DivedeState::AttackReady);
         return;
     }
 
     if (LengthFromPlayer > AT_LONGEST_DISTANCE)
     {
-        fChangeState(DivedState::Approach);
+        fChangeState(DivedeState::Approach);
         return;
     }
 
@@ -342,7 +342,7 @@ void ArcherEnemy_Ace::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Gra
     mStayTimer += elapsedTime_;
     if (mStayTimer >= MOVE_TIME)
     {
-        fChangeState(DivedState::Idle);
+        fChangeState(DivedeState::Idle);
         mStayTimer = 0;
     }
 }
@@ -358,7 +358,7 @@ void ArcherEnemy_Ace::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& G
     fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivedState::AttackIdle);
+        fChangeState(DivedeState::AttackIdle);
     }
 }
 
@@ -374,7 +374,7 @@ void ArcherEnemy_Ace::fAttackPreActionUpdate(float elapsedTime_, GraphicsPipelin
     fTurnToPlayer(elapsedTime_, ROT_SPEED);
     if (mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivedState::AttackShot);
+        fChangeState(DivedeState::AttackShot);
     }
 }
 
@@ -391,15 +391,13 @@ void ArcherEnemy_Ace::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Gra
     //’e‘•“U
     float bullet_speed = 1.0f * 0.2f;
     auto straightBullet = new StraightBullet(Graphics_,
-        mPosition, Math::GetFront(mOrientation) * bullet_speed);
+        tar_pos, Math::GetFront(mOrientation) * bullet_speed);
     //ƒpƒ‰ƒ[ƒ^İ’è
     straightBullet->fSetBulletData(0.5f, 0.5f, 0.5f, 1, 1.0f);
     //“o˜^
     mfAddFunc(straightBullet);
 
-    //‘Ò‹@ŠÔİ’è
-    mStayTimer = 3.0f;
-    fChangeState(DivedState::Idle);
+    fChangeState(DivedeState::Idle);
 
 }
 
@@ -419,7 +417,7 @@ void ArcherEnemy_Ace::fDamagedUpdate(float elapsedTime_, GraphicsPipeline& Graph
     XMStoreFloat3(&v, Vec);
 
 
-    fChangeState(DivedState::Idle);
+    fChangeState(DivedeState::Idle);
 }
 
 void ArcherEnemy_Ace::fStunInit()
@@ -439,16 +437,16 @@ void ArcherEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics
         mIsStun = false;
         mStunEffect->stop(effect_manager->get_effekseer_manager());
 
-        fChangeState(DivedState::Idle);
+        fChangeState(DivedeState::Idle);
     }
 }
 
 void ArcherEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
-        fChangeState(DivedState::Stun);
+        mIsStun = Arg_;
+        fChangeState(DivedeState::Stun);
     }
 }
 
