@@ -622,6 +622,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	{
 		assert(transit_index != 0 && "意図していない挙動になっています");
 		audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+		if (is_awakening) combo_count -= COMBO_COUNT_SUB;
 		transition_chain_attack(); // 攻撃ステートへ
 	}
 #endif // CHAIN_DEBUG
@@ -706,13 +707,14 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 
 			if (!reticles.empty()) reticles.clear();
-			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial)
 			{
 				tutorial_action_count--;
 				if (tutorial_action_count <= 0)is_next_tutorial = true;
 			}
-			transition_chain_search(); /*リセット*/ transition_normal_behavior();
+				is_chain_attack = false;
+				transition_chain_search(); /*リセット*/
+				transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{

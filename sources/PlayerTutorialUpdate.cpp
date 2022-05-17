@@ -1344,12 +1344,15 @@ void Player::TutorialAwaiking()
     }
     else
     {
-        //ボタン入力
-        if (game_pad->get_button() & GamePad::BTN_A)
+        if (behavior_state == Behavior::Normal)
         {
-            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
+            //ボタン入力
+            if (game_pad->get_button() & GamePad::BTN_A)
+            {
+                if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
+            }
+            if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
         }
-        if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
     }
 }
 

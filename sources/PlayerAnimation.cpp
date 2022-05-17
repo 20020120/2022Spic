@@ -708,12 +708,16 @@ void Player::NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::Awaiking()
 {
-    //ボタン入力
-    if (game_pad->get_button() & GamePad::BTN_A)
+    //チェイン攻撃中は覚醒状態の各遷移にはとばない
+    if (behavior_state == Behavior::Normal)
     {
-        if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+        //ボタン入力
+        if (game_pad->get_button() & GamePad::BTN_A)
+        {
+            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+        }
+        if (is_awakening && combo_count <= 0) TransitionInvAwaking();//覚醒状態のときにカウントが0になったら通常状態になる
     }
-    if (is_awakening &&combo_count <= 0) TransitionInvAwaking();//覚醒状態のときにカウントが0になったら通常状態になる
 }
 
 void Player::TransitionIdle(float blend_second)

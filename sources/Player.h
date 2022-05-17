@@ -118,6 +118,9 @@ private:
     static constexpr float TRANSFORM_HUM_ANIMATION_SPEED = 2.0f;
     //飛行機モードになるときのアニメーションスピード
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
+    //チェイン攻撃の時にコンボゲージが減る量
+    static constexpr float COMBO_COUNT_SUB = 2.0f;
+
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
     DirectX::XMFLOAT3 camera_right{};//カメラの右方向
@@ -601,12 +604,15 @@ private:
     }
     void transition_normal_behavior()
     {
+        PostEffect::clear_post_effect();
+        change_normal_timer = 1.5f;
         behavior_state = Behavior::Normal;
         if (is_tutorial)TransitionTutoriaIdle();
         else TransitionIdle();
     }
 
     void chain_parm_reset();
+    float change_normal_timer{ 0.0f };
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
