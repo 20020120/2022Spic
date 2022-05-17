@@ -1,9 +1,9 @@
 #include"SwordEnemy.h"
 #include"Operators.h"
-SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_, 
+SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
-        :BaseEnemy(Graphics_, 
+        :BaseEnemy(Graphics_,
                   "./resources/Models/Enemy/SwordEnemy.fbx",
                   ParamPack_,
                   EmitterPoint_)
@@ -202,15 +202,17 @@ void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void SwordEnemy::fAttackRunInit()
 {
-    
+    mMoveTimer = 0;
 }
 
 void SwordEnemy::fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mMoveTimer += elapsedTime_;
     // プレイヤーとの距離が近くなるまで走って近づく
     fTurnToPlayer(elapsedTime_, 3.0f);
     fMoveFront(elapsedTime_, 60.0f);
-    if( mAttackRange*0.1f>Math::Length(mPlayerPosition-mPosition))
+    // プレイヤーとの距離が近くなるまたは制限時間になったら
+    if ((mAttackRange * 0.1f > Math::Length(mPlayerPosition - mPosition)) || mMoveTimer > mMoveTimeLimit)
     {
         fChangeState(DivedState::AttackMiddle);
     }
@@ -249,17 +251,18 @@ void SwordEnemy::fAttackEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 
 void SwordEnemy::fEscapeInit()
 {
-    
+    mMoveTimer = 0;
 }
 
 void SwordEnemy::fEscapeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mMoveTimer += elapsedTime_;
     // プレイヤーと逆に進
     DirectX::XMFLOAT3 vec = { mPosition - mPlayerPosition };
     vec.y = 0.0f;
     mPosition += Math::Normalize(vec) * elapsedTime_ * 30.0f;
-
-    if(Math::Length(vec)>=60.0f)
+    // プレイヤーと距離を取るまたは制限時間になったら
+    if (Math::Length(vec) >= 60.0f || mMoveTimer > mMoveTimeLimit)
     {
         fChangeState(DivedState::Start);
     }

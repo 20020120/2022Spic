@@ -6,9 +6,9 @@ class SwordEnemy final :public BaseEnemy
 {
 public:
     //****************************************************************
-    // 
+    //
     // 構造体
-    // 
+    //
     //****************************************************************
      struct DivedState
      {
@@ -34,14 +34,14 @@ public:
      };
 public:
     //****************************************************************
-    // 
+    //
     // 関数
-    // 
+    //
     //****************************************************************
-    SwordEnemy(GraphicsPipeline& Graphics_, 
+    SwordEnemy(GraphicsPipeline& Graphics_,
               const DirectX::XMFLOAT3& EmitterPoint_/*スポーン位置*/,
               const EnemyParamPack& ParamPack_);
-    SwordEnemy(GraphicsPipeline& Graphics_); 
+    SwordEnemy(GraphicsPipeline& Graphics_);
     ~SwordEnemy() override = default;
 
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
@@ -49,17 +49,18 @@ public:
     void fUpdateAttackCapsule() override;
 
    //****************************************************************
-   // 
+   //
    // 変数
-   // 
+   //
    //****************************************************************
 private:
     float mWaitTimer{}; // 待ち時間
     skeleton::bone mSwordBone{};
+    float mMoveTimer{};
     //****************************************************************
-    // 
-    // 定数 
-    // 
+    //
+    // 定数
+    //
     //****************************************************************
     const float mMoveSpeed{ 10.0f };      // 移動速度
     const float mAttackRange{ 60.0f };    // 攻撃範囲
@@ -68,20 +69,20 @@ private:
 
     //--------------------<各ステートの待ち時間>--------------------//
     const float mAttackBeginTimeSec{ 0.85f };    // 剣を振りあげるまでの時間
-    const float mAttackPreActionTimeSec{0.1f};   // 剣を振り下ろす予備動作 　　
+    const float mAttackPreActionTimeSec{0.1f};   // 剣を振り下ろす予備動作
     const float mAttackDownSec{ 1.0f };          // 剣を振り下ろす
-    
+    const float mMoveTimeLimit{ 2.0f };          // プレイヤーに向かうのとプレイヤーから退く制限時間
 private:
     //****************************************************************
-    // 
+    //
     // ステートマシン
-    // 
+    //
     //****************************************************************
     //--------------------<剣の敵の共通の動き>--------------------//
     // スポーン
     void fSpawnInit();
     void fSpawnUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
- 
+
     // 歩き
     void fWalkInit();
     void fWalkUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
