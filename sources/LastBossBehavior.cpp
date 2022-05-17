@@ -13,6 +13,7 @@
 void LastBoss::fShipStartInit()
 {
     mDissolve = 1.0f;
+    mPosition = { 0.0f,20.0f,0.0f };
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -27,7 +28,7 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void LastBoss::fShipIdleInit()
 {
-  //mpModel->play_animation(mAnimPara)
+ 
 }
 
 void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -47,6 +48,7 @@ void LastBoss::fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void LastBoss::fShipBeamStartInit()
 {
+    mPosition = {};
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_start);
 
 }
@@ -65,31 +67,34 @@ void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fShipBeamChargeInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_idle,true);
+    mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_idle, true);
     mTimer = mkShipBeamChargeSec;
 
     const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     DirectX::XMFLOAT3 up{};
-    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mPointerBegin, up);
+    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mShipFacePosition, up);
 
-    //--------------------<レーザーポインターを初期化>--------------------//
-    mPointerEnd = mPointerBegin;
-    // 前方にポインターを伸ばす
-    const auto front = Math::GetFront(mOrientation);
-    mPointerEnd = mPointerBegin + front * 100.0f;
-    mLaserPointer.fSetPosition(mPointerBegin, mPointerEnd);
-    mLaserPointer.fSetRadius(0.035f);
-    mLaserPointer.fSetColor({ 1.0f,0.0f,0.0f ,1.0f });
-    mPointerAlpha = 1.0f;
-    mPointerThreshold = 0.0f;
+    mShipPointer.fSetRadius(0.03f);
+    mShipPointer.fSetColor({ 1.0f,0.0f,0.0f,1.0f });
+    mShipPointer.fSetAlpha(1.0f);
+
+    // ポインターの長さを初期化
+    mPointerLength = 0.0f;
 }
 
 void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 
     // レーザーポインターを伸ばす
-    mPointerThreshold += elapsedTime_ * 5.0f;
-    mLaserPointer.fSetLengthThreshold(mPointerThreshold);
+    mPointerLength += elapsedTime_ * 100.0f;
+
+
+    mShipPointer.fSetLengthThreshold(1.0f);
+    const DirectX::XMFLOAT3 front{ Math::GetFront(mOrientation) };
+    mShipPointerEnd = mShipFacePosition + (front * mPointerLength );
+
+    // ポインターに計算された値を設定
+    mShipPointer.fSetPosition(mShipFacePosition, mShipPointerEnd);
 
     // TODO : ここで小さめのカメラシェイク
     mTimer -= elapsedTime_;
@@ -106,38 +111,49 @@ void LastBoss::fShipBeamShootInit()
     mTimer = mkShipBeamShootSec;
 
     //--------------------<レーザーポインターを消す>--------------------//
-    mPointerThreshold = 0.0f;
-    mLaserPointer.fSetPosition(mPointerBegin, mPointerBegin);
-    mLaserPointer.fSetRadius(0.0f);
-    mLaserPointer.fSetColor({ 1.0f,0.0f,0.0f ,1.0f });
+    mShipPointer.fSetAlpha(0.0f);
 
     //--------------------<レーザービームを発射する>--------------------//
     const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     DirectX::XMFLOAT3 up{};
     // ボーンの位置を取得
-    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mPointerBegin, up);
-    const auto front = Math::GetFront(mOrientation);
-    mLaserEnd = mLaserBegin + front * 100.0f;
-    mLaserThreshold = 0.0f;
-    mLaserRadius = 20.0f;
-    mBeam.fSetAlpha(1.0f);
-    mBeam.fSetPosition(mLaserBegin, mLaserEnd);
-    mBeam.fSetLengthThreshold(mLaserThreshold);
-    mBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
-    mBeam.fSetRadius(mLaserRadius);
+    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mShipFacePosition, up);
+
+    // ビームの長さを初期化
+    mBeamLength = 0.0f;
+    // ビームの攻撃を有効
+    mIsAttack = true;
 }
 
 void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_,2.0f);
-    mLaserThreshold += elapsedTime_ * 20.0f;
-    mBeam.fSetLengthThreshold(mLaserThreshold);
+    const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    DirectX::XMFLOAT3 up{};
+    // ボーンの位置を取得
+    mpModel->fech_by_bone(mAnimPara, world, mShipFace, mShipFacePosition, up);
 
+    // ビームの撃つ先を設定する
+    const DirectX::XMFLOAT3 front = Math::GetFront(mOrientation);
+    const DirectX::XMFLOAT3 beamEnd{ mShipFacePosition + (front * mBeamLength) };
+
+    // ビームの長さを更新する
+    mBeamLength += elapsedTime_ * 100.0f;
+
+
+    // 攻撃capsuleを設定
+    mAttackCapsule.mBottom = mShipFacePosition;
+    mAttackCapsule.mTop = beamEnd;
+    mAttackCapsule.mRadius = 10.0f;
+
+
+    fTurnToPlayer(elapsedTime_,2.0f);
     // TODO : ここで激しいカメラシェイク
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
     {
         fChangeState(DivideState::ShipBeamEnd);
+        mIsAttack = false;
+        mBeamLength = 0.0f;
     }
 }
 
@@ -148,20 +164,15 @@ void LastBoss::fShipBeamEndInit()
 
 void LastBoss::fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mLaserRadius -= elapsedTime_ * 10.0f;
-    mLaserRadius = (std::max)(0.0f, mLaserRadius);
-    mBeam.fSetRadius(mLaserRadius);
 
-    if (mLaserRadius <= 0.0f)
-    {
-        fChangeState(DivideState::ShipToHuman);
-    }
+    fChangeState(DivideState::ShipToHuman);
 }
 
 void LastBoss::fChangeShipToHumanInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
     mCurrentMode = Mode::ShipToHuman;
+    mPosition = { 0.0f,20.0f,0.0f };
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, 
@@ -173,17 +184,21 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
         // 現在のモードを人型に変更する
         mCurrentMode = Mode::Human;
+        mPosition = {};
     }
 }
 
 void LastBoss::fHumanIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_idle);
+    mAnimationSpeed = 1.5f;
 }
 
 void LastBoss::fHumanIdleUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 5.0f);
+
    // 条件に応じて攻撃手段を分岐させる
 
     if (!mpModel->end_of_animation(mAnimPara)) return;
@@ -195,6 +210,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     {
         fChangeState(DivideState::HumanSpAway);
         mFirstSp = true;
+        mAnimationSpeed = 1.0f;
         return;
     }
     // 体力が５割を下回ったら必殺技
@@ -202,6 +218,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     {
         fChangeState(DivideState::HumanSpAway);
         mSecondSp = true;
+        mAnimationSpeed = 1.0f;
         return;
     }
 
@@ -221,7 +238,8 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         if (randNumber <= 3)
         {
             fChangeState(DivideState::HumanRush);
-            return;\
+            mAnimationSpeed = 1.0f;
+            return;
         }
     }
 
@@ -230,21 +248,25 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         if(randNumber>=8)
         {
             fChangeState(DivideState::HumanBlowAttack);
+            mAnimationSpeed = 1.0f;
             return;
         }
         else  if(randNumber>=6)
         {
             fChangeState(DivideState::HumanAllShot);
+            mAnimationSpeed = 1.0f;
             return;
         }
         else if(randNumber>=3)
         {
             fChangeState(DivideState::HumanRush);
+            mAnimationSpeed = 1.0f;
             return;
         }
         else
         {
             fChangeState(DivideState::HumanIdle);
+            mAnimationSpeed = 1.0f;
             return;
         }
     }
@@ -253,16 +275,19 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         if (randNumber > 6)
         {
             fChangeState(DivideState::HumanBlowAttack);
+            mAnimationSpeed = 1.0f;
             return;
         }
         else if(randNumber>4)
         {
             fChangeState(DivideState::HumanAllShot);
+            mAnimationSpeed = 1.0f;
             return;
         }
         else
         {
             fChangeState(DivideState::HumanIdle);
+            mAnimationSpeed = 1.0f;
             return;
         }
     }
@@ -369,6 +394,7 @@ void LastBoss::fHumanBlowAttackInit()
 void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 5.0f);
 
     mTimer += elapsedTime_;
 
@@ -520,7 +546,7 @@ void LastBoss::fHumanSpAttackWaitInit()
 void LastBoss::fHumanSpAttackWaitUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
-    fTurnToPlayer(elapsedTime_, 20.0f);
+    fTurnToPlayer(elapsedTime_, 5.0f);
     mTimer += elapsedTime_;
     if(mTimer>=mkHumanSpWaitTime)
     {
@@ -562,6 +588,22 @@ void LastBoss::fHumanSpAttackChargeInit()
     mAnimationSpeed = 0.7f;
     mpModel->play_animation(mAnimPara, AnimationName::human_beam_charge, true);
     mTimer = mkSpChargeTime;
+
+    // laserを初期化
+    mRightPointer.fSetRadius(0.3f);  // 半径
+    mLeftPointer.fSetRadius(0.3f);
+
+    mRightPointer.fSetColor({1.0f,0.0f,0.0f,1.0f}); // 色
+    mLeftPointer. fSetColor({1.0f,0.0f,0.0f,1.0f});
+
+    mRightPointer.fSetLengthThreshold(1.0f); // 閾値
+    mLeftPointer. fSetLengthThreshold(1.0f);
+
+    mRightPointer.fSetAlpha(1.0f); // 不透明度
+    mLeftPointer. fSetAlpha(1.0f);
+
+    mHumanBeamTarget = mPosition;
+
 }
 
 void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_, 
@@ -569,12 +611,14 @@ void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_,
 {
     mTimer -= elapsedTime_;
 
-    if(mTimer>=2.0f)
-    {
-        fTurnToPlayer(elapsedTime_, 5.0f);
-        mRightBeam.fSetPosition(mpTurretRight->fGetPosition(), mPlayerPosition);
-        mLeftBeam.fSetPosition(mpTurretLeft->fGetPosition(), mPlayerPosition);
-    }
+
+    // ポインターをプレイヤーの位置に回転させる
+    mHumanBeamTarget = Math::lerp(mHumanBeamTarget, mPlayerPosition, 
+        30.0f * elapsedTime_);
+
+    mRightPointer.fSetPosition(mpTurretRight->fGetPosition(), mHumanBeamTarget);
+    mLeftPointer.fSetPosition(mpTurretLeft->fGetPosition(), mHumanBeamTarget);
+    fTurnToPlayer(elapsedTime_, 5.0f);
    
 
 
@@ -590,29 +634,35 @@ void LastBoss::fHumanSpBeamShootInit()
     mpModel->play_animation(mAnimPara, AnimationName::human_beam_shoot);
     mTimer = 0.0f;
 
+    mRightPointer.fSetAlpha(0.0f);
+    mLeftPointer.fSetAlpha(0.0f);
+
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
+
+    mIsAttack = true;
 }
 
 void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
+    mHumanBeamTarget = Math::lerp(mHumanBeamTarget, mPlayerPosition,
+        1.0f * elapsedTime_);
+
+    mAttackCapsule.mBottom = mPosition;
+    mAttackCapsule.mTop = mHumanBeamTarget;
+    mAttackCapsule.mRadius = 5.0f;
+
     mTimer += elapsedTime_;
     if(mTimer>mkHumanSpBeamTime)
     {
+        mIsAttack = false;
         mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
         mAwayLerp += elapsedTime_ * 2.0f;
-        fResetLaser();
     }
     else
     {
-        mLeftBeamThreshold += elapsedTime_ * 10.0f;
-        mLeftBeamThreshold = (std::min)(2.0f, mLeftBeamThreshold);
-        mRightBeamThreshold += elapsedTime_ * 10.0f;
-        mRightBeamThreshold = (std::min)(2.0f, mRightBeamThreshold);
 
-        mLeftBeam.fSetLengthThreshold(mLeftBeamThreshold);
-        mRightBeam.fSetLengthThreshold(mRightBeamThreshold);
     }
     if (mAwayLerp > 1.0f)
     {
@@ -634,12 +684,12 @@ void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
     {
         mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
         mAwayLerp += elapsedTime_ * 2.0f;
-        fResetLaser();
+
     }
     if (mAwayLerp > 1.0f)
     {
         // ダメージを与える
-        mCurrentHitPoint -= (mMaxHp * 0.3f);
+        mCurrentHitPoint -= (mMaxHp * 0.1f);
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -650,7 +700,6 @@ void LastBoss::fHumanDieStartInit()
     // 位置をリセット
     mPosition = { 0.0f,0.0f,20.0f };
     mpModel->play_animation(mAnimPara, AnimationName::human_die);
-
     // TODO : エフェクトの類をすべてリセットする
 
     // TODO : カメラをボスの方に向ける
@@ -727,6 +776,7 @@ void LastBoss::fDragonIdleInit()
     mTimer = 0.0f;
     mCurrentMode = Mode::Dragon;
     mDragonBreathCount = 0;
+    mAnimationSpeed = 5.0f;
 }
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -736,18 +786,23 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
 
-    if(randNumber>6)
+    if(randNumber>8)
     {
         fChangeState(DivideState::DragonIdle);
     }
-    else if (randNumber > 3)
+    else if (randNumber > 6)
     {
         fChangeState(DivideState::DragonRushHide);
     }
-    else
+    else if(randNumber>4)
     {
         fChangeState(DivideState::DragonBeamStart);
     }
+    else
+    {
+        fChangeState(DivideState::DragonHideStart);
+    }
+    mAnimationSpeed = 1.0f;
 }
 
 void LastBoss::fDragonFastBreathStartInit()
@@ -884,8 +939,7 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
         mfAddBullet(new DragonBreath(Graphics_, p, 60.0f, mPlayerPosition));
         mIsShotBreath = true;
     }
-    
-    return;
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         // 確率でもう一度撃つ（最大三回）
@@ -1009,7 +1063,6 @@ void LastBoss::fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graph
     {
         fChangeState(DivideState::DragonBeamStart);
     }
-
 }
 
 void LastBoss::fDragonBeamStartInit()
@@ -1048,13 +1101,13 @@ void LastBoss::fDragonBeamShotInit()
     auto front = Math::Normalize(Math::GetFront(mOrientation));
     DirectX::XMFLOAT3 worldFront = { 0.0f,0.0f,1.0f };
     float dot = Math::Dot(front, worldFront);
-    mBeamStartRadian = acosf(dot);
-    mAddRadian = 0.0f;
+    //mBeamStartRadian = acosf(dot);
+    //mAddRadian = 0.0f;
 }
 
 void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
+    /*mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
 
     const float radian = mBeamStartRadian + mAddRadian;
 
@@ -1064,7 +1117,7 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graph
     if (mAddRadian >= DirectX::XMConvertToRadians(360.0f))
     {
         fChangeState(DivideState::DragonIdle);
-    }
+    }*/
 }
 
 
@@ -1115,14 +1168,14 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     BaseEnemy::fRender(graphics);
 
     //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
-    
+
     //--------------------<タレット描画>--------------------//
     // タレットの親の位置を取得する
     DirectX::XMFLOAT3 rightPosition{};
     DirectX::XMFLOAT3 leftPosition{};
     DirectX::XMFLOAT3 up{};
-    const DirectX::XMFLOAT4X4 world =Math::calc_world_matrix(
-        mScale,mOrientation, mPosition);
+    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(
+        mScale, mOrientation, mPosition);
 
     mpModel->fech_by_bone(mAnimPara, world, mTurretBoneLeft, leftPosition,
         up);
@@ -1135,16 +1188,15 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     //--------------------<セカンドガン描画>--------------------//
     DirectX::XMFLOAT4X4 rightMat{};
     DirectX::XMFLOAT4X4 leftMat{};
-    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneLeft,leftMat);
+    mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneLeft, leftMat);
     mpModel->fech_by_bone(mAnimPara, world, mSecondGunBoneRight, rightMat);
 
     mpSecondGunLeft->fRender(graphics, leftMat, leftPosition);
     mpSecondGunRight->fRender(graphics, rightMat, rightPosition);
 
+    //--------------------<ビームを描画>--------------------//
+    mShipPointer.fRender(graphics);
+    mRightPointer.fRender(graphics);
+    mLeftPointer.fRender(graphics);
 
-    // ビーム類を描画
-    mLaserPointer.fRender(graphics);
-    mBeam.fRender(graphics);
-    mRightBeam.fRender(graphics);
-    mLeftBeam. fRender(graphics);
 }

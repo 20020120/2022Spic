@@ -192,17 +192,13 @@ public:
     void fUpdateAttackCapsule() override;
     
     void fSetStun(bool Arg_, bool IsJust_) override;
-     
-    //--------------------<タレットの関数>--------------------//
-    skeleton::bone mShipFace{}; // タレットのボーンの位置
+
 
 protected:
     void fRegisterFunctions() override;
 
 private:
     void fGuiMenu();
-
-    void fResetLaser();
 
     [[nodiscard]] float fComputePercentHp() const; // 最大体力に対する現在の体力の割合を0.0f~1.0fで返す
     void fChangeHumanToDragon();
@@ -219,19 +215,6 @@ private:
     //****************************************************************
     float mTimer{}; // 汎用タイマー
 
-    // ビーム
-    LaserBeam mBeam{};
-    DirectX::XMFLOAT3 mLaserBegin{};   // ビームの始点
-    DirectX::XMFLOAT3 mLaserEnd{};     // ビームの終点
-    float mLaserThreshold{};           // ビームの長さ0.0f~1.0f
-    float mLaserAlpha{};
-    float mLaserRadius{};              // ビームの太さ
-
-    // 人型のビーム
-    LaserBeam mRightBeam{};
-    LaserBeam mLeftBeam{};
-    float mRightBeamThreshold{};
-    float mLeftBeamThreshold{};
 
     std::mt19937 mt{ std::random_device{}() };
 
@@ -247,15 +230,6 @@ private:
     skeleton::bone mSecondGunBoneRight{};  // タレットのボーン
     skeleton::bone mSecondGunBoneLeft{};   // タレットのボーン
 
-
-    LaserBeam mLaserPointer{};
-    DirectX::XMFLOAT3 mPointerBegin{}; // レーザーポインターの始点
-    DirectX::XMFLOAT3 mPointerEnd{};   // レーザーポインターの終点
-    float mPointerThreshold{};         // レーザーポインターの長さ0.0f~1.0f
-    float mPointerAlpha{};
-    float mRgbColorPower{};
-    float mRgbColorSpeed{ 10.0f };
-    float mHeartTimer{};
 
     //--------------------<人型の必殺技>--------------------//
     DirectX::XMFLOAT3 mAwayBegin{}; // 飛びのき地点の始点
@@ -289,10 +263,6 @@ private:
     // 召喚＆突進
     std::vector<BossRushUnit*> mRushVec{};
 
-    // ビーム
-    float mDragonMoveThreshold{ 0.0f };
-    float mBeamStartRadian{};
-    float mAddRadian{};
 
     // 全体攻撃エフェクト
     std::unique_ptr<Effect> mpAllAttackEffect{ nullptr };
@@ -300,6 +270,34 @@ private:
     // カメラ演出に使うボーン
     skeleton::bone mCameraEyeBone{};
     skeleton::bone mCameraFocusBone{};
+
+    // ビームを発射する長さ
+    float mBeamLength{};
+
+    //--------------------<レーザーポインター>--------------------//
+    LaserBeam mShipPointer{};  // 船
+    LaserBeam mRightPointer{}; // 右肩
+    LaserBeam mLeftPointer{};  // 左肩
+
+    // 位置
+    DirectX::XMFLOAT3 mShipFacePosition{};
+    DirectX::XMFLOAT3 mShipPointerEnd{};
+    // ポインターの長さ
+    float mPointerLength{};
+
+    //--------------------<レーザーポインターのボーン>--------------------//
+    skeleton::bone mShipFace{}; 
+
+    //--------------------<人型ビームのターゲット>--------------------//
+    DirectX::XMFLOAT3 mHumanBeamTarget{};
+
+    //--------------------<ボスの鼓動>--------------------//
+    float mHeartTimer{};
+    float mRgbColorPower{};
+    float mRgbColorSpeed{ 10.0f };
+
+    //--------------------<ドラゴンの移動>--------------------//
+    float mDragonMoveThreshold{};
 
     //****************************************************************
     // 
@@ -319,7 +317,7 @@ private:
     const float mkHumanAllShotBegin{ 0.3f };
    
     const float mkHumanSpWaitTime{ 15.0f };
-    const float mkHumanSpBeamTime{ 5.0f };
+    const float mkHumanSpBeamTime{ 10.0f };
     const float mkSpChargeTime = 7.0f;
     const float mkDistanceToPlayer{ 80.0f };
     const float mkLimitStage{ 300.0f };

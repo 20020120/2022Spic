@@ -20,8 +20,10 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     mCurrentMode = Mode::Ship;
 
     // laserを初期化
-    mBeam.fInitialize(Graphics_.get_device().Get(),L"");
-    mLaserPointer.fInitialize(Graphics_.get_device().Get(),L"");
+    mShipPointer.fInitialize(Graphics_.get_device().Get(),  L"");
+    mRightPointer.fInitialize(Graphics_.get_device().Get(), L"");
+    mLeftPointer.fInitialize(Graphics_.get_device().Get(),  L"");
+
 
     // タレットを初期化
     mpTurretLeft = std::make_unique<Turret>(Graphics_);
@@ -42,15 +44,6 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     // 弾発射用の関数を取得
     mfAddBullet= BulletManager::Instance().fGetAddFunction();
 
-    // ビームを初期化
-    mRightBeam.fInitialize(Graphics_.get_device().Get(), L"");
-    mLeftBeam.fInitialize(Graphics_.get_device().Get(), L"");
-
-    mRightBeam.fSetRadius(3.0f);
-    mRightBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
-    mLeftBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
-    mLeftBeam.fSetRadius(3.0f);
-    mRightBeam.fSetRadius(3.0f);
 
     // ラッシュする敵を登録
     DirectX::XMFLOAT3 entryPos{ 0.0f,500.0f,0.0f };
@@ -92,9 +85,11 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
     fGuiMenu();
-    mBeam.fUpdate();
-    mLaserPointer.fSetAlpha(mPointerAlpha);
-    mLaserPointer.fUpdate();
+
+    // レーザーポインターを更新
+    mShipPointer.fUpdate();
+    mRightPointer.fUpdate();
+    mLeftPointer.fUpdate();
 
     // 各モードから次のモードに遷移する
     switch (mCurrentMode) {
@@ -113,8 +108,6 @@ void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
     mpTurretLeft->fUpdate(elapsedTime_, Graphics_);
     mpTurretRight->fUpdate(elapsedTime_, Graphics_);
 
-    mRightBeam.fUpdate();
-    mLeftBeam.fUpdate();
 
     mpEnemyManager->fSetBossMode(mCurrentMode);
 
@@ -723,21 +716,11 @@ void LastBoss::fGuiMenu()
     ImGui::DragFloat3("CameraEye", &eyePosition.x);
     ImGui::DragFloat3("CameraFocus", &focusPosition.x);
 
+    int hp = mMaxHp;
+    ImGui::DragInt("MaxHp", &hp);
 
     ImGui::End();
 #endif
-}
-
-void LastBoss::fResetLaser()
-{
-    mRightBeamThreshold = 0.0f;
-    mLeftBeamThreshold = 0.0f;
-
-    mRightBeam.fSetAlpha(1.0f);
-    mLeftBeam.fSetAlpha(1.0f);
-
-    mLeftBeam.fSetLengthThreshold(mLeftBeamThreshold);
-    mRightBeam.fSetLengthThreshold(mRightBeamThreshold);
 }
 
 

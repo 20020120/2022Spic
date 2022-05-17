@@ -297,7 +297,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		mIsBossCamera = false;
 		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	}
-
+	
 
 	// camera
     //camera->Update(elapsed_time,player.get());
