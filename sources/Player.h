@@ -359,9 +359,9 @@ public:
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count);
+    void AddCombo(int count, bool block = false);
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
-    void AwakingAddCombo(int hit_count1, int hit_count2);
+    void AwakingAddCombo(int hit_count1, int hit_count2, bool block = false);
     //--------------------<敵からダメージを受ける>--------------------//
     void DamagedCheck(int damage, float InvincibleTime);
     void TutorialDamagedCheck(int damage, float InvincibleTime);

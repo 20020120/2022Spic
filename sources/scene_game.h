@@ -173,5 +173,8 @@ private:
     bool is_game_clear{ false };
     // ƒQ[ƒ€ƒNƒŠƒA
     StepFontElement game_clear_text;
-
+private:
+    bool slow{ false };
+    float slow_timer{ 0.0f };
+    float slow_rate{ 0.05f };
 };
