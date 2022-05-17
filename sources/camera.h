@@ -160,7 +160,10 @@ private:
 class JointCamera : public Camera
 {
 public:
-    JointCamera() : Camera(nullptr) {}
+    JointCamera(GraphicsPipeline& Graphics_) : Camera(nullptr)
+    {
+        JointCamera::Initialize(Graphics_);
+    }
     ~JointCamera() {}
 
     void Initialize(GraphicsPipeline& graphics);

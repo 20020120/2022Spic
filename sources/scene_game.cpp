@@ -46,7 +46,7 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
 	cameraManager->RegisterCamera(new ClearCamera(player.get()));
-	cameraManager->RegisterCamera(new JointCamera());
+	cameraManager->RegisterCamera(new JointCamera(graphics));
 
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
@@ -275,6 +275,30 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
+	//--------------------<ボスの方にカメラを向ける処理>--------------------//
+	if(enemyManager->fGetIsEventCamera()&&!mIsBossCamera)
+	{
+	    // まだボスのほうを向いていないとき
+		mIsBossCamera = true;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Joint));
+	}
+	if(enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+		const DirectX::XMFLOAT3 eye = enemyManager->fGetEye();
+		const DirectX::XMFLOAT3 focus = enemyManager->fGetFocus();
+
+	    // カメラがEnemyManagerを経由し555たボスによって更新される
+		cameraManager->GetCurrentCamera()->set_eye(eye);
+		cameraManager->GetCurrentCamera()->set_target(focus);
+	}
+	if (!enemyManager->fGetIsEventCamera() && mIsBossCamera)
+	{
+	    // カメラ処理終了
+		mIsBossCamera = false;
+		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
+	}
+
+
 	// camera
     //camera->Update(elapsed_time,player.get());
 	cameraManager->Update(elapsed_time);
@@ -288,6 +312,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	player->SetTarget(enemy);
 	player->SetCameraTarget(c->get_target());
 	if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
+
 
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
@@ -637,6 +662,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 
 void SceneGame::register_shadowmap(GraphicsPipeline& graphics, float elapsed_time)
 {
+	return;
 #ifdef SHADOW_MAP
 	Camera* c = cameraManager->GetCurrentCamera();
 	//--シャドウマップの生成--//

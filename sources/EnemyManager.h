@@ -97,6 +97,8 @@ public:
     // ボスから呼び出す
     void fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_);
 
+
+
      // チュートリアルで呼び出す関数
     void fSpawnTutorial_NoAttack(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics_);
@@ -104,8 +106,11 @@ public:
     //--------------------<ボス関連の関数>--------------------//
     [[nodiscard]] LastBoss::Mode fGetBossMode()const;
     void fSetBossMode(LastBoss::Mode Mode_);
-    
     [[nodiscard]] bool fGetIsEventCamera()const;
+    [[nodiscard]] DirectX::XMFLOAT3 fGetEye()const;
+    [[nodiscard]] DirectX::XMFLOAT3 fGetFocus()const;
+    void fSetBossEye(DirectX::XMFLOAT3 Eye_);
+    void fSetBossFocus(DirectX::XMFLOAT3 Focus_);
 
 private:
     //--------------------<敵と関連する処理>--------------------//
@@ -168,6 +173,9 @@ private:
     //--------------------<ボス関連の変数>--------------------//
     LastBoss::Mode mCurrentMode{ LastBoss::Mode::None };
     bool mIsBossEvent{};// イベント中
+    DirectX::XMFLOAT3 mBossCameraEye{ 0.0f,0.0f,-80.0f };
+    DirectX::XMFLOAT3 mBossCameraFocus{0.0f,0.0f,0.0f};
+
     //****************************************************************
     //
     // 定数

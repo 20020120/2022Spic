@@ -16,7 +16,7 @@ private:
 inline void ModelCashes::Load_IntoTitle(ID3D11Device* pDevice_)
 {
     // ボスのモデルをロード
-    auto model1 = resource_manager->load_model_resource(pDevice_, "./resources/Models/Enemy/boss_animation_fifth.fbx");
+    auto model1 = resource_manager->load_model_resource(pDevice_, "./resources/Models/Enemy/boss_animation_sixth.fbx");
     mpModelCashVec.emplace_back(std::move(model1));
     auto model2 = resource_manager->load_model_resource(pDevice_, "./resources/Models/Enemy/boss_animation_fifth_dive.fbx");
     mpModelCashVec.emplace_back(std::move(model2));

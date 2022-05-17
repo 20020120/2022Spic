@@ -118,7 +118,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                if(enemy->fDamaged(PlayerAttackPower_, 2.3f,Graphics_,elapsedTime_))
+                if(enemy->fDamaged(PlayerAttackPower_, 0.5f,Graphics_,elapsedTime_))
                 {
                     hitCounts++;
                 }
@@ -849,4 +849,24 @@ bool EnemyManager::fGetIsEventCamera() const
     }
 
     return result;
+}
+
+DirectX::XMFLOAT3 EnemyManager::fGetEye() const
+{
+    return mBossCameraEye;
+}
+
+DirectX::XMFLOAT3 EnemyManager::fGetFocus() const
+{
+    return mBossCameraFocus;
+}
+
+void EnemyManager::fSetBossEye(DirectX::XMFLOAT3 Eye_)
+{
+    mBossCameraEye = Eye_;
+}
+
+void EnemyManager::fSetBossFocus(DirectX::XMFLOAT3 Focus_)
+{
+    mBossCameraFocus = Focus_;
 }

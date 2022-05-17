@@ -55,7 +55,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 
 	cameraManager->RegisterCamera(new GameCamera(player.get()));
 	cameraManager->RegisterCamera(new ClearCamera(player.get()));
-	cameraManager->RegisterCamera(new JointCamera());
+	cameraManager->RegisterCamera(new JointCamera(graphics));
 
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);

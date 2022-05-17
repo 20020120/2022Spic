@@ -102,6 +102,10 @@ private:
     bool during_clear = false;
     float tunnel_alpha = 0.0f;
     std::unique_ptr<Tunnel> tunnel{ nullptr };
+
+    // ƒ{ƒX‚Ì•Ï”
+    bool mIsBossCamera{};
+
 private:
     struct StepFontElement
     {
