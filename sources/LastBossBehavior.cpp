@@ -697,8 +697,8 @@ void LastBoss::fHumanSpDamageUpdate(float elapsedTime_,
 
 void LastBoss::fHumanDieStartInit()
 {
+    mPosition.z = 0.0f;
     // 位置をリセット
-    mPosition = { 0.0f,0.0f,20.0f };
     mpModel->play_animation(mAnimPara, AnimationName::human_die);
     // TODO : エフェクトの類をすべてリセットする
 
@@ -708,6 +708,8 @@ void LastBoss::fHumanDieStartInit()
 
 void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+
+    mPosition = Math::lerp(mPosition, { 0.0f,80.0f,0.0f }, 10.0f * elapsedTime_);
    if(mpModel->end_of_animation(mAnimPara))
    {
        fChangeState(DivideState::HumanDieMiddle);
@@ -763,7 +765,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::DragonIdle);
+        fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
         mCurrentHitPoint = mMaxHp * mkPercentToDragon;
@@ -1162,10 +1164,59 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
     }
 }
 
+void LastBoss::fStunInit()
+{
+    mIsAttack = false;
+    mAttackCapsule.mRadius = 0.0f;
+    mStunEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+    mStunEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
+    mTimer = 3.0f;
+    mpModel->pause_animation(mAnimPara);
+}
+
+void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+{
+    mTimer -= elapsedTime_;
+    if (mTimer < 0.0f)
+    {
+
+        mIsStun = false;
+        mpModel->progress_animation(mAnimPara);
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
+        switch (mCurrentMode) {
+            case Mode::None: break;
+        case Mode::Ship:
+            fChangeState(DivideState::ShipIdle);
+            break;
+        case Mode::ShipToHuman:
+            break;
+        case Mode::Human:
+            fChangeState(DivideState::HumanIdle);
+            break;
+        case Mode::HumanToDragon: break;
+        case Mode::Dragon:
+            fChangeState(DivideState::DragonIdle);
+            break;
+        case Mode::DragonDie: break;
+        default: ;
+        }
+    }
+}
+
 
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
-    BaseEnemy::fRender(graphics);
+
+    SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 1);
+
+    graphics.set_pipeline_preset(SHADER_TYPES::PBR);
+    mDissolve = (std::max)(0.0f, mDissolve);
+    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
+    mpModel->render(graphics.get_dc().Get(), mAnimPara, world, color, mDissolve);
+
+
 
     //graphics.set_pipeline_preset(SHADER_TYPES::PBR);
 
@@ -1174,16 +1225,11 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     DirectX::XMFLOAT3 rightPosition{};
     DirectX::XMFLOAT3 leftPosition{};
     DirectX::XMFLOAT3 up{};
-    const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(
-        mScale, mOrientation, mPosition);
 
     mpModel->fech_by_bone(mAnimPara, world, mTurretBoneLeft, leftPosition,
         up);
     mpModel->fech_by_bone(mAnimPara, world, mTurretBoneRight, rightPosition,
         up);
-
-    mpTurretLeft->fRender(graphics, world, leftPosition);
-    mpTurretRight->fRender(graphics, world, rightPosition);
 
     //--------------------<セカンドガン描画>--------------------//
     DirectX::XMFLOAT4X4 rightMat{};
@@ -1193,6 +1239,9 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
 
     mpSecondGunLeft->fRender(graphics, leftMat, leftPosition);
     mpSecondGunRight->fRender(graphics, rightMat, rightPosition);
+
+    mpTurretLeft->fRender(graphics, leftMat, leftPosition);
+    mpTurretRight->fRender(graphics, rightMat, rightPosition);
 
     //--------------------<ビームを描画>--------------------//
     mShipPointer.fRender(graphics);

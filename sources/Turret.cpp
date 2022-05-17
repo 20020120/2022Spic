@@ -25,23 +25,16 @@ void LastBoss::Turret::fRender(GraphicsPipeline& graphics_,
     const DirectX::XMFLOAT4X4& ParentWorld_,
     const DirectX::XMFLOAT3& Position_)
 {
-    const auto transMat = DirectX::XMMatrixTranslation(Position_.x,
-    Position_.y,Position_.z);
-
-    const DirectX::XMMATRIX matrix =
-        DirectX::XMLoadFloat4x4(&ParentWorld_) * transMat;
-    DirectX::XMFLOAT4X4 trans{};
-    DirectX::XMStoreFloat4x4(&trans, matrix);
 
     mPosition =
     {
-        trans._41,
-        trans._42,
-        trans._43
+        ParentWorld_._41,
+        ParentWorld_._42,
+        ParentWorld_._43
 
     };
     mpModel->render(graphics_.get_dc().Get(), Turret::mAnimPara,
-        trans, { 1.0f,1.0f,1.0f,1.0f }, mDissolve);
+        ParentWorld_, { 1.0f,1.0f,1.0f,1.0f }, mDissolve);
 }
 
 void LastBoss::Turret::fSetDissolve(float Dissolve_)
@@ -73,18 +66,6 @@ void LastBoss::SecondGun::fUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 
 void LastBoss::SecondGun::fRender(GraphicsPipeline& graphics_, const DirectX::XMFLOAT4X4& ParentWorld_,const DirectX::XMFLOAT3& Position_)
 {
-    constexpr float scale = 1.0f;
-
-    const auto transMat = DirectX::XMMatrixTranslation(Position_.x,
-        Position_.y, Position_.z);
-    const auto scaleMat = DirectX::XMMatrixScaling(scale, scale, scale);
-    const auto rotMat = DirectX::XMMatrixIdentity();
-
-
-    const DirectX::XMMATRIX matrix =transMat*
-        DirectX::XMLoadFloat4x4(&ParentWorld_);
-    DirectX::XMFLOAT4X4 trans{};
-    DirectX::XMStoreFloat4x4(&trans, matrix);
 
     mpModel->render(graphics_.get_dc().Get(), SecondGun::mAnimPara,
         ParentWorld_, { 1.0f,1.0f,1.0f,1.0f },mDissolve);

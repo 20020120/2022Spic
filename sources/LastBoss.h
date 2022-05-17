@@ -90,6 +90,9 @@ private:
         inline static const char* DragonBeamShoot = "DragonBeamShoot"; // 発射
         inline static const char* DragonBeamEnd = "DragonBeamEnd";     // 終了
 
+
+        inline static const char* Stun = "Stun";     // スタン
+
     };
 
     enum  AnimationName {
@@ -299,6 +302,8 @@ private:
     //--------------------<ドラゴンの移動>--------------------//
     float mDragonMoveThreshold{};
 
+
+
     //****************************************************************
     // 
     // 定数
@@ -468,7 +473,10 @@ private:
     void fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     void fDragonDieMiddleInit();
     void fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-    
+
+
+    void fStunInit();
+    void fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
 public:
     void fRender(GraphicsPipeline& Graphics_) override;

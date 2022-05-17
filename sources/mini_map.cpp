@@ -60,6 +60,11 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 	//エネミーアイコン
 	for(auto& enemy : enemy_list)
 	{
+		if(enemy->mpIcon==nullptr)
+		{
+		    continue;
+		}
+
 		const DirectX::XMFLOAT2 e_pos = { enemy->fGetPosition().x,enemy->fGetPosition().z };
 		//プレイヤーから敵へのベクトル
 		const DirectX::XMVECTOR Normal_P_To_E_Vec = Math::calc_vector_AtoB_normalize(player_pos, e_pos);

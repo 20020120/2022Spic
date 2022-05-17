@@ -304,6 +304,8 @@ void TutorialEnemy::fMoveInit()
     mWonderTarget = { randPosition * 40.0f };
     mWonderBegin = mPosition;
     mTimer = 0.0f;
+
+    mpModel->play_animation(mAnimPara, AnimationName::walk, true);
 }
 
 void TutorialEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -329,7 +331,7 @@ void TutorialEnemy::fAttackStartUpdate(float elapsedTime_, GraphicsPipeline& Gra
     DirectX::XMFLOAT3 velPower = Math::Normalize(mPlayerPosition - mPosition);
     mPosition += velPower * elapsedTime_ * 40.0f;
 
-    if(length<=20.0f)
+    if(length<=10.0f)
     {
         fChangeState(DivideState::Attack);
     }

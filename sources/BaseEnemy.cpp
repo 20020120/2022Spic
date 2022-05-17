@@ -13,7 +13,11 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
 {
     mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(), FileName_);
     //�~�j�}�b�v�p�A�C�R��
-    mpIcon = std::make_unique<SpriteBatch>(Graphics_.get_device().Get(), IconFileName,1);
+    if (IconFileName)
+    {
+        mpIcon = std::make_unique<SpriteBatch>(Graphics_.get_device().Get(), IconFileName, 1);
+    }
+
     mBodyCapsule.mRadius = Param_.BodyCapsuleRad;
     mAttackCapsule.mRadius = Param_.AttackCapsuleRad;
 

@@ -10,7 +10,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     EnemyManager* pEnemyManager_)
     :BaseEnemy(Graphics_,
         "./resources/Models/Enemy/boss_animation_sixth.fbx",
-        ParamPack_, EmitterPoint_),mpEnemyManager(pEnemyManager_)
+        ParamPack_, EmitterPoint_,L"./resources/Sprites/ui/minimap/minimap_lastboss.png"), mpEnemyManager(pEnemyManager_)
 {
     // タレットのモデルを初期化
     fRegisterFunctions();
@@ -140,7 +140,11 @@ void LastBoss::fUpdateAttackCapsule()
 
 void LastBoss::fSetStun(bool Arg_, bool IsJust_)
 {
-    //BaseEnemy::fSetStun(arg);
+    if(IsJust_)
+    {
+        mIsStun = true;
+        fChangeState(DivideState::Stun);
+    }
 }
 
 void LastBoss::fRegisterFunctions()
@@ -599,6 +603,20 @@ void LastBoss::fRegisterFunctions()
         mFunctionMap.insert(std::make_pair(DivideState::DragonDieEnd, tuple));
     }
 
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_, Graphics_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun, tuple));
+    }
+
+
     fChangeState(DivideState::ShipStart);
 }
 
@@ -718,7 +736,9 @@ void LastBoss::fGuiMenu()
 
     int hp = mMaxHp;
     ImGui::DragInt("MaxHp", &hp);
-
+    
+    ImGui::RadioButton("IsAttack", mIsAttack);
+    ImGui::Checkbox("Stun", &mIsStun);
     ImGui::End();
 #endif
 }
