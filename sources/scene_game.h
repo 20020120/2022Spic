@@ -97,7 +97,11 @@ private:
     std::unique_ptr<MiniMap> minimap{ nullptr };
 
     // bgm切り替え用変数
-    bool bgm_switches[3] = { false,false,false };
+    LastBoss::Mode old_last_boss_mode = LastBoss::Mode::None;
+    LastBoss::Mode last_boss_mode     = LastBoss::Mode::None;
+    // スカイボックスの色切り替え用変数
+    float purple_threshold = 0;
+    float red_threshold = 0;
     // クリア演出
     bool during_clear = false;
     float tunnel_alpha = 0.0f;

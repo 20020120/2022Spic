@@ -94,7 +94,11 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
 
-	for (auto& bgm_switch : bgm_switches) { bgm_switch = false; }
+	old_last_boss_mode = LastBoss::Mode::None;
+	last_boss_mode     = LastBoss::Mode::None;
+
+	purple_threshold = 0;
+	red_threshold = 0;
 
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::GAME);
@@ -110,27 +114,6 @@ void SceneGame::uninitialize()
 
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	// ボスのBGM切り替え
-	//if (!bgm_switches[0] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_BATTLESHIP)
-	//{
-	//	audio_manager->stop_all_bgm();
-	//	audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
-
-	//	bgm_switches[0] = true;
-	//}
-	//else if (!bgm_switches[1] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_HUMANOID)
-	//{
-	//	audio_manager->stop_all_bgm();
-	//	audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
-
-	//	bgm_switches[1] = true;
-	//}
-	//else if (!bgm_switches[2] && mWaveManager.get_current_stage() == WaveManager::STAGE_IDENTIFIER::BOSS_DRAGON)
-	//{
-	//	audio_manager->stop_all_bgm();
-	//	audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
-	// bgm_switches[2] = true;
-	//}
 	if (is_game_clear == false && is_game_over == false)
 	{
 		brack_back_pram.color.w = 0;
@@ -221,6 +204,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
+	// enemyManagerのupdateの上で
+	old_last_boss_mode = last_boss_mode;
+
     const auto enemyManager = mWaveManager.fGetEnemyManager();
 	enemyManager->fSetPlayerPosition(player->GetPosition());
 	enemyManager->fSetPlayerSearch(player->during_search_time());
@@ -298,9 +284,41 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->GetBodyCapsuleParam().end,
 		player->GetBodyCapsuleParam().rasius, player->GetDamagedFunc());
 
+	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
+	last_boss_mode = enemyManager->fGetBossMode();
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::Ship)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
+	}
+	if (old_last_boss_mode == LastBoss::Mode::Ship && last_boss_mode == LastBoss::Mode::ShipToHuman)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+		purple_threshold = 0.01f;
+	}
+	if (old_last_boss_mode == LastBoss::Mode::Human && last_boss_mode == LastBoss::Mode::HumanToDragon)
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+		red_threshold = 0.01f;
+	}
+	// SkyDome
+	if (purple_threshold >= 0.01f && purple_threshold <= 1.0f)
+	{
+		purple_threshold += 0.2f * elapsed_time;
+		SkyDome::set_purple_threshold(purple_threshold);
+	}
+	if (red_threshold >= 0.01f && red_threshold <= 1.0f)
+	{
+		red_threshold += 0.2f * elapsed_time;
+		SkyDome::set_red_threshold(red_threshold);
+	}
+
 	//--------------------<ボスの方にカメラを向ける処理>--------------------//
 	if(enemyManager->fGetIsEventCamera()&&!mIsBossCamera)
 	{
+		post_effect->clear_post_effect();
 	    // まだボスのほうを向いていないとき
 		mIsBossCamera = true;
 		cameraManager->SetCamera(static_cast<int>(CameraTypes::Joint));
@@ -320,7 +338,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		mIsBossCamera = false;
 		cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	}
-	
+
 
 	// camera
     //camera->Update(elapsed_time,player.get());
