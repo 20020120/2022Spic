@@ -246,6 +246,9 @@ private:
     //画像のチュートリアルのジャスト回避
     std::unique_ptr<SpriteBatch> just_avoidance{ nullptr };
     Element just_avoidance_parm;
+    //画像のチュートリアルの覚醒
+    std::unique_ptr<SpriteBatch> awaiking_chain{ nullptr };
+    Element awaiking_chain_parm;
 
     StepFontElement sprite_tutorial_text;
     StepFontElement tutorial_count_text;

@@ -106,6 +106,11 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	just_avoidance_parm.scale = { 0.3f,0.3f };
 	just_avoidance_parm.texsize = { static_cast<float>(just_avoidance->get_texture2d_desc().Width),
 										static_cast<float>(just_avoidance->get_texture2d_desc().Height) };
+	awaiking_chain = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\awaiking.png", 1);
+	awaiking_chain_parm.position = { 378.9f,73.9f };
+	awaiking_chain_parm.scale = { 0.3f,0.3f };
+	awaiking_chain_parm.texsize = { static_cast<float>(awaiking_chain->get_texture2d_desc().Width),
+										static_cast<float>(awaiking_chain->get_texture2d_desc().Height) };
 
 	//コントローラーの画像
 	{
@@ -1087,7 +1092,8 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		sprite_render("back", brack_back.get(), brack_back_pram, 0);
 		sprite_render("sprite_frame", sprite_frame.get(), sprite_frame_parm, 0, glow_vertical);
-		sprite_render("just_avoidance", just_avoidance.get(), just_avoidance_parm, 0, 0);
+		if(button_priset == BottunPriset::BehindAvoidanceTutorialPriset)sprite_render("just_avoidance", just_avoidance.get(), just_avoidance_parm, 0, 0);
+		if(button_priset == BottunPriset::AwaikingTutorialPriset)sprite_render("awaiking_chain", awaiking_chain.get(), awaiking_chain_parm, 0, 0);
 		sprite_render("controller_b_pram", controller_keys[ControllerSprite::B].get(), controller_b_pram);
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
 		r_font_render("sprite_tutorial_text", sprite_tutorial_text);

@@ -1362,6 +1362,8 @@ void Player::TransitionTutorialInvAwaiking()
 
 void Player::TransitionTutorialAwaikingEvent()
 {
+    PostEffect::clear_post_effect();
+    is_lock_on = false;
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
