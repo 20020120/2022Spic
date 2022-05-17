@@ -770,6 +770,7 @@ void Player::TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::v
 
 void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
     attack_time += attack_add_time * elapsed_time;
     //敵に当たったか時間が2秒たったら加速を終わる
@@ -843,6 +844,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
 
 void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
     attack_time += attack_add_time * elapsed_time;
     //敵に当たったか時間が2秒たったら加速を終わる
@@ -1386,7 +1388,7 @@ void Player::TransitionTutorialAwaikingEventIdle()
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
-
+    audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::AwaikingSceneIdle, false, true);
     //覚醒状態かどうかの設定

@@ -309,4 +309,8 @@ private:
     //ƒXƒ^ƒ“‚µ‚Ä‚¢‚é“G‚ª‚¢‚È‚©‚Á‚½‚ç‘‚¦‚Ä‚¢‚­
     float is_stun_timer{ 0 };
     bool reset_text{ false };
+private:
+    bool slow{ false };
+    float slow_timer{ 0.0f };
+    float slow_rate{ 0.05f };
 };

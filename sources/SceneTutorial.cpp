@@ -232,6 +232,26 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 
 #endif // 0
+	//プレイヤーがジャスト回避したらslow
+	if (player->GetIsJustAvoidance())
+	{
+		slow = true;
+	}
+	else
+	{
+		slow_timer = 0.0f;
+		slow = false;
+	}
+	//slowがtrueなら
+	if (slow)
+	{
+		slow_timer += 1.0f * elapsed_time;
+		//タイマーが0.5秒以下なら遅くする
+		if (slow_timer < 0.5f)
+		{
+			elapsed_time *= slow_rate;
+		}
+	}
 
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
