@@ -16,6 +16,7 @@ public:
     //--------<getter/setter>--------//
     void focus(const BaseEnemy* target_enemy, bool lockon);
 private:
+    static constexpr float BASE_RATE_LENGTH = 25.0f; // ƒJƒƒ‰‚Æ“G‚Ì‹——£‚É‰‚¶‚ÄUI‚ğ¬‚³‚­‚·‚éŠ„‡‚ÌŠî€
     //--------< •Ï” >--------//
     std::unique_ptr<SpriteBatch> reticle{ nullptr };
 

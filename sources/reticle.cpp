@@ -36,7 +36,10 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time)
 
         element.color.w = Math::lerp(element.color.w, 0.7f, LERP_RATE * elapsed_time);
 
-        element.scale = Math::lerp(element.scale, { 0.06f, 0.06f }, LERP_RATE * elapsed_time);
+        float scale_rate = BASE_RATE_LENGTH / length_player_to_enemy;
+        scale_rate = Math::clamp(scale_rate, 0.5f, 1.0f);
+        DirectX::XMFLOAT2 arrival_scale = { 0.06f * scale_rate, 0.06f * scale_rate };
+        element.scale = Math::lerp(element.scale, arrival_scale, LERP_RATE * elapsed_time);
 
         if (element.color.w >= 0.6f) { element.angle += 30.0f * elapsed_time; }
         else { element.angle += 360.0f * elapsed_time; }
@@ -55,7 +58,10 @@ void Reticle::update(GraphicsPipeline& graphics, float elapsed_time, float lerp_
 
         element.color.w = Math::lerp(element.color.w, 0.9f, lerp_rate * elapsed_time);
 
-        element.scale = Math::lerp(element.scale, { 0.06f, 0.06f }, lerp_rate * elapsed_time);
+        float scale_rate = BASE_RATE_LENGTH / length_player_to_enemy;
+        scale_rate = Math::clamp(scale_rate, 0.5f, 1.0f);
+        DirectX::XMFLOAT2 arrival_scale = { 0.06f * scale_rate, 0.06f * scale_rate };
+        element.scale = Math::lerp(element.scale, arrival_scale, lerp_rate * elapsed_time);
 
         if (element.color.w >= 0.6f) { element.angle += 30.0f * elapsed_time; }
         else { element.angle += 360.0f * lerp_rate * elapsed_time; }
