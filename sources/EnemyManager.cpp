@@ -52,7 +52,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     // ウェーブ開始からの時間を更新
     if (!mDebugMode)
     {
-        //mWaveTimer += elapsedTime_;
+        mWaveTimer += elapsedTime_;
     }
 
     // カメラシェイク
