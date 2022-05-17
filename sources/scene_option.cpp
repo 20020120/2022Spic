@@ -7,6 +7,7 @@
 
 bool Option::validity = false;
 bool Option::switching = false;
+bool Option::home_disabled = false;
 
 Option::Option(GraphicsPipeline& graphics)
 {
@@ -83,15 +84,19 @@ void Option::initialize()
 	state = IconType::VOLUME;
 	cursor.position = { 1280.0f / 2.0f, 720.0f / 2.0f };
 	switching = false;
+	home_disabled = false;
 }
 
 void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 {
-	if (game_pad->get_button_down() & GamePad::BTN_START)
+	if (!home_disabled)
 	{
-		audio_manager->play_se(SE_INDEX::SELECT);
-		switching = true;
-		return;
+		if ((game_pad->get_button_down() & GamePad::BTN_START) || (game_pad->get_button_down() & GamePad::BTN_A))
+		{
+			audio_manager->play_se(SE_INDEX::SELECT);
+			switching = true;
+			return;
+		}
 	}
 
 	// tab back ‰‰o
@@ -122,6 +127,15 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (switching) return;
 
+	//--icon--//
+	if (icon_map.count(state))
+	{
+		icon_map.at(state)->update(graphics, elapsed_time);
+		icon_map.at(state)->vs_cursor(cursor.position);
+	}
+
+	if (home_disabled) return;
+
 	switch (state)
 	{
 	case IconType::VOLUME:
@@ -141,12 +155,6 @@ void Option::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (Math::equal_check(frame.scale.x, 0.25f, 0.01f)) { frame_arrival_scale = { 0.3f, 0.3f }; }
 	if (Math::equal_check(frame.scale.x, 0.3f, 0.01f)) { frame_arrival_scale = { 0.25f, 0.25f }; }
 	frame.scale = Math::lerp(frame.scale, frame_arrival_scale, 3 * elapsed_time);
-	//--icon--//
-	if (icon_map.count(state))
-	{
-		icon_map.at(state)->update(graphics, elapsed_time);
-		icon_map.at(state)->vs_cursor(cursor.position);
-	}
 	//--cursor--//
 	float cursor_speed = 700.0f * elapsed_time;
 	cursor_velocity = { fabsf(game_pad->get_axis_LX() + FLT_EPSILON) > 0.1f ? game_pad->get_axis_LX() : 0,
@@ -247,9 +255,7 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	//--tab--//
 	r_render("tab", tab, sprite_tab.get(), tab_add_position);
 	//--cursor--//
-	if (state != IconType::TRANSITION) r_render("cursor", cursor, sprite_cursor.get(), {});
-
-
+	if (state != IconType::TRANSITION && !home_disabled) { r_render("cursor", cursor, sprite_cursor.get(), {}); }
 	//--ˆê”Ô‰º--//
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	debug_2D->all_render(graphics.get_dc().Get());

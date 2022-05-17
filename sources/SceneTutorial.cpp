@@ -109,7 +109,10 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		controller_pram.scale = { 0.3f,0.3f };
 
 		controller_keys[ControllerSprite::A] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a.png", 1);
-		controller_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 1);
+		controller_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 2);
+		controller_b_pram.position = controller_b_pram.position = { 365.7f, 270.2f };
+		controller_b_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::B]->get_texture2d_desc().Width),
+										static_cast<float>(controller_keys[ControllerSprite::B]->get_texture2d_desc().Height) };
 		controller_keys[ControllerSprite::X] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\x.png", 1);
 		controller_keys[ControllerSprite::Y] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\y.png", 1);
 		controller_keys[ControllerSprite::RB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rb.png", 1);
@@ -123,6 +126,9 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		controller_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back.png", 1);
 		controller_back_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Width),
 										static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Height) };
+		controller_back_pram.position = { -156.3f,145.0f };
+		controller_back_pram.scale = { 0.3f,0.3f };
+
 	}
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
@@ -724,6 +730,21 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"LBボタンを長押ししてスタンしている敵をロックオン";
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
+		if (player->EnemiesIsStun(enemyManager->fGetEnemies()))is_stun_timer = 0.0f;
+		else is_stun_timer += 1.0f * elapsed_time;
+
+		//スタンしている敵が5秒間いなかったら
+		if (is_stun_timer > 5.0f)
+		{
+			tutorial_text_element[5].position = { 22.0f,72.0f };
+			tutorial_text_element[5].s = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
+		}
+		else
+		{
+			tutorial_text_element[5].position = { 30.0f,49.0f };
+			tutorial_text_element[5].s = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
+		}
+
 		if (is_next)
 		{
 			Judea_timer += 1.0f * elapsed_time;
@@ -927,7 +948,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
-		sprite_render("controller_back", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
+		sprite_render("controller_back_pram", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI
@@ -991,9 +1012,13 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	//回り込み回避の時とチェイン攻撃の時にしかうつさない
 	if (tutorial_state == TutorialState::BehindAvoidanceTutorial || tutorial_state == TutorialState::ChainAttackTutorial)
 	{
-		fonts->yu_gothic->Begin(graphics.get_dc().Get());
-		r_font_render("tutorial_count_text",tutorial_count_text);
-		fonts->yu_gothic->End(graphics.get_dc().Get());
+		//ChainAttackTutorialの時にスタンしている敵がいない時間が5秒以上の時はうつさない
+		if (is_stun_timer < 5.0f)
+		{
+			fonts->yu_gothic->Begin(graphics.get_dc().Get());
+			r_font_render("tutorial_count_text", tutorial_count_text);
+			fonts->yu_gothic->End(graphics.get_dc().Get());
+		}
 	}
 	if (tutorial_state == TutorialState::AwaikingTutorial)
 	{
@@ -1003,13 +1028,37 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	if (sprite_tutorial)
 	{
 		glow_vertical -= elapsed_time * 0.2f;
-
+		b_bottun_rate += 1.0f * elapsed_time;
+		if (b_button_change)
+		{
+			if (b_bottun_rate > 1.0f)
+			{
+				b_bottun_rate = 0.0f;
+				b_button_change = false;
+			}
+			else
+			{
+				controller_b_pram.position = Math::lerp({ 365.7f,270.2f }, { 365.7f,289.6f }, b_bottun_rate);
+			}
+		}
+		else
+		{
+			if (b_bottun_rate > 1.0f)
+			{
+				b_bottun_rate = 0.0f;
+				b_button_change = true;
+			}
+			else
+			{
+				controller_b_pram.position = Math::lerp({ 365.7f,289.6f }, { 365.7f,270.2f }, b_bottun_rate);
+			}
+		}
 		sprite_render("back", brack_back.get(), brack_back_pram, 0);
 		sprite_render("sprite_frame", sprite_frame.get(), sprite_frame_parm, 0, glow_vertical);
+		sprite_render("controller_b_pram", controller_keys[ControllerSprite::B].get(), controller_b_pram);
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
 		r_font_render("sprite_tutorial_text", sprite_tutorial_text);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
-
 	}
 
 }

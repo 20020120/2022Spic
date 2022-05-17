@@ -49,7 +49,7 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
-	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 8;
+	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 12;
 	DirectX::XMStoreFloat3(&target, Target);
 
 	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;

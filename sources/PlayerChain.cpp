@@ -131,6 +131,15 @@ void Player::ChainLockOn()
 }
 
 
+void Player::chain_parm_reset()
+{
+	if (!reticles.empty()) reticles.clear();
+	chain_cancel = true;
+	transition_chain_search(); /*リセット*/
+	transition_normal_behavior();
+}
+
+
 //#define CHAIN_DEBUG
 
 #ifdef CHAIN_DEBUG
@@ -245,7 +254,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		}
 
 		// 敵がいなければ通常行動に戻る
-		if (enemies.size() == 0) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }
+		if (enemies.size() == 0) { chain_parm_reset(); }
 		// スタンしてなくてもロックオン
 		// 決められた時間内に敵を索敵しロックオンステートへ
 		else
@@ -254,14 +263,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			if (search_time > 0)
 			{
 				/*キャンセルがあれがここへ*/
-				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
-				{
-					reticles.clear();
-
-					chain_cancel = true;
-					transition_chain_search(); /*リセット*/
-					transition_normal_behavior();
-				}
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER) { chain_parm_reset(); }
 				else
 				{
 					for (int i = 0; i < enemies.size(); ++i)
@@ -299,14 +301,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/
-				{
-					reticles.clear();
-
-					chain_cancel = true;
-					transition_chain_search(); /*リセット*/
-					transition_normal_behavior();
-				}
+				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/ { chain_parm_reset(); }
 				else { transition_chain_lockon_begin(); }
 			}
 		}
@@ -340,21 +335,14 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			setup_search_time = true;
 		}
 
-		if (!is_stun) { transition_chain_search(); /*リセット*/ transition_normal_behavior(); }
+		if (!is_stun) { chain_parm_reset(); }
 		else // 決められた時間内に敵を索敵しロックオンステートへ
 		{
 			search_time -= elapsed_time;
 			if (search_time > 0)
 			{
 				/*キャンセルがあれがここへ*/
-				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
-				{
-					reticles.clear();
-
-					chain_cancel = true;
-					transition_chain_search(); /*リセット*/
-					transition_normal_behavior();
-				}
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER) { chain_parm_reset(); }
 				else
 				{
 					for (int i = 0; i < enemies.size(); ++i)
@@ -392,14 +380,7 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/
-				{
-					reticles.clear();
-
-					chain_cancel = true;
-					transition_chain_search(); /*リセット*/
-					transition_normal_behavior();
-				}
+				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/ { chain_parm_reset(); }
 				else { transition_chain_lockon_begin(); }
 			}
 		}
@@ -724,7 +705,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 
 
-			reticles.clear();
+			if (!reticles.empty()) reticles.clear();
 			is_chain_attack = false;
 			if (tutorial_state == TutorialState::ChainAttackTutorial)
 			{

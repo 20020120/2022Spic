@@ -296,6 +296,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     {
         //モデルを映す
         if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+        GetPlayerDirections();
 
     }
     //クリア演出中じゃないとき
@@ -476,12 +477,24 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::DragFloat("l", &length_radius);
 
             ImGui::DragFloat3("charge_point",&charge_point.x);
+
+            ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
             ImGui::End();
         }
     }
 #endif // USE_IMGUI
+    debug_figure->create_capsule(just_avoidance_capsule_param.start, just_avoidance_capsule_param.end, just_avoidance_capsule_param.rasius,{1.0f,1.0f,1.0f,1.0f});
 }
 
+bool Player::EnemiesIsStun(std::vector<BaseEnemy*> enemies)
+{
+    bool is_stun{ false };
+    for (auto e : enemies)
+    {
+        if (e->fGetStun()) is_stun = true;
+    }
+    return is_stun;
+}
 
 void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
 {
@@ -614,7 +627,6 @@ void Player::BehindAvoidancePosition()
     behind_transit_index = 0;
     //--------------------------------------------//
 }
-
 bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
     const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
@@ -832,7 +844,7 @@ void Player::BodyCapsule()
 
         just_avoidance_capsule_param.start = pos;
         just_avoidance_capsule_param.end = end;
-        just_avoidance_capsule_param.rasius = 4.6f;
+        just_avoidance_capsule_param.rasius = 10.6f;
     }
 }
 void Player::SwordCapsule()
@@ -874,7 +886,6 @@ void Player::SwordCapsule()
     //debug_figure->create_capsule(sword_capsule_param[0].start, sword_capsule_param[0].end, sword_capsule_param[0].rasius, { 1.0f,1.0f,0.0f,1.0f });
     //debug_figure->create_capsule(sword_capsule_param[1].start, sword_capsule_param[1].end, sword_capsule_param[1].rasius, { 1.0f,1.0f,0.0f,1.0f });
 }
-
 void Player::StunSphere()
 {
     //ジャスト回避中なら
@@ -927,31 +938,12 @@ void Player::SetTarget( BaseEnemy* target_enemies)
 
 }
 
-void Player::AddCombo(int count)
+void Player::AddCombo(int count, bool block)
 {
     if (count != 0)
     {
-#if 0
-        //攻撃中じゃないとき
-        if (!is_attack)
-        {
-            //無敵時間がなかったらダメージ受けて無敵時間設定，コンボ0に
-            if (invincible_timer < 0)
-            {
-                invincible_timer = 1.0f;
-                player_health -= 1;
-            }
-        }
-        else
-        {
-            combo_count += static_cast<float>(count);
-            if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
-        }
-        is_enemy_hit = true;
-
-#endif // 0
-        audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
-
+        //もしブロックされていたら怯む
+        if (block) TransitionDamage();
         combo_count += static_cast<float>(count);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
@@ -965,11 +957,12 @@ void Player::AddCombo(int count)
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
-void Player::AwakingAddCombo(int hit_count1, int hit_count2)
+void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool block)
 {
     if (hit_count1 != 0 || hit_count2 != 0)
     {
-        audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+        //もしブロックされていたら怯む
+        if (block) TransitionDamage();
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
@@ -1412,6 +1405,5 @@ void Player::CameraReset()
     if (game_pad->get_button_down() & GamePad::BTN_X)
     {
         camera_reset = true;
-        orientation = { 0,0,0,1.0f };//期待の向きもリセットしてる(プロトでは)
     }
 }

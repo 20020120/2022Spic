@@ -26,6 +26,14 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
             if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
             //カメラリセット
             CameraReset();
+            if (is_behind_avoidance == false)
+            {
+                PlayerJustification(elapsed_time, position);
+                if (target_enemy != nullptr)
+                {
+                    PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                }
+            }
             break;
         case Player::Behavior::Chain:
             break;
@@ -38,7 +46,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         //プレイヤーのパラメータの変更
         TutorialInflectionParameters(elapsed_time);
 
-        PlayerJustification(elapsed_time, position);
 
         if (is_awakening)
         {

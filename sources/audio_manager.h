@@ -54,6 +54,10 @@ enum class SE_INDEX
     FIRE_BOLL_RUN,          //火の玉が走る
     ROCK_ON,                //ロックオン時の音
     PLAYER_RUSH,            //プレイヤー突進
+    SPEAR_RUSH,             //槍の敵突進
+    BOSS_RUSH,              //ボス突進
+    TITLE_CUT,              //タイトル切れる音
+    TITLE_CUTTING,          //タイトル切れていく音
 
     SE_COUNT
 };

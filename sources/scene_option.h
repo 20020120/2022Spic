@@ -26,6 +26,8 @@ public:
     static void set_validity(bool v) { validity = v; }
     static bool get_switching() { return switching; }
     static void set_switching(bool s) { switching = s; }
+    static bool get_home_disabled() { return home_disabled; }
+    static void set_home_disabled(bool d) { home_disabled = d; }
 private:
     //--------< ’è” >--------//
     enum class IconType
@@ -64,6 +66,7 @@ private:
 
     static bool validity;
     static bool switching;
+    static bool home_disabled;
 
     DirectX::XMFLOAT2 add_position{};
     DirectX::XMFLOAT2 tab_add_position{};

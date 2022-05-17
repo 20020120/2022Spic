@@ -68,7 +68,8 @@ public:
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //タイトル用のアップデート
     void UpdateTitle(float elapsed_time);
-
+    //スタンしている敵がいるかどうか
+    bool EnemiesIsStun(std::vector<BaseEnemy*> enemies);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
@@ -358,9 +359,9 @@ public:
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count);
+    void AddCombo(int count, bool block = false);
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
-    void AwakingAddCombo(int hit_count1, int hit_count2);
+    void AwakingAddCombo(int hit_count1, int hit_count2, bool block = false);
     //--------------------<敵からダメージを受ける>--------------------//
     void DamagedCheck(int damage, float InvincibleTime);
     void TutorialDamagedCheck(int damage, float InvincibleTime);
@@ -604,6 +605,8 @@ private:
         if (is_tutorial)TransitionTutoriaIdle();
         else TransitionIdle();
     }
+
+    void chain_parm_reset();
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue

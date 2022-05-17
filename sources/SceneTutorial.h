@@ -183,6 +183,9 @@ private:
     //チュートリアルの説明の最後まで表示されたかどうか
     bool end_tutorial_text{ false };
     float end_tutorial_text_timer{ 0.0f };
+    //画像のチュートリアルの時のBボタンの補完
+    float b_bottun_rate{ 0.0f };
+    bool b_button_change{ false };
 
     bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
     bool is_end_text{ false };
@@ -297,5 +300,9 @@ private:
     //コントローラーの画像のパラメータ
     Element controller_pram;
     Element controller_back_pram;
-
+    Element controller_b_pram;
+private:
+    //スタンしている敵がいなかったら増えていく
+    float is_stun_timer{ 0 };
+    bool reset_text{ false };
 };

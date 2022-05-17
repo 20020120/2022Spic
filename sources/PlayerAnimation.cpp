@@ -1075,6 +1075,7 @@ void Player::TransitionOpportunity()
 
 void Player::TransitionDamage()
 {
+    velocity = {};
     //ダッシュエフェクトの終了
     start_dash_effect = false;
     //攻撃中かどうかの設定
@@ -1258,13 +1259,13 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
-    //移動のアニメーションにする(回避)
+    velocity = {};
+    //移動のアニメーションにする()
     model->play_animation(AnimationClips::TransformWing, false);
     //アニメーション速度の設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
     is_update_animation = true;
-    velocity = {};
     //通常状態に戻ってるときの更新関数に切り替える
     player_activity = &Player::StageMoveUpdate;
     during_clear = true;
