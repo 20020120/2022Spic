@@ -56,6 +56,8 @@ enum class SE_INDEX
     PLAYER_RUSH,            //プレイヤー突進
     SPEAR_RUSH,             //槍の敵突進
     BOSS_RUSH,              //ボス突進
+    TITLE_CUT,              //タイトル切れる音
+    TITLE_CUTTING,          //タイトル切れていく音
 
     SE_COUNT
 };
