@@ -29,6 +29,21 @@ void ClearCamera::Initialize(GraphicsPipeline& graphics)
 	const DirectX::XMVECTOR PlayerForward = DirectX::XMLoadFloat3(&playerForward);
 	const DirectX::XMVECTOR PlayerUp = DirectX::XMLoadFloat3(&playerUp);
 
+	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
+	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
+
+	DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 1;
+	radius = 25;
+	EyeVector = DirectX::XMVector3Normalize(EyeVector);
+	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+
+	const DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * 12;
+	DirectX::XMStoreFloat3(&target, Target);
+
+	const DirectX::XMVECTOR Eye = Target + EyeVector * radius;
+	DirectX::XMStoreFloat3(&eye, Eye);
+
+
 	//const DirectX::XMVECTOR CameraPosition = DirectX::XMLoadFloat3(&eye);
 
 	//const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * 6;
@@ -116,7 +131,7 @@ void ClearCamera::UpdateEye()
 {
 	using namespace DirectX;
 
-	radius = 20;
+	radius = 25;
 	const DirectX::XMVECTOR EyeCenter = DirectX::XMLoadFloat3(&eyeCenter);
 	const DirectX::XMVECTOR EyeVector = DirectX::XMLoadFloat3(&eyeVector);
 	const DirectX::XMVECTOR Eye = EyeCenter + EyeVector * radius;
