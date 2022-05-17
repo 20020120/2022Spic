@@ -68,7 +68,8 @@ public:
     void UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
     //タイトル用のアップデート
     void UpdateTitle(float elapsed_time);
-
+    //スタンしている敵がいるかどうか
+    bool EnemiesIsSutn(std::vector<BaseEnemy*> enemies);
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
@@ -604,6 +605,8 @@ private:
         if (is_tutorial)TransitionTutoriaIdle();
         else TransitionIdle();
     }
+
+    void chain_parm_reset();
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue

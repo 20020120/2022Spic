@@ -95,6 +95,10 @@ void Player::rotate(float elapsed_time, int index, const std::vector<DirectX::XM
 	DirectX::XMStoreFloat4(&orientation, orientation_vec);
 }
 
+void Player::chain_parm_reset()
+{
+}
+
 void Player::lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func)
 {
 	if (during_search_time())

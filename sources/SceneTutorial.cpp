@@ -927,7 +927,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
-		sprite_render("controller_back", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
+		sprite_render("controller_base", controller_keys[ControllerSprite::Back].get(), controller_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI
