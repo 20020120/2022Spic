@@ -243,6 +243,10 @@ private:
     float arrow_rate{ 0 };
     bool arrow_move_change{ false };
 
+    //画像のチュートリアルのジャスト回避
+    std::unique_ptr<SpriteBatch> just_avoidance{ nullptr };
+    Element just_avoidance_parm;
+
     StepFontElement sprite_tutorial_text;
     StepFontElement tutorial_count_text;
 private:

@@ -17,24 +17,27 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
-            //回り込み回避よりも進んでいたら切り替えれる
-            if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
-            {
-                if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
-                {
-                    transition_chain_behavior();
-                }
-            }
-            //チュートリアルがロックオンの時よりも大きければ出来る
-            if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
-            //カメラリセット
-            CameraReset();
             if (is_behind_avoidance == false)
             {
-                PlayerJustification(elapsed_time, position);
-                if (target_enemy != nullptr)
+                //回り込み回避よりも進んでいたら切り替えれる
+                if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
                 {
-                    PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                    if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+                    {
+                        transition_chain_behavior();
+                    }
+                }
+                //チュートリアルがロックオンの時よりも大きければ出来る
+                if (tutorial_state >= TutorialState::LockOnTutorial)     TutorialLockOn();
+                //カメラリセット
+                CameraReset();
+                if (is_behind_avoidance == false)
+                {
+                    PlayerJustification(elapsed_time, position);
+                    if (target_enemy != nullptr)
+                    {
+                        PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                    }
                 }
             }
             break;
@@ -545,7 +548,7 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
 {
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
 
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 1.0f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 100.0f, behind_interpolated_way_points, 2.0f))
     {
         if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else         behaind_avoidance_cool_time = 0.5f;

@@ -82,9 +82,12 @@ private:
     float air_registance_offset_y{4.0f};
     //チェイン攻撃のヒット
     std::unique_ptr<Effect> player_slash_hit_effec;
+    //USE_IMGUI
 private:
     //プレイヤーの最大体力
-    static constexpr int MAX_HEALTH = 50;
+    static constexpr int MAX_HEALTH = 100;
+    //プレイヤーの体力の回復量
+    static constexpr int RECOVERY_HEALTH = 100;
     //突進時間
     static constexpr float CHARGE_MAX_TIME = 1.0f;
     //突進の進行方向変換回数
@@ -121,9 +124,9 @@ private:
     //チェイン攻撃の時にコンボゲージが減る量
     static constexpr float COMBO_COUNT_SUB = 2.0f;
     //プレイヤーが攻撃中にダメージを受けたときの減少量
-    static constexpr int ATTACK_DAMAGE_INV = 5;
+    static constexpr int ATTACK_DAMAGE_INV = 1;
     //プレイヤーが回避中にダメージを受けたときの減少量
-    static constexpr int AVOIDANCE_DAMAGE_INV = 5;
+    static constexpr int AVOIDANCE_DAMAGE_INV = 2;
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向

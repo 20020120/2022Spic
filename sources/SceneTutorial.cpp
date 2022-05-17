@@ -100,6 +100,13 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 										static_cast<float>(sprite_frame->get_texture2d_desc().Height) };
 	sprite_frame_parm.scale = { 1.74f,1.10f };
 	sprite_frame_parm.position = { 118.0f,-17.2f };
+
+	just_avoidance = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\just.png", 1);
+	just_avoidance_parm.position = { 378.9f,73.9f };
+	just_avoidance_parm.scale = { 0.3f,0.3f };
+	just_avoidance_parm.texsize = { static_cast<float>(just_avoidance->get_texture2d_desc().Width),
+										static_cast<float>(just_avoidance->get_texture2d_desc().Height) };
+
 	//コントローラーの画像
 	{
 		controller_base = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\base.png", 1);
@@ -193,6 +200,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	BulletManager& mBulletManager = BulletManager::Instance();
 	// クリア演出
 	mWaveManager.fUpdate(graphics, elapsed_time, mBulletManager.fGetAddFunction());
+#if 0
 	if (mWaveManager.during_clear_performance())
 	{
 		tunnel_alpha += elapsed_time * 0.5f;
@@ -223,6 +231,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 		}
 	}
 
+#endif // 0
+
 	//--------------------<敵の管理クラスの更新処理>--------------------//
 
 	const auto enemyManager = mWaveManager.fGetEnemyManager();
@@ -242,6 +252,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// 敵とのあたり判定(当たったらコンボ加算)
 	if (player->GetIsPlayerAttack())
 	{
+		bool block = false;
 		if (player->GetIsAwakening())
 		{
 			player->AwakingAddCombo
@@ -253,7 +264,8 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 					player->GetSwordCapsuleParam(0).rasius,
 					player->GetPlayerPower(),
 					graphics,
-					elapsed_time
+					elapsed_time,
+					block
 				),
 				enemyManager->fCalcPlayerAttackVsEnemies
 				(
@@ -262,8 +274,10 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 					player->GetSwordCapsuleParam(1).rasius,
 					player->GetPlayerPower(),
 					graphics,
-					elapsed_time
+					elapsed_time,
+					block
 				)
+				, block
 			);
 		}
 		else
@@ -274,8 +288,9 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 				player->GetSwordCapsuleParam(0).rasius,
 				player->GetPlayerPower(),
 				graphics,
-				elapsed_time
-			));
+				elapsed_time,
+				block
+			), block);
 		}
 	}
 
@@ -306,7 +321,6 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	player->SetCameraDirection(c->GetForward(), c->GetRight());
 	player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
-	//player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 	player->lockon_post_effect(elapsed_time, [=](float scope, float alpha) { post_effect->lockon_post_effect(scope, alpha); },
 		[=]() { post_effect->clear_post_effect(); });
 	player->SetCameraPosition(c->get_eye());
@@ -509,17 +523,18 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	{
 			ImGui::Begin("tutorial");
 			ImGui::DragFloat("change_scene_timer", &change_scene_timer);
+			if (ImGui::Button("is_next")) is_next = true;
 			//static int state = 1;
 			//ImGui::SliderInt("tutorial_state", &state, 1, 7);
 			//tutorial_state = static_cast<TutorialState>(state);
 			ImGui::End();
 	}
 #endif
+		//イベント中はこっちでプレイヤーとカメラの更新処理を書いておく
+		const auto enemyManager = mWaveManager.fGetEnemyManager();
 	//プレイヤーのイベント中
 	if (player->GetTutorialEvent())
 	{
-		//イベント中はこっちでプレイヤーとカメラの更新処理を書いておく
-		const auto enemyManager = mWaveManager.fGetEnemyManager();
 		cameraManager->Update(elapsed_time);
 		player->UpdateTutorial(elapsed_time, graphics, sky_dome.get(), enemyManager->fGetEnemies());
 		//もしまだジョイントカメラをセットしていなかったら
@@ -563,7 +578,6 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 	}
 
-	const auto enemyManager = mWaveManager.fGetEnemyManager();
 	std::wstring count_text_first = L"あと";
 	std::wstring count_text_count = std::to_wstring(player->GetTutorialCount());
 	std::wstring count_text_last = L"回";
@@ -681,7 +695,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
 		tutorial_count_text.position = { 800.0f,120.0f };
 		//画像のチュートリアルのパラメータ設定
-		sprite_tutorial_text.position = { 265.0f,392.0f };
+		sprite_tutorial_text.position = { 265.0f,430.0f };
 		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます";
 		if (is_next)
 		{
@@ -1055,6 +1069,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		sprite_render("back", brack_back.get(), brack_back_pram, 0);
 		sprite_render("sprite_frame", sprite_frame.get(), sprite_frame_parm, 0, glow_vertical);
+		sprite_render("just_avoidance", just_avoidance.get(), just_avoidance_parm, 0, 0);
 		sprite_render("controller_b_pram", controller_keys[ControllerSprite::B].get(), controller_b_pram);
 		fonts->yu_gothic->Begin(graphics.get_dc().Get());
 		r_font_render("sprite_tutorial_text", sprite_tutorial_text);
