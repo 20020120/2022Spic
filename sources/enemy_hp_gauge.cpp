@@ -67,7 +67,7 @@ void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
         focus_position = target_enemy->fGetPosition();
         hp_percent = target_enemy->fGetPercentHitPoint();
         length_player_to_enemy = target_enemy->fGetLengthFromPlayer();
-        offset = { 0, -70.0f };
+        offset = { 0, -150.0f };
 
 
 
