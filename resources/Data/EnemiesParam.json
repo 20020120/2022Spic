@@ -81,7 +81,7 @@
         {
             "key": "Spear_Ace",
             "value": {
-                "MaxHp": 30,
+                "MaxHp": 23,
                 "AttackPower": 10,
                 "InvincibleTime": 2.0,
                 "BodyCapsuleRad": 5.0,
@@ -92,7 +92,7 @@
         {
             "key": "Sword",
             "value": {
-                "MaxHp": 1,
+                "MaxHp": 10,
                 "AttackPower": 10,
                 "InvincibleTime": 2.0,
                 "BodyCapsuleRad": 5.0,
