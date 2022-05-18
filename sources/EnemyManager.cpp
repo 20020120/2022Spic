@@ -125,15 +125,18 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             // “–‚½‚Á‚Ä‚¢‚½‚ç
             if (result)
             {
-                if(enemy->fDamaged(PlayerAttackPower_, 0.5f,Graphics_,elapsedTime_))
+                if(enemy->fDamaged(PlayerAttackPower_, 0.1f,Graphics_,elapsedTime_))
                 {
                     //UŒ‚‚ð–h‚ª‚ê‚½‚ç‘¦ƒŠƒ^[ƒ“
-                    if(enemy->mIsSuccesGuard)
+                    hitCounts++;
+                }
+                else
+                {
+                    if (enemy->mIsSuccesGuard)
                     {
                         is_shield = true;
                         return hitCounts;
                     }
-                    hitCounts++;
                 }
             }
         }
