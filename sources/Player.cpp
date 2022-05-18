@@ -297,7 +297,14 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     {
         transition_chain_behavior();
     }
+
+    bool is_search_time = during_search_time();
+    ImGui::Checkbox("is_search_time", &is_search_time);
+    bool is_chain_attack = during_chain_attack();
+    ImGui::Checkbox("is_chain_attack", &is_chain_attack);
+
     ImGui::Text("search_time:%f", search_time);
+
     ImGui::End();
 #endif // USE_IMGUI
     ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
