@@ -495,6 +495,8 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::DragFloat3("charge_point",&charge_point.x);
 
+            ImGui::Text("behind_test_timer,%.2f", behind_test_timer);
+            ImGui::Text("behind_speed,%.2f", behind_speed);
             ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
             ImGui::End();
         }
@@ -638,11 +640,29 @@ void Player::BehindAvoidancePosition()
     behind_way_points.emplace_back(behind_point_3); // 中継地点
     behind_way_points.emplace_back(behind_point_4); //ゴールの位置
 
+    {
+        const size_t step = 3;
         // way_pointsを通るカーブを作成
-    CatmullRomSpline curve(behind_way_points);
-    curve.interpolate(behind_interpolated_way_points,8);
+        CatmullRomSpline curve(behind_way_points);
+        curve.interpolate(behind_interpolated_way_points, step);
 
-    behind_transit_index = 0;
+        behind_transit_index = 0;
+#if 1
+        //自分の位置とウェイポイントのベクトルを求める
+    //+1しているのはindex番目の値が自分の位置だからその次の値を取得するため
+        XMVECTOR vec = XMLoadFloat3(&behind_interpolated_way_points.at(0)) - XMLoadFloat3(&behind_interpolated_way_points.at(1));
+        //長さを求めて
+        XMVECTOR length_vec = DirectX::XMVector3Length(vec);
+        //その値を取得(4dベクトルのxの値を取ってくる関数)
+        //一区分当たりの距離
+        float length = DirectX::XMVectorGetX(length_vec);
+        const float behind_time{ 0.5f };
+        //一区分当たりの時間
+        const float time = behind_time / (static_cast<float>(step) * 4.0f);
+        behind_speed = length / time;
+
+#endif // 1
+    }
     //--------------------------------------------//
 }
 bool Player::BehindAvoidanceMove(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,

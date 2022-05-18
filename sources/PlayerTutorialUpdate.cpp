@@ -603,7 +603,7 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
 {
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
 
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 45.0f, behind_interpolated_way_points, 1.5f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {
         if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else         behaind_avoidance_cool_time = 1.0f;

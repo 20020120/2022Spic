@@ -195,10 +195,11 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    behind_test_timer += 1.0f * elapsed_time;
     //behind_timer += 2.0f * elapsed_time;
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     //BehindAvoidanceMove(elapsed_time);
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,45.0f, behind_interpolated_way_points,1.5f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position, behind_speed, behind_interpolated_way_points,1.5f))
     {
         if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else   behaind_avoidance_cool_time = 1.0f;
@@ -561,13 +562,13 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::SpecialSurgeUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    special_surge_timer += 1.0f * elapsed_time;
+    //special_surge_timer += 1.0f * elapsed_time;
 
-    if (special_surge_timer > 1.0f)
-    {
-        velocity = {};
-        TransitionOpportunity();
-    }
+    //if (special_surge_timer > 1.0f)
+    //{
+    //    velocity = {};
+    //    TransitionOpportunity();
+    //}
     UpdateSpecialSurgeVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 }
 
@@ -836,6 +837,7 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    behind_test_timer = 0.0f;
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
     player_behind_effec->play(effect_manager->get_effekseer_manager(), {position.x,position.y + air_registance_offset_y ,position.z});
     if (target_enemy != nullptr)
@@ -890,31 +892,6 @@ void Player::TransitionBehindAvoidance()
     //背後に回り込むときの関数に切り替える
     player_activity = &Player::BehindAvoidanceUpdate;
 
-    velocity = {};
-    //回避中かどうかの設定
-    is_avoidance = true;
-    //回り込み回避かどうか
-    is_behind_avoidance = true;
-    //覚醒状態の時の回避アニメーションの設定
-    if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
-    //通常状態の時のアニメーションの設定
-    else model->play_animation(AnimationClips::Avoidance, false, true);
-    //後ろに回り込む座標の取得
-    BehindAvoidancePosition();
-    //回り込むときのタイマー
-    behind_timer = 0;
-    //回り込みの補完レート
-    behind_late = 0;
-    //移動速度の初期化
-    velocity = {};
-    //攻撃中かどうかの設定
-    is_attack = false;
-    //アニメーションの速度
-    animation_speed = 1.0f;
-    //アニメーションをしていいかどうか
-    is_update_animation = true;
-    //背後に回り込むときの関数に切り替える
-    player_activity = &Player::BehindAvoidanceUpdate;
 }
 
 void Player::TransitionJustBehindAvoidance()
@@ -1158,7 +1135,7 @@ void Player::TransitionSpecialSurge()
     //コンボカウントの制限
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
     //ゲージ消費の突進のタイマー
-    special_surge_timer = 0.0f;
+    //special_surge_timer = 0.0f;
     //アニメーションスピードの設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか
@@ -1174,7 +1151,7 @@ void Player::TransitionOpportunity()
     //攻撃中かどうかの設定
     is_attack = false;
     //隙が生じた時の経過時間をリセット
-    special_surge_timer = 0;
+    //special_surge_timer = 0;
     //アニメーションスピードの設定
     animation_speed = 1.0f;
     //アニメーションをしていいかどうか

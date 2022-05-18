@@ -101,7 +101,7 @@ private:
     static constexpr float LOCK_ON_LANGE = 100.0f;
     //後ろに回り込める距離
     static constexpr float  BEHIND_LANGE_MAX = 45.0f;
-    static constexpr float  BEHIND_LANGE_MIN = 5.0f;
+    static constexpr float  BEHIND_LANGE_MIN = 15.0f;
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 30.0f;
     //回避の時のアニメーションスピード
@@ -207,6 +207,10 @@ private:
     DirectX::XMFLOAT3 behind_point_2{};//中継地点
     DirectX::XMFLOAT3 behind_point_3{};//ゴール
 
+       //回り込むスピード
+    float behind_speed{ 0.0f };
+    float behind_test_timer{ 0.0f };
+
     int behind_transit_index = 0;
     std::vector<DirectX::XMFLOAT3> behind_way_points;
     std::vector<DirectX::XMFLOAT3> behind_interpolated_way_points;
@@ -232,7 +236,7 @@ private:
     bool is_special_surge{ false };
     //ゲージ消費の突進の隙
     float special_surge_opportunity{ 1.5f };
-    float special_surge_timer{ 0 };
+    //float special_surge_timer{ 0 };
     float opportunity_timer{ 0 };
     //プレイヤーの体力
     int player_health = MAX_HEALTH;
