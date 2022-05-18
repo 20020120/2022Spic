@@ -1,5 +1,6 @@
 #pragma once
 #include<memory>
+#include <map>
 #include"BasePlayer.h"
 #include"PlayerMove.h"
 #include"collision.h"
@@ -647,7 +648,7 @@ private:
     std::vector<DirectX::XMFLOAT3> sort_points;  // ソートされたポイント
     std::vector<DirectX::XMFLOAT3> way_points;   // 中間点を算出したポイント
     std::vector<DirectX::XMFLOAT3> interpolated_way_points; // way_pointsを通るように分割したポイント
-    std::vector<std::unique_ptr<Reticle>> reticles; // チェイン攻撃のreticles
+    std::map<std::unique_ptr<Reticle>, BaseEnemy*> reticles; // チェイン攻撃のreticles
     bool is_chain_attack = false; // ロックオン完了から攻撃終了までtrue
     static constexpr float ROCKON_FRAME = 0.3f;
     float frame_time  = 0.0f;

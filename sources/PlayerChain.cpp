@@ -149,7 +149,7 @@ void Player::transition_chain_search()
 {
 	if (!chain_lockon_enemy_indexes.empty()) chain_lockon_enemy_indexes.clear();
 	if (!lockon_suggests.empty()) lockon_suggests.clear();
-	if (!reticles.empty()) reticles.clear();
+	if (!reticles.empty()) { reticles.clear(); }
 
 	// 初めの要素にはプレイヤーを入れる
 	LockOnSuggest player_suggest;
@@ -285,16 +285,17 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 							enemies.at(i)->fSetIsLockOnOfChain(true);
 							// reticle生成
-							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
+							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
 
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
 					}
 					// reticleの更新
-					for (size_t index = 0; index < reticles.size(); ++index)
+					for (const auto& reticle : reticles)
 					{
-						reticles.at(index)->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
-						reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
+						if (reticle.first == nullptr || reticle.second == nullptr) continue;
+						reticle.first->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+						reticle.first->focus(reticle.second, true);
 					}
 				}
 			}
@@ -364,16 +365,17 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 							enemies.at(i)->fSetIsLockOnOfChain(true);
 							// reticle生成
-							reticles.emplace_back(std::make_unique<Reticle>(graphics_));
+							reticles.insert(std::make_pair(std::make_unique<Reticle>(graphics_), enemies.at(i)));
 
 							audio_manager->play_se(SE_INDEX::ROCK_ON);
 						}
 					}
 					// reticleの更新
-					for (size_t index = 0; index < reticles.size(); ++index)
+					for (const auto& reticle : reticles)
 					{
-						reticles.at(index)->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
-						reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
+						if (reticle.first == nullptr || reticle.second == nullptr) continue;
+						reticle.first->update(graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+						reticle.first->focus(reticle.second, true);
 					}
 				}
 			}
@@ -630,10 +632,11 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 #endif // CHAIN_DEBUG
 
 	// reticleの更新
-	for (size_t index = 0; index < reticles.size(); ++index)
+	for (const auto& reticle : reticles)
 	{
-		reticles.at(index)->update(Graphics_, elapsed_time, 1.0f / SEARCH_TIME);
-		reticles.at(index)->focus(enemies.at(chain_lockon_enemy_indexes.at(index)), true);
+		if (reticle.first == nullptr || reticle.second == nullptr) continue;
+		reticle.first->update(Graphics_, elapsed_time, 1.0f / SEARCH_TIME);
+		reticle.first->focus(reticle.second, true);
 	}
 
 	// 軌跡

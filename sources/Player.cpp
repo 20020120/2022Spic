@@ -544,7 +544,8 @@ void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
 
     for (const auto& reticle : reticles)
     {
-        reticle->render(graphics.get_dc().Get());
+        if (reticle.first == nullptr || reticle.second == nullptr) continue;
+        reticle.first->render(graphics.get_dc().Get());
     }
 }
 
