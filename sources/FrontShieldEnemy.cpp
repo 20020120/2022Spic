@@ -6,7 +6,7 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/ShieldEnemy.fbx",
+        "./resources/Models/Enemy/enemy_shield.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -17,7 +17,7 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
 }
 
 ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ShieldEnemy.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_shield.fbx")
 {}
 
 void ShieldEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
@@ -272,9 +272,9 @@ void ShieldEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 }
 void ShieldEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
 }

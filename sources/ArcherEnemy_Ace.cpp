@@ -13,7 +13,7 @@
 ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     EnemyParamPack ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/Archer_Ace.fbx",
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_arrow.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -32,7 +32,7 @@ ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
 
 
 ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/Archer_Ace.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_arrow.fbx")
 {}
 
 

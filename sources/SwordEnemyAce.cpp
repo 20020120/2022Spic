@@ -2,7 +2,7 @@
 #include"Operators.h"
 SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemyAce.fbx",ParamPack_,EmitterPoint_)
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_sword.fbx",ParamPack_,EmitterPoint_)
 {
     SwordEnemy_Ace::fRegisterFunctions();
     // É{Å[ÉìÇèâä˙âª
@@ -11,7 +11,7 @@ SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLO
 }
 
 SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemyAce.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_sword.fbx")
 {}
 
 SwordEnemy_Ace::~SwordEnemy_Ace()

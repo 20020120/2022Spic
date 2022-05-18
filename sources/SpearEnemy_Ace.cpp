@@ -3,7 +3,7 @@
 SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_,
                                const DirectX::XMFLOAT3& EmitterPoint_,
                                const EnemyParamPack& ParamPack_)
-:BaseEnemy(Graphics_, "./resources/Models/Enemy/SpearEnemyAce.fbx",
+:BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_spear.fbx",
     ParamPack_,EmitterPoint_)
 {
     fRegisterFunctions();
@@ -15,7 +15,7 @@ SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_,
 }
 
 SpearEnemy_Ace::SpearEnemy_Ace(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SpearEnemyAce.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_spear.fbx")
 {}
 
 void SpearEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

@@ -4,7 +4,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
         :BaseEnemy(Graphics_,
-                  "./resources/Models/Enemy/SwordEnemy.fbx",
+                  "./resources/Models/Enemy/enemy_sword.fbx",
                   ParamPack_,
                   EmitterPoint_)
 {
@@ -15,7 +15,7 @@ SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_,
 }
 
 SwordEnemy::SwordEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SwordEnemy.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_sword.fbx")
 {}
 
 void SwordEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

@@ -6,7 +6,7 @@ ShieldEnemy_Ace::ShieldEnemy_Ace(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
     :BaseEnemy(Graphics_,
-        "./resources/Models/Enemy/ShieldEnemyAce.fbx",
+        "./resources/Models/Enemy/enemy_ace_shield.fbx",
         ParamPack_,
         EmitterPoint_)
 {
@@ -19,7 +19,7 @@ ShieldEnemy_Ace::ShieldEnemy_Ace(GraphicsPipeline& Graphics_,
 }
 
 ShieldEnemy_Ace::ShieldEnemy_Ace(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/ShieldEnemyAce.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_ace_shield.fbx")
 {}
 
 void ShieldEnemy_Ace::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

@@ -3,7 +3,7 @@
 SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SpearEnemy.fbx", ParamPack_,
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_spear.fbx", ParamPack_,
         EmitterPoint_)
 {
     SpearEnemy::fRegisterFunctions();
@@ -11,7 +11,7 @@ SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_,
 }
 
 SpearEnemy::SpearEnemy(GraphicsPipeline& Graphics_)
-    :BaseEnemy(Graphics_, "./resources/Models/Enemy/SpearEnemy.fbx")
+    :BaseEnemy(Graphics_, "./resources/Models/Enemy/enemy_spear.fbx")
 {}
 
 void SpearEnemy::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
