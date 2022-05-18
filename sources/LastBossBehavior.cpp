@@ -1249,3 +1249,31 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mLeftPointer.fRender(graphics);
 
 }
+
+bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsed_time)
+{
+    if(mCurrentMode==Mode::Ship)
+    {
+        return false;
+    }
+
+    bool ret{ false };
+    if (mInvincibleTime <= 0.0f)
+    {
+        if (mIsLockOnOfChain)
+        {
+            Damage_ = 15;
+        }
+        mCurrentHitPoint -= Damage_;
+        mInvincibleTime = InvincibleTime_;
+        ret = true;
+    }
+
+    
+   
+    if (mCurrentHitPoint <= 0)
+    {
+        fDie(Graphics_);
+    }
+    return ret;
+}
