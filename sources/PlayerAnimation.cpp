@@ -64,6 +64,9 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<B
         (this->*player_activity)(elapsed_time, sky_dome);
         break;
     case Player::Behavior::Chain:
+        //自分のクラスの関数ポインタを呼ぶ
+        (this->*player_activity)(elapsed_time, sky_dome);
+
         (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
@@ -74,12 +77,14 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<B
 void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //移動に遷移
-    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    //チェイン攻撃のロックオン完了から攻撃終了の時は操作は受け付けない
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
     {
         TransitionMove();
     }
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
-    if (change_normal_timer < 0)
+    //チェイン攻撃の状態では移動以外の操作は受け付けない
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -115,12 +120,13 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
     //移動入力がなくなったら待機に遷移
-    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
         TransitionIdle();
     }
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
-    if (change_normal_timer < 0)
+    //チェイン攻撃の状態では移動以外の操作は受け付けない
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };

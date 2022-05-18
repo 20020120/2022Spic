@@ -186,6 +186,8 @@ private:
     //画像のチュートリアルの時のBボタンの補完
     float b_bottun_rate{ 0.0f };
     bool b_button_change{ false };
+    //同じチュートリアル中にテキストを変えたらtrueになる
+    bool change_text{ false };
 
     bool StepString(float elapsed_time, StepFontElement& step_font_element, bool loop = false);
     bool is_end_text{ false };

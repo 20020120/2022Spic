@@ -149,7 +149,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
 	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
 	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
-	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります。";
+	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります\nチェイン攻撃ではゲージはたまりません";
 	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
 
 	tutorial_text_element[0].position = { 166.0f,44.0f };
@@ -773,13 +773,21 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		//スタンしている敵が5秒間いなかったら
 		if (is_stun_timer > 5.0f)
 		{
-			tutorial_text_element[5].position = { 22.0f,72.0f };
-			tutorial_text_element[5].s = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
+			if (change_text == false)
+			{
+				tutorial_text_element[5].position = { 22.0f,72.0f };
+				tutorial_text_element[5].s = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
+				change_text = true;
+			}
 		}
 		else
 		{
-			tutorial_text_element[5].position = { 30.0f,49.0f };
-			tutorial_text_element[5].s = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
+			if (change_text)
+			{
+				tutorial_text_element[5].position = { 30.0f,49.0f };
+				tutorial_text_element[5].s = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます\nロックオン中はプレイヤーは動くことが出来ません";
+				change_text = false;
+			}
 		}
 
 		if (is_next)
