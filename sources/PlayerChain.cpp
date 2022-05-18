@@ -34,7 +34,7 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 		if (index != 0 && index % (STEPS * 2) == 0) // “G‚Ìƒ|ƒCƒ“ƒg‚É‚Â‚¢‚½
 		{
 			// player_slash_hit_effec
-			player_slash_hit_effec->play(effect_manager->get_effekseer_manager(), points.at(index), 0.5f);
+			player_slash_hit_effec->play(effect_manager->get_effekseer_manager(), points.at(index), 0.8f);
 			player_slash_hit_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
 
 			return true;
