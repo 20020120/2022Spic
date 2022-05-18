@@ -785,7 +785,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			if (change_text)
 			{
 				tutorial_text_element[5].position = { 30.0f,49.0f };
-				tutorial_text_element[5].s = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます\nロックオン中はプレイヤーは動くことが出来ません";
+				tutorial_text_element[5].s = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
 				change_text = false;
 			}
 		}

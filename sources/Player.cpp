@@ -272,7 +272,7 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
             ImGui::DragFloat("animation_speed", &animation_speed,0.1f);
             ImGui::DragFloat("threshold_camera_mesh", &threshold_camera_mesh,0.1f);
 
-            if (ImGui::Button("Damage")) DamagedCheck(1.0f, 0.1f);
+            if (ImGui::Button("Damage")) DamagedCheck(1, 0.1f);
             ImGui::End();
         }
     }
