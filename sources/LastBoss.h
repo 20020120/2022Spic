@@ -302,6 +302,19 @@ private:
     //--------------------<ドラゴンの移動>--------------------//
     float mDragonMoveThreshold{};
 
+    //--------------------<エフェクト>--------------------//
+    std::unique_ptr<Effect> mpBeamEffect{ nullptr };
+    std::unique_ptr<Effect> mpBeamBaseEffect{ nullptr };
+
+    std::unique_ptr<Effect> mpBeamRightEffect{ nullptr };
+    std::unique_ptr<Effect> mpBeamLeftEffect{ nullptr };
+
+    // ビームの発射位置
+    DirectX::XMFLOAT3 mBeamEffectPosition{};
+    DirectX::XMFLOAT4 mBeamEffectOrientation{ 0.0f,0.0f,0.0f,1.0f };
+
+    DirectX::XMFLOAT4 mBeamRightOrientation{ 0.0f,0.0f,0.0f,1.0f };
+    DirectX::XMFLOAT4 mBeamLeftOrientation{ 0.0f,0.0f,0.0f,1.0f };
 
 
     //****************************************************************
@@ -310,7 +323,7 @@ private:
     // 
     //****************************************************************
     const float mkRotSpeed { 20.0f }; // 回転速度
-    const float  mkShipBeamChargeSec{ 5.0f }; // 戦艦のビームをチャージする長さ
+    const float  mkShipBeamChargeSec{ 4.0f }; // 戦艦のビームをチャージする長さ
     const float  mkShipBeamShootSec{ 5.0f }; // 戦艦のビームを発射している長さ
     const float  mkHumanDieIdleSec{ 5.0f };  // 人型の死亡時間
 
@@ -481,4 +494,5 @@ private:
 public:
     void fRender(GraphicsPipeline& Graphics_) override;
     bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
+    void fDie(GraphicsPipeline& Graphics_) override;
 };

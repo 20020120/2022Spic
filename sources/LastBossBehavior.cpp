@@ -5,6 +5,8 @@
 #include "CannonballBullet.h"
 #include "DragonBreath.h"
 #include "EnemyManager.h"
+#include"Operators.h"
+#include"audio_manager.h"
 //****************************************************************
 // 
 // 戦艦モード 
@@ -57,22 +59,19 @@ void LastBoss::fShipBeamStartInit()
     mMoveBegin = mPosition;
     mMoveEnd = { 0.0f,0.0f,600.0f };
     mMoveThreshold = 0.0f;
-    mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_start);
-
+    mOrientation = { 0.0f,1.0f,0.0f,0.0f };
+    mpModel->play_animation(mAnimPara, AnimationName::ship_beam_shot_start);
 }
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
 
     mMoveThreshold += elapsedTime_ * 5.0f;
-    mMoveThreshold = (std::min)(1.0f, mMoveThreshold);
+    mMoveThreshold = (std::min)(1.1f, mMoveThreshold);
     mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
 
-    // プレイヤーの方向に回転
-    fTurnToPlayer(elapsedTime_, mkRotSpeed);
-
     // アニメーション終了と同時に遷移
-    if (mpModel->end_of_animation(mAnimPara) && mMoveThreshold > 1.0f)
+    if (mpModel->end_of_animation(mAnimPara) && mMoveThreshold >= 1.0f)
     {
         fChangeState(DivideState::ShipBeamCharge);
     }
@@ -87,17 +86,22 @@ void LastBoss::fShipBeamChargeInit()
     DirectX::XMFLOAT3 up{};
     mpModel->fech_by_bone(mAnimPara, world, mShipFace, mShipFacePosition, up);
 
-    mShipPointer.fSetRadius(0.03f);
+    mShipPointer.fSetRadius(0.1f);
     mShipPointer.fSetColor({ 1.0f,0.0f,0.0f,1.0f });
     mShipPointer.fSetAlpha(1.0f);
 
     // ポインターの長さを初期化
     mPointerLength = 0.0f;
+
+    mpBeamBaseEffect->play(effect_manager->get_effekseer_manager(), { 0.0f,0.0f,520.0f });
+    mpBeamBaseEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
+
+    // SEを再生
+    audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
 }
 
 void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-
     // レーザーポインターを伸ばす
     mPointerLength += elapsedTime_ * 1000.0f;
 
@@ -113,6 +117,7 @@ void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graph
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
         // 発射
         fChangeState(DivideState::ShipBeamShoot);
     }
@@ -136,10 +141,33 @@ void LastBoss::fShipBeamShootInit()
     mBeamLength = 0.0f;
     // ビームの攻撃を有効
     mIsAttack = true;
+
+    // ビームの発射位置を計算
+    const DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 520.0f };
+    const auto normVec = Math::Normalize(mPlayerPosition - mPosition);
+    float d = Math::Dot(normVec, pos - mPosition);
+
+    mBeamEffectPosition = mPosition + (normVec * d);
+    mpBeamEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 10);
+    mpBeamBaseEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 15);
+
+    // ＳＥ再生
+    audio_manager->play_se(SE_INDEX::BOSS_BEAM);
 }
 
 void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    const DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 520.0f };
+    const auto normVec = Math::Normalize(mPlayerPosition - mPosition);
+    float d = Math::Dot(normVec, pos - mPosition);
+    mBeamEffectPosition = mPosition + (normVec * d);
+    // エフェクトの位置を更新
+    mpBeamEffect->set_position(effect_manager->get_effekseer_manager(), mBeamEffectPosition);
+    mpBeamEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
+
+    mpBeamBaseEffect->set_position(effect_manager->get_effekseer_manager(), mBeamEffectPosition);
+    mpBeamBaseEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
+
     const auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     DirectX::XMFLOAT3 up{};
     // ボーンの位置を取得
@@ -164,6 +192,7 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
         fChangeState(DivideState::ShipBeamEnd);
         mIsAttack = false;
         mBeamLength = 0.0f;
@@ -183,6 +212,7 @@ void LastBoss::fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 
 void LastBoss::fChangeShipToHumanInit()
 {
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
     mCurrentMode = Mode::ShipToHuman;
     mPosition = { 0.0f,20.0f,0.0f };
@@ -270,7 +300,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
             mAnimationSpeed = 1.0f;
             return;
         }
-        else if(randNumber>=3)
+        else if(randNumber>=1)
         {
             fChangeState(DivideState::HumanRush);
             mAnimationSpeed = 1.0f;
@@ -291,7 +321,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
             mAnimationSpeed = 1.0f;
             return;
         }
-        else if(randNumber>4)
+        else if(randNumber>2)
         {
             fChangeState(DivideState::HumanAllShot);
             mAnimationSpeed = 1.0f;
@@ -376,6 +406,7 @@ void LastBoss::fHumanAllShotUpdate(float elapsedTime_,
         // 一定間隔で発射
         if (mShotTimer <= 0.0f)
         {
+            audio_manager->play_se(SE_INDEX::CANNON);
             mfAddBullet(new CannonballBullet(Graphics_,bulletVec ,
                180.0f, leftPosition));
             mShotTimer = mkHumanAllShotDelay;
@@ -398,7 +429,7 @@ void LastBoss::fHumanBlowAttackInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::human_shockwave);
     mpAllAttackEffect->play(effect_manager->get_effekseer_manager(),
-        mPosition, 5.0f);
+        mPosition, 10.0f);
     mIsAttack = true;
     mAttackCapsule.mRadius = 0.0f;
     mTimer = 0.0f;
@@ -463,6 +494,7 @@ void LastBoss::fHumanRushInit()
     mMoveBegin = mPosition;
     mMoveThreshold = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::human_rush_idle);
+    audio_manager->play_se(SE_INDEX::BOSS_RUSH);
 }
 
 void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -473,6 +505,7 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // 終了条件
     if (currentLength > limitLength * 1.2f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
         fChangeState(DivideState::HumanIdle);
         return;
     }
@@ -603,8 +636,8 @@ void LastBoss::fHumanSpAttackChargeInit()
     mTimer = mkSpChargeTime;
 
     // laserを初期化
-    mRightPointer.fSetRadius(0.3f);  // 半径
-    mLeftPointer.fSetRadius(0.3f);
+    mRightPointer.fSetRadius(0.1f);  // 半径
+    mLeftPointer.fSetRadius(0.1f);
 
     mRightPointer.fSetColor({1.0f,0.0f,0.0f,1.0f}); // 色
     mLeftPointer. fSetColor({1.0f,0.0f,0.0f,1.0f});
@@ -617,6 +650,7 @@ void LastBoss::fHumanSpAttackChargeInit()
 
     mHumanBeamTarget = mPosition;
 
+    audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
 }
 
 void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_, 
@@ -637,6 +671,7 @@ void LastBoss::fHumanSpAttackChargeUpdate(float elapsedTime_,
 
     if (mTimer <= 0.0f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
         fChangeState(DivideState::HumanSpShoot);
         mAnimationSpeed = 1.0f;
     }
@@ -653,22 +688,84 @@ void LastBoss::fHumanSpBeamShootInit()
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
 
+    mpBeamRightEffect->play(effect_manager->get_effekseer_manager(), mpTurretRight->fGetPosition());
+    mpBeamRightEffect->set_scale(effect_manager->get_effekseer_manager(), { 5.0f,5.0f,5.0f });
+    mpBeamLeftEffect->play(effect_manager->get_effekseer_manager(), mpTurretLeft->fGetPosition());
+    mpBeamLeftEffect->set_scale(effect_manager->get_effekseer_manager(), { 5.0f,5.0f,5.0f });
+
     mIsAttack = true;
+
+    audio_manager->play_se(SE_INDEX::BOSS_BEAM);
 }
 
 void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 5.0f);
+
+    auto fRotBeamEffect = [=](const DirectX::XMFLOAT4 Orientation_,
+        DirectX::XMFLOAT3 Begin_)->DirectX::XMFLOAT4
+    {
+
+        // 回転を算出
+        // 現在の上ベクトル
+        DirectX::XMFLOAT3 up{ 0.001f,0.0f,1.0f };
+        up = Math::Normalize(up);
+        // 終点とのベクトル
+        DirectX::XMFLOAT3 cylinderUp = { mHumanBeamTarget - Begin_ };
+        cylinderUp = Math::Normalize(cylinderUp);
+
+        // 外積で回転軸を算出
+        auto cross = Math::Cross(up, cylinderUp);
+        cross = Math::Normalize(cross);
+        // 長さが０の時クラッシュ回避のため仮の値を代入
+        if (Math::Length(cross) <= 0.0f)
+        {
+            cross = { 0.0f,1.0f,0.0f };
+        }
+        // 内積で回転角を算出
+        auto dot = Math::Dot(up, cylinderUp);
+        dot = acosf(dot);
+        DirectX::XMFLOAT4 dummy{ 0.0f,0.0f,0.0f,1.0f };
+        auto rotQua = Math::RotQuaternion(dummy, cross, dot);
+
+        // 補完
+        auto res = DirectX::XMQuaternionSlerp(
+            DirectX::XMLoadFloat4(&Orientation_),
+            DirectX::XMLoadFloat4(&rotQua),
+            1.0f);
+
+        DirectX::XMFLOAT4 ret{};
+        DirectX::XMStoreFloat4(&ret, res);
+        return ret;
+    };
+
+    mBeamRightOrientation = fRotBeamEffect(mBeamRightOrientation, mpTurretRight->fGetPosition());
+    mBeamLeftOrientation = fRotBeamEffect(mBeamLeftOrientation, mpTurretLeft->fGetPosition());
+
+    mpBeamLeftEffect->set_position(effect_manager->get_effekseer_manager(), mpTurretLeft->fGetPosition());
+    mpBeamLeftEffect->set_quaternion(effect_manager->get_effekseer_manager(), mBeamLeftOrientation);
+
+    mpBeamRightEffect->set_position(effect_manager->get_effekseer_manager(), mpTurretRight->fGetPosition());
+    mpBeamRightEffect->set_quaternion(effect_manager->get_effekseer_manager(), mBeamRightOrientation);
+
+
     mHumanBeamTarget = Math::lerp(mHumanBeamTarget, mPlayerPosition,
-        1.0f * elapsedTime_);
+        3.0f * elapsedTime_);
 
     mAttackCapsule.mBottom = mPosition;
     mAttackCapsule.mTop = mHumanBeamTarget;
-    mAttackCapsule.mRadius = 5.0f;
+    mAttackCapsule.mRadius = 7.0f;
 
     mTimer += elapsedTime_;
     if(mTimer>mkHumanSpBeamTime)
     {
+        if (mIsAttack)
+        {
+            audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
+            mpBeamRightEffect->stop(effect_manager->get_effekseer_manager());
+            mpBeamLeftEffect->stop(effect_manager->get_effekseer_manager());
+        }
         mIsAttack = false;
         mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
         mAwayLerp += elapsedTime_ * 2.0f;
@@ -679,6 +776,7 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
     }
     if (mAwayLerp > 1.0f)
     {
+
         fChangeState(DivideState::HumanIdle);
     }
 }
@@ -951,7 +1049,8 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
     {
         auto p = mPosition;
         p.y += 30.0f;
-        mfAddBullet(new DragonBreath(Graphics_, p, 60.0f, mPlayerPosition));
+        audio_manager->play_se(SE_INDEX::FIRE_BOLL);
+        mfAddBullet(new DragonBreath(Graphics_, p, 200.0f, mPlayerPosition));
         mIsShotBreath = true;
     }
 
@@ -1152,7 +1251,7 @@ void LastBoss::fDragonDieStartInit()
     mPosition = { 0.0f,0.0f,50.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_die);
     // TODO カメラをボスに注目させる
-    
+    mCurrentMode = Mode::DragonDie;
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1174,6 +1273,7 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
     if(mDissolve>=1.0f)
     {
         mIsAlive = false;
+        BaseEnemy::fDie(Graphics_);
     }
 }
 
@@ -1286,7 +1386,12 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
    
     if (mCurrentHitPoint <= 0)
     {
-        fDie(Graphics_);
+        fChangeState(DivideState::DragonDieStart);
     }
     return ret;
+}
+
+void LastBoss::fDie(GraphicsPipeline& graphics)
+{
+    
 }

@@ -4,6 +4,7 @@
 #include"EnemyManager.h"
 #include"Operators.h"
 #include"DragonBreath.h"
+#include"enemy_hp_gauge.h"
 LastBoss::LastBoss(GraphicsPipeline& Graphics_,
     const DirectX::XMFLOAT3& EmitterPoint_,
     const EnemyParamPack& ParamPack_,
@@ -64,6 +65,14 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
         effect_manager->get_effekseer_manager(),
         "./resources/Effect/boss_wave.efk"); 
 
+    mpBeamEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
+
+    mpBeamBaseEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/beam_base2.efk");
+
+    mpBeamRightEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
+    mpBeamLeftEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
+
+
    // ƒ{[ƒ“‚ğæ“¾
    mCameraEyeBone = mpModel->get_bone_by_name("camera_joint");
    mCameraFocusBone = mpModel->get_bone_by_name("camera_focus_joint");
@@ -84,6 +93,8 @@ LastBoss::~LastBoss()
 
 void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
+    BossHpGauge::set_hp_percent(fGetPercentHitPoint());
+
     elapsedTime_ = fBaseUpdate(elapsedTime_, Graphics_);
     fGuiMenu();
 
@@ -627,6 +638,8 @@ void LastBoss::fGuiMenu()
     ImGui::Begin("LastBoss");
     ImGui::DragFloat3("Position", &mPosition.x);
     ImGui::DragFloat3("Scale", &mScale.x);
+    ImGui::DragFloat4("Orientation", &mOrientation.x);
+
     if (ImGui::Button("Beam"))
     {
         fChangeState(DivideState::ShipBeamStart);
@@ -740,6 +753,14 @@ void LastBoss::fGuiMenu()
 
     int hp = mMaxHp;
     ImGui::DragInt("MaxHp", &hp);
+
+    static DirectX::XMFLOAT3 pos{};
+    ImGui::DragFloat3("pp", &pos.x);
+    if(ImGui::Button("Effect"))
+    {
+        mpBeamEffect->play(effect_manager->get_effekseer_manager(), pos);
+        mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 15.0f,15.0f,15.0f });
+    }
     
     ImGui::RadioButton("IsAttack", mIsAttack);
     ImGui::Checkbox("Stun", &mIsStun);
@@ -774,7 +795,7 @@ void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_) const
     vec.reserve(Amounts_);
 
     // ’è”
-    constexpr DirectX::XMFLOAT3 SummonCenterPosition = { 0.0f,0.0f,0.0f };
+    const DirectX::XMFLOAT3 SummonCenterPosition = mPlayerPosition;
 
     // ˆê‘Ì“–‚½‚è‚Ì‰ñ“]Šp‚ğZo‚·‚é
     const float peaceOfRotation = 360.0f / static_cast<float>(Amounts_);
@@ -785,7 +806,7 @@ void LastBoss::fSpawnChildUnit(GraphicsPipeline& Graphics_, int Amounts_) const
         const DirectX::XMFLOAT3 unitPosition
         = { cosf(rot),0.0f,sinf(rot) };
 
-        vec.emplace_back(SummonCenterPosition+unitPosition);
+        vec.emplace_back(SummonCenterPosition + (unitPosition * 60.0f));
     }
 
     mpEnemyManager->fReserveBossUnit(vec);

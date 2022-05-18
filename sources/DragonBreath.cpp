@@ -11,15 +11,20 @@ float Power,const DirectX::XMFLOAT3& Target_)
 
     fTurnToTarget(1.0f, 20.0f, mTargetPosition);
     mVelocity = Math::Normalize(Target_ - effect_position);
-    mScale = { 1.0f,1.0f,1.0f };
+    mScale = { 5.0f,5.0f,5.0f };
     mPosition = effect_position;
     mPower = Power;
+
+    mBulletData.mRadius = 20.0f;
+    mBulletData.mLengthFromPositionB = 1.0f;
+    mBulletData.mLengthFromPositionA = 1.0f;
 }
+
 
 DragonBreath::~DragonBreath()
 {
     mpBombEffect->play(effect_manager->get_effekseer_manager(), mPosition);
-    mpBombEffect->set_scale(effect_manager->get_effekseer_manager(), { 3.0f,3.0f,3.0f });
+    mpBombEffect->set_scale(effect_manager->get_effekseer_manager(), { 10.0f,10.0f,10.0f });
 }
 
 void DragonBreath::fUpdate(float elapsed_time)
@@ -32,6 +37,7 @@ void DragonBreath::fUpdate(float elapsed_time)
     {
         mIsAlive = false;
     }
+    
 }
 
 void DragonBreath::fTurnToTarget(float elapsedTime_,float RotSpeed_,const DirectX::XMFLOAT3& Target_)
