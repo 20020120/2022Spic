@@ -271,6 +271,8 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
             ImGui::DragFloat3("event_camera_eye", &event_camera_eye.x,0.1f);
             ImGui::DragFloat("animation_speed", &animation_speed,0.1f);
             ImGui::DragFloat("threshold_camera_mesh", &threshold_camera_mesh,0.1f);
+
+            if (ImGui::Button("Damage")) DamagedCheck(1.0f, 0.1f);
             ImGui::End();
         }
     }
@@ -1009,19 +1011,21 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool block)
 
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
-    if (behavior_state == Behavior::Chain && during_chain_attack()) return;
+    if (during_chain_attack()) return;
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
     if (player_health <= 0)return;
+    //ジャスト回避の時はダメージ受けない
+    if (is_just_avoidance) return;
 
     if (invincible_timer > 0.0f)return;
-    //攻撃状態ならダメージを受けない
+    //攻撃状態ならダメージを減少
     if (is_attack)  damage -= ATTACK_DAMAGE_INV;
-    //もし回避中じゃなかったら怯む
+    //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (damage >= 10.0f) TransitionDamage();
+    if (behavior_state != Behavior::Chain && damage >= 10.0f) TransitionDamage();
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
@@ -1037,7 +1041,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
-    if (behavior_state == Behavior::Chain && during_chain_attack()) return;
+    if (during_chain_attack()) return;
     //チュートリアル中ステートが死ならダメージを食らわない
     if (condition_state == ConditionState::Die) return;
     //練習時間じゃなかったらダメージを食らわない
@@ -1047,14 +1051,17 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
     if (player_health <= 0)return;
+    //ジャスト回避の時はダメージ受けない
+    if (is_just_avoidance) return;
 
     if (invincible_timer > 0.0f)return;
 
+    //攻撃状態ならダメージを減少
     if (is_attack)  damage -= ATTACK_DAMAGE_INV;
-    //もし回避中じゃなかったら怯む
+    //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (damage > 10.0f) TransitionTutorialDamage();
+    if (behavior_state != Behavior::Chain && damage > 10.0f) TransitionTutorialDamage();
 
     //無敵時間設定
     invincible_timer = InvincibleTime;

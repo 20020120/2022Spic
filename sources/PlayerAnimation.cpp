@@ -925,6 +925,8 @@ void Player::TransitionJustBehindAvoidance()
     {
         target_enemy->fSetStun(true, true);
     }
+    //HP‰ñ•œ‚·‚é
+    player_health += JUST_AVOIDANCE_HEAL;
     is_just_avoidance = true;
     player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     velocity = {};

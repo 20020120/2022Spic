@@ -199,6 +199,8 @@ void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::
         (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
         break;
     case Player::Behavior::Chain:
+        //自分のクラスの関数ポインタを呼ぶ
+        (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
         (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
@@ -220,11 +222,11 @@ void Player::ChangeTutorialState(int state)
 void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     //移動に遷移
-    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
     {
         TransitionTutorialMove();
     }
-    if (change_normal_timer < 0)
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         switch (tutorial_state)
         {
@@ -393,11 +395,11 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
 void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     //移動入力がなくなったら待機に遷移
-    if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
         TransitionTutoriaIdle();
     }
-    if (change_normal_timer < 0)
+    if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         switch (tutorial_state)
         {
@@ -1123,6 +1125,8 @@ void Player::TransitionTutorialJustBehindAvoidance()
         target_enemy->fSetStun(true, true);
     }
     is_just_avoidance = true;
+    //HP回復する
+    player_health += JUST_AVOIDANCE_HEAL;
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;

@@ -158,7 +158,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[3].position = { 68.0f,53.0f };
 	tutorial_text_element[4].position = { 22.0f,72.0f };
 	tutorial_text_element[5].position = { 30.0f,49.0f };
-	tutorial_text_element[6].position = { 121.0f,49.0f };
+	tutorial_text_element[6].position = { 121.0f,34.0f };
 	tutorial_text_element[7].position = { 297.0f,69.0f };
 
 	tutorial_count_text.s = L"‚ ‚Æ‚R‰ñ";
