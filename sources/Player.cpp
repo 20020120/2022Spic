@@ -7,7 +7,7 @@
 Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
-    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentysecond.fbx",false,60.0f);
+    model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentythird.fbx",false,60.0f);
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -999,10 +999,10 @@ void Player::SetTarget( BaseEnemy* target_enemies)
 
 void Player::AddCombo(int count, bool block)
 {
+    if (block) TransitionDamage();
     if (count != 0)
     {
         //もしブロックされていたら怯む
-        if (block) TransitionDamage();
         combo_count += static_cast<float>(count);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;

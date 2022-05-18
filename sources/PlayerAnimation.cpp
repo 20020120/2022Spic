@@ -325,7 +325,7 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
     if (model->end_of_animation())
     {
-
+        is_attack = false;
         attack_time += attack_add_time * elapsed_time;
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE1_MAX_TIME)
@@ -442,6 +442,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -498,7 +499,7 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
                     velocity.x *= 0.2f;
                     velocity.y *= 0.2f;
                     velocity.z *= 0.2f;
-                    TransitionAttackType2(attack_animation_blends_speeds.z);
+                    TransitionCharge(attack_animation_blends_speeds.z);
                 }
             }
         }
@@ -708,7 +709,6 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
-    condition_state = ConditionState::Alive;
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
     //覚醒状態の時の待機アニメーションにセット
@@ -951,7 +951,6 @@ void Player::TransitionCharge(float blend_seconds)
     player_activity = &Player::ChargeUpdate;
 
 }
-
 void Player::TransitionAttackType1(float blend_seconds)
 {
     //覚醒状態の時の１撃目のアニメーションに設定
@@ -971,12 +970,7 @@ void Player::TransitionAttackType1(float blend_seconds)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーションスピードの設定
-#if 1
     animation_speed = ATTACK1_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.y;
-#endif // 0
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //加速のレート
@@ -1006,12 +1000,7 @@ void Player::TransitionAttackType2(float blend_seconds)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
-#if 1
     animation_speed = ATTACK2_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.z;
-#endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
         //ロックオンしてない場合のターゲットの設定
@@ -1048,12 +1037,7 @@ void Player::TransitionAttackType3(float blend_seconds)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
-#if 1
     animation_speed = ATTACK3_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.w;
-#endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //加速のレート

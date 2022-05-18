@@ -83,6 +83,7 @@ private:
     float air_registance_offset_y{4.0f};
     //チェイン攻撃のヒット
     std::unique_ptr<Effect> player_slash_hit_effec;
+    DirectX::XMFLOAT3 slash_effec_pos{};
     //USE_IMGUI
 private:
     //プレイヤーの最大体力
@@ -383,7 +384,7 @@ public:
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count, bool block = false);
+    void AddCombo(int count, bool block);
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
     void AwakingAddCombo(int hit_count1, int hit_count2, bool block = false);
     //--------------------<敵からダメージを受ける>--------------------//

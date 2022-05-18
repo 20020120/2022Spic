@@ -180,7 +180,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
 
             ImGui::DragFloat("execution_timer", &execution_timer);
             ImGui::Checkbox("is_next", &is_next_tutorial);
-
+            ImGui::DragFloat3("slash_effec_pos", &slash_effec_pos.x,0.1f);
 
             ImGui::End();
         }
@@ -737,9 +737,10 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
 
 void Player::TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-
     if (model->end_of_animation())
     {
+
+        is_attack = false;
         attack_time += attack_add_time * elapsed_time;
         //猶予時間を超えたら待機に遷移
         if (attack_time > ATTACK_TYPE1_MAX_TIME)
@@ -806,6 +807,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
         }
 
     }
+
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -865,6 +867,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
+
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
@@ -889,6 +892,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     if (model->end_of_animation())
     {
+
         attack_time += attack_add_time * elapsed_time;
         if (attack_time > ATTACK_TYPE3_MAX_TIME)
         {
@@ -899,6 +903,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
                 velocity.x *= 0.2f;
                 velocity.y *= 0.2f;
                 velocity.z *= 0.2f;
+
                 TransitionTutorialMove();
             }
             //移動入力がなかったら待機に遷移
@@ -921,7 +926,7 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
                     velocity.x *= 0.2f;
                     velocity.y *= 0.2f;
                     velocity.z *= 0.2f;
-                    TransitionTutorialAttack2(attack_animation_blends_speeds.z);
+                    TransitionTutorialCharge(attack_animation_blends_speeds.z);
                 }
             }
         }
@@ -1257,12 +1262,7 @@ void Player::TransitionTutorialAttack1(float blend_second)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーションスピードの設定
-#if 1
     animation_speed = ATTACK1_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.y;
-#endif // 0
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //加速のレート
@@ -1292,12 +1292,7 @@ void Player::TransitionTutorialAttack2(float blend_second)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
-#if 1
     animation_speed = ATTACK2_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.z;
-#endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
@@ -1334,12 +1329,7 @@ void Player::TransitionTutorialAttack3(float blend_second)
     //攻撃中かどうかの設定
     is_attack = true;
     //アニメーション速度の設定
-#if 1
     animation_speed = ATTACK3_ANIMATION_SPEED;
-#else
-    //デバッグ用
-    animation_speed = attack_animation_speeds.w;
-#endif // 0
     //攻撃の加速の設定
     //SetAccelerationVelocity();
     //加速のレート
