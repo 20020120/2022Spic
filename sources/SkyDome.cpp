@@ -65,10 +65,11 @@ void SkyDome::Render(GraphicsPipeline& graphics, float elapsed_time)
 
     field_glow_time += elapsed_time * glow_speed;
 
+#if 0
     constants->data.field_time += elapsed_time;
     constants->bind(graphics.get_dc().Get(), 10);
-
     graphics.set_pipeline_preset(SHADER_TYPES::FIELD);
+#endif // 0
 
     DirectX::XMFLOAT3 field_scale = { scale.x * scale_factor, scale.y * scale_factor, scale.z * scale_factor };
     field->render(graphics.get_dc().Get(), Math::calc_world_matrix(field_scale, angle, position),
