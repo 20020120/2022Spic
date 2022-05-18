@@ -21,8 +21,8 @@ float2 calcHexOffset(float2 uv)
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float2 uv = (2.0 * pin.texcoord - field_resolution.xy) / field_resolution.y;
-    float2 hexInfo = calcHexOffset(uv * 100.0);
-    float speed = 0.5;
+    float2 hexInfo = calcHexOffset(uv * 200.0);
+    float speed = 0.1;
     float a = cos(speed * (1.5 * length(uv) - field_time));
     float h = calcHexDistance(hexInfo);
 
@@ -31,9 +31,9 @@ float4 main(VS_OUT pin) : SV_TARGET
     fragColor.b = 1 - (S(abs(sin(h * a * 5.0)), 1.0, 1.0) + 0.3 * S(h, 0.45, 20.0) + 0.15
         + 0.3 * smoothstep(0.5, 0.25 + 12.0 / field_resolution.y, h));
 
-    if (fragColor.r < 0.2f && fragColor.g < 0.2f && fragColor.b < 0.2f )
+    if (fragColor.b < 0.2f)
     {
-        //clip(-1);
+        clip(-1);
     }
 
     return fragColor;
