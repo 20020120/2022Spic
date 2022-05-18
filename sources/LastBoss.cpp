@@ -75,6 +75,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_)
 {
 
     mScale = { 0.05f,0.05f,0.05f };
+    mPosition = { 0.0f,20.0f,250.0f };
 }
 
 LastBoss::~LastBoss()
@@ -645,6 +646,9 @@ void LastBoss::fGuiMenu()
     case Mode::HumanToDragon:
         ImGui::Text("Mode::HumanToDragon");
         break;
+    case Mode::None: break;
+    case Mode::ShipToHuman: break;
+    case Mode::DragonDie: break;
     default: ;
     }
 
@@ -739,6 +743,8 @@ void LastBoss::fGuiMenu()
     
     ImGui::RadioButton("IsAttack", mIsAttack);
     ImGui::Checkbox("Stun", &mIsStun);
+    ImGui::DragFloat("Timer", &mTimer);
+
     ImGui::End();
 #endif
 }

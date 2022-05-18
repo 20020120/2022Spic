@@ -76,7 +76,7 @@ public:
     void fSetIsPlayerChainTime(bool IsChain_);//プレイヤーがチェイン状態であるかどうかをエネミーが受け取る関数
     void fSetPlayerPosition(DirectX::XMFLOAT3 Position_);
     void fSetPlayerSearch(bool Arg_); // プレイヤーがチェイン攻撃中にTrue
-
+    void fSetIsTutorial(bool Arg_);
 public:
     //--------------------<ImGui>--------------------//
     void fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_);
@@ -176,6 +176,9 @@ private:
     bool mIsBossEvent{};// イベント中
     DirectX::XMFLOAT3 mBossCameraEye{ 0.0f,0.0f,-80.0f };
     DirectX::XMFLOAT3 mBossCameraFocus{0.0f,0.0f,0.0f};
+
+    // チュートリアルの使用
+    bool mIsTutorial{ false };
 
     //****************************************************************
     //

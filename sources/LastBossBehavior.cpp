@@ -13,27 +13,33 @@
 void LastBoss::fShipStartInit()
 {
     mDissolve = 1.0f;
-    mPosition = { 0.0f,20.0f,0.0f };
+    mPosition = { 0.0f,80.0f,600.0f };
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mDissolve -= elapsedTime_ * 2.0f;
-    mDissolve = (std::max)(0.0f, mDissolve);
-    if (mDissolve <= 0.0f)
-    {
-        fChangeState(DivideState::ShipIdle);
-    }
+    fChangeState(DivideState::ShipIdle);
 }
 
 void LastBoss::fShipIdleInit()
 {
- 
+    mTimer = 0.0f;
+    mpModel->play_animation(mAnimPara, AnimationName::ship_idle, true);
 }
 
 void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-   
+    mTimer += elapsedTime_;
+    fTurnToPlayer(elapsedTime_, 5.0f);
+   if(mTimer>30.0f)
+   {
+       fChangeState(DivideState::ShipBeamStart);
+   }
+
+    // ランダムな敵を出現させる
+
+
 }
 
 void LastBoss::fShipAttackInit()
@@ -48,18 +54,25 @@ void LastBoss::fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void LastBoss::fShipBeamStartInit()
 {
-    mPosition = {};
+    mMoveBegin = mPosition;
+    mMoveEnd = { 0.0f,0.0f,600.0f };
+    mMoveThreshold = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::ship_beam_charge_start);
 
 }
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+
+    mMoveThreshold += elapsedTime_ * 5.0f;
+    mMoveThreshold = (std::min)(1.0f, mMoveThreshold);
+    mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
+
     // プレイヤーの方向に回転
     fTurnToPlayer(elapsedTime_, mkRotSpeed);
 
     // アニメーション終了と同時に遷移
-    if(mpModel->end_of_animation(mAnimPara))
+    if (mpModel->end_of_animation(mAnimPara) && mMoveThreshold > 1.0f)
     {
         fChangeState(DivideState::ShipBeamCharge);
     }
@@ -86,7 +99,7 @@ void LastBoss::fShipBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graph
 {
 
     // レーザーポインターを伸ばす
-    mPointerLength += elapsedTime_ * 100.0f;
+    mPointerLength += elapsedTime_ * 1000.0f;
 
 
     mShipPointer.fSetLengthThreshold(1.0f);
@@ -137,7 +150,7 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     const DirectX::XMFLOAT3 beamEnd{ mShipFacePosition + (front * mBeamLength) };
 
     // ビームの長さを更新する
-    mBeamLength += elapsedTime_ * 100.0f;
+    mBeamLength += elapsedTime_ * 1000.0f;
 
 
     // 攻撃capsuleを設定
@@ -1208,7 +1221,7 @@ void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
 
-    SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 1);
+    SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 0);
 
     graphics.set_pipeline_preset(SHADER_TYPES::PBR);
     mDissolve = (std::max)(0.0f, mDissolve);

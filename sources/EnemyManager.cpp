@@ -43,6 +43,9 @@ void EnemyManager::fInitialize(GraphicsPipeline& graphics_, AddBulletFunc Func_)
 
     // キャッシュに登録
     fRegisterCash(graphics_);
+
+    // チュートリアルかどうかを初期化
+    mIsTutorial = false;
 }
 
 void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBulletFunc Func_)
@@ -50,7 +53,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     //--------------------<管理クラス自体の更新処理>--------------------//
 
     // ウェーブ開始からの時間を更新
-    if (!mDebugMode)
+    if (!mDebugMode && !mIsTutorial)
     {
         //--------------------<敵がたまりすぎたら>--------------------//
         if (mEnemyVec.size() < 30)
@@ -330,6 +333,11 @@ void EnemyManager::fSetPlayerSearch(bool Arg_)
     {
         enemy->fSetIsPlayerSearch(Arg_);
     }
+}
+
+void EnemyManager::fSetIsTutorial(bool Arg_)
+{
+    mIsTutorial = Arg_;
 }
 
 void EnemyManager::fSpawn(GraphicsPipeline& graphics)
