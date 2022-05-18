@@ -197,8 +197,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	if (slow)
 	{
 		slow_timer += 1.0f * elapsed_time;
-		//タイマーが0.5秒以下なら遅くする
-		if (slow_timer < 0.5f)
+		//タイマーが1.0秒以下なら遅くする
+		if (slow_timer < 1.0f)
 		{
 			elapsed_time *= slow_rate;
 		}
@@ -514,7 +514,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	// オブジェクトの削除処理はこの下でやるルール
 	//
 	//****************************************************************
-	enemyManager->fDeleteEnemies();
+	//enemyManager->fDeleteEnemies();
 }
 
 #define OFF_SCREEN_RENDERING

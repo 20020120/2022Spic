@@ -46,7 +46,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	mBulletManager.fInitialize();
 	//--------------------<敵の管理クラスを初期化>--------------------//
 	mWaveManager.fInitialize(graphics, mBulletManager.fGetAddFunction());
-
+	mWaveManager.fGetEnemyManager()->fSetIsTutorial(true);
 	player = std::make_unique<Player>(graphics);
 	player->SetTutorialDamageFunc();
 	player->SetIsTutorial(true);
@@ -252,7 +252,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		slow_timer += 1.0f * elapsed_time;
 		//タイマーが0.5秒以下なら遅くする
-		if (slow_timer < 0.5f)
+		if (slow_timer < 1.0f)
 		{
 			elapsed_time *= slow_rate;
 		}
@@ -397,7 +397,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	// オブジェクトの削除処理はこの下でやるルール
 	//
 	//****************************************************************
-	enemyManager->fDeleteEnemies();
+	//enemyManager->fDeleteEnemies();
 
 }
 #define OFF_SCREEN_RENDERING
@@ -719,7 +719,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_count_text.position = { 800.0f,120.0f };
 		//画像のチュートリアルのパラメータ設定
 		sprite_tutorial_text.position = { 265.0f,430.0f };
-		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます";
+		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます\nジャスト回避をするとHPが少量回復します";
 		if (is_next)
 		{
 			//ジャスト回避の説明をする

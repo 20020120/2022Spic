@@ -198,10 +198,10 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     //behind_timer += 2.0f * elapsed_time;
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     //BehindAvoidanceMove(elapsed_time);
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,100.0f, behind_interpolated_way_points,2.0f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position,50.0f, behind_interpolated_way_points,2.0f))
     {
         if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
-        else   behaind_avoidance_cool_time = 0.5f;
+        else   behaind_avoidance_cool_time = 1.0f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;

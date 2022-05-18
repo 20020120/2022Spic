@@ -1018,7 +1018,8 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     if (player_health <= 0)return;
     //ジャスト回避の時はダメージ受けない
     if (is_just_avoidance) return;
-
+    //チェイン攻撃から戻ってきてすぐはダメージを食らわない
+    if (change_normal_timer >= 0) return;
     if (invincible_timer > 0.0f)return;
     //攻撃状態ならダメージを減少
     if (is_attack)  damage -= ATTACK_DAMAGE_INV;
@@ -1046,7 +1047,8 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     if (condition_state == ConditionState::Die) return;
     //練習時間じゃなかったらダメージを食らわない
     if (tutorial_state != TutorialState::FreePractice) damage = 0;
-    //ジャスト回避
+    //チェイン攻撃から戻ってきてすぐはダメージを食らわない
+    if (change_normal_timer >= 0) return;
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない
