@@ -200,7 +200,7 @@ void Player::ExecFuncTutorialUpdate(float elapsed_time, SkyDome* sky_dome, std::
         break;
     case Player::Behavior::Chain:
         //自分のクラスの関数ポインタを呼ぶ
-        (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
+        if (during_chain_attack() == false) (this->*player_tutorial_activity)(elapsed_time, sky_dome, enemies);
         (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
@@ -603,7 +603,7 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
 {
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
 
-    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 50.0f, behind_interpolated_way_points, 2.0f))
+    if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, 45.0f, behind_interpolated_way_points, 1.5f))
     {
         if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else         behaind_avoidance_cool_time = 1.0f;
