@@ -981,6 +981,7 @@ void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, 
 
 void Player::TutorialAwaikingEventIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    combo_count = MAX_COMBO_COUNT;
     if (model->end_of_animation())
     {
         if (awaiking_event)

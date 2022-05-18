@@ -102,12 +102,12 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	sprite_frame_parm.position = { 118.0f,-17.2f };
 
 	just_avoidance = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\just.png", 1);
-	just_avoidance_parm.position = { 378.9f,73.9f };
+	just_avoidance_parm.position = { 378.9f,93.0f };
 	just_avoidance_parm.scale = { 0.3f,0.3f };
 	just_avoidance_parm.texsize = { static_cast<float>(just_avoidance->get_texture2d_desc().Width),
 										static_cast<float>(just_avoidance->get_texture2d_desc().Height) };
 	awaiking_chain = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\awaiking.png", 1);
-	awaiking_chain_parm.position = { 378.9f,73.9f };
+	awaiking_chain_parm.position = { 378.9f,93.7f };
 	awaiking_chain_parm.scale = { 0.3f,0.3f };
 	awaiking_chain_parm.texsize = { static_cast<float>(awaiking_chain->get_texture2d_desc().Width),
 										static_cast<float>(awaiking_chain->get_texture2d_desc().Height) };
