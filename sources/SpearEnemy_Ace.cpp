@@ -197,9 +197,9 @@ void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
 
 void SpearEnemy_Ace::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if(mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivideState::Stun);
     }
 }

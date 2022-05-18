@@ -137,8 +137,6 @@ private:
     const float MAX_MOVE_SPEED = 3.0f;
     //回転スピード
     const float ROT_SPEED = 10.0f;
-    //スタンの長さ
-    const float mStunTime = 1.0f;
 
 };
 

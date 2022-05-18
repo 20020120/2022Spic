@@ -254,7 +254,7 @@ void ShieldEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     // タイマーを加算
     mWaitTimer += elapsedTime_;
     //シールド構え時間が一定時間たったら
-    if (mWaitTimer >= mStunSec)
+    if (mWaitTimer >= mStunTime)
     {
         fChangeState(DivedState::Move);
         mStunEffect->stop(effect_manager->get_effekseer_manager());
