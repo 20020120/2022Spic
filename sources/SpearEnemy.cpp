@@ -277,9 +277,9 @@ void SpearEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
 }
