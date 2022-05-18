@@ -409,6 +409,10 @@ void Player::transition_chain_lockon_begin()
 void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
 	GraphicsPipeline& Graphics_)
 {
+#ifdef USE_IMGUI
+	ImGui::Begin("chain"); ImGui::Text("lockon_begin"); ImGui::End();
+#endif // USE_IMGUI
+
 	if (model->end_of_animation())
 	{
 		transition_chain_lockon();

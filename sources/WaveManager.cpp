@@ -123,6 +123,12 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
                 // TODO:藤岡が書いたところ6
                 //----------------------------------
                 transition_reduction();
+
+                PostEffect::clear_post_effect();
+
+                effect_manager->finalize();
+                effect_manager->initialize(Graphics_);
+
                 //---ここまで--//
             }
             else // ゲームクリア
@@ -149,8 +155,6 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         // クリア状態に遷移
         if (mEnemyManager.fGetClearWave()) {
             clear_flg = true;
-            effect_manager->finalize();
-            effect_manager->initialize(Graphics_);
 
         }
 

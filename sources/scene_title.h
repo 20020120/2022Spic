@@ -170,6 +170,11 @@ private:
 
     bool has_stageNo_json = false;
 
+    // コンフィグ
+    Element config_b;
+    std::unique_ptr<SpriteBatch> sprite_config_b{ nullptr };
+    StepFontElement config_b_font;
+
     //--------< マルチスレッド >--------//
     static void loading_thread(ID3D11Device* device);
     static bool is_load_ready;

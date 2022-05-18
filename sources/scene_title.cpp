@@ -168,6 +168,20 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 		slashing_power = 0;
 		slashing_wait_timer = 0;
 	}
+	// config
+	{
+		sprite_config_b        = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 1);
+
+		config_b.position      = { 795,525 };
+		config_b.scale         = { 0.6f,0.6f };
+		config_b.texsize       = { static_cast<float>(sprite_config_b->get_texture2d_desc().Width), static_cast<float>(sprite_config_b->get_texture2d_desc().Height) };
+		config_b.color         = { 1,1,1,1 };
+
+		config_b_font.s        = L"決定";
+		config_b_font.position = { 1200, 675 };
+		config_b_font.scale    = { 0.6f,0.6f };
+	}
+
 	//--audio--//
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TITLE);
@@ -433,6 +447,10 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	else
 	{
 		slashing_wait_timer += elapsed_time;
+		if (has_stageNo_json && (game_pad->get_button_down() & GamePad::BTN_B))
+		{
+			slashing_power = SLASHING_MAX;
+		}
 	}
 
 	selecter1.position = Math::lerp(selecter1.position, arrival_pos1, 10.0f * elapsed_time);
@@ -473,12 +491,12 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	ImGui::DragFloat3("eye", &eye.x, 0.1f);
 	ImGui::DragFloat3("focus", &focus.x, 0.1f);
 	ImGui::End();
-#endif // USE_IMGUI
 	if (validity_joint_camera)
 	{
 		cameraManager->GetCurrentCamera()->set_eye(eye);
 		cameraManager->GetCurrentCamera()->set_target(focus);
 	}
+#endif // USE_IMGUI
 
 
 	// SE
@@ -565,7 +583,7 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	sky_dome->Render(graphics, elapsed_time);
 	//タイトルオブジェクト
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-	title_stage_model->render(graphics.get_dc().Get(), Math::calc_world_matrix(title_stage_parm.scale, title_stage_parm.angle, title_stage_parm.pos), {1.0f,1.0f,1.0f,1.0f});
+	title_stage_model->render(graphics.get_dc().Get(), Math::calc_world_matrix(title_stage_parm.scale, title_stage_parm.angle, title_stage_parm.pos), { 1.0f,1.0f,1.0f,1.0f });
 	// player
 	player->TitleRender(graphics, elapsed_time);
 
@@ -658,9 +676,14 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 	step_string(elapsed_time, L"ロード中...", now_loading, 2.0f, true);
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	r_font_render("beginning", beginning);
-	if(has_stageNo_json) r_font_render("succession", succession);
+	if (has_stageNo_json) r_font_render("succession", succession);
 	r_font_render("exit", exit);
 	if (!is_load_ready)	r_font_render("now_loading", now_loading);
+	fonts->yu_gothic->End(graphics.get_dc().Get());
+	// config
+	r_sprite_render("config b", sprite_config_b.get(), config_b);
+	fonts->yu_gothic->Begin(graphics.get_dc().Get());
+	r_font_render("config_b_font", config_b_font);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
 	if (tutorial_tab.display)
