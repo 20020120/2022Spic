@@ -88,6 +88,8 @@ private:
     float dimension{ 0.1f };
     // enemy_hp_gauge
     std::unique_ptr<EnemyHpGauge> enemy_hp_gauge{ nullptr };
+    // boss_hp_gauge
+    std::unique_ptr<BossHpGauge> boss_hp_gauge{ nullptr };
     // reticle
     std::unique_ptr<Reticle> reticle{ nullptr };
     // counter

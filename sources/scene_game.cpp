@@ -54,6 +54,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 	// enemy_hp_gauge
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
+	// boss_hp_gauge
+	boss_hp_gauge = std::make_unique<BossHpGauge>(graphics);
 	// reticle
 	reticle = std::make_unique<Reticle>(graphics);
 	// wave
@@ -359,6 +361,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
+	boss_hp_gauge->update(graphics, elapsed_time);
+	if (last_boss_mode == LastBoss::Mode::None) { boss_hp_gauge->set_animation(false); }
+	else { boss_hp_gauge->set_animation(true); }
 
 	reticle->update(graphics, elapsed_time);
 	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
@@ -649,6 +654,8 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	// enemy_hp_gauge
 	enemy_hp_gauge->render(graphics.get_dc().Get());
+	// boss_hp_gauge
+	boss_hp_gauge->render(graphics.get_dc().Get());
 	// reticle
 	reticle->render(graphics.get_dc().Get());
 
