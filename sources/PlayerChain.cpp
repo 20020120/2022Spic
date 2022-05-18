@@ -253,7 +253,14 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 		}
 
 		// 敵がいなければ通常行動に戻る
-		if (enemies.size() == 0) { chain_parm_reset(); }
+		if (enemies.size() == 0)
+		{
+			for (const auto& enemy : enemies)
+			{
+				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+			}
+			chain_parm_reset();
+		}
 		// スタンしてなくてもロックオン
 		// 決められた時間内に敵を索敵しロックオンステートへ
 		else
@@ -262,21 +269,21 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			if (search_time > 0)
 			{
 				/*キャンセルがあれがここへ*/
-				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER) { chain_parm_reset(); }
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
+				{
+					for (const auto& enemy : enemies)
+					{
+						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+					}
+					chain_parm_reset();
+				}
 				else
 				{
 					for (int i = 0; i < enemies.size(); ++i)
 					{
-						bool registered = false;
-						for (auto index : chain_lockon_enemy_indexes)
-						{
-							if (index == i) // 一度登録したインデックスは登録しない
-							{
-								registered = true;
-								break;
-							}
-						}
-						if (!registered && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
+						if (enemies.at(i)->fIsLockOnOfChain()) continue;
+
+						if (enemies.at(i)->fGetPosition().y < 5.0f && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
 						{
 							chain_lockon_enemy_indexes.emplace_back(i); // 登録
 							LockOnSuggest enemy_suggest; // サジェスト登録
@@ -301,7 +308,14 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/ { chain_parm_reset(); }
+				if (chain_lockon_enemy_indexes.empty()) /*カメラにスタンした敵が一体も映らなかった*/
+				{
+					for (const auto& enemy : enemies)
+					{
+						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+					}
+					chain_parm_reset();
+				}
 				else { transition_chain_lockon_begin(); }
 			}
 		}
@@ -335,28 +349,36 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			setup_search_time = true;
 		}
 
-		if (!is_stun) { chain_parm_reset(); }
+		if (!is_stun)
+		{
+			for (const auto& enemy : enemies)
+			{
+				if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+			}
+			chain_parm_reset();
+		}
 		else // 決められた時間内に敵を索敵しロックオンステートへ
 		{
 			search_time -= elapsed_time;
 			if (search_time > 0)
 			{
 				/*キャンセルがあれがここへ*/
-				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER) { chain_parm_reset(); }
+				if (game_pad->get_button_up() & GamePad::BTN_LEFT_SHOULDER)
+				{
+					for (const auto& enemy : enemies)
+					{
+						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+					}
+					chain_parm_reset();
+				}
 				else
 				{
 					for (int i = 0; i < enemies.size(); ++i)
 					{
-						bool registered = false;
-						for (auto index : chain_lockon_enemy_indexes)
-						{
-							if (index == i) // 一度登録したインデックスは登録しない
-							{
-								registered = true;
-								break;
-							}
-						}
-						if (!registered && enemies.at(i)->fGetStun() && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+						if (enemies.at(i)->fIsLockOnOfChain()) continue;
+
+						if (enemies.at(i)->fGetPosition().y < 5.0f && enemies.at(i)->fGetStun()
+							&& enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
 						{
 							chain_lockon_enemy_indexes.emplace_back(i); // 登録
 							LockOnSuggest enemy_suggest; // サジェスト登録
@@ -381,7 +403,14 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 			else
 			{
-				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/ { chain_parm_reset(); }
+				if (chain_lockon_enemy_indexes.empty()) /*カメラに敵が一体も映らなかった*/
+				{
+					for (const auto& enemy : enemies)
+					{
+						if (enemy->fIsLockOnOfChain()) { enemy->fSetIsLockOnOfChain(false); }
+					}
+					chain_parm_reset();
+				}
 				else { transition_chain_lockon_begin(); }
 			}
 		}

@@ -1,7 +1,7 @@
 #include"TutorialEnemy.h"
 #include"Operators.h"
-TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics, 
-                                               const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param ): BaseEnemy(graphics, 
+TutorialEnemy_NoAttack::TutorialEnemy_NoAttack(GraphicsPipeline& graphics,
+                                               const DirectX::XMFLOAT3& entry_position, const EnemyParamPack& param ): BaseEnemy(graphics,
                                                                                                                                  "./resources/Models/Enemy/enemy_tutorial.fbx", param, entry_position)
 {
     mPosition = entry_position;
@@ -20,7 +20,7 @@ void TutorialEnemy_NoAttack::fUpdate(GraphicsPipeline& Graphics_, float elapsedT
 
 void TutorialEnemy_NoAttack::fUpdateAttackCapsule()
 {
-    
+
 }
 
 void TutorialEnemy_NoAttack::fRegisterFunctions()
@@ -100,7 +100,7 @@ void TutorialEnemy_NoAttack::fIdleUpdate(float elapsedTime_, GraphicsPipeline& G
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
-        fChangeState(DivideState::Idle);
+        fChangeState(DivideState::Move);
     }
 }
 

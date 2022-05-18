@@ -203,6 +203,12 @@ void SceneTitle::uninitialize()
 	fire_effect2->stop(effect_manager->get_effekseer_manager());
 }
 
+void SceneTitle::effect_liberation(GraphicsPipeline& graphics)
+{
+	effect_manager->finalize();
+	effect_manager->initialize(graphics);
+}
+
 void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	//-- audio volume --//

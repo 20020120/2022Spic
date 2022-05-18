@@ -170,7 +170,7 @@ void framework::render(float elapsed_time/*Elapsed seconds from last frame*/)
 bool framework::uninitialize()
 {
 	// ƒV[ƒ“‚Ì‰ð•ú
-	if (scene_manager != nullptr) { scene_manager->clear(); }
+	if (scene_manager != nullptr) { scene_manager->clear(*graphics); }
 	// entities
 	entities_uninitialize(*graphics);
 	return true;
@@ -325,8 +325,8 @@ void framework::calculate_frame_stats()
 
 		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)" << game_mode << wire_flame << flat_debug;
 #else
-		//outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
-		outs << APPLICATION_NAME;
+		outs << APPLICATION_NAME << L" : FPS : " << fps << L" / " << L"Frame Time : " << 1000.0f / fps << L" (ms)";
+		//outs << APPLICATION_NAME;
 #endif // _DEBUG
 
 		SetWindowTextW(hwnd, outs.str().c_str());

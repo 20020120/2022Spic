@@ -24,11 +24,11 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 	//ラスボス
 	last_boss_icon_param =
 	{ {128,128},{1,1} };
-	
+
 }
 void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_pos, const DirectX::XMFLOAT2& player_forward,const DirectX::XMFLOAT2& camera_forward, std::vector<BaseEnemy*> enemy_list)
 {
-	//レーダーあいこん　
+	//レーダーあいこん
 
 	DirectX::XMFLOAT2 center_pos = { 1177,130.0f };//アイコンの基準位置
 	mini_map_icon->begin(graphics.get_dc().Get());
@@ -88,7 +88,14 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 		if(length_p_to_e_vec < 90.0f)
 		{
 			enemy->mpIcon->begin(graphics.get_dc().Get());
-			enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });
+			if(enemy->fGetStun()) // スタンしてる敵のアイコンの色変える
+			{
+				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale }, { 0,0 }, { 1,1,0,1 }, 0);
+			}
+			else
+			{
+				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });
+			}
 			enemy->mpIcon->end(graphics.get_dc().Get());
 
 		}

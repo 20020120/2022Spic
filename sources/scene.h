@@ -12,6 +12,8 @@ public:
     virtual void initialize(GraphicsPipeline& graphics) = 0;
     //終了化
     virtual void uninitialize() = 0;
+    // エフェクト解放
+    virtual void effect_liberation(GraphicsPipeline& graphics) {}
     //更新処理
     virtual void update(GraphicsPipeline& graphics, float elapsed_time) = 0;
     //描画処理

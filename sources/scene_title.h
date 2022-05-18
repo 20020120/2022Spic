@@ -30,6 +30,8 @@ public:
     void initialize(GraphicsPipeline& graphics) override;
     //終了化
     void uninitialize() override;
+    // エフェクト解放
+    void effect_liberation(GraphicsPipeline& graphics) override;
     //更新処理
     void update(GraphicsPipeline& graphics, float elapsed_time) override;
     //描画処理

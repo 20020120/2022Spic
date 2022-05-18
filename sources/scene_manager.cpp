@@ -121,10 +121,11 @@ void SceneManager::register_shadowmap(GraphicsPipeline& graphics, float elapsed_
     }
 }
 
-void SceneManager::clear()
+void SceneManager::clear(GraphicsPipeline& graphics)
 {
     if (current_scene != nullptr)
     {
+        current_scene->effect_liberation(graphics);
         current_scene->uninitialize();
         delete current_scene;
         current_scene = nullptr;
@@ -133,7 +134,7 @@ void SceneManager::clear()
 
 void SceneManager::change_scene(GraphicsPipeline& graphics, Scene* s)
 {
-    clear();
+    clear(graphics);
     current_scene = s;
     // –¢‰Šú‰»‚Ìê‡‚Í‰Šú‰»‚·‚é
     if (!current_scene->is_ready())
