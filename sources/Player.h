@@ -96,7 +96,9 @@ private:
     //攻撃1撃目の猶予時間
     static constexpr float ATTACK_TYPE1_MAX_TIME = 0.3f;
     //攻撃2撃目の猶予時間
-    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.3f;
+    static constexpr float ATTACK_TYPE2_MAX_TIME = 0.2f;
+    //攻撃3撃目の猶予時間
+    static constexpr float ATTACK_TYPE3_MAX_TIME = 0.2f;
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
     //後ろに回り込める距離
@@ -107,15 +109,15 @@ private:
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
     //突進開始の時のアニメーションスピード
-    static constexpr float CHARGEINIT_ANIMATION_SPEED = 2.5f;
+    static constexpr float CHARGEINIT_ANIMATION_SPEED = 5.5f;
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 2.0f;
     //攻撃1の時のアニメーションスピード
-    static constexpr float ATTACK1_ANIMATION_SPEED = 3.5f;
+    static constexpr float ATTACK1_ANIMATION_SPEED = 4.5f;
     //攻撃2の時のアニメーションスピード
-    static constexpr float ATTACK2_ANIMATION_SPEED = 3.5f;
+    static constexpr float ATTACK2_ANIMATION_SPEED = 4.5f;
     //攻撃3の時のアニメーションスピード
-    static constexpr float ATTACK3_ANIMATION_SPEED = 3.5f;
+    static constexpr float ATTACK3_ANIMATION_SPEED = 4.5f;
     //ゲージ消費量(突進)
     static constexpr float GAUGE_CONSUMPTION = 5.0f;
     //人型に戻るときのアニメーションスピード

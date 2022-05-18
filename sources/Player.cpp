@@ -833,7 +833,7 @@ void Player::InflectionCombo(float elapsed_time)
     duration_combo_timer += 1.0f * elapsed_time;
     if (is_awakening)
     {
-        combo_count -= elapsed_time * 5.0f;
+        combo_count -= elapsed_time * 2.0f;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
@@ -1011,7 +1011,7 @@ void Player::AddCombo(int count, bool block)
     else
     {
         //audio_manager->play_se(SE_INDEX::SWING_SWORD);
-        is_enemy_hit = false;
+        //is_enemy_hit = false;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
@@ -1030,7 +1030,7 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool block)
     else
     {
        // audio_manager->play_se(SE_INDEX::SWING_SWORD);
-        is_enemy_hit = false;
+        //is_enemy_hit = false;
     }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 

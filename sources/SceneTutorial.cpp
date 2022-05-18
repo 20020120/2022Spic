@@ -175,6 +175,12 @@ void TutorialScene::uninitialize()
 	mBulletManager.fFinalize();
 }
 
+void TutorialScene::effect_liberation(GraphicsPipeline& graphics)
+{
+	effect_manager->finalize();
+	effect_manager->initialize(graphics);
+}
+
 void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	const float bgm_volume = 2.0f;
@@ -770,6 +776,10 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		if (player->EnemiesIsStun(enemyManager->fGetEnemies()))is_stun_timer = 0.0f;
 		else is_stun_timer += 1.0f * elapsed_time;
 
+		for (auto enemy : enemyManager->fGetEnemies())
+		{
+			if (enemy->fGetStun() == false && enemy->fGetDissolve() <= 0)enemy->fSetStun(true);
+		}
 		//ƒXƒ^ƒ“‚µ‚Ä‚¢‚é“G‚ª5•bŠÔ‚¢‚È‚©‚Á‚½‚ç
 		if (is_stun_timer > 5.0f)
 		{

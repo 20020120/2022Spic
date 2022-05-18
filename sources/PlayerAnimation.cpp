@@ -279,6 +279,8 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
             charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+            is_enemy_hit = false;
+            is_attack = false;
             TransitionAttackType1(attack_animation_blends_speeds.y);
         }
         if (is_lock_on == false && charge_change_direction_count > 0)
@@ -331,20 +333,12 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
             attack_time = 0;
             TransitionIdle();
         }
-        //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚2Œ‚–Ú‚É‘JˆÚ
-#if 0
-            if (enemy_length > 20.0f)
+        else
+        {
+            //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚2Œ‚–Ú‚É‘JˆÚ
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                TransitionChargeInit();
-            }
-            else
-            {
-                TransitionAttackType2(attack_animation_blends_speeds.z);
-            }
-#else
-            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
-            {
-                if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
                 {
                     attack_time = 0;
                     velocity.x *= 0.2f;
@@ -353,9 +347,8 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
                     TransitionAttackType2(attack_animation_blends_speeds.z);
                 }
             }
-            else   TransitionIdle();
+        }
 
-#endif // 0
     }
     if (is_awakening)
     {
@@ -370,25 +363,9 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
-    attack_time += attack_add_time * elapsed_time;
-    //“G‚É“–‚½‚Á‚½‚©ŽžŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ðI‚í‚é
-#if 0
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
-    {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-
-        //if (length > 5.0f)ChargeAcceleration(elapsed_time);
-        SetAccelerationVelocity();
-    }
-#else
     if (is_update_animation == false)
     {
+        attack_time += attack_add_time * elapsed_time;
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
@@ -397,10 +374,12 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
             is_charge = false;
+            is_attack = false;
             attack_time = 0;
             is_update_animation = true;
+            is_enemy_hit = false;
         }
-        else if (attack_time >= 2.0f)
+        if (attack_time >= 0.6f)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
@@ -413,9 +392,9 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
     }
 
-#endif // 0
     if (model->end_of_animation())
     {
+        attack_time += attack_add_time * elapsed_time;
         //—P—\ŽžŠÔ‚ð’´‚¦‚½‚ç‘Ò‹@‚É‘JˆÚ
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
         {
@@ -425,20 +404,12 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
             attack_time = 0;
             TransitionIdle();
         }
-        //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚3Œ‚–Ú‚É‘JˆÚ
-#if 0
-            if (enemy_length > 0.0f)
+        else
+        {
+            //—P—\ŽžŠÔ‚æ‚è‚à‘‚­‰Ÿ‚µ‚½‚çUŒ‚3Œ‚–Ú‚É‘JˆÚ
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                TransitionChargeInit();
-            }
-            else
-            {
-                TransitionAttackType3(attack_animation_blends_speeds.w);
-            }
-#else
-            if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
-            {
-                if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
                 {
                     velocity.x *= 0.2f;
                     velocity.y *= 0.2f;
@@ -447,14 +418,7 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
                     TransitionAttackType3(attack_animation_blends_speeds.w);
                 }
             }
-            else
-            {
-                velocity.x *= 0.2f;
-                velocity.y *= 0.2f;
-                velocity.z *= 0.2f;
-                TransitionIdle();
-            }
-#endif // 0
+        }
     }
     if (is_awakening)
     {
@@ -470,25 +434,11 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
-    attack_time += attack_add_time * elapsed_time;
     //“G‚É“–‚½‚Á‚½‚©ŽžŠÔ‚ª2•b‚½‚Á‚½‚ç‰Á‘¬‚ðI‚í‚é
 
-#if 0
-    if (is_update_animation == false && (is_enemy_hit || attack_time >= 1.0f))
-    {
-        is_charge = false;
-        attack_time = 0;
-        is_update_animation = true;
-    }
-    else
-    {
-        float length{ Math::calc_vector_AtoB_length(position,target) };
-        //if (length > 5.0f) ChargeAcceleration(elapsed_time);
-        SetAccelerationVelocity();
-    }
-#else
     if (is_update_animation == false)
     {
+        attack_time += attack_add_time * elapsed_time;
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
@@ -497,10 +447,12 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
             is_charge = false;
+            is_attack = false;
             attack_time = 0;
             is_update_animation = true;
+            is_enemy_hit = false;
         }
-        else if (attack_time >= 2.0f)
+        if (attack_time >= 0.6f)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
@@ -511,24 +463,10 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
             TransitionIdle();
         }
     }
-
-#endif // 0
-
     if (model->end_of_animation())
     {
-
-        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
-        {
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-            {
-                attack_time = 0;
-                velocity.x *= 0.2f;
-                velocity.y *= 0.2f;
-                velocity.z *= 0.2f;
-                TransitionAttackType2(attack_animation_blends_speeds.x);
-            }
-        }
-        else
+        attack_time += attack_add_time * elapsed_time;
+        if (attack_time > ATTACK_TYPE3_MAX_TIME)
         {
             //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
             if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -547,6 +485,21 @@ void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
                 velocity.z *= 0.2f;
                 charge_time = 0;
                 TransitionIdle();
+            }
+
+        }
+        else
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    attack_time = 0;
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    TransitionAttackType2(attack_animation_blends_speeds.z);
+                }
             }
         }
     }
@@ -1074,7 +1027,6 @@ void Player::TransitionAttackType2(float blend_seconds)
     //‚QŒ‚–Ú‚ÌXVŠÖ”‚ÉØ‚è‘Ö‚¦‚é
     player_activity = &Player::AttackType2Update;
 }
-
 void Player::TransitionAttackType3(float blend_seconds)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);

@@ -16,7 +16,7 @@ PointLights::PointLights(GraphicsPipeline& graphics)
 	set_all_parameters(1, { -4.5f,3.3f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(2, { 4.2f,3.3f,0.8f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(3, { 4.2f,3.3f,5.5f,0 }, { 1,0,0,1 }, 5.0f, 1.0f);
-	set_all_parameters(4, { 22.271f,22.049f,37.301f,0 },  { 1,1,1,1 }, 5.3f, 4.0f);
+	set_all_parameters(4, { 22.245f,22.129f,37.306f,0 },  { 1,1,1,1 }, 5.3f, 3.6f);
 	set_all_parameters(5, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(6, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);
 	set_all_parameters(7, { FLT_MAX,FLT_MAX,FLT_MAX,0 }, { 0, 0,0,1 }, 5.0f, 1.0f);

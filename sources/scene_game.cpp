@@ -114,6 +114,12 @@ void SceneGame::uninitialize()
 	mBulletManager.fFinalize();
 }
 
+void SceneGame::effect_liberation(GraphicsPipeline& graphics)
+{
+	effect_manager->finalize();
+	effect_manager->initialize(graphics);
+}
+
 void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 {
 	if (is_game_clear == false && is_game_over == false)
