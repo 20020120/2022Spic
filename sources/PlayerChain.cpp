@@ -398,6 +398,9 @@ void Player::transition_chain_lockon_begin()
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
 	player_chain_activity = &Player::chain_lockon_begin_update;
 
+	// velocityƒNƒŠƒA
+	velocity = {};
+
 	audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
 }
 
