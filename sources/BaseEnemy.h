@@ -58,6 +58,7 @@ public:
     [[nodiscard]] float fGetPercentHitPoint()const;
     [[nodiscard]] bool fGetStun()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;
+    [[nodiscard]] float fGetDissolve()const;
 
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };

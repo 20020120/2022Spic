@@ -313,6 +313,11 @@ bool BaseEnemy::fIsLockOnOfChain() const
     return mIsLockOnOfChain;
 }
 
+float BaseEnemy::fGetDissolve() const
+{
+    return mDissolve;
+}
+
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {

@@ -688,6 +688,8 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
+            is_enemy_hit = false;
+            is_attack = false;
             charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             //É`ÉÖÅ[ÉgÉäÉAÉãÇ™çUåÇÇ»ÇÁ
             if (tutorial_state == TutorialState::AttackTutorial) is_next_tutorial = true;
@@ -745,19 +747,20 @@ void Player::TutorialAttack1Update(float elapsed_time, SkyDome* sky_dome, std::v
             attack_time = 0;
             TransitionTutoriaIdle();
         }
-        //óPó\éûä‘ÇÊÇËÇ‡ëÅÇ≠âüÇµÇΩÇÁçUåÇ2åÇñ⁄Ç…ëJà⁄
-        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+        else
         {
+
+            //óPó\éûä‘ÇÊÇËÇ‡ëÅÇ≠âüÇµÇΩÇÁçUåÇ2åÇñ⁄Ç…ëJà⁄
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                attack_time = 0;
-                velocity.x *= 0.2f;
-                velocity.y *= 0.2f;
-                velocity.z *= 0.2f;
-                TransitionTutorialAttack2(attack_animation_blends_speeds.z);
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    attack_time = 0;
+                    TransitionTutorialAttack2(attack_animation_blends_speeds.z);
+                }
             }
         }
-        else TransitionTutoriaIdle();
+        //else TransitionTutoriaIdle();
     }
     if (is_awakening)
     {
@@ -774,10 +777,10 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
 {
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
-    attack_time += attack_add_time * elapsed_time;
     //ìGÇ…ìñÇΩÇ¡ÇΩÇ©éûä‘Ç™2ïbÇΩÇ¡ÇΩÇÁâ¡ë¨ÇèIÇÌÇÈ
     if (is_update_animation == false)
     {
+        attack_time += attack_add_time * elapsed_time;
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
@@ -786,10 +789,12 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
             is_charge = false;
+            is_attack = false;
             attack_time = 0;
+            is_enemy_hit = false;
             is_update_animation = true;
         }
-        else if (attack_time >= 2.0f)
+        if (attack_time >= 0.6f)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
@@ -803,6 +808,7 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
     }
     if (model->end_of_animation())
     {
+        attack_time += attack_add_time * elapsed_time;
 
         //óPó\éûä‘Çí¥Ç¶ÇΩÇÁë“ã@Ç…ëJà⁄
         if (attack_time > ATTACK_TYPE2_MAX_TIME)
@@ -813,25 +819,28 @@ void Player::TutorialAttack2Update(float elapsed_time, SkyDome* sky_dome, std::v
             attack_time = 0;
             TransitionTutoriaIdle();
         }
-        //óPó\éûä‘ÇÊÇËÇ‡ëÅÇ≠âüÇµÇΩÇÁçUåÇ3åÇñ⁄Ç…ëJà⁄
-        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+        else
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
-                velocity.x *= 0.2f;
-                velocity.y *= 0.2f;
-                velocity.z *= 0.2f;
-                attack_time = 0;
-                TransitionTutorialAttack3(attack_animation_blends_speeds.w);
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    attack_time = 0;
+                    TransitionTutorialAttack3(attack_animation_blends_speeds.w);
+                }
             }
         }
-        else
-        {
-            velocity.x *= 0.2f;
-            velocity.y *= 0.2f;
-            velocity.z *= 0.2f;
-            TransitionTutoriaIdle();
-        }
+        //óPó\éûä‘ÇÊÇËÇ‡ëÅÇ≠âüÇµÇΩÇÁçUåÇ3åÇñ⁄Ç…ëJà⁄
+        //else
+        //{
+        //    velocity.x *= 0.2f;
+        //    velocity.y *= 0.2f;
+        //    velocity.z *= 0.2f;
+        //    TransitionTutoriaIdle();
+        //}
     }
     if (is_awakening)
     {
@@ -848,11 +857,11 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
 {
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
 
-    attack_time += attack_add_time * elapsed_time;
     //ìGÇ…ìñÇΩÇ¡ÇΩÇ©éûä‘Ç™2ïbÇΩÇ¡ÇΩÇÁâ¡ë¨ÇèIÇÌÇÈ
 
     if (is_update_animation == false)
     {
+        attack_time += attack_add_time * elapsed_time;
         SetAccelerationVelocity();
         if (is_enemy_hit)
         {
@@ -861,10 +870,12 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
             is_charge = false;
+            is_attack = false;
+            is_enemy_hit = false;
             attack_time = 0;
             is_update_animation = true;
         }
-        else if (attack_time >= 2.0f)
+        if (attack_time >= 0.6f)
         {
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             is_charge = false;
@@ -878,19 +889,8 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
 
     if (model->end_of_animation())
     {
-
-        if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
-        {
-            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
-            {
-                attack_time = 0;
-                velocity.x *= 0.2f;
-                velocity.y *= 0.2f;
-                velocity.z *= 0.2f;
-                TransitionTutorialAttack2(attack_animation_blends_speeds.x);
-            }
-        }
-        else
+        attack_time += attack_add_time * elapsed_time;
+        if (attack_time > ATTACK_TYPE3_MAX_TIME)
         {
             //à⁄ìÆì¸óÕÇ™Ç†Ç¡ÇΩÇÁà⁄ìÆÇ…ëJà⁄
             if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -909,6 +909,20 @@ void Player::TutorialAttack3Update(float elapsed_time, SkyDome* sky_dome, std::v
                 velocity.z *= 0.2f;
                 charge_time = 0;
                 TransitionTutoriaIdle();
+            }
+        }
+        else
+        {
+            if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
+            {
+                if (target_enemy != nullptr && target_enemy->fGetPercentHitPoint() != 0)
+                {
+                    attack_time = 0;
+                    velocity.x *= 0.2f;
+                    velocity.y *= 0.2f;
+                    velocity.z *= 0.2f;
+                    TransitionTutorialAttack2(attack_animation_blends_speeds.z);
+                }
             }
         }
     }
@@ -968,6 +982,8 @@ void Player::TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
 
 void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    //îÒï\é¶Ç…ÇµÇƒÇÈÇ‡ÇÃÇÕï\é¶
+    threshold_mesh -= 0.7f * elapsed_time;
     //ÉJÉÅÉâÇ…ìnÇ∑ílÇê›íË
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
@@ -982,6 +998,8 @@ void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, 
 void Player::TutorialAwaikingEventIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     combo_count = MAX_COMBO_COUNT;
+    //îÒï\é¶Ç…ÇµÇƒÇÈÇ‡ÇÃÇÕï\é¶
+    threshold_mesh -= 0.5f * elapsed_time;
     if (model->end_of_animation())
     {
         if (awaiking_event)
@@ -1374,8 +1392,8 @@ void Player::TransitionTutorialAwaikingEvent()
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
     //ÉvÉåÉCÉÑÅ[ÇÃà íuÇÕå¥ì_Ç…à⁄ìÆ
     position = { 0,0,0 };
-    //îÒï\é¶Ç…ÇµÇƒÇÈÇ‡ÇÃÇÕï\é¶
-    threshold_mesh = 0.0f;
+    ////îÒï\é¶Ç…ÇµÇƒÇÈÇ‡ÇÃÇÕï\é¶
+    //threshold_mesh = 0.0f;
     //äoê¡èÛë‘Ç…Ç»ÇÈÉAÉjÉÅÅ[ÉVÉáÉìÇ…ê›íË
     model->play_animation(AnimationClips::AwaikingScene, false, true);
     //äoê¡èÛë‘Ç©Ç«Ç§Ç©ÇÃê›íË
