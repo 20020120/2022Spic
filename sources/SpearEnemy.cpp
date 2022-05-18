@@ -187,6 +187,7 @@ void SpearEnemy::fThrustBeginInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_idle);
     mWaitTimer = 0.0f;
+    mIsAttack = true;
 }
 void SpearEnemy::fThrustBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
@@ -226,14 +227,14 @@ void SpearEnemy::fThrustEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     mPosition += V;
 
     // 突進中はプレイヤーの方向に軽くホーミングする
-    fTurnToPlayer(elapsedTime_,3.0f);
+    fTurnToPlayer(elapsedTime_,5.0f);
 
     mWaitTimer += elapsedTime_;
     if (mWaitTimer >= mThrustEndSec)
     {
         fChangeState(DivedState::Idle);
-    }
-}
+        mIsAttack = false;
+    }}
 
 void SpearEnemy::fDamageInit()
 {
@@ -276,9 +277,9 @@ void SpearEnemy::fDieUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
 }

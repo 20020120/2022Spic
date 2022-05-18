@@ -480,4 +480,5 @@ private:
 
 public:
     void fRender(GraphicsPipeline& Graphics_) override;
+    bool fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsedTime_) override;
 };

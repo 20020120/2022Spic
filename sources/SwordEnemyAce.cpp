@@ -261,7 +261,7 @@ bool SwordEnemy_Ace::fDamaged(int damage, float invincible_time, GraphicsPipelin
     if (mInvincibleTime <= 0.0f)
     {
         mIsHit = true;
-        if (!mIsWaitCounter)
+        if (!mIsWaitCounter||mIsStun)
         {
             mCurrentHitPoint -= damage;
             mInvincibleTime = invincible_time;
