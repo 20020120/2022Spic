@@ -133,7 +133,6 @@ void Player::ChainLockOn()
 
 void Player::chain_parm_reset()
 {
-	if (!reticles.empty()) reticles.clear();
 	chain_cancel = true;
 	transition_chain_search(); /*リセット*/
 	transition_normal_behavior();
@@ -150,6 +149,7 @@ void Player::transition_chain_search()
 {
 	if (!chain_lockon_enemy_indexes.empty()) chain_lockon_enemy_indexes.clear();
 	if (!lockon_suggests.empty()) lockon_suggests.clear();
+	if (!reticles.empty()) reticles.clear();
 
 	// 初めの要素にはプレイヤーを入れる
 	LockOnSuggest player_suggest;
@@ -700,21 +700,20 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			for (const auto& enemy : enemies)
 			{
 				if (!enemy->fIsLockOnOfChain()) continue; // ダメージを与えるのはロックオンされた敵のみ
-				enemy->fDamaged(25, 0.3f,Graphics_,elapsed_time);
+				enemy->fDamaged(25, 0.3f, Graphics_, elapsed_time);
 				enemy->fSetIsLockOnOfChain(false);
 			}
 
 
-			if (!reticles.empty()) reticles.clear();
 			if (tutorial_state == TutorialState::ChainAttackTutorial)
 			{
 				tutorial_action_count--;
 				if (tutorial_action_count <= 0)is_next_tutorial = true;
 			}
-				is_chain_attack = false;
-				change_normal_timer = 1.5f;
-				transition_chain_search(); /*リセット*/
-				transition_normal_behavior();
+			is_chain_attack = false;
+			change_normal_timer = 1.5f;
+			transition_chain_search(); /*リセット*/
+			transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{
