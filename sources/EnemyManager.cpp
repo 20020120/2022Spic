@@ -102,7 +102,7 @@ void EnemyManager::fFinalize()
 
 int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
     DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_,
-    GraphicsPipeline& Graphics_,float elapsedTime_,bool is_shield)
+    GraphicsPipeline& Graphics_,float elapsedTime_,bool& is_shield)
 {
     //--------------------<ƒvƒŒƒCƒ„[‚ÌUŒ‚‚Æ“G‚Ì“–‚½‚è”»’è>--------------------//
       // UŒ‚‚ª‰½‘Ì‚Ì“G‚É“–‚½‚Á‚½‚©
@@ -124,6 +124,12 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             {
                 if(enemy->fDamaged(PlayerAttackPower_, 0.5f,Graphics_,elapsedTime_))
                 {
+                    //UŒ‚‚ð–h‚ª‚ê‚½‚ç‘¦ƒŠƒ^[ƒ“
+                    if(enemy->mIsSuccesGuard)
+                    {
+                        is_shield = true;
+                        return hitCounts;
+                    }
                     hitCounts++;
                 }
             }

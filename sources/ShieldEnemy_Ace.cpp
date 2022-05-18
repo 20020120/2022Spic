@@ -130,6 +130,7 @@ bool ShieldEnemy_Ace::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipel
     if (is_shield && fJudge_in_view())
     {
         fChangeState(DivedState::Shield);
+        mIsSuccesGuard = true;
         return false;
     }
     bool ret{ false };

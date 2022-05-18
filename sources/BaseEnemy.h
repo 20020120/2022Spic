@@ -72,6 +72,7 @@ protected:
     float mDissolve{};
 public:
     std::unique_ptr<SpriteBatch> mpIcon{ nullptr };//ミニマップで使う用のアイコン
+    bool mIsSuccesGuard = false;
 protected:
     float mAnimationSpeed{1.0f};
     bool mIsStun{}; // スタン状態かどうか

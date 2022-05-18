@@ -355,16 +355,20 @@ void TutorialEnemy::fAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics
 void TutorialEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
-    mTimer = mStunTime;
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+
+    mTimer = 0;
 }
 
 void TutorialEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mTimer -= elapsedTime_;
-
-    if (mTimer <= 0.0f)
+    mTimer += elapsedTime_;
+    if (mTimer >= mStunTime)
     {
-        mIsStun = false;
         fChangeState(DivideState::Idle);
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+        mIsStun = false;
     }
 }

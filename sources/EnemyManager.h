@@ -42,7 +42,7 @@ public:
         int PlayerAttackPower_   ,              // プレイヤーの攻撃力
         GraphicsPipeline& Graphics_,
         float elapsedTime_,
-        bool is_shield
+        bool& is_shield
     );
     // 敵の攻撃とプレイヤーの当たり判定
     bool fCalcEnemiesAttackVsPlayer(
