@@ -403,7 +403,7 @@ void Player::transition_chain_lockon_begin()
 	// velocityクリア
 	velocity = {};
 
-	audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+	audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
 }
 
 void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
@@ -630,6 +630,7 @@ void Player::chain_lockon_update(float elapsed_time, std::vector<BaseEnemy*> ene
 	{
 		assert(transit_index != 0 && "意図していない挙動になっています");
 		audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+		audio_manager->play_se(SE_INDEX::AVOIDANCE);
 		if (is_awakening) combo_count -= COMBO_COUNT_SUB;
 		transition_chain_attack(); // 攻撃ステートへ
 	}
