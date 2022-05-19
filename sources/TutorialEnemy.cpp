@@ -360,6 +360,7 @@ void TutorialEnemy::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    audio_manager->play_se(SE_INDEX::STAN);
 
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mIsAttack = false;
