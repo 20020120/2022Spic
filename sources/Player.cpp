@@ -986,7 +986,7 @@ void Player::SetTarget( BaseEnemy* target_enemies)
     if (target_enemy != nullptr)
     {
         //ターゲットしている敵が死んでいるかスタンしていたら
-        if (target_enemy->fGetIsAlive() == false || target_enemy->fGetStun() == true)
+        if (target_enemy != nullptr && (target_enemy->fGetIsAlive() == false || target_enemy->fGetStun() == true))
         {
             //倒した敵の位置を保存
             //if (target_lerp_rate > 1.0f)old_target = target;
@@ -1048,6 +1048,8 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
     if (during_chain_attack()) return;
+    //チュートリアル中ステートが死ならダメージを食らわない
+    if (condition_state == ConditionState::Die) return;
     //ダメージが0の場合は健康状態を変更する必要がない
     if (damage == 0)return;
     //死亡している場合は健康状態を変更しない

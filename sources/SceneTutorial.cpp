@@ -168,7 +168,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_count_text.s = L"‚ ‚Æ‚R‰ñ";
 
 	audio_manager->stop_all_bgm();
-	audio_manager->play_bgm(BGM_INDEX::TITLE);
+	audio_manager->play_bgm(BGM_INDEX::TUTORIAL);
 
 }
 
