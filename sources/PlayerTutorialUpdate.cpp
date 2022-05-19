@@ -993,6 +993,11 @@ void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, 
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
+    if (awaiking_se = false && model->get_anim_para().animation_tick > 8.142f)
+    {
+        awaiking_se = true;
+        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+    }
     if (model->end_of_animation())
     {
         //アニメーションが終わったら遷移
@@ -1401,6 +1406,7 @@ void Player::TransitionTutorialAwaikingEvent()
     is_update_animation = true;
     //イベントカメラに切り替え
     awaiking_event = true;
+    awaiking_se = false;
     //覚醒状態になる途中の更新関数に切り替える
     player_tutorial_activity = &Player::TutorialAwaikingEventUpdate;
 }
