@@ -136,6 +136,13 @@ void GameCamera::gameUpdate(float elapsedTime)
 	const DirectX::XMVECTOR EyeCenter = PlayerPosition + PlayerUp * up1;
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
+	if(boss_animation)
+	{
+		DirectX::XMVECTOR EyeVector = DirectX::XMVector3Normalize(PlayerPosition) * 10 + PlayerUp * up1;
+		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
+		boss_animation = false;
+	}
+
     switch (state)
     {
 	case CameraState::Free:
