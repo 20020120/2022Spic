@@ -115,6 +115,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 void SceneGame::uninitialize()
 {
+	audio_manager->stop_all_se();
+	audio_manager->stop_all_bgm();
+
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	mWaveManager.fFinalize();

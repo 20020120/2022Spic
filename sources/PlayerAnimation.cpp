@@ -1230,7 +1230,7 @@ void Player::TransitionTransformWing()
 
 void Player::TransitionAwaking()
 {
-    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
+    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,5.0f);
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::Awaking, false,true);
