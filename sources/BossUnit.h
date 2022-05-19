@@ -66,6 +66,8 @@ private:
 
     float mLifeTimer{};
 
+    std::unique_ptr<Effect> mpBeamEffect{};
+
     const DirectX::XMFLOAT3 mStartPosition{};
     const float length = { 100.0f };
     const float mkIdleTime = 3.0f;

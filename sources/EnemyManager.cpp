@@ -54,7 +54,8 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     //--------------------<管理クラス自体の更新処理>--------------------//
 
     // ウェーブ開始からの時間を更新
-    if (!mDebugMode && !mIsTutorial)
+    mDelay-=elapsedTime_;
+    if (!mDebugMode && !mIsTutorial && mDelay <= 0.0f)
     {
         //--------------------<敵がたまりすぎたら>--------------------//
         if (mEnemyVec.size() < 30)
@@ -745,6 +746,7 @@ void EnemyManager::fStartWave(int WaveIndex_)
 
     // 何秒でこのウェーブが終わるかを初期化する
     mLastTimer = mCurrentWaveVec.back().mSpawnTimer;
+    mDelay = 3.0f;
 }
 
 bool EnemyManager::fWaveClear() const
@@ -950,4 +952,9 @@ void EnemyManager::fSetBossEye(DirectX::XMFLOAT3 Eye_)
 void EnemyManager::fSetBossFocus(DirectX::XMFLOAT3 Focus_)
 {
     mBossCameraFocus = Focus_;
+}
+
+bool EnemyManager::fGetBossClear() const
+{
+    return mCurrentMode == LastBoss::Mode::BossDieEnd;
 }

@@ -132,6 +132,12 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         {
             if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
             {
+                if (!clear_parameters.se_play)
+                {
+                    audio_manager->play_se(SE_INDEX::DRAW_PEN);
+                    clear_parameters.se_play = true;
+                }
+
                 if (clear_wait_timer >= CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
                 {
                     clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, 1.0f, 4.0f * elapsedTime_);
@@ -199,6 +205,8 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             }
             else // ゲームクリア
             {
+                audio_manager->stop_all_bgm();
+
                 SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
                 return;
             }

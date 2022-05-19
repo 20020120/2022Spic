@@ -193,10 +193,10 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     // 攻撃capsuleを設定
     mAttackCapsule.mBottom = mShipFacePosition;
     mAttackCapsule.mTop = beamEnd;
-    mAttackCapsule.mRadius = 10.0f;
+    mAttackCapsule.mRadius = 13.0f;
 
 
-    fTurnToPlayer(elapsedTime_,4.0f);
+    fTurnToPlayer(elapsedTime_,6.0f);
     // TODO : ここで激しいカメラシェイク
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
@@ -227,6 +227,7 @@ void LastBoss::fChangeShipToHumanInit()
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
     mCurrentMode = Mode::ShipToHuman;
     mPosition = { 0.0f,20.0f,0.0f };
+    PostEffect::boss_awakening_effect({ 0.0f,0.0f }, 0.0f, 0.25f);
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_, 
@@ -234,6 +235,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 {
     if(mpModel->end_of_animation(mAnimPara))
     {
+        PostEffect::clear_post_effect();
         fChangeState(DivideState::HumanIdle);
 
         // 現在のモードを人型に変更する
@@ -1252,6 +1254,7 @@ void LastBoss::fDragonBeamShotInit()
     mpBeamEffect->play(effect_manager->get_effekseer_manager(), mPosition);
     mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 10.0f,10.0f,10.0f });
     audio_manager->play_se(SE_INDEX::BOSS_BEAM);
+    mAttackPower = 10;
 }
 
 void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, 
@@ -1272,7 +1275,6 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
     mAttackCapsule.mTop = 
         pos + (Math::GetFront(mOrientation) * mBeamLength);
     mAttackCapsule.mRadius = 20.0f;
-
     fTurnToTarget(elapsedTime_, 10.0f, mPosition + beamFront * 20.0f);
 
     
@@ -1336,6 +1338,7 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
 
 void LastBoss::fStunInit()
 {
+    mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mIsAttack = false;
     mAttackCapsule.mRadius = 0.0f;
     mStunEffect->play(effect_manager->get_effekseer_manager(), mPosition);

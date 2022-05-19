@@ -291,6 +291,7 @@ void SpearEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
     if (!mIsStun)
     {
+        mIsAttack = false;
         mIsStun = Arg_;
         fChangeState(DivedState::Stun);
     }
