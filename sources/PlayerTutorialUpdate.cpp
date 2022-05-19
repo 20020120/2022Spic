@@ -1153,6 +1153,8 @@ void Player::TransitionTutorialJustBehindAvoidance()
     is_just_avoidance = true;
     //HP回復する
     player_health += JUST_AVOIDANCE_HEALTH;
+    //コンボゲージ増やす
+    combo_count += JUST_AVOIDANCE_COMBO;
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;

@@ -937,6 +937,8 @@ void Player::TransitionJustBehindAvoidance()
     }
     //HP回復する
     player_health += JUST_AVOIDANCE_HEALTH;
+    //コンボゲージ増やす
+    combo_count += JUST_AVOIDANCE_COMBO;
     is_just_avoidance = true;
     player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     velocity = {};
@@ -1384,7 +1386,6 @@ void Player::TransitionStageMove()
 
 void Player::TransitionStageMoveEnd()
 {
-    position = { 0.0f,0.0f,20.0f };
     model->play_animation(AnimationClips::WingDashEnd, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
