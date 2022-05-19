@@ -105,9 +105,11 @@ private:
     static constexpr float ATTACK_TYPE3_MAX_TIME = 0.2f;
     //ロックオンできる距離
     static constexpr float LOCK_ON_LANGE = 100.0f;
+public:
     //後ろに回り込める距離
     static constexpr float  BEHIND_LANGE_MAX = 55.0f;
     static constexpr float  BEHIND_LANGE_MIN = 5.0f;
+private:
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 30.0f;
     //回避の時のアニメーションスピード

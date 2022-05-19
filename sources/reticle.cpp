@@ -1,7 +1,7 @@
 #include "reticle.h"
 #include "Operators.h"
 #include "codinate_convert.h"
-
+#include "Player.h"
 Reticle::Reticle(GraphicsPipeline& graphics)
 {
     reticle = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\reticle.png", 1);
@@ -77,7 +77,10 @@ void Reticle::render(ID3D11DeviceContext* dc)
 {
     //--reticle--//
     reticle->begin(dc);
-    reticle->render(dc, element.position + offset, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
+    if (length_player_to_enemy > Player::BEHIND_LANGE_MIN && length_player_to_enemy < Player::BEHIND_LANGE_MAX)
+        reticle->render(dc, element.position + offset, element.scale, element.pivot, { 0,1,0,1 }, element.angle, element.texpos, element.texsize);
+    else
+        reticle->render(dc, element.position + offset, element.scale, element.pivot, element.color, element.angle, element.texpos, element.texsize);
     reticle->end(dc);
 }
 
