@@ -14,6 +14,7 @@ enum class BGM_INDEX
     BOSS_BATTLESHIP,
     BOSS_HUMANOID,
     BOSS_DRAGON,
+    CLEAR,
 
     BGM_COUNT
 };
@@ -58,6 +59,8 @@ enum class SE_INDEX
     BOSS_RUSH,              //ボス突進
     TITLE_CUT,              //タイトル切れる音
     TITLE_CUTTING,          //タイトル切れていく音
+    DRAW_PEN,               //クリア、ゲームオーバーの音
+    BOSS_EXPLOSION,         //ボス爆破音
 
     SE_COUNT
 };

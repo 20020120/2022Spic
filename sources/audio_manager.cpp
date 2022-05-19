@@ -56,12 +56,13 @@ void AudioManager::initialize_XAudio2()
 //-------------------------------------------------------
 void AudioManager::initialize_bgm()
 {
-	register_bgm(L"resources/Audios/title.wav", BGM_INDEX::TITLE, 0.1f);
-	register_bgm(L"resources/Audios/tutorial.wav", BGM_INDEX::TUTORIAL, 0.1f);
-	register_bgm(L"resources/Audios/gaming.wav", BGM_INDEX::GAME, 0.1f);
-	register_bgm(L"resources/Audios/boss_battleship.wav", BGM_INDEX::BOSS_BATTLESHIP, 0.1f);
-	register_bgm(L"resources/Audios/boss_human.wav", BGM_INDEX::BOSS_HUMANOID, 0.1f);
-	register_bgm(L"resources/Audios/boss_dragon.wav", BGM_INDEX::BOSS_DRAGON, 0.1f);
+	register_bgm(L"resources/Audios/BGM/title.wav", BGM_INDEX::TITLE, 0.1f);
+	register_bgm(L"resources/Audios/BGM/tutorial.wav", BGM_INDEX::TUTORIAL, 0.1f);
+	register_bgm(L"resources/Audios/BGM/gaming.wav", BGM_INDEX::GAME, 0.1f);
+	register_bgm(L"resources/Audios/BGM/boss_battleship.wav", BGM_INDEX::BOSS_BATTLESHIP, 0.1f);
+	register_bgm(L"resources/Audios/BGM/boss_human.wav", BGM_INDEX::BOSS_HUMANOID, 0.1f);
+	register_bgm(L"resources/Audios/BGM/boss_dragon.wav", BGM_INDEX::BOSS_DRAGON, 0.1f);
+	register_bgm(L"resources/Audios/BGM/clear.wav", BGM_INDEX::CLEAR, 0.1f);
 
 
 }
@@ -205,6 +206,8 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/boss_rush.wav", SE_INDEX::BOSS_RUSH, 0.1f, LOOP_INFINITY);
 	register_se(L"resources/Audios/SE/title_cut.wav", SE_INDEX::TITLE_CUT , 0.1f);
 	register_se(L"resources/Audios/SE/title_cutting.wav", SE_INDEX::TITLE_CUTTING, 0.1f);
+	register_se(L"resources/Audios/SE/draw_pen.wav", SE_INDEX::DRAW_PEN, 0.1f);
+	register_se(L"resources/Audios/SE/boss_explosion.wav", SE_INDEX::BOSS_EXPLOSION, 0.1f);
 
 }
 

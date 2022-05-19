@@ -668,20 +668,22 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	//--------<ui>--------//
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	// enemy_hp_gauge
-	enemy_hp_gauge->render(graphics.get_dc().Get());
-	// boss_hp_gauge
-	boss_hp_gauge->render(graphics.get_dc().Get());
-	// reticle
-	reticle->render(graphics.get_dc().Get());
-
+	if (mIsBossCamera == false)
+	{
+		// enemy_hp_gauge
+		enemy_hp_gauge->render(graphics.get_dc().Get());
+		// boss_hp_gauge
+		boss_hp_gauge->render(graphics.get_dc().Get());
+		// reticle
+		reticle->render(graphics.get_dc().Get());
+	}
 	// wave
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();
 	const DirectX::XMFLOAT2 p_pos = { player->GetPosition().x,player->GetPosition().z };
 	const DirectX::XMFLOAT2 p_forward = { player->GetForward().x,player->GetForward().z };
 	const DirectX::XMFLOAT2 c_forward = { c->GetForward().x,c->GetForward().z };
-	player->ConfigRender(graphics, elapsed_time);
+	if (mIsBossCamera == false)player->ConfigRender(graphics, elapsed_time);
     if (during_clear == false && is_game_clear == false)
 	{
 		minimap->render(graphics, p_pos, p_forward, c_forward, mWaveManager.fGetEnemyManager()->fGetEnemies());
