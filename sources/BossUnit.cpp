@@ -20,6 +20,9 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_,
     mBeam.fSetRadius(2.0f);
     mWarningLine.fSetRadius(0.05f);
     mLifeTimer = mkLifeTime;
+
+    mpBeamEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(),
+        "./resources/Effect/unit_beam.efk");
 }
 
 BossUnit::BossUnit(GraphicsPipeline& Graphics_)
@@ -362,21 +365,22 @@ void BossUnit::fAttackBeamInit()
     mTimer = 0.0f;
     mIsAttack = true;
     mpModel->play_animation(mAnimPara, AnimationName::BEAM_SHOOT_START);
+    mpBeamEffect->play(effect_manager->get_effekseer_manager(), mPosition);
 }
 
 void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mBeamThreshold += elapsedTime_ * 10.0f;
-    mBeamThreshold = (std::min)(3.0f, mBeamThreshold);
     mTimer += elapsedTime_;
 
     mAttackCapsule.mTop = mBeam.fGetStart();
     mAttackCapsule.mBottom = Math::lerp(mBeam.fGetStart(),
         mBeam.fGetEnd(), mBeamThreshold);
-    
+
+    mpBeamEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
     if(mTimer>mkChargeTime)
     {
         fResetLaser();
+        mpBeamEffect->stop(effect_manager->get_effekseer_manager());
         fChangeState(DivideState::Idle);
         mIsAttack = false;
     }

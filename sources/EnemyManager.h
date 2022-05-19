@@ -113,6 +113,8 @@ public:
     void fSetBossEye(DirectX::XMFLOAT3 Eye_);
     void fSetBossFocus(DirectX::XMFLOAT3 Focus_);
 
+    bool fGetBossClear()const;
+
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
@@ -180,6 +182,7 @@ private:
     // チュートリアルの使用
     bool mIsTutorial{ false };
 
+    float mDelay{};
     //****************************************************************
     //
     // 定数

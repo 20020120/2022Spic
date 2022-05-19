@@ -76,4 +76,5 @@ public:
 private:
     bool mIsHit{};
     bool mIsWaitCounter{};
+    skeleton::bone mBone{};
 };

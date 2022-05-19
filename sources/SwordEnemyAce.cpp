@@ -8,6 +8,7 @@ SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_, const DirectX::XMFLO
     // ƒ{[ƒ“‚ð‰Šú‰»
     mScale = { 0.05f,0.05f,0.05f };
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
+    mBone = mpModel->get_bone_by_name("sword_handle_ctr");
 }
 
 SwordEnemy_Ace::SwordEnemy_Ace(GraphicsPipeline& Graphics_)
@@ -190,18 +191,26 @@ void SwordEnemy_Ace::fCounterMiddleUpdate(float elapsedTime_, GraphicsPipeline& 
 
 void SwordEnemy_Ace::fCounterAttackInit()
 {
-    mpModel->play_animation(AnimationName::ace_attack);
+    mpModel->play_animation(AnimationName::ace_attack, false, true, 0.3f, 2.0f);
     mWaitTimer = 0.0f;
     mAnimationSpeed = 2.0f;
+    mIsAttack = true;
 }
 
 void SwordEnemy_Ace::fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    auto world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
+    DirectX::XMFLOAT3 pos{};
+    DirectX::XMFLOAT3 up{};
+    mpModel->fech_by_bone(mAnimPara, world, mBone, pos, up);
+    
+
     mWaitTimer += elapsedTime_;
     if (mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::CounterEnd);
         mAnimationSpeed = 1.0f;
+        mIsAttack = false;
     }
 }
 
