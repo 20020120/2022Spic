@@ -309,12 +309,14 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	if (old_last_boss_mode == LastBoss::Mode::Ship && last_boss_mode == LastBoss::Mode::ShipToHuman)
 	{
+		c->boss_animation = true;
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
 		purple_threshold = 0.01f;
 	}
 	if (old_last_boss_mode == LastBoss::Mode::Human && last_boss_mode == LastBoss::Mode::HumanToDragon)
 	{
+		c->boss_animation = true;
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
 		red_threshold = 0.01f;

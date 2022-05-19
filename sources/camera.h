@@ -61,6 +61,8 @@ public:
     virtual void Initialize(GraphicsPipeline& graphics) = 0;
     virtual void Update(float elapsedTime) = 0;
 
+    bool boss_animation{};//ボスがアニメーション
+
 protected:
     Player* player;
 
