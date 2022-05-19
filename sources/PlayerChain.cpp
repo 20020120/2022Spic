@@ -113,8 +113,8 @@ void Player::lockon_post_effect(float elapsed_time, std::function<void(float, fl
 			frame_scope = 0.5f - rate * (0.5f - ROCKON_FRAME);
 			frame_alpha += elapsed_time * 0.1f * 3.0f / SEARCH_TIME;
 			frame_alpha = (std::min)(frame_alpha, 0.3f);
-			effect_func(frame_scope, frame_alpha);
 			if (rate > 0.98f) { effect_clear_func(); }
+			else effect_func(frame_scope, frame_alpha);
 		}
 	}
 	if (chain_cancel)

@@ -218,7 +218,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	audio_manager->set_all_volume_bgm(BGM_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_bgm_volume());
 	audio_manager->set_all_volume_se(SE_VOLUME * VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
-	audio_manager->set_volume_se(SE_INDEX::OPEN_FIRE,0.1f *VolumeFile::get_instance().get_master_volume() * VolumeFile::get_instance().get_se_volume());
 
 	//--logo_parameters--//
 	const int FRAMW_COUNT_X = 7;

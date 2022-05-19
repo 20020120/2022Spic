@@ -35,6 +35,15 @@ void EnemyHpGauge::update(GraphicsPipeline& graphics, float elapsed_time)
     {
         gauge.position = conversion_2D(graphics.get_dc().Get(), focus_position);
         gauge.color.w = Math::lerp(gauge.color.w, 1.0f, 10.0f * elapsed_time);
+
+        float scale_rate = BASE_RATE_LENGTH / length_player_to_enemy;
+        scale_rate = Math::clamp(scale_rate, 0.5f, 1.0f);
+        // offset
+        DirectX::XMFLOAT2 arrival_offset = { 0.0f * scale_rate, -150.0f * scale_rate };
+        offset = Math::lerp(offset, arrival_offset, 10.0f * elapsed_time);
+        // scale
+        DirectX::XMFLOAT2 arrival_scale = { 0.2f * scale_rate, 0.2f * scale_rate };
+        gauge.scale = Math::lerp(gauge.scale, arrival_scale, 10.0f * elapsed_time);
     }
     else
     {
@@ -63,16 +72,10 @@ void EnemyHpGauge::focus(const BaseEnemy* target_enemy, bool lockon)
 {
     if (target_enemy != nullptr)
     {
-        animation = lockon;
-        focus_position = target_enemy->fGetPosition();
-        hp_percent = target_enemy->fGetPercentHitPoint();
+        animation              = lockon;
+        focus_position         = target_enemy->fGetPosition();
+        hp_percent             = target_enemy->fGetPercentHitPoint();
         length_player_to_enemy = target_enemy->fGetLengthFromPlayer();
-        offset = { 0, -150.0f };
-
-
-
-        //if (target_enemy->fGetType() == "class ChaseEnemy") { offset = { 0, -80.0f }; }
-        //else { offset = { 0, -70.0f }; }
     }
     else
     {

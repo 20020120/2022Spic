@@ -128,9 +128,12 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     {
         clear_wait_timer -= elapsedTime_;
         // クリアのアニメーション
-        if (clear_wait_timer < CLEAR_WAIT_TIME - 1.0f) // 1秒待ってクリアアニメーション
+        if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
         {
-            //clear_parameters.threshold = Math::lerp(clear_parameters.threshold, -0.5f, 2.0f * elapsedTime_);
+            if (clear_wait_timer >= CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
+            {
+                clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, 1.0f, 4.0f * elapsedTime_);
+            }
 
             //--parameters--//
             const int FRAMW_COUNT_X = 4;
@@ -141,14 +144,10 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
 #ifdef USE_IMGUI
             ImGui::Begin("ClearProto");
-            if (ImGui::TreeNode("clear animation"))
-            {
-                ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
-                ImGui::Text("timer:%f", clear_parameters.timer);
-                ImGui::Text("frame_x:%d", frame_x);
-                ImGui::Text("frame_y:%d", clear_parameters.frame_y);
-                ImGui::TreePop();
-            }
+            ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+            ImGui::Text("timer:%f", clear_parameters.timer);
+            ImGui::Text("frame_x:%d", frame_x);
+            ImGui::Text("frame_y:%d", clear_parameters.frame_y);
             ImGui::End();
 #endif // USE_IMGUI
             if (frame_x >= FRAMW_COUNT_X)
@@ -168,10 +167,15 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
                 clear_parameters.timer += elapsedTime_;
             }
         }
-        //if (clear_wait_timer < CLEAR_WAIT_TIME - 2.5f)
-        //{
-        //    clear_parameters.threshold = Math::lerp(clear_parameters.threshold, 1.5f, 2.0f * elapsedTime_);
-        //}
+        if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
+        {
+            clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
+#ifdef USE_IMGUI
+            ImGui::Begin("ClearProto");
+            ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
+            ImGui::End();
+#endif // USE_IMGUI
+        }
 
         if (clear_wait_timer < 0)
         {
@@ -245,7 +249,7 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
         dissolve->end(dc);
     };
     // clear_parameters
-    if (clear_flg && clear_wait_timer < CLEAR_WAIT_TIME - 1.0f)
+    if (clear_flg && clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME)
     {
         r_dissolve("Clear", clear_parameters.sprite_clear.get(), clear_parameters.clear, clear_parameters.threshold);
     }

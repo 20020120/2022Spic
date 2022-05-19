@@ -214,7 +214,9 @@ private:
 
     StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
 
-    static constexpr float CLEAR_WAIT_TIME = 3.0f;
+    static constexpr float CLEAR_WAIT_TIME = 5.0f;
+    static constexpr float CLEAR_ANIMATION_WAIT_TIME = 2.0f;
+    static constexpr float CLEAR_ANIMATION_FADE_WAIT_TIME = 4.0f;
     float clear_wait_timer = CLEAR_WAIT_TIME;
     bool clear_flg = false;
 
@@ -230,6 +232,8 @@ private:
 
         void initialize()
         {
+            clear.color.w = 0.0f;
+
             threshold  = -0.5f;
 
             timer      = 0;
