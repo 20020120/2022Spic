@@ -121,21 +121,33 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		controller_pram.scale = { 0.3f,0.3f };
 
 		controller_keys[ControllerSprite::A] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a.png", 1);
+		controller_on_keys[ControllerSprite::A] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a_on.png", 1);
 		controller_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b.png", 2);
+		controller_on_keys[ControllerSprite::B] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\b_on.png", 1);
 		controller_b_pram.position = controller_b_pram.position = { 365.7f, 270.2f };
 		controller_b_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::B]->get_texture2d_desc().Width),
 										static_cast<float>(controller_keys[ControllerSprite::B]->get_texture2d_desc().Height) };
 		controller_keys[ControllerSprite::X] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\x.png", 1);
+		controller_on_keys[ControllerSprite::X] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\x_on.png", 1);
 		controller_keys[ControllerSprite::Y] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\y.png", 1);
+		controller_on_keys[ControllerSprite::Y] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\y_on.png", 1);
 		controller_keys[ControllerSprite::RB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rb.png", 1);
+		controller_on_keys[ControllerSprite::RB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rb_on.png", 1);
 		controller_keys[ControllerSprite::RT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rt.png", 1);
+		controller_on_keys[ControllerSprite::RT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\rt_on.png", 1);
 		controller_keys[ControllerSprite::LB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lb.png", 1);
+		controller_on_keys[ControllerSprite::LB] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lb_on.png", 1);
 		controller_keys[ControllerSprite::LT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lt.png", 1);
+		controller_on_keys[ControllerSprite::LT] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\lt_on.png", 1);
 		controller_keys[ControllerSprite::RightStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\right_stick.png", 1);
+		controller_on_keys[ControllerSprite::RightStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\right_stick_on.png", 1);
 		controller_keys[ControllerSprite::LeftStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\left_stick.png", 1);
+		controller_on_keys[ControllerSprite::LeftStick] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\left_stick_on.png", 1);
 		controller_keys[ControllerSprite::Cross] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\cross.png", 1);
 		controller_keys[ControllerSprite::Menu] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\menu.png", 1);
+		controller_on_keys[ControllerSprite::Menu] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\menu_on.png", 1);
 		controller_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back.png", 1);
+		controller_on_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back_2_on.png", 2);
 		controller_keys[ControllerSprite::Back2] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back_2.png", 1);
 		controller_back_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Width),
 										static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Height) };
@@ -911,7 +923,6 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_check_text = L"自由に練習する";
 		change_scene_txt.color = { 1.0f,1.0f,1.0f,1.0f };
 		//チュートリアル終了の文字の位置を再設定
-		change_scene_txt.position = { 116.7f,282.0f };
 		check_mark_parm.threshold = 1.0f;
 
 		enemyManager->fSpawnTutorial(elapsed_time, graphics);
@@ -1021,19 +1032,30 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		fonts->yu_gothic->End(graphics.get_dc().Get());
 
 		sprite_render("controller_base", controller_base.get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::A_)sprite_render("controller_base", controller_keys[ControllerSprite::A].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::B_)sprite_render("controller_base", controller_keys[ControllerSprite::B].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::X_)sprite_render("controller_base", controller_keys[ControllerSprite::X].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::Y_)sprite_render("controller_base", controller_keys[ControllerSprite::Y].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::RT_)sprite_render("controller_base", controller_keys[ControllerSprite::RT].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::RB_)sprite_render("controller_base", controller_keys[ControllerSprite::RB].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::LT_)sprite_render("controller_base", controller_keys[ControllerSprite::LT].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::LB_)sprite_render("controller_base", controller_keys[ControllerSprite::LB].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::RightStick_)sprite_render("controller_base", controller_keys[ControllerSprite::RightStick].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::A_)sprite_render("controller_base", controller_on_keys[ControllerSprite::A].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::A].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::B_)sprite_render("controller_base", controller_on_keys[ControllerSprite::B].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::B].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::X_)sprite_render("controller_base", controller_on_keys[ControllerSprite::X].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::X].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::Y_)sprite_render("controller_base", controller_on_keys[ControllerSprite::Y].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::Y].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RT_)sprite_render("controller_base", controller_on_keys[ControllerSprite::RT].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::RT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RB_)sprite_render("controller_base", controller_on_keys[ControllerSprite::RB].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::RB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LT_)sprite_render("controller_base", controller_on_keys[ControllerSprite::LT].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::LT].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LB_)sprite_render("controller_base", controller_on_keys[ControllerSprite::LB].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::LB].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::RightStick_)sprite_render("controller_base", controller_on_keys[ControllerSprite::RightStick].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::RightStick].get(), controller_pram, 0, 0);
+		if(button_priset & BottunPriset::LeftStick_)sprite_render("controller_base", controller_on_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::LeftStick].get(), controller_pram, 0, 0);
 		if(button_priset & BottunPriset::Cross_)sprite_render("controller_base", controller_keys[ControllerSprite::Cross].get(), controller_pram, 0, 0);
-		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
-		sprite_render("controller_back_pram", controller_keys[ControllerSprite::Back].get(), controller_back_pram, 0, 0);
+		if(button_priset & BottunPriset::Menu_)sprite_render("controller_base", controller_on_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
+		else sprite_render("controller_base", controller_keys[ControllerSprite::Menu].get(), controller_pram, 0, 0);
+		sprite_render("controller_back_pram", controller_on_keys[ControllerSprite::Back].get(), controller_pram, 0, 0);
 
 	}
 #ifdef USE_IMGUI
@@ -1081,7 +1103,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	fonts->yu_gothic->Draw(tutorial_skip_text, change_scene_txt.position, change_scene_txt.scale, change_scene_txt.color, change_scene_txt.angle, TEXT_ALIGN::UPPER_LEFT);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
-	sprite_render("controller_back_button_pram", controller_keys[ControllerSprite::Back2].get(), controller_back_button_pram, 0, 0);
+	sprite_render("controller_back_button_pram", controller_on_keys[ControllerSprite::Back].get(), controller_back_button_pram, 0, 0);
 
 	check_box->begin(graphics.get_dc().Get());
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);

@@ -309,6 +309,7 @@ private:
     //コントローラーの画像
     std::unique_ptr<SpriteBatch> controller_base{ nullptr };
     std::unique_ptr<SpriteBatch> controller_keys[ControllerSprite::End]{ nullptr };
+    std::unique_ptr<SpriteBatch> controller_on_keys[ControllerSprite::End]{ nullptr };
     //コントローラーの画像のパラメータ
     Element controller_pram;
     Element controller_back_pram;
