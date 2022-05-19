@@ -65,8 +65,7 @@ void Player::ExecFuncUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<B
         break;
     case Player::Behavior::Chain:
         //自分のクラスの関数ポインタを呼ぶ
-        if(during_chain_attack() == false)(this->*player_activity)(elapsed_time, sky_dome);
-
+        if(during_chain_attack() == false)(this->*chain_activity)(elapsed_time, sky_dome);
         (this->*player_chain_activity)(elapsed_time, enemies,Graphics_);
         break;
     default:
@@ -998,14 +997,14 @@ void Player::TransitionCharge(float blend_seconds)
     if (is_awakening)
     {
         //プレイヤーの攻撃力
-        player_attack_power = 1;
+        player_attack_power = CHARGE_AWAIKING_ATTACK_POWER;
         model->play_animation(AnimationClips::AwakingCharge, false, true, blend_seconds);
     }
     //通常状態の時の突進アニメーションに設定
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 1;
+        player_attack_power = CHARGE_NORMAL_ATTACK_POWER;
         model->play_animation(AnimationClips::Charge, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
@@ -1036,14 +1035,14 @@ void Player::TransitionAttackType1(float blend_seconds)
     if (is_awakening)
     {
         //プレイヤーの攻撃力
-        player_attack_power = 4;
+        player_attack_power = ATTACK_TYPE1_AWAIKING_ATTACK_POWER;
         model->play_animation(AnimationClips::AwakingAttackType1, false, true, blend_seconds);
     }
     //通常状態の時の１撃目のアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 1;
+        player_attack_power = ATTACK_TYPE1_NORMAL_ATTACK_POWER;
         model->play_animation(AnimationClips::AttackType1, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
@@ -1066,14 +1065,14 @@ void Player::TransitionAttackType2(float blend_seconds)
     if (is_awakening)
     {
         //プレイヤーの攻撃力
-        player_attack_power = 6;
+        player_attack_power = ATTACK_TYPE2_AWAIKING_ATTACK_POWER;
         model->play_animation(AnimationClips::AwakingAttackType2, false, true, blend_seconds);
     }
     //通常状態の時の２撃目のアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 2;
+        player_attack_power = ATTACK_TYPE2_NORMAL_ATTACK_POWER;
         model->play_animation(AnimationClips::AttackType2, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
@@ -1103,14 +1102,14 @@ void Player::TransitionAttackType3(float blend_seconds)
     if (is_awakening)
     {
         //プレイヤーの攻撃力
-        player_attack_power = 9;
+        player_attack_power = ATTACK_TYPE3_AWAIKING_ATTACK_POWER;
         model->play_animation(AnimationClips::AwakingAttackType3, false, true, blend_seconds);
     }
     //通常状態の時の３撃目ののアニメーションに設定
     else
     {
         //プレイヤーの攻撃力
-        player_attack_power = 4;
+        player_attack_power = ATTACK_TYPE3_NORMAL_ATTACK_POWER;
         model->play_animation(AnimationClips::AttackType3, false, true, blend_seconds);
     }
     //攻撃中かどうかの設定
@@ -1386,3 +1385,51 @@ void Player::TransitionStageMoveEnd()
     player_activity = &Player::WingDashEndUpdate;
 
 }
+
+void Player::ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    {
+        TransitionChainMove();
+    }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
+}
+void Player::ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome)
+{
+    //移動入力がなくなったら待機に遷移
+    if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        TransitionChainIdle();
+    }
+    UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+}
+void Player::TransitionChainIdle(float blend_second)
+{
+    if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
+    //通常状態の待機アニメーションにセット
+    else model->play_animation(AnimationClips::Idle, true, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //アニメーション速度
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //待機状態の時の更新関数に切り替える
+    player_activity = &Player::ChainIdleUpdate;
+}
+void Player::TransitionChainMove(float blend_second)
+{
+    if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
+    //通常状態の時に移動アニメーションの設定
+    else model->play_animation(AnimationClips::Move, true, true, blend_second);
+    //攻撃中かどうかの設定
+    is_attack = false;
+    //アニメーション速度
+    animation_speed = 1.0f;
+    //アニメーションをしていいかどうか
+    is_update_animation = true;
+    //移動状態の時の更新関数に切り替える
+    player_activity = &Player::ChainMoveUpdate;
+}
+

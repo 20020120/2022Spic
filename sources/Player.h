@@ -134,6 +134,20 @@ private:
     static constexpr int AVOIDANCE_DAMAGE_INV = 2;
     //プレイヤーのジャスト回避の回復
     static constexpr int JUST_AVOIDANCE_HEALTH = 5;
+    //プレイヤーの突進の攻撃力
+    static constexpr int CHARGE_NORMAL_ATTACK_POWER = 1;
+    static constexpr int CHARGE_AWAIKING_ATTACK_POWER = 1;
+    //1撃目の攻撃力
+    static constexpr int ATTACK_TYPE1_NORMAL_ATTACK_POWER = 1;
+    static constexpr int ATTACK_TYPE1_AWAIKING_ATTACK_POWER = 4;
+    //2撃目の攻撃力
+    static constexpr int ATTACK_TYPE2_NORMAL_ATTACK_POWER = 2;
+    static constexpr int ATTACK_TYPE2_AWAIKING_ATTACK_POWER = 6;
+    //3撃目の攻撃力
+    static constexpr int ATTACK_TYPE3_NORMAL_ATTACK_POWER = 4;
+    static constexpr int ATTACK_TYPE3_AWAIKING_ATTACK_POWER = 9;
+
+
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
@@ -595,6 +609,20 @@ public:
     bool GetEndClearMotion() { return is_end_clear_motion; }
     bool GetStartClearMotion() { return is_start_cleear_motion; }
     void PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies);
+private:
+    //関数ポインタ
+    typedef void(Player::* PlayerChainMoveActivity)(float elapsed_time, SkyDome* sky_dome);
+    PlayerChainMoveActivity chain_activity = &Player::ChainIdleUpdate;
+    //待機アニメーション中の更新処理
+    void ChainIdleUpdate(float elapsed_time, SkyDome* sky_dome);
+    //移動アニメーション中の更新処理
+    void ChainMoveUpdate(float elapsed_time, SkyDome* sky_dome);
+    //待機に遷移
+    void TransitionChainIdle(float blend_second = 0.3f);
+    //移動に遷移
+    void TransitionChainMove(float blend_second = 0.3f);
+
+
 private:
     //--------<藤岡パート>--------//
     //関数ポインタ
