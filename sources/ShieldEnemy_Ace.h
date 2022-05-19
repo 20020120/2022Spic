@@ -72,7 +72,7 @@ private:
     const float mDifenceRange{ 40.0f };    // 攻撃範囲
     const float mAttackDelaySec{ 1.0f };  // 攻撃後の隙の長さ（秒）
     const float mSpawnDelaySec{ 1.0f };   // 登場後の長さ（秒）
-    const float mViewingAngle{ 45.0f };   // 視野角
+    const float mViewingAngle{ 60.0f };   // 視野角
 
     //--------------------<各ステートの待ち時間>--------------------//
     const float mShieldReadySec{ 3.0f };          // 盾を構える
