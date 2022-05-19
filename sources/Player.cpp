@@ -1053,6 +1053,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     if (player_health <= 0)return;
     //ジャスト回避の時はダメージ受けない
     if (is_just_avoidance) return;
+    if (is_behind_avoidance) return;
     //チェイン攻撃から戻ってきてすぐはダメージを食らわない
     if (change_normal_timer >= 0) return;
     if (invincible_timer > 0.0f)return;
@@ -1061,7 +1062,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (behavior_state != Behavior::Chain && damage >= 5.0f) TransitionDamage();
+    if (behavior_state == Behavior::Normal && damage >= 5.0f) TransitionDamage();
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
@@ -1091,6 +1092,7 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     if (player_health <= 0)return;
     //ジャスト回避の時はダメージ受けない
     if (is_just_avoidance) return;
+    if (is_behind_avoidance) return;
 
     if (invincible_timer > 0.0f)return;
 
@@ -1099,7 +1101,7 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (behavior_state != Behavior::Chain && damage > 5.0f) TransitionTutorialDamage();
+    if (behavior_state == Behavior::Normal && damage > 5.0f) TransitionTutorialDamage();
 
     //無敵時間設定
     invincible_timer = InvincibleTime;
