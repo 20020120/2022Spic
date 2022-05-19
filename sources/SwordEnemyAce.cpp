@@ -203,6 +203,9 @@ void SwordEnemy_Ace::fCounterAttackUpdate(float elapsedTime_, GraphicsPipeline& 
     DirectX::XMFLOAT3 pos{};
     DirectX::XMFLOAT3 up{};
     mpModel->fech_by_bone(mAnimPara, world, mBone, pos, up);
+    mAttackCapsule.mBottom = pos;
+    mAttackCapsule.mTop = pos + up * 10.0f;
+    mAttackCapsule.mRadius = 5.0f;
     
 
     mWaitTimer += elapsedTime_;
