@@ -203,6 +203,8 @@ void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 void SwordEnemy::fAttackRunInit()
 {
     mMoveTimer = 0;
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
 }
 
 void SwordEnemy::fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
