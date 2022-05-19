@@ -242,6 +242,7 @@ void SwordEnemy_Ace::fStunInit()
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = mStunTime;
+    mIsAttack = false;
 }
 
 void SwordEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
