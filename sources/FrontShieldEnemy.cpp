@@ -245,6 +245,7 @@ void ShieldEnemy::fStunInit()
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = 0.0f;
+    is_shield = false;
 }
 
 void ShieldEnemy::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
