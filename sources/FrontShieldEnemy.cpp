@@ -11,6 +11,8 @@ ShieldEnemy::ShieldEnemy(GraphicsPipeline& Graphics_,
         EmitterPoint_)
 {
     ShieldEnemy::fRegisterFunctions();
+    mShieldEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkShieldPath);
+
     // ƒ{[ƒ“‚ð‰Šú‰»
     mScale = { 0.05f,0.05f,0.05f };
     is_shield = false;
@@ -228,6 +230,8 @@ void ShieldEnemy::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& Grap
 void ShieldEnemy::fShieldInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::shield);
+    mShieldEffect->play(effect_manager->get_effekseer_manager(), mPosition,5);
+    mShieldEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
 }
 
 void ShieldEnemy::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

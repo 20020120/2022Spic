@@ -15,6 +15,8 @@ ShieldEnemy_Ace::ShieldEnemy_Ace(GraphicsPipeline& Graphics_,
     mScale = { 0.05f,0.05f,0.05f };
     is_shield = false;
     mVernierEffect->stop(effect_manager->get_effekseer_manager());
+    mShieldEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkShieldPath);
+
 
 }
 
@@ -230,6 +232,9 @@ void ShieldEnemy_Ace::fShieldAttackUpdate(float elapsedTime_, GraphicsPipeline& 
 void ShieldEnemy_Ace::fShieldInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::shield);
+    mShieldEffect->play(effect_manager->get_effekseer_manager(), mPosition, 5);
+    mShieldEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
+
 }
 
 void ShieldEnemy_Ace::fShieldUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

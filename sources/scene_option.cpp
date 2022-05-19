@@ -253,7 +253,7 @@ void Option::render(GraphicsPipeline& graphics, float elapsed_time)
 	std::string gui_names[3] = { "volume", "game", "transition" };
 	if (icon_map.count(state)) { icon_map.at(state)->render(gui_names[static_cast<int>(state)], graphics.get_dc().Get(), add_position); }
 	//--tab--//
-	r_render("tab", tab, sprite_tab.get(), tab_add_position);
+	if (!home_disabled) r_render("tab", tab, sprite_tab.get(), tab_add_position);
 	//--cursor--//
 	if (state != IconType::TRANSITION && !home_disabled) { r_render("cursor", cursor, sprite_cursor.get(), {}); }
 	//--ˆê”Ô‰º--//

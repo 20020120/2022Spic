@@ -2,7 +2,7 @@
 #include"Operators.h"
 #include"user.h"
 StraightBullet::StraightBullet(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 InitPoint_, DirectX::XMFLOAT3 mVelocity_)
-    :BaseBullet(Graphics_, "./resources/Effect/RedPlayerBullet.efk",{})
+    :BaseBullet(Graphics_, "./resources/Effect/arrow.efk",{})
 {
     mLifeTime = 10.0f;
     mPosition = InitPoint_;

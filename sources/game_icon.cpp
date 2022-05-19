@@ -59,12 +59,12 @@ GameIcon::GameIcon(ID3D11Device* device) : IconBase(device)
 	operation.scale = { 0.9f, 0.9f };
 	operation.s = L"操作確認";
 
-	operation_back.position = { 695.0f, 515.0f };
+	operation_back.position = { 1128.0f, 682.0f };
 	operation_back.scale = { 0.9f, 0.9f };
 	operation_back.s = L"Aボタンで戻る";
 
 	display_operation = false;
-	sprite_operation = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\title\\title_back.png", 1);
+	sprite_operation = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\option\\con_option.png", 1);
 	sprite_mask      = std::make_unique<SpriteBatch>(device, L".\\resources\\Sprites\\mask\\white_mask.png", 1);
 
 	//--button--//
@@ -281,7 +281,7 @@ void GameIcon::render(std::string gui, ID3D11DeviceContext* dc, const DirectX::X
 			DirectX::XMFLOAT2 texsize = { static_cast<float>(sprite_mask->get_texture2d_desc().Width),
 										   static_cast<float>(sprite_mask->get_texture2d_desc().Height) };
 			sprite_mask->begin(dc);
-			sprite_mask->render(dc, { 640, 360 }, { 1,1 }, { texsize * 0.5f }, { 0,0,0,0.4f }, 0, { 0,0 }, texsize);
+			sprite_mask->render(dc, { 640, 360 }, { 1,1 }, { texsize * 0.5f }, { 0,0,0,0.6f }, 0, { 0,0 }, texsize);
 			sprite_mask->end(dc);
 		}
 		{

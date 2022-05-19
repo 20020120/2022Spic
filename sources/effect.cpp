@@ -106,6 +106,11 @@ void Effect::set_quaternion(Effekseer::Manager* effekseer_manager, DirectX::XMFL
    set_posture(effekseer_manager, r_mat, ang);
 }
 
+void Effect::set_orient(Effekseer::Manager* effekseer_manager, DirectX::XMFLOAT3& orient)
+{
+
+}
+
 
 
 //-----------------------------------------------//
