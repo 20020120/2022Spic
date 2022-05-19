@@ -189,7 +189,7 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     // ビームの長さを更新する
     mBeamLength += elapsedTime_ * 1000.0f;
 
-
+    
     // 攻撃capsuleを設定
     mAttackCapsule.mBottom = mShipFacePosition;
     mAttackCapsule.mTop = beamEnd;
@@ -215,12 +215,14 @@ void LastBoss::fShipBeamEndInit()
 
 void LastBoss::fShipBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-
+    effect_manager->finalize();
+    effect_manager->initialize(Graphics_);
     fChangeState(DivideState::ShipToHuman);
 }
 
 void LastBoss::fChangeShipToHumanInit()
 {
+    audio_manager->stop_all_se();
     mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
     mCurrentMode = Mode::ShipToHuman;
@@ -487,7 +489,7 @@ void LastBoss::fMoveAwayInit()
 
 void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mMoveThreshold += elapsedTime_ * 20.0f;
+    mMoveThreshold += elapsedTime_ * 3.0f;
     mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
 
     if(mMoveThreshold>=1.0f|| Math::Length(mPosition) > mkLimitStage)
@@ -554,6 +556,8 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void LastBoss::fHumanSpAttackAwayInit()
 {
+    mPosition.y = 6.0f;
+
    // 飛びのく地点をセット
     mAwayBegin = mPosition;
     mAwayLerp = 0.0f;
@@ -833,6 +837,8 @@ void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     mPosition = Math::lerp(mPosition, { 0.0f,80.0f,0.0f }, 10.0f * elapsedTime_);
    if(mpModel->end_of_animation(mAnimPara))
    {
+       effect_manager->finalize();
+       effect_manager->initialize(Graphics_);
        fChangeState(DivideState::HumanDieMiddle);
    }
 }
@@ -875,6 +881,8 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
     if(mTimer<=0.0f)
     {
+        effect_manager->finalize();
+        effect_manager->initialize(Graphics_);
         fChangeState(DivideState::HumanToDragon);
         PostEffect::clear_post_effect();
     }
@@ -882,6 +890,7 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
 
 void LastBoss::fHumanToDragonInit()
 {
+    audio_manager->stop_all_se();
     mpModel->play_animation(mAnimPara,AnimationName::human_to_dragon);
 }
 
@@ -893,13 +902,14 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
         mCurrentHitPoint = mMaxHp * mkPercentToDragon;
+        mPosition = {};
     }
 }
 
 void LastBoss::fDragonIdleInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
-    mTimer = 1.0f;
+    mTimer = 2.0f;
     mCurrentMode = Mode::Dragon;
     mDragonBreathCount = 0;
     mAnimationSpeed = 5.0f;
@@ -1199,6 +1209,7 @@ void LastBoss::fDragonBeamMoveUpdate(float elapsedTime_, GraphicsPipeline& Graph
 void LastBoss::fDragonBeamStartInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_ready);
+   
 }
 
 void LastBoss::fDragonBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1214,6 +1225,7 @@ void LastBoss::fDragonBeamChargeInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::dragon_beam_charge);
     mTimer = mkDragonBeamChargeTime;
+    audio_manager->play_se(SE_INDEX::BOSS_CHARGE);
 }
 
 void LastBoss::fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1222,6 +1234,7 @@ void LastBoss::fDragonBeamChargeUpdate(float elapsedTime_, GraphicsPipeline& Gra
     mTimer -= elapsedTime_;
     if (mTimer < 0.0f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_CHARGE);
         fChangeState(DivideState::DragonBeamShoot);
     }
 }
@@ -1249,21 +1262,21 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
     DirectX::XMFLOAT3 pos = mPosition + (Math::GetFront(mOrientation) * 20.0f);
     mpBeamEffect->set_position(effect_manager->get_effekseer_manager(), pos);
 
-    mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
+    mAddRadian += DirectX::XMConvertToRadians(60.0f * elapsedTime_);
     const float radian = mStartBeamRadian + mAddRadian;
     const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
 
     mBeamLength += elapsedTime_ * 500.0f;
 
-    mAttackCapsule.mBottom = mPosition;
+    mAttackCapsule.mBottom = pos;
     mAttackCapsule.mTop = 
-        mPosition + (Math::GetFront(mOrientation) * mBeamLength);
+        pos + (Math::GetFront(mOrientation) * mBeamLength);
     mAttackCapsule.mRadius = 20.0f;
 
-    fTurnToTarget(elapsedTime_, 10.0f, beamFront);
+    fTurnToTarget(elapsedTime_, 10.0f, mPosition + beamFront * 20.0f);
 
     
-    float rotMax = 300.0f * (1.0f - static_cast<float>(mCurrentHitPoint / mMaxHp));
+    float rotMax = 500.0f * (1.0f - static_cast<float>(mCurrentHitPoint / mMaxHp));
 
     if (mAddRadian >= DirectX::XMConvertToRadians(rotMax))
     {
@@ -1287,11 +1300,13 @@ void LastBoss::fDragonBeamEndUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fDragonDieStartInit()
 {
+    audio_manager->stop_all_se();
     // 位置をリセット
     mPosition = { 0.0f,0.0f,50.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_die);
     // TODO カメラをボスに注目させる
     mCurrentMode = Mode::DragonDie;
+    mAnimationSpeed = 1.0f;
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1428,6 +1443,8 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
    
     if (mCurrentHitPoint <= 0)
     {
+        effect_manager->finalize();
+        effect_manager->initialize(Graphics_);
         fChangeState(DivideState::DragonDieStart);
     }
     return ret;

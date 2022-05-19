@@ -422,7 +422,7 @@ private:
     void fHumanSpAttackTimeOverUpdate(float elapsedTime_, 
         GraphicsPipeline& Graphics_);
 
-    void fHumanSpAttackChargeInit();
+    void fHumanSpAttackChargeInit();\
     void fHumanSpAttackChargeUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
 
     void fHumanSpBeamShootInit();

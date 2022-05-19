@@ -1366,7 +1366,6 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
-    position = { 0.0f,0.0f,20.0f };
     //ステージ遷移の時に回復する
     const float health = static_cast<float>(player_health) /static_cast<float>(MAX_HEALTH);
     if (health < 0.7f) player_health = MAX_HEALTH * 0.7;
@@ -1385,6 +1384,7 @@ void Player::TransitionStageMove()
 
 void Player::TransitionStageMoveEnd()
 {
+    position = { 0.0f,0.0f,20.0f };
     model->play_animation(AnimationClips::WingDashEnd, false, true);
     //アニメーション速度の設定
     animation_speed = 1.0f;
