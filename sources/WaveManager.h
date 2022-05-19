@@ -150,7 +150,7 @@ private:
     void update_enlargement(float elapsed_time);
 
     bool close = false;
-    float wait_timer = 1.5f;
+    float wait_timer = 1.0f;
 public:
     enum STAGE_IDENTIFIER /*S_ìûíBêî_ç∂Ç©ÇÁÇÃêî*/
     {
@@ -214,8 +214,30 @@ private:
 
     StageDetails::ROUTE route_state = StageDetails::ROUTE::LEFT;
 
-    float clear_wait_timer = 3.0f;
+    static constexpr float CLEAR_WAIT_TIME = 3.0f;
+    float clear_wait_timer = CLEAR_WAIT_TIME;
     bool clear_flg = false;
+
+    struct ClearParameters
+    {
+        std::unique_ptr<SpriteDissolve> sprite_clear = nullptr;
+        SpriteArg clear;
+        float threshold = -0.5f;
+
+        float timer     = 0;
+        int frame_y     = 0;
+        bool start_anim = false;
+
+        void initialize()
+        {
+            threshold  = -0.5f;
+
+            timer      = 0;
+            frame_y    = 0;
+            start_anim = false;
+        }
+    };
+    ClearParameters clear_parameters;
 
 public:
     // getter

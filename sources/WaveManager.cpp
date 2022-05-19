@@ -1,5 +1,6 @@
 #include"WaveManager.h"
 #include "Operators.h"
+#include "scene_game.h"
 #include "scene_title.h"
 #include "scene_loading.h"
 #include "scene_manager.h"
@@ -104,16 +105,74 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
         }
     }
 
+    // clear_parameters
+    clear_parameters.sprite_clear = std::make_unique<SpriteDissolve>(graphics_.get_device().Get(),
+        L".\\resources\\Sprites\\stageclear.png", L".\\resources\\Sprites\\clear_wave\\player_icon_mask.png", 1);
+    const int FRAMES_X = 4;   const int FRAMES_Y = 2;
+    clear_parameters.clear.texsize = { (float)clear_parameters.sprite_clear->get_texture2d_desc().Width / FRAMES_X,
+                                       (float)clear_parameters.sprite_clear->get_texture2d_desc().Height / FRAMES_Y };
+    clear_parameters.clear.pivot = player_icon.arg.texsize * DirectX::XMFLOAT2{ 0.5f, 0.5f };
+    clear_parameters.clear.scale = { 1,1 };
+    clear_parameters.clear.pos   = { 540,265 };
+
+    clear_parameters.initialize();
+
     transition_reduction();
     //---ここまで--//
 }
 
 void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBulletFunc Func_)
 {
-    // 3秒待ってクリア演出へ
+    // 待ってクリア演出へ
     if (clear_flg)
     {
         clear_wait_timer -= elapsedTime_;
+        // クリアのアニメーション
+        if (clear_wait_timer < CLEAR_WAIT_TIME - 1.0f) // 1秒待ってクリアアニメーション
+        {
+            //clear_parameters.threshold = Math::lerp(clear_parameters.threshold, -0.5f, 2.0f * elapsedTime_);
+
+            //--parameters--//
+            const int FRAMW_COUNT_X = 4;
+            const int FRAMW_COUNT_Y = 2;
+            static float logo_animation_speed = 0.05f;
+
+            int frame_x;
+            frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+#ifdef USE_IMGUI
+            ImGui::Begin("ClearProto");
+            if (ImGui::TreeNode("clear animation"))
+            {
+                ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+                ImGui::Text("timer:%f", clear_parameters.timer);
+                ImGui::Text("frame_x:%d", frame_x);
+                ImGui::Text("frame_y:%d", clear_parameters.frame_y);
+                ImGui::TreePop();
+            }
+            ImGui::End();
+#endif // USE_IMGUI
+            if (frame_x >= FRAMW_COUNT_X)
+            {
+                // 1行下のアニメーションへ
+                if (clear_parameters.frame_y < FRAMW_COUNT_Y - 1)
+                {
+                    clear_parameters.timer = 0;
+                    ++clear_parameters.frame_y;
+                }
+            }
+            else
+            {
+                // アニメーション
+                clear_parameters.clear.texpos.x = frame_x * clear_parameters.clear.texsize.x;
+                clear_parameters.clear.texpos.y = clear_parameters.frame_y * clear_parameters.clear.texsize.y;
+                clear_parameters.timer += elapsedTime_;
+            }
+        }
+        //if (clear_wait_timer < CLEAR_WAIT_TIME - 2.5f)
+        //{
+        //    clear_parameters.threshold = Math::lerp(clear_parameters.threshold, 1.5f, 2.0f * elapsedTime_);
+        //}
+
         if (clear_wait_timer < 0)
         {
             if (current_stage != STAGE_IDENTIFIER::BOSS) // クリア演出へ
@@ -172,22 +231,27 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
     //----------------------------------
     // TODO:藤岡が書いたところ3
     //----------------------------------
+    auto r_dissolve = [&](std::string g_name, SpriteDissolve* dissolve, SpriteArg& arg, float& threshold)
+    {
+#ifdef USE_IMGUI
+        ImGui::Begin(g_name.c_str());
+        ImGui::DragFloat2("pos", &arg.pos.x);
+        ImGui::DragFloat2("scale", &arg.scale.x, 0.1f);
+        ImGui::DragFloat("threshold", &threshold, 0.01f);
+        ImGui::End();
+#endif // USE_IMGUI
+        dissolve->begin(dc);
+        dissolve->render(dc, arg.pos, arg.scale, arg.pivot, arg.color, arg.angle, arg.texpos, arg.texsize, threshold);
+        dissolve->end(dc);
+    };
+    // clear_parameters
+    if (clear_flg && clear_wait_timer < CLEAR_WAIT_TIME - 1.0f)
+    {
+        r_dissolve("Clear", clear_parameters.sprite_clear.get(), clear_parameters.clear, clear_parameters.threshold);
+    }
 
     if (mWaveState == WaveState::Clear)
     {
-        auto r_dissolve = [&](std::string g_name, SpriteDissolve* dissolve, SpriteArg& arg, float& threshold)
-        {
-#ifdef USE_IMGUI
-            ImGui::Begin(g_name.c_str());
-            ImGui::DragFloat2("pos", &arg.pos.x);
-            ImGui::DragFloat2("scale", &arg.scale.x, 0.1f);
-            ImGui::DragFloat("threshold", &threshold, 0.01f);
-            ImGui::End();
-#endif // USE_IMGUI
-            dissolve->begin(dc);
-            dissolve->render(dc, arg.pos, arg.scale, arg.pivot, arg.color, arg.angle, arg.texpos, arg.texsize, threshold);
-            dissolve->end(dc);
-        };
         r_dissolve("Map", map.sprite.get(), map.arg, map.threshold);
         r_dissolve("player icon", player_icon.sprite.get(), player_icon.arg, player_icon.threshold);
         for (auto& arrow : arrows)
@@ -315,6 +379,8 @@ void WaveManager::fClearUpdate(float elapsedTime_)
         if (Math::equal_check(player_icon.threshold, 1.0f, 0.1f))
         {
             PostEffect::clear_post_effect();
+
+            clear_parameters.initialize();
             // クリア演出終了、次のステージへ
             fStartWave();
         }
@@ -379,11 +445,11 @@ void WaveManager::transition_reduction()
     clear_state = CLEAR_STATE::REDUCTION;
 
     clear_flg = false;
-    clear_wait_timer = 3.0f;
+    clear_wait_timer = CLEAR_WAIT_TIME;
 
     close = false;
     viewpoint = { 640.0f, 360.0f };
-    wait_timer = 2.5f;
+    wait_timer = 1.5f;
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
     arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
@@ -414,7 +480,7 @@ void WaveManager::update_reduction(float elapsed_time)
     player_icon.arg.scale = DirectX::XMFLOAT2(0.3f, 0.3f) * map.arg.scale;
 
     // 選択状態に遷移
-    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.001f))
+    if (Math::equal_check(map.arg.scale.x, arrival_scale.x, 0.01f))
     {
         transition_selection();
     }
@@ -575,7 +641,7 @@ void WaveManager::transition_enlargement()
 {
     clear_state = CLEAR_STATE::ENLARGEMENT;
 
-    wait_timer = 3.0f;
+    wait_timer = 2.0f;
     arrival_viewpoint = { 640.0f, 360.0f };
     arrival_scale     = { 6.0f, 6.0f };
 }
