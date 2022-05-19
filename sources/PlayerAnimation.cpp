@@ -238,6 +238,11 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //ChargeAcceleration(elapsed_time);
     //攻撃の加速の設定
     SetAccelerationVelocity();
+    //ブロックされていたら剣をふって怯む
+    if (is_block)
+    {
+        TransitionAttackType1(attack_animation_blends_speeds.y);
+    }
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
@@ -323,8 +328,34 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 {
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.16f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.11f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+
     if (model->end_of_animation())
     {
+
         is_attack = false;
         attack_time += attack_add_time * elapsed_time;
         //猶予時間を超えたら待機に遷移
@@ -362,6 +393,31 @@ void Player::AttackType1Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 {
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.25f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.26f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+
     charge_point = Math::calc_designated_point(position, forward, 200.0f);
     if (is_update_animation == false)
     {
@@ -391,7 +447,6 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
         }
 
     }
-
     if (model->end_of_animation())
     {
         attack_time += attack_add_time * elapsed_time;
@@ -432,8 +487,32 @@ void Player::AttackType2Update(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AttackType3Update(float elapsed_time, SkyDome* sky_dome)
 {
-    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+    if (is_awakening)
+    {
+        if (model->get_anim_para().animation_tick > 0.37f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.35f)
+        {
+            //ブロックされたかどうか
+            if (is_block)
+            {
+                is_block = false;
+                TransitionDamage();
+            }
+        }
+    }
 
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //敵に当たったか時間が2秒たったら加速を終わる
 
     if (is_update_animation == false)
@@ -1098,6 +1177,7 @@ void Player::TransitionOpportunity()
 
 void Player::TransitionDamage()
 {
+    PostEffect::clear_post_effect();
     velocity = {};
     //ダッシュエフェクトの終了
     start_dash_effect = false;

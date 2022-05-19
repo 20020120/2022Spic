@@ -819,7 +819,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 				check_mark_parm.is_threshold = false;
 				for (int i = 0; i < 50; ++i)
 				{
-					player->AddCombo(2,false);
+					bool fa = false;
+					player->AddCombo(2,fa);
 				}
 			}
 		}
