@@ -63,6 +63,9 @@ private:
 private:
     float mWaitTimer{}; // ‘Ò‚¿ŠÔ
     bool is_shield;
+    std::unique_ptr<Effect> mShieldEffect{ nullptr };
+    inline static const char* mkShieldPath = "./resources/Effect/shield.efk";
+
     //****************************************************************
     // 
     // ’è” 

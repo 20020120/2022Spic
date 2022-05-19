@@ -76,6 +76,7 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
     bool ret{ false };
     if(mInvincibleTime<=0.0f)
     {
+
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
         ret = true;
@@ -83,6 +84,8 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
     //HP���Ȃ��Ȃ��������S������
     if (mCurrentHitPoint <= 0)
     {
+        audio_manager->play_se(SE_INDEX::ENEMY_EXPLOSION);
+
         fDie(Graphics_);
     }
     return ret;

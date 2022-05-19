@@ -185,6 +185,8 @@ void SpearEnemy::fMoveUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 //--------------------<突進準備>--------------------//
 void SpearEnemy::fThrustBeginInit()
 {
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
     mpModel->play_animation(mAnimPara, AnimationName::attack_idle);
     mWaitTimer = 0.0f;
     mIsAttack = true;
@@ -201,6 +203,8 @@ void SpearEnemy::fThrustBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 //--------------------<槍を突き出すアニメーション>--------------------//
 void SpearEnemy::fThrustMiddleInit()
 {
+    audio_manager->play_se(SE_INDEX::SPEAR_RUSH);
+
     // 突き中のアニメーションを再生
     mpModel->play_animation(mAnimPara, AnimationName::attack_up);
     mWaitTimer = 0.0f;
