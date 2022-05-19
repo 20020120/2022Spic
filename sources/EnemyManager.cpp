@@ -442,7 +442,7 @@ void EnemyManager::fSpawn(EnemySource Source_, GraphicsPipeline& graphics_)
         BaseEnemy* enemy = new SpearEnemy_Ace(graphics_,
             Source_.mEmitterPoint,
             mEditor.fGetParam(Source_.mType));
-        mEnemyVec.emplace_back(enemy);
+        //mEnemyVec.emplace_back(enemy);
     }
         break;
     case EnemyType::Boss:
