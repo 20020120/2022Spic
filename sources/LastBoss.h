@@ -26,6 +26,7 @@ public:
         HumanToDragon, // 人型からドラゴンに遷移している途中（ダメージは受けない）
         Dragon,        // ドラゴン（体力の20%~0%）
         DragonDie,     // ドラゴン死ぬ
+        BossDieEnd,
     };
 
 private:
@@ -276,7 +277,7 @@ private:
 
     // ビームを発射する長さ
     float mBeamLength{};
-
+    float mStartBeamRadian{};
     //--------------------<レーザーポインター>--------------------//
     LaserBeam mShipPointer{};  // 船
     LaserBeam mRightPointer{}; // 右肩
@@ -316,7 +317,8 @@ private:
     DirectX::XMFLOAT4 mBeamRightOrientation{ 0.0f,0.0f,0.0f,1.0f };
     DirectX::XMFLOAT4 mBeamLeftOrientation{ 0.0f,0.0f,0.0f,1.0f };
 
-
+    float mAddRadian{};
+    bool mIsSpawnEnemy{};
     //****************************************************************
     // 
     // 定数
@@ -327,7 +329,7 @@ private:
     const float  mkShipBeamShootSec{ 5.0f }; // 戦艦のビームを発射している長さ
     const float  mkHumanDieIdleSec{ 5.0f };  // 人型の死亡時間
 
-    const float mkPercentToDragon{ 0.2f }; // ドラゴン形態に遷移する体力の割合
+    const float mkPercentToDragon{ 0.5f }; // ドラゴン形態に遷移する体力の割合
 
     const float mkWaitHeartEffect = 0.5f;
     const float mkHumanAllShotDelay{ 0.1f };

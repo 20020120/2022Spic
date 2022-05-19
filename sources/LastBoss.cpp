@@ -152,6 +152,12 @@ void LastBoss::fUpdateAttackCapsule()
 
 void LastBoss::fSetStun(bool Arg_, bool IsJust_)
 {
+    // ‘D‚Ìó‘Ô‚ÍƒXƒ^ƒ“‚µ‚È‚¢
+    if (mCurrentMode == Mode::Ship)
+    {
+        return;
+    }
+
     if(IsJust_)
     {
         mIsStun = true;
