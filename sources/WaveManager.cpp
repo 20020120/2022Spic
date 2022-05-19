@@ -117,6 +117,9 @@ void WaveManager::fInitialize(GraphicsPipeline& graphics_,AddBulletFunc Func_)
 
     clear_parameters.initialize();
 
+
+    game_clear = false;
+
     transition_reduction();
     //---ここまで--//
 }
@@ -206,8 +209,8 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
             else // ゲームクリア
             {
                 audio_manager->stop_all_bgm();
+                game_clear = true;
 
-                SceneManager::scene_switching(new SceneLoading(new SceneTitle()), DISSOLVE_TYPE::DOT, 2.0f);
                 return;
             }
         }
@@ -227,7 +230,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
         // クリア状態に遷移
-        if (mEnemyManager.fGetClearWave()) { clear_flg = true; }
+        if (mEnemyManager.fGetClearWave() || mEnemyManager.fGetBossClear()) { clear_flg = true; }
 
         break;
     case WaveState::Clear:

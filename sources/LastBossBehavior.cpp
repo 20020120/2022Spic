@@ -1265,7 +1265,7 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
     DirectX::XMFLOAT3 pos = mPosition + (Math::GetFront(mOrientation) * 20.0f);
     mpBeamEffect->set_position(effect_manager->get_effekseer_manager(), pos);
 
-    mAddRadian += DirectX::XMConvertToRadians(60.0f * elapsedTime_);
+    mAddRadian += DirectX::XMConvertToRadians(40.0f * elapsedTime_);
     const float radian = mStartBeamRadian + mAddRadian;
     const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
 

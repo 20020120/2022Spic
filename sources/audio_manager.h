@@ -61,6 +61,7 @@ enum class SE_INDEX
     TITLE_CUTTING,          //タイトル切れていく音
     DRAW_PEN,               //クリア、ゲームオーバーの音
     BOSS_EXPLOSION,         //ボス爆破音
+    GAUGE_MAX,              //覚醒ゲージMAX
 
     SE_COUNT
 };

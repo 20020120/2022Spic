@@ -208,6 +208,7 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/title_cutting.wav", SE_INDEX::TITLE_CUTTING, 0.1f);
 	register_se(L"resources/Audios/SE/draw_pen.wav", SE_INDEX::DRAW_PEN, 0.1f);
 	register_se(L"resources/Audios/SE/boss_explosion.wav", SE_INDEX::BOSS_EXPLOSION, 0.1f);
+	register_se(L"resources/Audios/SE/gauge_max.wav", SE_INDEX::GAUGE_MAX, 0.1f);
 
 }
 
