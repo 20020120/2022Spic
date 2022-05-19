@@ -191,6 +191,7 @@ void SpearEnemy::fThrustBeginInit()
 }
 void SpearEnemy::fThrustBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 5.0f);
     mWaitTimer += elapsedTime_;
    if(mWaitTimer>=mThrustBeginSec)
    {
@@ -207,6 +208,7 @@ void SpearEnemy::fThrustMiddleInit()
 
 void SpearEnemy::fThrustMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    fTurnToPlayer(elapsedTime_, 5.0f);
     mWaitTimer += elapsedTime_;
     if(mWaitTimer >= mThrustMiddleSec)
     {
@@ -225,9 +227,14 @@ void SpearEnemy::fThrustEndUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     // 正面方向に突撃する
     const auto V = Math::GetFront(mOrientation) * mThrustSpeed * elapsedTime_;
     mPosition += V;
+    mAttackCapsule.mBottom = {
+        mPosition.x,
+        mPosition.y + 8.0f,
+        mPosition.z,
+    };
+    mAttackCapsule.mTop = mAttackCapsule.mBottom + (Math::GetFront(mOrientation) * 15.0f);
+    mAttackCapsule.mRadius = 5.0f;
 
-    // 突進中はプレイヤーの方向に軽くホーミングする
-    fTurnToPlayer(elapsedTime_,5.0f);
 
     mWaitTimer += elapsedTime_;
     if (mWaitTimer >= mThrustEndSec)
