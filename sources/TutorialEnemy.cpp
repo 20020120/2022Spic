@@ -362,7 +362,7 @@ void TutorialEnemy::fStunInit()
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
 
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
-    mIsAttack = true;
+    mIsAttack = false;
     mTimer = 0;
 }
 
