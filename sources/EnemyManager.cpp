@@ -786,25 +786,26 @@ void EnemyManager::fRegisterCash(GraphicsPipeline& graphics_)
     // ƒLƒƒƒbƒVƒ…‚Éƒ‚ƒfƒ‹‚ð“o˜^
     BaseEnemy* enemy = new SwordEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new ArcherEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new ShieldEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new SpearEnemy(graphics_);
     mCashEnemyVec.emplace_back(enemy);
-    enemy = new SpearEnemy(graphics_);
-    mCashEnemyVec.emplace_back(enemy);
+
     enemy = new ArcherEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new ShieldEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new SpearEnemy_Ace(graphics_);
     mCashEnemyVec.emplace_back(enemy);
+
     enemy = new SwordEnemy_Ace(graphics_);
-    mCashEnemyVec.emplace_back(enemy);
-    enemy = new LastBoss(graphics_);
-    mCashEnemyVec.emplace_back(enemy);
-    enemy = new TutorialEnemy_NoAttack(graphics_);
     mCashEnemyVec.emplace_back(enemy);
 }
 
