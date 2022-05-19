@@ -909,7 +909,6 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		end_tutorial_text_timer += 1.0f * elapsed_time;
 		tutorial_check_text = L"自由に練習する";
-		tutorial_skip_text = L"チュートリアル終了";
 		change_scene_txt.color = { 1.0f,1.0f,1.0f,1.0f };
 		//チュートリアル終了の文字の位置を再設定
 		change_scene_txt.position = { 116.7f,282.0f };
