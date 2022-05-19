@@ -1368,7 +1368,9 @@ void Player::TransitionStageMove()
 {
     position = { 0.0f,0.0f,20.0f };
     //ステージ遷移の時に回復する
-    player_health += RECOVERY_HEALTH;
+    const float health = static_cast<float>(player_health) /static_cast<float>(MAX_HEALTH);
+    if (health < 0.7f) player_health = MAX_HEALTH * 0.7;
+    //player_health += RECOVERY_HEALTH;
     velocity = {};
     //移動のアニメーションにする()
     model->play_animation(AnimationClips::TransformWing, false);
