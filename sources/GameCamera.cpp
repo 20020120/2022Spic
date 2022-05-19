@@ -138,7 +138,8 @@ void GameCamera::gameUpdate(float elapsedTime)
 
 	if(boss_animation)
 	{
-		DirectX::XMVECTOR EyeVector = DirectX::XMVector3Normalize(PlayerPosition) * 10 + PlayerUp * up1;
+		DirectX::XMVECTOR EyeVector = DirectX::XMVector3Normalize(PlayerPosition) * 10 + PlayerUp * 1;
+		EyeVector = DirectX::XMVector3Normalize(EyeVector);
 		DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 		boss_animation = false;
 	}
