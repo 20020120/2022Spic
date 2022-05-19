@@ -230,6 +230,8 @@ private:
         int frame_y     = 0;
         bool start_anim = false;
 
+        bool se_play = false;
+
         void initialize()
         {
             clear.color.w = 0.0f;
@@ -239,6 +241,7 @@ private:
             timer      = 0;
             frame_y    = 0;
             start_anim = false;
+            se_play    = false;
         }
     };
     ClearParameters clear_parameters;
