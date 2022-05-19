@@ -265,7 +265,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         mAnimationSpeed = 1.0f;
         return;
     }
-
+    
     // ステージの限界値を反映
     if(fLimitStageHuman(elapsedTime_))
     {
@@ -1218,19 +1218,28 @@ void LastBoss::fDragonBeamShotInit()
     float dot = Math::Dot(front, worldFront);
     mStartBeamRadian = acosf(dot);
     mAddRadian = 0.0f;
+    mIsAttack = true;
+    mBeamLength = 0.0f;
 }
 
-void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
+void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, 
+    GraphicsPipeline& Graphics_)
 {
     mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
-
     const float radian = mStartBeamRadian + mAddRadian;
-
     const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
-    fTurnToTarget(elapsedTime_, 10.0f, beamFront);
 
+    mBeamLength += elapsedTime_ * 100.0f;
+
+    mAttackCapsule.mBottom = mPosition;
+    mAttackCapsule.mTop = 
+        mPosition + (Math::GetFront(mOrientation) * mBeamLength);
+    mAttackCapsule.mRadius = 20.0f;
+
+    fTurnToTarget(elapsedTime_, 10.0f, beamFront);
     if (mAddRadian >= DirectX::XMConvertToRadians(360.0f))
     {
+        mIsAttack = false;
         fChangeState(DivideState::DragonIdle);
     }
 }
@@ -1330,7 +1339,7 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mDissolve = (std::max)(0.0f, mDissolve);
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
     const DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f };
-    mpModel->render(graphics.get_dc().Get(), mAnimPara, world, color, mDissolve);
+    mpModel->render(graphics.get_dc().Get(), mAnimPara, world, color, mDissolve,0.0f,{1.0f,1.0f,1.0f,1.0f},0.8f,cameraTuple);
 
 
 

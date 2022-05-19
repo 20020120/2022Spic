@@ -19,6 +19,7 @@ float Power,const DirectX::XMFLOAT3& Target_)
     mBulletData.mLengthFromPositionB = 1.0f;
     mBulletData.mLengthFromPositionA = 1.0f;
     mBulletData.mDamage = 10;
+    mBulletData.mInvincible_time = 1.0f;
 }
 
 
