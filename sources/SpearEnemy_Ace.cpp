@@ -195,6 +195,8 @@ void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Gra
 void SpearEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = mStunTime;
     mIsAttack = false;
 }
@@ -204,6 +206,8 @@ void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
     if(mWaitTimer<=0.0f)
     {
         fChangeState(DivideState::Idle);
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
         mIsStun = false;
     }
 }

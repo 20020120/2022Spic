@@ -105,6 +105,10 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	purple_threshold = 0;
 	red_threshold = 0;
 
+
+	sky_dome->set_purple_threshold(0);
+	sky_dome->set_red_threshold(0);
+
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::GAME);
 }
@@ -143,6 +147,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	//ゲームオーバー,ゲームクリアの時は止める
 	if (is_game_over) return;
 	if (is_game_clear) return;
+	// ゲームクリア
+	if (mWaveManager.get_game_clear()) { is_game_clear = true; }
+
 	// option
 	if (option->get_validity())
 	{
