@@ -788,6 +788,7 @@ private:
     void TransitionTutorialAwaikingEvent();
     void TransitionTutorialAwaikingEventIdle();
     bool awaiking_event{ false };
+    bool awaiking_se{ false };
     //ƒ_ƒ[ƒWó‚¯‚½‚Æ‚«‚É‘JˆÚ
     void TransitionTutorialDamage();
 
