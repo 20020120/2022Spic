@@ -242,8 +242,9 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
 void LastBoss::fHumanIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::human_idle, false, true, 0.3f, 1.5f);
+    mpModel->play_animation(mAnimPara, AnimationName::human_idle, true, true, 0.3f, 1.5f);
     mAnimationSpeed = 1.5f;
+    mTimer = 2.0f;
 }
 
 void LastBoss::fHumanIdleUpdate(float elapsedTime_, 
@@ -253,7 +254,11 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
 
    // 条件に応じて攻撃手段を分岐させる
 
-    if (!mpModel->end_of_animation(mAnimPara)) return;
+    mTimer -= elapsedTime_;
+    if (mTimer >= 0.0f)
+    {
+        return;
+    }
 
     //--------------------<アニメーションが終了したら>--------------------//
 
@@ -838,20 +843,23 @@ void LastBoss::fHumanDieMiddleInit()
     mTimer = mkHumanDieIdleSec;
     mRgbColorPower = 0.0f;
     mHeartTimer = 0.0f;
+    mPerformThresold = 0.0f;
 }
 
 void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     // RGBずらしで心臓のどくどくを演出する
     mTimer -= elapsedTime_;
-    
-    PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower);
+    mPerformThresold += elapsedTime_ * 0.5f;
+    mPerformThresold = (std::min)(0.15f, mPerformThresold);
+    PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower, mPerformThresold);
     if(mHeartTimer<=0.0f)
     {
         mRgbColorPower += mRgbColorSpeed * elapsedTime_;
         if (mRgbColorPower > 1.0f)
         {
             mRgbColorSpeed *= -1.0f;
+            audio_manager->play_se(SE_INDEX::HEART_BEAT);
         }
         if (mRgbColorPower < 0.0f)
         {
@@ -890,8 +898,8 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 
 void LastBoss::fDragonIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle);
-    mTimer = 0.0f;
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_idle, true);
+    mTimer = 1.0f;
     mCurrentMode = Mode::Dragon;
     mDragonBreathCount = 0;
     mAnimationSpeed = 5.0f;
@@ -899,10 +907,11 @@ void LastBoss::fDragonIdleInit()
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    if (mpModel->end_of_animation(mAnimPara) == false)
-    {
-        return;;
-    }
+    mTimer -= elapsedTime_;
+   if(mTimer>=0.0f)
+   {
+       return;
+   }
 
     const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
@@ -915,7 +924,7 @@ void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
     {
         fChangeState(DivideState::DragonRushHide);
     }
-    else if(randNumber>4)
+    else if(randNumber>2)
     {
         fChangeState(DivideState::DragonBeamStart);
     }

@@ -28,7 +28,7 @@
             "value": {
                 "MaxHp": 200,
                 "AttackPower": 3,
-                "InvincibleTime": 0.4000000238418579,
+                "InvincibleTime": 0.40000003576278689,
                 "BodyCapsuleRad": 40.0,
                 "AttackCapsuleRad": 0.0,
                 "StunTime": 0.0
