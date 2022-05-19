@@ -56,11 +56,11 @@ public:
 
 inline void TutorialEnemy_NoAttack::fSetStun(bool Arg_, bool IsJust_)
 {
-    if(Arg_)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivideState::Stun);
     }
-    mIsStun = Arg_;
 }
 
 
@@ -128,11 +128,11 @@ public:
 
 inline void TutorialEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
-    if (Arg_)
+    if (!mIsStun)
     {
+        mIsStun = Arg_;
         fChangeState(DivideState::Stun);
     }
-    mIsStun = Arg_;
 }
 
 

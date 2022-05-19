@@ -115,7 +115,7 @@ private:
     //突進の時のアニメーションスピード
     static constexpr float CHARGE_ANIMATION_SPEED = 2.0f;
     //攻撃1の時のアニメーションスピード
-    static constexpr float ATTACK1_ANIMATION_SPEED = 4.5f;
+    static constexpr float ATTACK1_ANIMATION_SPEED = 2.5f;
     //攻撃2の時のアニメーションスピード
     static constexpr float ATTACK2_ANIMATION_SPEED = 4.5f;
     //攻撃3の時のアニメーションスピード
@@ -260,6 +260,8 @@ private:
     bool is_awakening{ false };
     //突進中かどうか
     bool is_charge{ false };
+    //ブロックされたかどうか
+    bool is_block{ false };
     //プレイヤーのアニメーションスピード
     float animation_speed{ 1.0f };
     //突進の加速用のvelocity
@@ -385,9 +387,9 @@ public:
     //一番近い敵を持って来てその位置をセットする
     void SetTarget(BaseEnemy* target_enemy);
     DirectX::XMFLOAT3 GetTarget() { return target; };
-    void AddCombo(int count, bool block);
+    void AddCombo(int count, bool& block);
     //覚醒状態の時は２つ当たり判定があるから引数が２つ
-    void AwakingAddCombo(int hit_count1, int hit_count2, bool block = false);
+    void AwakingAddCombo(int hit_count1, int hit_count2, bool& block);
     //--------------------<敵からダメージを受ける>--------------------//
     void DamagedCheck(int damage, float InvincibleTime);
     void TutorialDamagedCheck(int damage, float InvincibleTime);

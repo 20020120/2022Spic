@@ -498,6 +498,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::Text("behind_test_timer,%.2f", behind_test_timer);
             ImGui::Text("behind_speed,%.2f", behind_speed);
             ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
+            ImGui::Checkbox("is_block", &is_block);
             ImGui::End();
         }
     }
@@ -1002,9 +1003,10 @@ void Player::SetTarget( BaseEnemy* target_enemies)
 
 }
 
-void Player::AddCombo(int count, bool block)
+void Player::AddCombo(int count, bool& block)
 {
-    if (block) TransitionDamage();
+    //ブロックされたかどうかを
+    is_block = block;
     if (count != 0)
     {
         //もしブロックされていたら怯む
@@ -1021,12 +1023,13 @@ void Player::AddCombo(int count, bool block)
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 }
 
-void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool block)
+void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 {
+    //ブロックされたかどうかを
+    is_block = block;
     if (hit_count1 != 0 || hit_count2 != 0)
     {
         //もしブロックされていたら怯む
-        if (block) TransitionDamage();
         combo_count += static_cast<float>(hit_count1 + hit_count2);
         //if (is_special_surge) special_surge_combo_count += static_cast<float>(count);//ゲージ消費の突進中に当たった数を保存
         is_enemy_hit = true;
@@ -1063,6 +1066,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ダメージ処理
     player_health -= damage;
+    audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
     // 死亡した時の処理
