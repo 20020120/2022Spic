@@ -319,6 +319,7 @@ private:
 
     float mAddRadian{};
     bool mIsSpawnEnemy{};
+    float mDragonBeamLength{};
     //****************************************************************
     // 
     // ’è”

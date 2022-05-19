@@ -202,7 +202,7 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/rock_on.wav", SE_INDEX::ROCK_ON, 0.1f);
 	register_se(L"resources/Audios/SE/player_rush.wav", SE_INDEX::PLAYER_RUSH, 0.1f);
 	register_se(L"resources/Audios/SE/spear_rush.wav", SE_INDEX::SPEAR_RUSH, 0.1f);
-	register_se(L"resources/Audios/SE/boss_rush.wav", SE_INDEX::BOSS_RUSH, 0.1f);
+	register_se(L"resources/Audios/SE/boss_rush.wav", SE_INDEX::BOSS_RUSH, 0.1f, LOOP_INFINITY);
 	register_se(L"resources/Audios/SE/title_cut.wav", SE_INDEX::TITLE_CUT , 0.1f);
 	register_se(L"resources/Audios/SE/title_cutting.wav", SE_INDEX::TITLE_CUTTING, 0.1f);
 

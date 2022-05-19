@@ -153,7 +153,7 @@ void LastBoss::fUpdateAttackCapsule()
 void LastBoss::fSetStun(bool Arg_, bool IsJust_)
 {
     // ‘D‚Ìó‘Ô‚ÍƒXƒ^ƒ“‚µ‚È‚¢
-    if (mCurrentMode == Mode::Ship)
+    if (mCurrentMode == Mode::Ship || mPosition.y >= 10.0f)
     {
         return;
     }
