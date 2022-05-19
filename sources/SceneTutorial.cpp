@@ -456,9 +456,9 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 	//--------<ui>--------//
 	graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	// enemy_hp_gauge
-	enemy_hp_gauge->render(graphics.get_dc().Get());
+	if (player->GetTutorialEvent() == false)enemy_hp_gauge->render(graphics.get_dc().Get());
 	// reticle
-	reticle->render(graphics.get_dc().Get());
+	if (player->GetTutorialEvent() == false)reticle->render(graphics.get_dc().Get());
 	// wave
 	//wave->render(graphics.get_dc().Get());
 	Camera* c = cameraManager->GetCurrentCamera();

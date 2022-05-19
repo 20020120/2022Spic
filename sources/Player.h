@@ -109,7 +109,7 @@ private:
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 30.0f;
     //回避の時のアニメーションスピード
-    static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.0f;
+    static constexpr float AVOIDANCE_ANIMATION_SPEED = 2.0f;
     //突進開始の時のアニメーションスピード
     static constexpr float CHARGEINIT_ANIMATION_SPEED = 5.5f;
     //突進の時のアニメーションスピード

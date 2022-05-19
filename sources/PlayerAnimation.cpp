@@ -90,7 +90,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             //ジャスト回避なら
-            if (is_just_avoidance_capsul)
+            if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
             {
                 TransitionJustBehindAvoidance();
             }
@@ -132,7 +132,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
         if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
         {
             //ジャスト回避なら
-            if (is_just_avoidance_capsul)
+            if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
             {
                 TransitionJustBehindAvoidance();
             }
@@ -826,6 +826,7 @@ void Player::TransitionAvoidance()
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position,0.3f);
+    player_air_registance_effec->set_speed(effect_manager->get_effekseer_manager(), AVOIDANCE_ANIMATION_SPEED);
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -859,7 +860,7 @@ void Player::TransitionAvoidance()
     //攻撃中かどうかの設定
     is_attack = false;
     //アニメーションの速度
-    animation_speed = 1.0f;
+    animation_speed = AVOIDANCE_ANIMATION_SPEED;
     //アニメーションをしていいかどうか
     is_update_animation = true;
     //回避状態の時の更新関数に切り替える
