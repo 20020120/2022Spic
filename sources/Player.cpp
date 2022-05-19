@@ -842,6 +842,15 @@ void Player::InflectionCombo(float elapsed_time)
     {
         combo_count -= elapsed_time * 2.0f;
     }
+    if (combo_max_se == false && combo_count >= MAX_COMBO_COUNT - 5.0f)
+    {
+        audio_manager->play_se(SE_INDEX::GAUGE_MAX);
+        combo_max_se = true;
+    }
+    if (combo_count < MAX_COMBO_COUNT - 5.0f)
+    {
+        combo_max_se = false;
+    }
     combo_count = Math::clamp(combo_count, 0.0f, MAX_COMBO_COUNT);
 
     //if (duration_combo_timer < 0 && combo_count > 0) duration_combo_timer = 5.0f;

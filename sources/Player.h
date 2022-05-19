@@ -252,6 +252,8 @@ private:
     int player_attack_power{ 3 };
     //コンボ数
     float combo_count{ 0 };
+    //コンボゲージSE
+    bool combo_max_se{ false };
     //ゲージ消費の突進中に当たった数
     float special_surge_combo_count{ 0 };
     //プレイヤーが今攻撃中かそうでないか
