@@ -7,7 +7,7 @@ StraightBullet::StraightBullet(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 In
     mLifeTime = 10.0f;
     mPosition = InitPoint_;
     mVelocity = mVelocity_;
-    mScale = { 0.2f,0.2f,0.2f };
+    mScale = { 0.8f,0.8f,0.8f };
     // 進行方向から弾の回転値を計算する
     DirectX::XMFLOAT3 up{ 0.001f,1.0f,0.0f };
     up = Math::Normalize(up);

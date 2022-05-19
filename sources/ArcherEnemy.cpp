@@ -350,6 +350,8 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 void ArcherEnemy::fAttackBeginInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_ready);
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
     mStayTimer = 0.0f;
 }
 

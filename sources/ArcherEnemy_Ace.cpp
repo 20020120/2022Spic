@@ -21,7 +21,7 @@ ArcherEnemy_Ace::ArcherEnemy_Ace(GraphicsPipeline& Graphics_,
     // 位置を初期化
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.03f,0.03f,0.03f };
+    mScale = { 0.05f,0.05f,0.05f };
     //パラメーターの初期化
     fParamInitialize();
     fRegisterFunctions();
@@ -350,6 +350,8 @@ void ArcherEnemy_Ace::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Gra
 void ArcherEnemy_Ace::fAttackBeginInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_ready);
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
     mStayTimer = 0.0f;
 }
 
@@ -425,6 +427,8 @@ void ArcherEnemy_Ace::fStunInit()
     mpModel->play_animation(mAnimPara, AnimationName::damage, false);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mStayTimer = 0;
 
 }
