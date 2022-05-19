@@ -102,6 +102,18 @@ void SpearEnemy_Ace::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::WipeAttack, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun, tuple));
+    }
     fChangeState(DivideState::Start);
 }
 

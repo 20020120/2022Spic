@@ -1338,6 +1338,7 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
 
 void LastBoss::fStunInit()
 {
+    audio_manager->stop_all_se();
     mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mIsAttack = false;
     mAttackCapsule.mRadius = 0.0f;
