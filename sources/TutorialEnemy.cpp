@@ -135,6 +135,9 @@ void TutorialEnemy_NoAttack::fMoveUpdate(float elapsedTime_, GraphicsPipeline& G
 void TutorialEnemy_NoAttack::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+
     mTimer = mStunTime;
 }
 
@@ -144,6 +147,7 @@ void TutorialEnemy_NoAttack::fStunUpdate(float elapsedTime_, GraphicsPipeline& G
 
     if(mTimer<=0.0f)
     {
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
         mIsStun = false;
         fChangeState(DivideState::Idle);
     }
