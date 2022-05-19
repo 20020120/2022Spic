@@ -28,6 +28,7 @@ void LastBoss::fShipIdleInit()
 {
     mTimer = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::ship_idle, true);
+    mIsSpawnEnemy = false;
 }
 
 void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -39,8 +40,17 @@ void LastBoss::fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
        fChangeState(DivideState::ShipBeamStart);
    }
 
-    // ランダムな敵を出現させる
-
+    const int t = static_cast<int>(mTimer * 10);
+   if (!mIsSpawnEnemy && t % 10 == 0)
+   {
+       // ランダムな敵を出現させる
+       mpEnemyManager->fCreateRandomEnemy(Graphics_, mPlayerPosition);
+       mIsSpawnEnemy = true;
+   }
+   if(mIsSpawnEnemy && t % 10 == 9)
+   {
+       mIsSpawnEnemy = false;
+   }
 
 }
 
@@ -65,7 +75,6 @@ void LastBoss::fShipBeamStartInit()
 
 void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-
     mMoveThreshold += elapsedTime_ * 5.0f;
     mMoveThreshold = (std::min)(1.1f, mMoveThreshold);
     mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
@@ -148,8 +157,8 @@ void LastBoss::fShipBeamShootInit()
     float d = Math::Dot(normVec, pos - mPosition);
 
     mBeamEffectPosition = mPosition + (normVec * d);
-    mpBeamEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 10);
-    mpBeamBaseEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 15);
+    mpBeamEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 8);
+    mpBeamBaseEffect->play(effect_manager->get_effekseer_manager(), mBeamEffectPosition, 8);
 
     // ＳＥ再生
     audio_manager->play_se(SE_INDEX::BOSS_BEAM);
@@ -187,7 +196,7 @@ void LastBoss::fShipBeamShootUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     mAttackCapsule.mRadius = 10.0f;
 
 
-    fTurnToPlayer(elapsedTime_,2.0f);
+    fTurnToPlayer(elapsedTime_,4.0f);
     // TODO : ここで激しいカメラシェイク
     mTimer -= elapsedTime_;
     if(mTimer<=0.0f)
@@ -249,18 +258,10 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
     //--------------------<アニメーションが終了したら>--------------------//
 
      // 体力が９割を下回ったら以下きめの必殺技
-    if (!mFirstSp && fComputePercentHp() < 0.9f)
+    if (!mFirstSp && fComputePercentHp() < 0.7f)
     {
         fChangeState(DivideState::HumanSpAway);
         mFirstSp = true;
-        mAnimationSpeed = 1.0f;
-        return;
-    }
-    // 体力が５割を下回ったら必殺技
-    if (!mSecondSp && fComputePercentHp() <= 0.5f)
-    {
-        fChangeState(DivideState::HumanSpAway);
-        mSecondSp = true;
         mAnimationSpeed = 1.0f;
         return;
     }
@@ -308,7 +309,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         }
         else
         {
-            fChangeState(DivideState::HumanIdle);
+            fChangeState(DivideState::HumanRush);
             mAnimationSpeed = 1.0f;
             return;
         }
@@ -1215,15 +1216,15 @@ void LastBoss::fDragonBeamShotInit()
     auto front = Math::Normalize(Math::GetFront(mOrientation));
     DirectX::XMFLOAT3 worldFront = { 0.0f,0.0f,1.0f };
     float dot = Math::Dot(front, worldFront);
-    //mBeamStartRadian = acosf(dot);
-    //mAddRadian = 0.0f;
+    mStartBeamRadian = acosf(dot);
+    mAddRadian = 0.0f;
 }
 
 void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    /*mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
+    mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
 
-    const float radian = mBeamStartRadian + mAddRadian;
+    const float radian = mStartBeamRadian + mAddRadian;
 
     const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
     fTurnToTarget(elapsedTime_, 10.0f, beamFront);
@@ -1231,7 +1232,7 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, GraphicsPipeline& Graph
     if (mAddRadian >= DirectX::XMConvertToRadians(360.0f))
     {
         fChangeState(DivideState::DragonIdle);
-    }*/
+    }
 }
 
 
@@ -1274,6 +1275,8 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
     {
         mIsAlive = false;
         BaseEnemy::fDie(Graphics_);
+        mCurrentMode = Mode::BossDieEnd;
+        mpEnemyManager->fSetBossMode(mCurrentMode);
     }
 }
 

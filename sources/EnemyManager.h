@@ -97,7 +97,7 @@ public:
 
     // ボスから呼び出す
     void fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_);
-
+    void fCreateRandomEnemy(GraphicsPipeline& Graphics_, DirectX::XMFLOAT3 SeedPosition_);
 
 
      // チュートリアルで呼び出す関数
@@ -170,7 +170,7 @@ private:
     // ボスがユニットを召喚
     bool mIsReserveBossUnit{};
     std::vector<DirectX::XMFLOAT3> mUnitEntryPointVec{};
-
+    std::vector<EnemySource> mReserveVec{};
     //--------------------<ボス関連の変数>--------------------//
     LastBoss::Mode mCurrentMode{ LastBoss::Mode::None };
     bool mIsBossEvent{};// イベント中

@@ -89,6 +89,17 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 
     //--------------------<ボスが敵を召喚する>--------------------//
     fCreateBossUnit(graphics_);
+
+    bool isCreate{};
+    for (const auto& source : mReserveVec)
+    {
+        isCreate = true;
+        fSpawn(source, graphics_);
+    }
+    if(isCreate)
+    {
+        mReserveVec.clear();
+    }
 }
 
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
@@ -127,6 +138,8 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             {
                 if(enemy->fDamaged(PlayerAttackPower_, 0.1f,Graphics_,elapsedTime_))
                 {
+                    audio_manager->play_se(SE_INDEX::ATTACK_SWORD);
+
                     //攻撃を防がれたら即リターン
                     hitCounts++;
                 }
@@ -485,6 +498,45 @@ void EnemyManager::fReserveBossUnit(std::vector<DirectX::XMFLOAT3> Vec_)
         mIsReserveBossUnit = true;
         mUnitEntryPointVec = Vec_;
     }
+}
+
+void EnemyManager::fCreateRandomEnemy(
+    GraphicsPipeline& Graphics_,
+    DirectX::XMFLOAT3 SeedPosition_)
+{
+    if(mEnemyVec.size()>30)
+    {
+        return;
+    }
+
+    // 乱数で敵のタイプを取得
+    std::mt19937 mt{ std::random_device{}() };
+    const std::uniform_int_distribution<int> RandTargetAdd(0, 10);
+    int randNumber = RandTargetAdd(mt);
+
+    // チュートリアルの敵なら違う敵を出す
+    if (randNumber == 9 || randNumber == 8)
+    {
+        randNumber = 10;
+    }
+
+    EnemySource source;
+
+    const std::uniform_int_distribution<int> RandTargetAdd2(-5, 5);
+    const int randPosition = RandTargetAdd2(mt);
+    const int randPositionX = RandTargetAdd2(mt);
+    const int randPositionY = RandTargetAdd2(mt);
+    source.mEmitterPoint = 
+    {
+        SeedPosition_.x+
+        (static_cast<float>(randPosition)* static_cast<float>(randPositionX)),
+        0.0f,
+        SeedPosition_.z+
+        static_cast<float>(randPosition)* static_cast<float>(randPositionY),
+    };
+
+    source.mType = static_cast<EnemyType>(randNumber);
+    mReserveVec.emplace_back(source);
 }
 
 void EnemyManager::fSort(std::function<bool(const BaseEnemy* A_, const BaseEnemy* B_)> Function_)

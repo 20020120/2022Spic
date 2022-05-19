@@ -18,6 +18,7 @@ float Power,const DirectX::XMFLOAT3& Target_)
     mBulletData.mRadius = 20.0f;
     mBulletData.mLengthFromPositionB = 1.0f;
     mBulletData.mLengthFromPositionA = 1.0f;
+    mBulletData.mDamage = 10;
 }
 
 
