@@ -1066,6 +1066,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ƒ_ƒ[ƒWˆ—
     player_health -= damage;
+    audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
     // €–S‚µ‚½‚Ìˆ—
