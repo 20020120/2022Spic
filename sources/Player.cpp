@@ -1061,7 +1061,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (behavior_state != Behavior::Chain && damage >= 10.0f) TransitionDamage();
+    if (behavior_state != Behavior::Chain && damage >= 5.0f) TransitionDamage();
     //無敵時間設定
     invincible_timer = InvincibleTime;
     //ダメージ処理
@@ -1099,7 +1099,7 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     //もし回避中ならダメージ減少
     if (is_avoidance) damage -= AVOIDANCE_DAMAGE_INV;
     //ダメージが10より大きかったら怯む
-    if (behavior_state != Behavior::Chain && damage > 10.0f) TransitionTutorialDamage();
+    if (behavior_state != Behavior::Chain && damage > 5.0f) TransitionTutorialDamage();
 
     //無敵時間設定
     invincible_timer = InvincibleTime;
