@@ -301,6 +301,7 @@ private:
         Cross,//十字ボタン
         Menu,//メニューボタン
         Back,//バックボタン
+        Back2,//バックボタン
 
         End
     };
@@ -312,6 +313,10 @@ private:
     Element controller_pram;
     Element controller_back_pram;
     Element controller_b_pram;
+    Element controller_back_button_pram;
+    float back_button_rate{ 0 };
+    bool back_button_move_change{ false };
+
 private:
     //スタンしている敵がいなかったら増えていく
     float is_stun_timer{ 0 };
