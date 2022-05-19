@@ -1153,6 +1153,8 @@ void Player::TransitionTutorialJustBehindAvoidance()
     is_just_avoidance = true;
     //HP回復する
     player_health += JUST_AVOIDANCE_HEALTH;
+    //コンボゲージ増やす
+    combo_count += JUST_AVOIDANCE_COMBO;
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -1451,7 +1453,12 @@ void Player::TutorialAwaiking()
         {
             if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaikingEvent();//イベントの覚醒
         }
-        if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();
+        if (is_awakening && combo_count <= 0)
+        {
+            //覚醒状態かどうかの設定
+            is_awakening = false;
+            TransitionTutorialInvAwaiking();
+        }
     }
     else
     {
@@ -1462,7 +1469,12 @@ void Player::TutorialAwaiking()
             {
                 if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaiking();//コンボカウントが最大のときは覚醒状態になる
             }
-            if (is_awakening && combo_count <= 0) TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
+            if (is_awakening && combo_count <= 0)
+            {
+                //覚醒状態かどうかの設定
+                is_awakening = false;
+                TransitionTutorialInvAwaiking();//覚醒状態のときにカウントが0になったら通常状態になる
+            }
         }
     }
 }
