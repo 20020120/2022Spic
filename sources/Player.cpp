@@ -1273,6 +1273,8 @@ void Player::SpecialSurgeAcceleration()
 
 void Player::LockOn()
 {
+    if (condition_state == ConditionState::Die) return;
+
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
@@ -1336,6 +1338,8 @@ void Player::LockOn()
 
 void Player::TutorialLockOn()
 {
+    if (condition_state == ConditionState::Die) return;
+
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {

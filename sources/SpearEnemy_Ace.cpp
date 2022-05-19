@@ -184,6 +184,7 @@ void SpearEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
     mWaitTimer = mStunTime;
+    mIsAttack = false;
 }
 void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
 {

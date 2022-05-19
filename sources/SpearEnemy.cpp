@@ -123,6 +123,7 @@ void SpearEnemy::fStartInit()
     mpModel->play_animation(mAnimPara, AnimationName::idle, true);
     // 汎用タイマーを初期化
     mWaitTimer = 0.0f;
+    mIsAttack = false;
 }
 
 void SpearEnemy::fStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
