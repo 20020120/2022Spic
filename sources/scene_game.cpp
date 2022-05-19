@@ -302,6 +302,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	last_boss_mode = enemyManager->fGetBossMode();
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::Ship)
 	{
+		c->boss_animation = true;
+		player->SetPosition({ 0,0,-120.0f });
 		//プレイヤーの行動範囲変更.
 		player->ChangePlayerJustificationLength();
 		audio_manager->stop_all_bgm();
