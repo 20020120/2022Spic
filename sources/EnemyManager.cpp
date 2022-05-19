@@ -16,6 +16,7 @@
 #include"TutorialEnemy.h"
 #include"SwordEnemyAce.h"
 #include"BossUnit.h"
+#include "game_icon.h"
 
 #include"imgui_include.h"
 #include "user.h"
@@ -65,7 +66,7 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     // カメラシェイク
     if(mCameraShakeTime>0.0f)
     {
-        camera_shake->shake(graphics_, elapsedTime_);
+        if (GameFile::get_instance().get_shake()) camera_shake->shake(graphics_, elapsedTime_);
     }
     mCameraShakeTime -= elapsedTime_;
     mCameraShakeTime = (std::max)(0.0f, mCameraShakeTime);
@@ -154,7 +155,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
             }
         }
     }
-    
+
     return hitCounts;
 }
 
@@ -219,7 +220,7 @@ bool EnemyManager::fCalcEnemiesAttackVsPlayerCounter(DirectX::XMFLOAT3 PlayerCap
 
 void EnemyManager::fCalcPlayerStunVsEnemyBody(const DirectX::XMFLOAT3 PlayerPosition_, float Radius_)
 {
-    
+
     if(Radius_<=0.0f)
     {
         return;
@@ -526,7 +527,7 @@ void EnemyManager::fCreateRandomEnemy(
     const int randPosition = RandTargetAdd2(mt);
     const int randPositionX = RandTargetAdd2(mt);
     const int randPositionY = RandTargetAdd2(mt);
-    source.mEmitterPoint = 
+    source.mEmitterPoint =
     {
         SeedPosition_.x+
         (static_cast<float>(randPosition)* static_cast<float>(randPositionX)),
@@ -583,7 +584,7 @@ void EnemyManager::fCollisionEnemyVsEnemy()
             capsule1.mRadius *= mAdjustmentEnemies;
             capsule2.mRadius *= mAdjustmentEnemies;
 
-            
+
             const bool result=Collision::capsule_vs_capsule(
                 capsule1.mTop, capsule1.mBottom, capsule1.mRadius,
                 capsule2.mTop, capsule2.mBottom, capsule2.mRadius);
@@ -613,7 +614,7 @@ void EnemyManager::fCollisionEnemyVsEnemy()
                 // めり込み距離
                 const float raidLength = radiusAdd - length;
                 DirectX::XMFLOAT3 res = enemy2->fGetPosition() + (vec * raidLength);
-                
+
             }
 
         }
@@ -691,7 +692,7 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
         {
             fStartWave(mCurrentWave);
         }
-       
+
         ImGui::Separator();
 
         if (ImGui::Button("AllClear"))
@@ -887,16 +888,16 @@ void EnemyManager::fSpawnTutorial(float elapsedTime_, GraphicsPipeline& Graphics
 }
 
 //****************************************************************
-// 
+//
 // ボス関連の関数
-// 
+//
 //****************************************************************
 LastBoss::Mode EnemyManager::fGetBossMode() const
 {
     return mCurrentMode;
 }
 
-void EnemyManager::fSetBossMode(LastBoss::Mode Mode_) 
+void EnemyManager::fSetBossMode(LastBoss::Mode Mode_)
 {
     mCurrentMode = Mode_;
 }
