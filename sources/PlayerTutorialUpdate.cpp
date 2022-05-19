@@ -1150,7 +1150,7 @@ void Player::TransitionTutorialJustBehindAvoidance()
     }
     is_just_avoidance = true;
     //HP‰ñ•œ‚·‚é
-    player_health += JUST_AVOIDANCE_HEAL;
+    player_health += JUST_AVOIDANCE_HEALTH;
     velocity = {};
     //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
     is_avoidance = true;

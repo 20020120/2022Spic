@@ -140,10 +140,10 @@ void PlayerMove::PlayerJustification(float elapsed_time, DirectX::XMFLOAT3& pos)
     float length{};
     XMStoreFloat(&length, length_vec);
     //最大距離よりも大きくなったら
-    if (length > MAX_LENGTH)
+    if (length > max_length)
     {
         //長さの差を求める
-        float difference{ length - MAX_LENGTH };
+        float difference{ length - max_length };
         //原点の方向のベクトル
         XMVECTOR dir_normal_vec{ XMVector3Normalize(dir) };
         //原点方向に差の位置を出す
