@@ -4,7 +4,7 @@
             "key": "Archer",
             "value": {
                 "cereal_class_version": 2,
-                "MaxHp": 20,
+                "MaxHp": 10,
                 "AttackPower": 10,
                 "InvincibleTime": 1.0,
                 "BodyCapsuleRad": 5.0,
@@ -15,7 +15,7 @@
         {
             "key": "Archer_Ace",
             "value": {
-                "MaxHp": 30,
+                "MaxHp": 15,
                 "AttackPower": 10,
                 "InvincibleTime": 1.0,
                 "BodyCapsuleRad": 5.0,
@@ -26,7 +26,7 @@
         {
             "key": "Boss",
             "value": {
-                "MaxHp": 200,
+                "MaxHp": 400,
                 "AttackPower": 3,
                 "InvincibleTime": 0.40000003576278689,
                 "BodyCapsuleRad": 40.0,
@@ -59,7 +59,7 @@
         {
             "key": "Shield_Ace",
             "value": {
-                "MaxHp": 10,
+                "MaxHp": 15,
                 "AttackPower": 1,
                 "InvincibleTime": 1.0,
                 "BodyCapsuleRad": 5.0,
@@ -81,7 +81,7 @@
         {
             "key": "Spear_Ace",
             "value": {
-                "MaxHp": 23,
+                "MaxHp": 15,
                 "AttackPower": 10,
                 "InvincibleTime": 2.0,
                 "BodyCapsuleRad": 5.0,
