@@ -93,6 +93,8 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     {
         if (ImGui::Begin("Player"))
         {
+            ImGui::Text("time%.2f", model->get_anim_para().animation_tick);
+
             if (ImGui::TreeNode("transform"))
             {
                 ImGui::DragFloat3("position", &position.x);
@@ -946,7 +948,6 @@ void Player::TutorialAwaikingUpdate(float elapsed_time, SkyDome* sky_dome, std::
 {
     if (model->end_of_animation())
     {
-        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
         {
@@ -987,17 +988,18 @@ void Player::TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
 
 void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    if (awaiking_se == false && model->get_anim_para().animation_tick > 8.1f)
+    {
+        awaiking_se = true;
+        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+    }
+
     //非表示にしてるものは表示
     threshold_mesh -= 0.7f * elapsed_time;
     //カメラに渡す値を設定
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
-    if (awaiking_se = false && model->get_anim_para().animation_tick > 8.142f)
-    {
-        awaiking_se = true;
-        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
-    }
     if (model->end_of_animation())
     {
         //アニメーションが終わったら遷移
@@ -1416,7 +1418,6 @@ void Player::TransitionTutorialAwaikingEventIdle()
     DirectX::XMFLOAT3 up = {};
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[8], event_camera_joint, up);
     model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[9], event_camera_eye, up);
-    audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::AwaikingSceneIdle, false, true);
     //覚醒状態かどうかの設定
