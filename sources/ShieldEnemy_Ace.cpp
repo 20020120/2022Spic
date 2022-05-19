@@ -247,6 +247,7 @@ void ShieldEnemy_Ace::fStunInit()
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
     mWaitTimer = 0.0f;
+    is_shield = false;
 }
 
 void ShieldEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -257,10 +258,10 @@ void ShieldEnemy_Ace::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics
     //シールド構え時間が一定時間たったら
     if (mWaitTimer >= mStunTime)
     {
-        fChangeState(DivedState::Move);
         mStunEffect->stop(effect_manager->get_effekseer_manager());
 
         mIsStun = false;
+        fChangeState(DivedState::Move);
     }
 
 }

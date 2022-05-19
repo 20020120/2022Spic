@@ -172,7 +172,12 @@ private:
     Element brack_back_pram;
     //黒くなり切ったかどうか
     bool is_set_black{ false };
-
+    //ゲームオーバーの画像
+    std::unique_ptr<SpriteBatch> game_over_sprite{ nullptr };
+    //フレームのパラ
+    Element game_over_sprite_pram;
+    //ゲームオーバーのスプライトが描画させたかどうか
+    bool is_game_over_sprite{ false };
 
     //---------ゲームクリア-----------//
     void GameClearAct(float elapsed_time, GraphicsPipeline& graphics);

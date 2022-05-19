@@ -85,6 +85,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 										static_cast<float>(brack_back->get_texture2d_desc().Height) };
 	brack_back_pram.color = { 1.0f,1.0f,1.0f,0.0f };
 
+	game_over_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\gameover.png", 1);
+	game_over_sprite_pram.position = { 415.9f,0.0f };
+	game_over_sprite_pram.texsize = { 512.0f,512.0f };
 	//font
 	game_over_text.s = L"ゲームオーバー";
 	game_over_text.position = { 553.1f,124.3f };
@@ -299,6 +302,8 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	last_boss_mode = enemyManager->fGetBossMode();
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::Ship)
 	{
+		//プレイヤーの行動範囲変更.
+		player->ChangePlayerJustificationLength();
 		audio_manager->stop_all_bgm();
 		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
 	}
@@ -699,6 +704,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	{
 		glow_vertical -= elapsed_time * 0.2f;
 
+	    sprite_render("game_over_sprite", game_over_sprite.get(), game_over_sprite_pram, 0, 0);
 		sprite_render("back", brack_back.get(), brack_back_pram, 0, glow_vertical);
 		//画面が黒くなったら
 		if (is_set_black)
@@ -754,7 +760,28 @@ void SceneGame::GameOverAct(float elapsed_time)
 		}
 		if (is_set_black == false)
 		{
-			brack_back_pram.color.w += 1.0f * elapsed_time;
+			static float icon_time{ 0.0f };
+			icon_time += 1.0f * elapsed_time;
+			if (is_game_over_sprite == false && icon_time > 0.2f)
+			{
+				icon_time = 0.0f;
+				game_over_sprite_pram.texpos.x += game_over_sprite_pram.texsize.x;
+				//スプライトのtexposが最後まで行った時
+				if (game_over_sprite_pram.texpos.x >= 1536.0f
+					&& game_over_sprite_pram.texpos.y >= 512.0f)
+				{
+					is_game_over_sprite = true;
+				}
+				//スプライトのtexpos.yが0ならリセット
+				if (game_over_sprite_pram.texpos.x > 1536.0f
+					&& game_over_sprite_pram.texpos.y < 512.0f )
+				{
+					game_over_sprite_pram.texpos.x = 0.0f;
+					game_over_sprite_pram.texpos.y += 512.0f;
+				}
+
+			}
+			if(is_game_over_sprite)brack_back_pram.color.w += 1.0f * elapsed_time;
 			//セレクターの初期化
 			selecter1.position = { 328.0f,267.3f };
 			selecter2.position = { 637.1f,267.3f };
