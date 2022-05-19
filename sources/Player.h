@@ -74,6 +74,7 @@ public:
     void Render(GraphicsPipeline& graphics, float elapsed_time)override;
     void ConfigRender(GraphicsPipeline& graphics, float elapsed_time);
     void TitleRender(GraphicsPipeline& graphics, float elapsed_time);
+    void ChangePlayerJustificationLength();
 private:
     //エフェクト
     //回り込み回避
@@ -131,8 +132,8 @@ private:
     static constexpr int ATTACK_DAMAGE_INV = 1;
     //プレイヤーが回避中にダメージを受けたときの減少量
     static constexpr int AVOIDANCE_DAMAGE_INV = 2;
-    //プレイヤーの最大体力
-    static constexpr int JUST_AVOIDANCE_HEAL = 5;
+    //プレイヤーのジャスト回避の回復
+    static constexpr int JUST_AVOIDANCE_HEALTH = 5;
 
 private:
     DirectX::XMFLOAT3 camera_forward{};//カメラの前方向
