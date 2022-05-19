@@ -341,11 +341,11 @@ private:
     const float mkHumanSpBeamTime{ 10.0f };
     const float mkSpChargeTime = 7.0f;
     const float mkDistanceToPlayer{ 80.0f };
-    const float mkLimitStage{ 300.0f };
+    const float mkLimitStage{ 400.0f };
     const float mkTimerBlow{ 0.8f };
     const float mkDragonHideTime{ 0.5f };
     const float mkDragonRushWaitTime{ 4.0f };
-    const float mkDragonBeamChargeTime{ 3.0f };
+    const float mkDragonBeamChargeTime{ 1.0f };
 private:
 
     //****************************************************************

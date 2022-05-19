@@ -24,7 +24,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mVernierEffect = std::make_unique<Effect>(Graphics_,
       effect_manager->get_effekseer_manager(), mkVernierPath);
     mVernierEffect->play(effect_manager->get_effekseer_manager(), mPosition);
-    mCubeHalfSize = mScale.x * 5.0f;
+    mCubeHalfSize = mScale.x * 2.5f;
     mDissolve = 1.0f;
     mIsStun = false;
 
@@ -98,6 +98,7 @@ void BaseEnemy::fDie(GraphicsPipeline& Graphics_)
     if (mIsStun) mStunEffect->stop(effect_manager->get_effekseer_manager());
     // カメラシェイク
     camera_shake->reset(Graphics_);
+    audio_manager->play_se(SE_INDEX::ENEMY_EXPLOSION);
 }
 
 

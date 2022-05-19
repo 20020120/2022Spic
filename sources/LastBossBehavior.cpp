@@ -242,7 +242,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
 void LastBoss::fHumanIdleInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::human_idle);
+    mpModel->play_animation(mAnimPara, AnimationName::human_idle, false, true, 0.3f, 1.5f);
     mAnimationSpeed = 1.5f;
 }
 
@@ -330,7 +330,7 @@ void LastBoss::fHumanIdleUpdate(float elapsedTime_,
         }
         else
         {
-            fChangeState(DivideState::HumanIdle);
+            fChangeState(DivideState::HumanMove);
             mAnimationSpeed = 1.0f;
             return;
         }
@@ -449,13 +449,15 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
         mAttackCapsule.mRadius += elapsedTime_ * 50.0f;
         mAttackCapsule.mTop = mPosition + capsuleLength;
         mAttackCapsule.mBottom = mPosition - capsuleLength;
+        mAttackPower *= 2;
     }
 
 
     if(mpModel->end_of_animation(mAnimPara))
     {
+        mAttackPower /= 2;
         const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
-        if (const auto num = RandTargetAdd(mt); num < 2)
+        if (const auto num = RandTargetAdd(mt); num < 4)
         {
             fChangeState(DivideState::HumanMove);
             mIsAttack = false;
@@ -474,15 +476,16 @@ void LastBoss::fMoveAwayInit()
 {
     mMoveBegin = mPosition;
     const auto normalV = Math::Normalize(mPosition - mPlayerPosition);
-    mMoveEnd = mPosition + normalV * 50.0f;
+    mMoveEnd = mPosition + normalV * 100.0f;
     mMoveThreshold = 0.0f;
 }
 
 void LastBoss::fMoveAwayUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mMoveThreshold += elapsedTime_ * 2.0f;
+    mMoveThreshold += elapsedTime_ * 20.0f;
     mPosition = Math::lerp(mMoveBegin, mMoveEnd, mMoveThreshold);
-    if(mMoveThreshold>=1.0f)
+
+    if(mMoveThreshold>=1.0f|| Math::Length(mPosition) > mkLimitStage)
     {
         fChangeState(DivideState::HumanIdle);
     }
@@ -506,7 +509,7 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     // I—¹ðŒ
     if (currentLength > limitLength * 1.2f)
     {
-        audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
+        
         fChangeState(DivideState::HumanIdle);
         return;
     }
@@ -539,6 +542,7 @@ void LastBoss::fHumanRushUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
     if(mMoveThreshold>=1.0f)
     {
+        audio_manager->stop_se(SE_INDEX::BOSS_RUSH);
         fChangeState(DivideState::HumanBlowAttack);
     }
 }
@@ -895,7 +899,10 @@ void LastBoss::fDragonIdleInit()
 
 void LastBoss::fDragonIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    if (mpModel->end_of_animation(mAnimPara) == false) return;;
+    if (mpModel->end_of_animation(mAnimPara) == false)
+    {
+        return;;
+    }
 
     const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
     const int randNumber = RandTargetAdd(mt);
@@ -1023,7 +1030,7 @@ void LastBoss::fDragonBreathAppearUpdate(float elapsedTime_, GraphicsPipeline& G
 
 void LastBoss::fDragonBreathChargeInit()
 {
-    mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_ready);
+    mpModel->play_animation(mAnimPara, AnimationName::dragon_breath_ready, false, true, 0.3f, 0.5f);
 }
 
 void LastBoss::fDragonBreathChargeUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1220,16 +1227,24 @@ void LastBoss::fDragonBeamShotInit()
     mAddRadian = 0.0f;
     mIsAttack = true;
     mBeamLength = 0.0f;
+    mpBeamEffect->play(effect_manager->get_effekseer_manager(), mPosition);
+    mpBeamEffect->set_scale(effect_manager->get_effekseer_manager(), { 10.0f,10.0f,10.0f });
+    audio_manager->play_se(SE_INDEX::BOSS_BEAM);
 }
 
 void LastBoss::fDragonBeamShotUpdate(float elapsedTime_, 
     GraphicsPipeline& Graphics_)
 {
+    // ƒr[ƒ€‚ð‰ñ“]‚³‚¹‚é
+    mpBeamEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
+    DirectX::XMFLOAT3 pos = mPosition + (Math::GetFront(mOrientation) * 20.0f);
+    mpBeamEffect->set_position(effect_manager->get_effekseer_manager(), pos);
+
     mAddRadian += DirectX::XMConvertToRadians(360.0f / 5.0f * elapsedTime_);
     const float radian = mStartBeamRadian + mAddRadian;
     const DirectX::XMFLOAT3 beamFront = { cosf(radian),0.0f,sinf(radian) };
 
-    mBeamLength += elapsedTime_ * 100.0f;
+    mBeamLength += elapsedTime_ * 500.0f;
 
     mAttackCapsule.mBottom = mPosition;
     mAttackCapsule.mTop = 
@@ -1237,9 +1252,15 @@ void LastBoss::fDragonBeamShotUpdate(float elapsedTime_,
     mAttackCapsule.mRadius = 20.0f;
 
     fTurnToTarget(elapsedTime_, 10.0f, beamFront);
-    if (mAddRadian >= DirectX::XMConvertToRadians(360.0f))
+
+    
+    float rotMax = 300.0f * (1.0f - static_cast<float>(mCurrentHitPoint / mMaxHp));
+
+    if (mAddRadian >= DirectX::XMConvertToRadians(rotMax))
     {
         mIsAttack = false;
+        audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
+        mpBeamEffect->stop(effect_manager->get_effekseer_manager());
         fChangeState(DivideState::DragonIdle);
     }
 }
@@ -1333,7 +1354,7 @@ void LastBoss::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 void LastBoss::fRender(GraphicsPipeline& graphics)
 {
 
-    SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 0);
+    SkinnedMesh::mesh_tuple cameraTuple = std::make_tuple("camera_mesh", 1);
 
     graphics.set_pipeline_preset(SHADER_TYPES::PBR);
     mDissolve = (std::max)(0.0f, mDissolve);
