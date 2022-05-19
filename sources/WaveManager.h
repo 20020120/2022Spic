@@ -246,9 +246,11 @@ private:
     };
     ClearParameters clear_parameters;
 
+    bool game_clear = false;
 public:
     // getter
     const STAGE_IDENTIFIER& get_current_stage() { return current_stage; }
+    const bool get_game_clear() const { return game_clear; }
 
     //---‚±‚±‚Ü‚Å--//
 
