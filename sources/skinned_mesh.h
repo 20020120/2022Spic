@@ -399,6 +399,97 @@ public:
         }
     }
 
+    template<class... A> void render(ID3D11DeviceContext* dc, anim_Parameters& para, const DirectX::XMFLOAT4X4& world,
+        const DirectX::XMFLOAT4& material_color, float threshold, float glow_time,
+        const DirectX::XMFLOAT4& emissive_color, float glow_thickness, A... mesh_tuples)
+    {
+        for (const mesh& mesh : meshes)
+        {
+            for (mesh_tuple tup : std::initializer_list<mesh_tuple>{ mesh_tuples... })
+            {
+                if (mesh.name == std::get<0>(tup))
+                {
+                    geometry_constants->data.dissolve_threshold.x = std::get<1>(tup);
+                    break;
+                }
+                else
+                {
+                    geometry_constants->data.dissolve_threshold.x = threshold;
+                }
+            }
+            geometry_constants->data.dissolve_threshold.y = glow_time;
+            geometry_constants->data.emissive_color = emissive_color;
+            geometry_constants->data.glow_thickness = glow_thickness;
+            geometry_constants->data.sub_color_threshold_purple = 0;
+            geometry_constants->data.sub_color_threshold_red = 0;
+
+
+            uint32_t stride{ sizeof(vertex) };
+            uint32_t offset{ 0 };
+            dc->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+            dc->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+            dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            // 定数バッファのバインド
+            {
+                if (&para.current_keyframe && (&para.current_keyframe)->nodes.size() > 0)
+                {
+                    // ※メッシュのglobal_transform（位置・姿勢）が時間軸で変化しているので、その行列をキーフレームから取得する
+                    // ※取得したglobal_transform行列を定数バッファのワールド変換行列に合成する
+                    const animation::keyframe::node& mesh_node{ (&para.current_keyframe)->nodes.at(mesh.node_index) };
+                    XMStoreFloat4x4(&geometry_constants->data.world, XMLoadFloat4x4(&mesh_node.global_transform) * XMLoadFloat4x4(&world));
+
+                    const size_t bone_count{ mesh.bind_pose.bones.size() };
+                    _ASSERT_EXPR(bone_count < MAX_BONES, L"The value of the 'bone_count' has exceeded MAX_BONES.");
+                    for (int bone_index = 0; bone_index < bone_count; ++bone_index)
+                    {
+                        const skeleton::bone& bone{ mesh.bind_pose.bones.at(bone_index) };
+                        const animation::keyframe::node& bone_node{ (&para.current_keyframe)->nodes.at(bone.node_index) };
+                        XMStoreFloat4x4(&geometry_constants->data.bone_transforms[bone_index],
+                            XMLoadFloat4x4(&bone.offset_transform) *
+                            XMLoadFloat4x4(&bone_node.global_transform) *
+                            XMMatrixInverse(nullptr, XMLoadFloat4x4(&mesh.default_global_transform))
+                        );
+                    }
+                }
+                else
+                {
+                    XMStoreFloat4x4(&geometry_constants->data.world,
+                        XMLoadFloat4x4(&mesh.default_global_transform) * XMLoadFloat4x4(&world));
+                    for (size_t bone_index = 0; bone_index < MAX_BONES; ++bone_index)
+                    {
+                        geometry_constants->data.bone_transforms[bone_index] = {
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1,
+                        };
+                    }
+                }
+                for (const mesh::subset& subset : mesh.subsets)
+                {
+                    using namespace DirectX;
+                    const material& material{ materials.at(subset.material_unique_id) };
+
+                    XMStoreFloat4(&geometry_constants->data.material_color, XMLoadFloat4(&material_color) * XMLoadFloat4(&material.Kd));
+                    geometry_constants->bind(dc, 0, CB_FLAG::PS_VS);
+                    // シェーダーリソースビューのセット
+                    dc->PSSetShaderResources(0, 1, material.shader_resource_views[0].GetAddressOf());
+                    dc->PSSetShaderResources(1, 1, material.shader_resource_views[1].GetAddressOf());
+                    dc->PSSetShaderResources(2, 1, material.shader_resource_views[2].GetAddressOf());
+                    dc->PSSetShaderResources(3, 1, material.shader_resource_views[3].GetAddressOf());
+                    dc->PSSetShaderResources(4, 1, material.shader_resource_views[4].GetAddressOf());
+                    dc->PSSetShaderResources(5, 1, material.shader_resource_views[5].GetAddressOf());
+                    dc->PSSetShaderResources(8, 1, material.shader_resource_views[6].GetAddressOf());
+                    dc->PSSetShaderResources(9, 1, material.shader_resource_views[7].GetAddressOf());
+                    dc->PSSetShaderResources(20, 1, sub_color_shader_resource_views[0].GetAddressOf());
+                    dc->PSSetShaderResources(21, 1, sub_color_shader_resource_views[1].GetAddressOf());
+                    // 描画
+                    dc->DrawIndexed(subset.index_count, subset.start_index_location, 0);
+                }
+            }
+        }
+    }
+
 
     // アニメーション
     void play_animation(int animation_index, bool is_loop = false, bool interpolation = true, float blend_seconds = 0.3f, float playback_speed = 1.0f);
