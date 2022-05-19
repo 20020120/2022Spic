@@ -35,6 +35,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
     player_slash_hit_effec      = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
+    player_awaiking_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_kakusei1.efk");
 }
 
 Player::~Player()
@@ -1336,7 +1337,7 @@ void Player::TutorialLockOn()
     //今プレイヤーに一番近い敵が生きている時かつフラスタムの中にいる場合
     if (target_enemy != nullptr)
     {
-        if (is_push_lock_on_button == false && target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
+        if (behavior_state == Behavior::Normal && is_push_lock_on_button == false && target_enemy->fGetIsAlive() && target_enemy->fComputeAndGetIntoCamera())
         {
             target = target_enemy->fGetPosition();
             //敵と自分の距離を求める

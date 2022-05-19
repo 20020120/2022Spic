@@ -654,6 +654,7 @@ void Player::AwakingUpdate(float elapsed_time, SkyDome* sky_dome)
     if (model->end_of_animation())
     {
         audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+        player_awaiking_effec->stop(effect_manager->get_effekseer_manager());
 
         //移動入力があったら移動に遷移
         if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
@@ -1222,6 +1223,8 @@ void Player::TransitionTransformWing()
 
 void Player::TransitionAwaking()
 {
+    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
+    invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::Awaking, false,true);
     //覚醒状態かどうかの設定
@@ -1236,6 +1239,7 @@ void Player::TransitionAwaking()
 
 void Player::TransitionInvAwaking()
 {
+    invincible_timer = 2.0f;
     //通常状態に戻るアニメーションに設定
     model->play_animation(AnimationClips::InvAwaking, false,true);
     //覚醒状態かどうかの設定
@@ -1362,8 +1366,11 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
+    position = { 0.0f,0.0f,20.0f };
     //ステージ遷移の時に回復する
-    player_health += RECOVERY_HEALTH;
+    const float health = static_cast<float>(player_health) /static_cast<float>(MAX_HEALTH);
+    if (health < 0.7f) player_health = MAX_HEALTH * 0.7;
+    //player_health += RECOVERY_HEALTH;
     velocity = {};
     //移動のアニメーションにする()
     model->play_animation(AnimationClips::TransformWing, false);

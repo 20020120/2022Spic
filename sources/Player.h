@@ -85,6 +85,8 @@ private:
     //チェイン攻撃のヒット
     std::unique_ptr<Effect> player_slash_hit_effec;
     DirectX::XMFLOAT3 slash_effec_pos{};
+    std::unique_ptr<Effect> player_awaiking_effec;
+
     //USE_IMGUI
 private:
     //プレイヤーの最大体力
@@ -347,6 +349,7 @@ public:
     void SetEndDashEffect(bool a) { end_dash_effect = a; }
     void SetCameraTarget(DirectX::XMFLOAT3 p) { camera_target = p; }
     void SetBossCamera(bool boss_c) { boss_camera = boss_c; }
+    void SetPosition(DirectX::XMFLOAT3 pos) { position = pos; }
     DirectX::XMFLOAT3 GetForward() { return forward; }
     DirectX::XMFLOAT3 GetRight() { return right; }
     DirectX::XMFLOAT3 GetUp() { return up; }

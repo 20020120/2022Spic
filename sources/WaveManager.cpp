@@ -128,55 +128,58 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
     {
         clear_wait_timer -= elapsedTime_;
         // クリアのアニメーション
-        if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
+        if (current_stage != STAGE_IDENTIFIER::BOSS)
         {
-            if (clear_wait_timer >= CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
+            if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_WAIT_TIME) // 2秒待ってクリアアニメーション
             {
-                clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, 1.0f, 4.0f * elapsedTime_);
-            }
-
-            //--parameters--//
-            const int FRAMW_COUNT_X = 4;
-            const int FRAMW_COUNT_Y = 2;
-            static float logo_animation_speed = 0.05f;
-
-            int frame_x;
-            frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
-#ifdef USE_IMGUI
-            ImGui::Begin("ClearProto");
-            ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
-            ImGui::Text("timer:%f", clear_parameters.timer);
-            ImGui::Text("frame_x:%d", frame_x);
-            ImGui::Text("frame_y:%d", clear_parameters.frame_y);
-            ImGui::End();
-#endif // USE_IMGUI
-            if (frame_x >= FRAMW_COUNT_X)
-            {
-                // 1行下のアニメーションへ
-                if (clear_parameters.frame_y < FRAMW_COUNT_Y - 1)
+                if (clear_wait_timer >= CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
                 {
-                    clear_parameters.timer = 0;
-                    ++clear_parameters.frame_y;
+                    clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, 1.0f, 4.0f * elapsedTime_);
+                }
+
+                //--parameters--//
+                const int FRAMW_COUNT_X = 4;
+                const int FRAMW_COUNT_Y = 2;
+                static float logo_animation_speed = 0.05f;
+
+                int frame_x;
+                frame_x = static_cast<int>(clear_parameters.timer / logo_animation_speed) % (FRAMW_COUNT_X + 1);
+#ifdef USE_IMGUI
+                ImGui::Begin("ClearProto");
+                ImGui::DragFloat("speed", &logo_animation_speed, 0.01f);
+                ImGui::Text("timer:%f", clear_parameters.timer);
+                ImGui::Text("frame_x:%d", frame_x);
+                ImGui::Text("frame_y:%d", clear_parameters.frame_y);
+                ImGui::End();
+#endif // USE_IMGUI
+                if (frame_x >= FRAMW_COUNT_X)
+                {
+                    // 1行下のアニメーションへ
+                    if (clear_parameters.frame_y < FRAMW_COUNT_Y - 1)
+                    {
+                        clear_parameters.timer = 0;
+                        ++clear_parameters.frame_y;
+                    }
+                }
+                else
+                {
+                    // アニメーション
+                    clear_parameters.clear.texpos.x = frame_x * clear_parameters.clear.texsize.x;
+                    clear_parameters.clear.texpos.y = clear_parameters.frame_y * clear_parameters.clear.texsize.y;
+                    clear_parameters.timer += elapsedTime_;
                 }
             }
-            else
+            if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
             {
-                // アニメーション
-                clear_parameters.clear.texpos.x = frame_x * clear_parameters.clear.texsize.x;
-                clear_parameters.clear.texpos.y = clear_parameters.frame_y * clear_parameters.clear.texsize.y;
-                clear_parameters.timer += elapsedTime_;
+                clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
+#ifdef USE_IMGUI
+                ImGui::Begin("ClearProto");
+                ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
+                ImGui::End();
+#endif // USE_IMGUI
             }
         }
-        if (clear_wait_timer < CLEAR_WAIT_TIME - CLEAR_ANIMATION_FADE_WAIT_TIME)
-        {
-            clear_parameters.clear.color.w = Math::lerp(clear_parameters.clear.color.w, -0.5f, 2.0f * elapsedTime_);
-#ifdef USE_IMGUI
-            ImGui::Begin("ClearProto");
-            ImGui::Text("alpha:%f", clear_parameters.clear.color.w);
-            ImGui::End();
-#endif // USE_IMGUI
-        }
-
+        // クリア演出orゲームクリア
         if (clear_wait_timer < 0)
         {
             if (current_stage != STAGE_IDENTIFIER::BOSS) // クリア演出へ
@@ -216,10 +219,7 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
         mEnemyManager.fUpdate(Graphics_,elapsedTime_,Func_);
 
         // クリア状態に遷移
-        if (mEnemyManager.fGetClearWave()) {
-            clear_flg = true;
-
-        }
+        if (mEnemyManager.fGetClearWave()) { clear_flg = true; }
 
         break;
     case WaveState::Clear:
@@ -646,7 +646,8 @@ void WaveManager::transition_enlargement()
     clear_state = CLEAR_STATE::ENLARGEMENT;
 
     wait_timer = 2.0f;
-    arrival_viewpoint = { 640.0f, 360.0f };
+    if (next_stage == STAGE_IDENTIFIER::BOSS) arrival_viewpoint = { 640.0f, 175.0f };
+    else  arrival_viewpoint = { 640.0f, 360.0f };
     arrival_scale     = { 6.0f, 6.0f };
 }
 

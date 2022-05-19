@@ -1062,6 +1062,8 @@ void Player::TransitionTutorialAvoidance(float blend_second)
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z },0.3f);
+    player_air_registance_effec->set_speed(effect_manager->get_effekseer_manager(), AVOIDANCE_ANIMATION_SPEED);
+
     //回避中かどうかの設定
     is_avoidance = true;
     //回り込み回避かどうか
@@ -1347,6 +1349,8 @@ void Player::TransitionTutorialAttack3(float blend_second)
 
 void Player::TransitionTutorialAwaiking()
 {
+    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position);
+    invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::Awaking, false, true);
     //覚醒状態かどうかの設定
@@ -1361,6 +1365,7 @@ void Player::TransitionTutorialAwaiking()
 
 void Player::TransitionTutorialInvAwaiking()
 {
+    invincible_timer = 2.0f;
     //通常状態に戻るアニメーションに設定
     model->play_animation(AnimationClips::InvAwaking, false, true);
     //覚醒状態かどうかの設定

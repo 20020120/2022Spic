@@ -136,8 +136,12 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		controller_keys[ControllerSprite::Cross] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\cross.png", 1);
 		controller_keys[ControllerSprite::Menu] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\menu.png", 1);
 		controller_keys[ControllerSprite::Back] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back.png", 1);
+		controller_keys[ControllerSprite::Back2] = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\back_2.png", 1);
 		controller_back_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Width),
 										static_cast<float>(controller_keys[ControllerSprite::Back]->get_texture2d_desc().Height) };
+		controller_back_button_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back2]->get_texture2d_desc().Width),
+										static_cast<float>(controller_keys[ControllerSprite::Back2]->get_texture2d_desc().Height) };
+		controller_back_button_pram.scale = { 0.8f,0.8f };
 		controller_back_pram.position = { -156.3f,145.0f };
 		controller_back_pram.scale = { 0.3f,0.3f };
 
@@ -919,12 +923,38 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	default:
 		break;
 	}
+	back_button_rate += 1.0f * elapsed_time;
+	if (back_button_move_change)
+	{
+		if (back_button_rate > 1.0f)
+		{
+			back_button_rate = 0.0f;
+			back_button_move_change = false;
+		}
+		else
+		{
+			controller_back_button_pram.position = Math::lerp({ -134.8f,119.1f }, { -134.8f,136.5f }, back_button_rate);
+		}
+	}
+	else
+	{
+		if (back_button_rate > 1.0f)
+		{
+			back_button_rate = 0.0f;
+			back_button_move_change = true;
+		}
+		else
+		{
+			controller_back_button_pram.position = Math::lerp({ -134.8f,136.5f }, { -134.8f,119.1f }, back_button_rate);
+		}
+	}
+
 	//バックボタンを長押しして3秒たったらチュートリアルスキップ
 	if (game_pad->get_button() & GamePad::BTN_BACK)
 	{
 		change_scene_timer += 1.0f * elapsed_time;
 		change_gauge_parm.threshold -=(1.0f * elapsed_time) / 3.0f;
-		if (change_scene_timer > 3.5f)
+		if (change_scene_timer > 3.4f)
 		{
 			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 		}
@@ -1052,6 +1082,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	fonts->yu_gothic->Draw(tutorial_skip_text, change_scene_txt.position, change_scene_txt.scale, change_scene_txt.color, change_scene_txt.angle, TEXT_ALIGN::UPPER_LEFT);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
+	sprite_render("controller_back_button_pram", controller_keys[ControllerSprite::Back2].get(), controller_back_button_pram, 0, 0);
 
 	check_box->begin(graphics.get_dc().Get());
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);
