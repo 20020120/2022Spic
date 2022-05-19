@@ -21,7 +21,7 @@ ArcherEnemy::ArcherEnemy(GraphicsPipeline& Graphics_,
     // 位置を初期化
     mPosition = EmitterPoint_;
     mOrientation = { 0.0f,0.0f,0.0f,1.0f };
-    mScale = { 0.03f,0.03f,0.03f };
+    mScale = { 0.05f,0.05f,0.05f };
     //パラメーターの初期化
     fParamInitialize();
     fRegisterFunctions();

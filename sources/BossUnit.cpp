@@ -55,10 +55,9 @@ void BossUnit::fUpdateAttackCapsule()
 
 void BossUnit::fSetStun(bool Arg_, bool IsJust_)
 {
-    mIsStun = Arg_;
-    if (mIsStun)
+    if (!mIsStun)
     {
-        fResetLaser();
+        mIsStun = Arg_;
         fChangeState(DivideState::Stun);
     }
 }
@@ -393,6 +392,9 @@ void BossUnit::fStunInit()
 {
     mTimer = 0.0f;
     mpModel->play_animation(mAnimPara, AnimationName::STUN, true);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+
 }
 
 void BossUnit::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -401,6 +403,8 @@ void BossUnit::fStunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     if(mTimer>=mStunTime)
     {
         fChangeState(DivideState::Idle);
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
         mIsStun = false;
     }
 }
