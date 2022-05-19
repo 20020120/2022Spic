@@ -769,7 +769,7 @@ void SceneGame::GameOverAct(float elapsed_time)
 		{
 			static float icon_time{ 0.0f };
 			icon_time += 1.0f * elapsed_time;
-			if (is_game_over_sprite == false && icon_time > 0.2f)
+			if (is_game_over_sprite == false && icon_time > 0.1f)
 			{
 				icon_time = 0.0f;
 				game_over_sprite_pram.texpos.x += game_over_sprite_pram.texsize.x;
@@ -777,12 +777,14 @@ void SceneGame::GameOverAct(float elapsed_time)
 				if (game_over_sprite_pram.texpos.x >= 1536.0f
 					&& game_over_sprite_pram.texpos.y >= 512.0f)
 				{
+					audio_manager->play_se(SE_INDEX::DRAW_PEN);
 					is_game_over_sprite = true;
 				}
 				//スプライトのtexpos.yが0ならリセット
 				if (game_over_sprite_pram.texpos.x > 1536.0f
 					&& game_over_sprite_pram.texpos.y < 512.0f )
 				{
+					audio_manager->play_se(SE_INDEX::DRAW_PEN);
 					game_over_sprite_pram.texpos.x = 0.0f;
 					game_over_sprite_pram.texpos.y += 512.0f;
 				}
@@ -886,7 +888,11 @@ void SceneGame::GameClearAct(float elapsed_time,GraphicsPipeline& graphics)
 			//画面ヲ徐々に黒くする
 			if (brack_back_pram.color.w > 0.7f)
 			{
-				is_set_black = true;
+				if (is_set_black == false)
+				{
+					audio_manager->play_bgm(BGM_INDEX::CLEAR);
+					is_set_black = true;
+				}
 				brack_back_pram.color.w = 0.7f;
 			}
 			if (is_set_black == false) brack_back_pram.color.w += 1.0f * elapsed_time;
