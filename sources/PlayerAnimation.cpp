@@ -166,31 +166,51 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     avoidance_boost_time += 1.0f * elapsed_time;
     //回避の時の加速
     SetAccelerationVelocity();
-    if (avoidance_boost_time > 1.0f)
+    //ロックオンしている敵と一定距離近くなったら
+    float length{ Math::calc_vector_AtoB_length(position, target) };
+    if (is_lock_on && length < 15.0f)
     {
+        //攻撃に遷移
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        //回避中かどうかの設定
-        is_avoidance = false;
-        is_behind_avoidance = false;
-        //移動入力があったら移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        TransitionAttackType1();
+    }
+    if (avoidance_boost_time > 1.0f)
+    {
+        model->progress_animation();
+        if (model->end_of_animation())
         {
-            TransitionMove();
-        }
-        //移動入力がなかったら待機に遷移
-        else
-        {
-            TransitionIdle();
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+            //回避中かどうかの設定
+            is_avoidance = false;
+            is_behind_avoidance = false;
+            //移動入力があったら移動に遷移
+            if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+            {
+                TransitionMove();
+            }
+            //移動入力がなかったら待機に遷移
+            else
+            {
+                TransitionIdle();
+            }
         }
     }
     else
     {
+        if (model->get_anim_para().animation_tick > 0.2f)
+        {
+            model->pause_animation();
+        }
+        //連続回避の回数が0より大きいときに
         if (avoidance_direction_count > 0)
         {
-            if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+            //回避ボタンを押したら入力方向に方向転換
+            if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
             {
                 avoidance_direction_count--;
                 avoidance_buttun = true;
@@ -215,36 +235,6 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
         }
     }
     UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-
-#if 0
-    AvoidanceAcceleration(elapsed_time);
-    //回避のアニメーションが終わったら
-    if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
-    {
-
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        //回避中かどうかの設定
-        is_avoidance = false;
-        is_behind_avoidance = false;
-        //移動入力があったら移動に遷移
-        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
-        {
-            TransitionMove();
-        }
-        //移動入力がなかったら待機に遷移
-        else
-        {
-            TransitionIdle();
-        }
-        Awaiking();
-        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    }
-    else
-    {
-        UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
-    }
-
-#endif // 0
 }
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)

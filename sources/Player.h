@@ -113,7 +113,7 @@ private:
     //コンボの最大数
     static constexpr float MAX_COMBO_COUNT = 30.0f;
     //回避の時のアニメーションスピード
-    static constexpr float AVOIDANCE_ANIMATION_SPEED = 2.0f;
+    static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.5f;
     //突進開始の時のアニメーションスピード
     static constexpr float CHARGEINIT_ANIMATION_SPEED = 5.5f;
     //突進の時のアニメーションスピード
@@ -192,6 +192,8 @@ private:
     bool avoidance_buttun{ false };
     //回避力
     float  avoidance_velocity{ 15.0f };
+    //回避のアニメーションをスタートする
+    bool avoidance_animation_start{ false };
     //イージングの効果時間
     float easing_time{ 1.0f };
     //回避ブースト開始と到達

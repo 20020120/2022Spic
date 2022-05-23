@@ -26,6 +26,13 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                 is_chain_attack_aftertaste_timer = 0;
             }
         }
+        if (avoidance_buttun)
+        {
+            if (game_pad->get_trigger_R() < 0.1f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_buttun = false;
+            }
+        }
 
         switch (behavior_state)
         {
@@ -251,7 +258,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             break;
         case Player::TutorialState::AvoidanceTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
@@ -259,7 +266,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::LockOnTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
@@ -267,7 +274,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::AttackTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
@@ -280,7 +287,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::BehindAvoidanceTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -308,7 +315,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::ChainAttackTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -337,7 +344,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::AwaikingTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -370,7 +377,7 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             is_next_tutorial = false;
             execution_timer = 0;
 
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -424,14 +431,14 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             if (execution_timer > 1.5f) is_next_tutorial = true;
             break;
         case Player::TutorialState::AvoidanceTutorial:
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
             break;
         case Player::TutorialState::LockOnTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
@@ -439,7 +446,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         break;
         case Player::TutorialState::AttackTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 TransitionTutorialAvoidance();
             }
@@ -452,7 +459,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::BehindAvoidanceTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -481,7 +488,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::ChainAttackTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -511,7 +518,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
         }
         case Player::TutorialState::AwaikingTutorial:
         {
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -543,7 +550,7 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
             is_next_tutorial = false;
             execution_timer = 0;
 
-            if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
             {
                 //回避に遷移
                 float length{ Math::calc_vector_AtoB_length(position, target) };
@@ -585,13 +592,29 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
     //エフェクトの位置，回転設定
     player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
-
-    AvoidanceAcceleration(elapsed_time);
-    if (avoidance_boost_time > avoidance_easing_time&& model->end_of_animation())
+    avoidance_boost_time += 1.0f * elapsed_time;
+    //回避の時の加速
+    SetAccelerationVelocity();
+    //ロックオンしている敵と一定距離近くなったら
+    float length{ Math::calc_vector_AtoB_length(position, target) };
+    if (is_lock_on && length < 15.0f)
     {
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
-        //もしチュートリアルが回避なら
-        if (tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
+        //攻撃に遷移
+        velocity.x *= 0.2f;
+        velocity.y *= 0.2f;
+        velocity.z *= 0.2f;
+        TransitionTutorialAttack1();
+    }
+    if (avoidance_boost_time > 1.0f)
+    {
+        model->progress_animation();
+        if (model->end_of_animation())
+        {
+            if(tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
+            velocity.x *= 0.2f;
+            velocity.y *= 0.2f;
+            velocity.z *= 0.2f;
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             //回避中かどうかの設定
             is_avoidance = false;
             is_behind_avoidance = false;
@@ -599,19 +622,79 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
             if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
             {
                 TransitionTutorialMove();
-            }
+}
             //移動入力がなかったら待機に遷移
             else
             {
                 TransitionTutoriaIdle();
             }
-            if(tutorial_state >= TutorialState::AwaikingTutorial)   TutorialAwaiking();
-         UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+        }
+    }
+    else
+    {
+        if (model->get_anim_para().animation_tick > 0.2f)
+        {
+            model->pause_animation();
+        }
+        //連続回避の回数が0より大きいときに
+        if (avoidance_direction_count > 0)
+        {
+            //回避ボタンを押したら入力方向に方向転換
+            if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_direction_count--;
+                avoidance_buttun = true;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                {
+                    ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                }
+                else
+                {
+                    ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+                }
+                //覚醒状態の時の回避アニメーションの設定
+                if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+                //通常状態の時のアニメーションの設定
+                else model->play_animation(AnimationClips::Avoidance, false, true);
+                avoidance_boost_time = 0.0f;
+            }
+        }
+    }
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
+
+#if 0
+    AvoidanceAcceleration(elapsed_time);
+    if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
+    {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+        //もしチュートリアルが回避なら
+        if (tutorial_state == TutorialState::AvoidanceTutorial) is_next_tutorial = true;
+        //回避中かどうかの設定
+        is_avoidance = false;
+        is_behind_avoidance = false;
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionTutorialMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionTutoriaIdle();
+        }
+        if (tutorial_state >= TutorialState::AwaikingTutorial)   TutorialAwaiking();
+        UpdateVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
     else
     {
         UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
+
+#endif // 0
 }
 
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
@@ -1089,6 +1172,7 @@ void Player::TransitionTutorialAvoidance(float blend_second)
     //回り込み回避かどうか
     is_behind_avoidance = false;
     //--------------------------イージング加速の変数初期化---------------------------------//
+#if 0
     avoidance_boost_time = 0;
     avoidance_start = velocity;
     if (is_lock_on)
@@ -1109,6 +1193,13 @@ void Player::TransitionTutorialAvoidance(float blend_second)
         leverage = 30.0f;
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
+
+#endif // 0
+    avoidance_boost_time = 0.0f;
+    //方向転換の回数
+    avoidance_direction_count = 3;
+    //ロックオンしてない場合のターゲットの設定
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
     //-----------------------------------------------------------------------------------------//
     //覚醒状態の時の回避アニメーションの設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
