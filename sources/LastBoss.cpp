@@ -77,6 +77,24 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
    mCameraEyeBone = mpModel->get_bone_by_name("camera_joint");
    mCameraFocusBone = mpModel->get_bone_by_name("camera_focus_joint");
 
+
+    // パラメーターをロード
+   fLoadParam();
+
+    // 内容に応じて初期ステータスを切り替える
+   if (mBossParam.BossStateNumber == 0) // 戦艦
+   {
+       // 何もしない
+   }
+   else if (mBossParam.BossStateNumber == 1) // 人型
+   {
+       fChangeState(DivideState::ShipToHuman);
+   }
+   else if(mBossParam.BossStateNumber == 2) // ドラゴン
+   {
+       fChangeState(DivideState::HumanToDragon);
+   }
+
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)
@@ -89,6 +107,7 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_)
 
 LastBoss::~LastBoss()
 {
+    fSaveParam();
 }
 
 void LastBoss::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

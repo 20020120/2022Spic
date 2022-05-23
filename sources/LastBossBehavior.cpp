@@ -7,6 +7,41 @@
 #include "EnemyManager.h"
 #include"Operators.h"
 #include"audio_manager.h"
+
+void LastBoss::fLoadParam()
+{
+    // Jsonファイルから値を取得
+    std::filesystem::path path = "./resources/Data/BossParam.json";
+    path.replace_extension(".json");
+    if (std::filesystem::exists(path.c_str()))
+    {
+        std::ifstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONInputArchive o_archive(ifs);
+            o_archive(mBossParam);
+        }
+    }
+}
+
+void LastBoss::fSaveParam()
+{
+    // Jsonファイルから値を取得
+    std::filesystem::path path = "./resources/Data/BossParam.json";
+    path.replace_extension(".json");
+    //if (std::filesystem::exists(path.c_str()))
+    {
+        std::ofstream ifs;
+        ifs.open(path);
+        if (ifs)
+        {
+            cereal::JSONOutputArchive o_archive(ifs);
+            o_archive(mBossParam);
+        }
+    }
+}
+
 //****************************************************************
 // 
 // 戦艦モード 
@@ -225,6 +260,7 @@ void LastBoss::fChangeShipToHumanInit()
     audio_manager->stop_all_se();
     mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     mpModel->play_animation(mAnimPara, AnimationName::ship_to_human);
+    mDissolve = 0.0f;
     mCurrentMode = Mode::ShipToHuman;
     mPosition = { 0.0f,20.0f,0.0f };
     PostEffect::boss_awakening_effect({ 0.0f,0.0f }, 0.0f, 0.25f);
@@ -241,6 +277,10 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         // 現在のモードを人型に変更する
         mCurrentMode = Mode::Human;
         mPosition = {};
+
+        // アニメーションを見たフラグをオンにする
+        mBossParam.mShowMovie_ShipToHuman = true;
+        mBossParam.BossStateNumber = 1;
     }
 }
 
@@ -894,6 +934,9 @@ void LastBoss::fHumanToDragonInit()
 {
     audio_manager->stop_all_se();
     mpModel->play_animation(mAnimPara,AnimationName::human_to_dragon);
+    mDissolve = 0.0f;
+    mCurrentMode = Mode::HumanToDragon;
+    mPosition = {};
 }
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -905,6 +948,10 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         // 体力の値をドラゴンモードの初期値にしておく
         mCurrentHitPoint = mMaxHp * mkPercentToDragon;
         mPosition = {};
+
+        // アニメーションを見たフラグをオンにする
+        mBossParam.mShowMovie_HumanToDragon = true;
+        mBossParam.BossStateNumber = 2;
     }
 }
 

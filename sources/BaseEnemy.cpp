@@ -52,7 +52,7 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     mInvincibleTime = (std::max)(-1.0f, mInvincibleTime);
     fUpdateVernierEffectPos();
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
-    mpModel->update_animation(mAnimPara, elapsedTime_ * mAnimationSpeed);
+    mpModel->update_animation(mAnimPara, elapsedTime_ );
 
     
     if (mCurrentHitPoint <= 0.0f)

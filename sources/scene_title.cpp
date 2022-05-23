@@ -10,7 +10,7 @@
 #include "ModelCashe.h"
 #include"SceneTutorial.h"
 #include "WaveManager.h"
-
+#include "LastBoss.h"
 bool SceneTitle::is_load_ready = false;
 
 void SceneTitle::initialize(GraphicsPipeline& graphics)
@@ -193,6 +193,7 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	std::thread thread(loading_thread, graphics.get_device().Get());
 	//ƒXƒŒƒbƒh‚ÌŠÇ—‚ğ•úŠü
 	thread.detach();
+
 }
 
 void SceneTitle::uninitialize()
