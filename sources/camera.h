@@ -139,6 +139,7 @@ private:
     float attackEndSpeed{};
     bool timerStart{ false };
     float timer{};
+
 };
 
 class ClearCamera : public Camera

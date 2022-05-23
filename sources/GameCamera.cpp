@@ -255,7 +255,7 @@ void GameCamera::gameUpdate(float elapsedTime)
 		{
 			timer += elapsedTime;
 		}
-		if (timer > 1.5f)
+		if (timer > AttackEndCameraTimer)
 		{
 			timerStart = false;
 			UpdateTarget(PlayerPosition, PlayerUp);
