@@ -780,7 +780,7 @@ void Player::Awaiking()
         //ボタン入力
         if (game_pad->get_button() & GamePad::BTN_A)
         {
-            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+            if (combo_count >= MAX_COMBO_COUNT - 5.0f && is_awakening == false)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
         }
         if (is_awakening && combo_count <= 0)
         {
