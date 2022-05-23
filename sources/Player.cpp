@@ -326,12 +326,18 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
         if (during_chain_attack() && !during_chain_attack_end())
         {
-            static const float AddAttackEndCameraTimer = 1.0f;
             is_chain_attack_aftertaste_timer += elapsed_time;
             if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
             {
                 is_chain_attack_aftertaste = false;
                 is_chain_attack_aftertaste_timer = 0;
+            }
+        }
+        if (avoidance_buttun)
+        {
+            if (game_pad->get_trigger_R() < 0.1f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_buttun = false;
             }
         }
 
@@ -514,6 +520,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::Text("behind_test_timer,%.2f", behind_test_timer);
             ImGui::Text("behind_speed,%.2f", behind_speed);
+            ImGui::InputInt("avoidance_direction_count", &avoidance_direction_count);
             ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
             ImGui::Checkbox("is_block", &is_block);
             ImGui::End();
