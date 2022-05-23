@@ -3,6 +3,8 @@
 #include"user.h"
 #include"easing.h"
 
+#include "BaseCamera.h"
+
 void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
 
@@ -14,6 +16,18 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
     if (awaiking_event == false)
     {
+        // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+        if (during_chain_attack() && !during_chain_attack_end())
+        {
+            static const float AddAttackEndCameraTimer = 1.0f;
+            is_chain_attack_aftertaste_timer += elapsed_time;
+            if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
+            {
+                is_chain_attack_aftertaste = false;
+                is_chain_attack_aftertaste_timer = 0;
+            }
+        }
+
         switch (behavior_state)
         {
         case Player::Behavior::Normal:

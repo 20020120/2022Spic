@@ -94,6 +94,7 @@ protected:
     bool cameraAvoidEnd{ false };
     float lerpLate{ 1.0f };
 
+public:
     static constexpr float AttackEndCameraTimer = 1.5f;
 
 };

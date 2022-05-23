@@ -195,12 +195,12 @@ void GameCamera::gameUpdate(float elapsedTime)
 			UpdateTarget(PlayerPosition, PlayerUp);
 			UpdateEye();
 		}
-		if(!player->during_search_time() && !player->during_chain_attack())
+		if(!player->during_search_time() && !player->during_chain_attack_end())
 		{
 			state = Free;
 			break;
 		}
-		if(player->during_chain_attack())
+		if(player->during_chain_attack_end())
 		{
 			state = Attacking;
 			break;
@@ -208,7 +208,7 @@ void GameCamera::gameUpdate(float elapsedTime)
 		break;
 	case CameraState::Attacking:
 		UpdateAttackingCamera(elapsedTime);
-		if(!player->during_chain_attack())
+		if(!player->during_chain_attack_end())
 		{
 			state = CameraStopAttackEnd;
 			timerStart = true;
@@ -491,7 +491,7 @@ void GameCamera::UpdateStopEndTarget()
 {
 	if(player->GetEnemyLockOn())
 	    avoidTargetPos = player->GetTarget();
-	
+
 	avoidTargetPos.y = target.y;
 
 	target = avoidTargetPos;
@@ -635,7 +635,7 @@ void GameCamera::UpdateAttackingCamera(float elapsedTime)
     	angle = acosf(angle);
 		AttackingUpdateTarget(angle, CameraToPlayer);
 	}
-	
+
 }
 
 void GameCamera::AttackingUpdateTarget(float angle, DirectX::XMVECTOR CameraToPlayer)

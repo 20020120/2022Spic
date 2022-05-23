@@ -2,6 +2,9 @@
 #include"imgui_include.h"
 #include"user.h"
 #include"easing.h"
+#include "BaseCamera.h"
+
+
 //プレイヤーの原点は腰
 
 Player::Player(GraphicsPipeline& graphics)
@@ -320,6 +323,18 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     //クリア演出中じゃないとき
     else
     {
+        // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+        if (during_chain_attack() && !during_chain_attack_end())
+        {
+            static const float AddAttackEndCameraTimer = 1.0f;
+            is_chain_attack_aftertaste_timer += elapsed_time;
+            if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
+            {
+                is_chain_attack_aftertaste = false;
+                is_chain_attack_aftertaste_timer = 0;
+            }
+        }
+
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
