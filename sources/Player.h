@@ -186,6 +186,10 @@ private:
 private:
     //回避が始まった時間
     float avoidance_boost_time{ 0 };
+    //回避の方向転換の回数
+    int avoidance_direction_count{ 3 };
+    //回避のボタンを押して離したかどうか
+    bool avoidance_buttun{ false };
     //回避力
     float  avoidance_velocity{ 15.0f };
     //イージングの効果時間
@@ -679,7 +683,7 @@ private:
 public:
     bool during_search_time() { return search_time < SEARCH_TIME && search_time > 0; }
     bool during_chain_attack_end() { return behavior_state == Behavior::Chain && is_chain_attack; }  // ロックオン完了から攻撃終了までtrue
-    bool during_chain_attack() { return behavior_state == Behavior::Chain && is_chain_attack_aftertaste; }  // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
+    bool during_chain_attack() { return is_chain_attack_aftertaste; }  // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
     void lockon_post_effect(float elapsed_time, std::function<void(float, float)> effect_func, std::function<void()> effect_clear_func);
 private:
     //--------< 変数 >--------//

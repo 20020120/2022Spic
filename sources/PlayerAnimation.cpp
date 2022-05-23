@@ -160,10 +160,70 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    if (avoidance_buttun)
+    {
+        if (game_pad->get_trigger_R() < 0.5f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
+        {
+            avoidance_buttun = false;
+        }
+    }
     //エフェクトの位置，回転設定
     player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(),position);
     player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
+    avoidance_boost_time += 1.0f * elapsed_time;
+    //回避の時の加速
+    SetAccelerationVelocity();
+    if (avoidance_boost_time > 1.0f)
+    {
+        velocity.x *= 0.2f;
+        velocity.y *= 0.2f;
+        velocity.z *= 0.2f;
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+        //回避中かどうかの設定
+        is_avoidance = false;
+        is_behind_avoidance = false;
+        //移動入力があったら移動に遷移
+        if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+        {
+            TransitionMove();
+        }
+        //移動入力がなかったら待機に遷移
+        else
+        {
+            TransitionIdle();
+        }
+    }
+    else
+    {
+        if (avoidance_direction_count > 0)
+        {
+            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            {
+                avoidance_direction_count--;
+                avoidance_buttun = true;
+                velocity = {};
+                DirectX::XMFLOAT3 movevec = SetMoveVec(camera_forward, camera_right);
+                if ((movevec.x * movevec.x) + (movevec.z * movevec.z) > 0)
+                {
+                    ChargeTurn(elapsed_time, movevec, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, movevec, 200.0f);
+                }
+                else
+                {
+                    ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
+                    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+                }
+                ////覚醒状態の時の回避アニメーションの設定
+                //if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+                ////通常状態の時のアニメーションの設定
+                //else model->play_animation(AnimationClips::Avoidance, false, true);
+                avoidance_boost_time = 0.0f;
+            }
+        }
+    }
+    UpdateAttackVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
 
+#if 0
     AvoidanceAcceleration(elapsed_time);
     //回避のアニメーションが終わったら
     if (avoidance_boost_time > avoidance_easing_time && model->end_of_animation())
@@ -190,6 +250,8 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         UpdateAvoidanceVelocity(elapsed_time, position, orientation, camera_forward, camera_right, camera_position, sky_dome);
     }
+
+#endif // 0
 }
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
@@ -838,6 +900,7 @@ void Player::TransitionAvoidance()
     //回り込み回避かどうか
     is_behind_avoidance = false;
     //--------------------------イージング加速の変数初期化---------------------------------//
+#if 0
     avoidance_boost_time = 0;
     avoidance_start = velocity;
     if (is_lock_on)
@@ -858,6 +921,14 @@ void Player::TransitionAvoidance()
         leverage = 30.0f;
         avoidance_end = { forward.x * leverage ,forward.y * leverage,forward.z * leverage };
     }
+
+#endif // 0
+    avoidance_boost_time = 0.0f;
+    //方向転換の回数
+    avoidance_direction_count = 3;
+    //ロックオンしてない場合のターゲットの設定
+    charge_point = Math::calc_designated_point(position, forward, 200.0f);
+
     //-----------------------------------------------------------------------------------------//
     //覚醒状態の時の回避アニメーションの設定
     if(is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false,true);

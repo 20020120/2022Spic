@@ -444,6 +444,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 ImGui::Checkbox("is_push_lock_on_button", &is_push_lock_on_button);
                 ImGui::Checkbox("is_charge", &is_charge);
                 ImGui::Checkbox("is_attack", &is_attack);
+                ImGui::Checkbox("avoidance_buttun", &avoidance_buttun);
                 ImGui::TreePop();
             }
             if (ImGui::TreeNode("CapsuleParam"))
