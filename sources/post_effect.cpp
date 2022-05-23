@@ -34,6 +34,8 @@ PostEffect::PostEffect(ID3D11Device* device)
 		create_ps_from_cso(device, "shaders/lockon_ps.cso", pixel_shaders[12].GetAddressOf());
 		create_ps_from_cso(device, "shaders/zoom_RGB_shift.cso", pixel_shaders[13].GetAddressOf());
 		create_ps_from_cso(device, "shaders/wipe_ps.cso", pixel_shaders[14].GetAddressOf());
+		create_ps_from_cso(device, "shaders/color_filter_ps.cso", pixel_shaders[15].GetAddressOf());
+
 	}
 	// 定数バッファ
 	effect_constants = std::make_unique<Constants<PostEffectConstants>>(device);
@@ -67,7 +69,7 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 {
 	{
 		const char* effects[] = { "NONE", "BLUR", "RGB_SHIFT", "WHITE_NOISE", "LOW_RESOLUTION", "SCAN_LINE", "GAME_BOY",
-			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL", "ZOOM_RGB_SHIFT", "WIPE"};
+			"BARREL_SHAPED", "GLITCH", "VIGNETTING", "DASH_BLUR", "LOCKON", "LOCKON_CENTRAL", "ZOOM_RGB_SHIFT", "WIPE", "COLOR_FILTER" };
 #ifdef USE_IMGUI
 		imgui_menu_bar("contents", "post effect", display_effect_imgui);
 		if (display_effect_imgui)
@@ -410,6 +412,26 @@ void PostEffect::apply_an_effect(ID3D11DeviceContext* dc, float elapsed_time)
 				effect_constants->bind(dc, 5);
 				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 14);
 			}
+			if (effect_type[i] == static_cast<int>(POST_EFFECT_TYPE::COLOR_FILTER))
+			{
+#ifdef USE_IMGUI
+				std::string ss = "filter " + std::to_string(i + 1);
+				if (display_effect_imgui)
+				{
+					ImGui::Begin("pst efc para");
+					if (ImGui::TreeNode(ss.c_str()))
+					{
+						ImGui::DragFloat("hueShift", &effect_constants_for_preservation.hueShift, 0.001f);
+						ImGui::DragFloat("saturation", &effect_constants_for_preservation.saturation, 0.001f);
+						ImGui::DragFloat("brightness", &effect_constants_for_preservation.brightness, 0.001f);
+						ImGui::TreePop();
+					}
+					ImGui::End();
+				}
+#endif
+				effect_constants->bind(dc, 5);
+				r_set_framebuffer_pstefc(i, last_minute_framebuffer_slot, 15);
+			}
 		}
 	}
 }
@@ -508,4 +530,13 @@ void PostEffect::wipe_effect(float threshold)
 	effect_constants_for_preservation.wipe_threshold = threshold;
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::WIPE);
+}
+
+void PostEffect::color_filter(float hueShift, float saturation, float brightness)
+{
+	effect_constants_for_preservation.hueShift = hueShift;
+	effect_constants_for_preservation.saturation = saturation;
+	effect_constants_for_preservation.brightness = brightness;
+	post_effect_count = 1;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::COLOR_FILTER);
 }

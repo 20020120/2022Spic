@@ -28,6 +28,7 @@ public:
 	static void title_post_effect(float power);
 	static void boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power, float wipe_threshold = 0);
 	static void wipe_effect(float threshold);
+	static void color_filter(float hueShift, float saturation, float brightness);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }
@@ -50,6 +51,7 @@ private:
 		LOCKON,                     // ロックオン
 		LOCKON_CENTRAL,             // ロックオン真ん中
 		ZOOM_RGB_SHIFT,             // RGB_SHIFT(ズーム)
+		COLOR_FILTER,				//カラーフィルター
 		WIPE,
 
 		PST_EFC_COUNT               //この定数が最後に
@@ -114,6 +116,14 @@ private:
 		// wipe
 		float wipe_threshold = 0.0f;
 		DirectX::XMFLOAT3 pad13;
+		// color filter
+		// 色相調整
+		float hueShift = 1.0f;
+		// 彩度調整
+		float saturation = 1.0f;
+		// 明度調整
+		float brightness = 1.0f;
+		float pad14;
 	};
 	std::unique_ptr<Constants<PostEffectConstants>> effect_constants;
     //--------< 関数 >--------//

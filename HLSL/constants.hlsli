@@ -102,6 +102,14 @@ cbuffer POST_EFFECT_CONSTANTS : register(b5)
     // wipe
     float wipe_threshold;
     float3 post_effect_pad13;
+    //color filter
+       // F‘Š’²®
+    float hueShift;
+    // Ê“x’²®
+    float saturation;
+    // –¾“x’²®
+    float brightness;
+    float pad14;
 };
 
 cbuffer SHADOWMAP_CONSTANTS : register(b6)
