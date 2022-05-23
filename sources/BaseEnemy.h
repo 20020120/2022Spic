@@ -121,7 +121,8 @@ private:
 
     std::unique_ptr<Effect> mDeathEffect{ nullptr };
     inline static const char* mkDeathPath = "./resources/Effect/Bomb2.efk";
-
+    std::unique_ptr<Effect> mDamageEffect{ nullptr };
+    inline static const char* mkDamagePath = "./resources/Effect/enemy_hit.efk";
    
 };
 

@@ -30,6 +30,7 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
 
     mBombEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkBombPath);
     mStunEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkStunPath);
+    mDamageEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkDamagePath);
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -76,7 +77,7 @@ bool  BaseEnemy::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& 
     bool ret{ false };
     if(mInvincibleTime<=0.0f)
     {
-
+        mDamageEffect->play(effect_manager->get_effekseer_manager(), mPosition);
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
         ret = true;
