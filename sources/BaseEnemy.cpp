@@ -244,7 +244,7 @@ void BaseEnemy::fSetLaunchDissolve()
 {
     if(mCurrentHitPoint <= 0)
     {
-        mDissolve = 0.0f;
+        mDissolve = 1.0f;
     }
 }
 
