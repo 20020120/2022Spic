@@ -240,6 +240,14 @@ void BaseEnemy::fSetIsPlayerSearch(bool Arg_)
     mIsPlayerSearch = Arg_;
 }
 
+void BaseEnemy::fSetLaunchDissolve()
+{
+    if(mCurrentHitPoint <= 0)
+    {
+        mDissolve = 0.0f;
+    }
+}
+
 bool BaseEnemy::fGetAttack() const
 {
     return mIsAttack;

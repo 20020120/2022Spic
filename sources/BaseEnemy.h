@@ -44,7 +44,7 @@ public:
     void fSetAttack(bool Arg_);
     void fSetIsLockOnOfChain(bool RockOn_);
     void fSetIsPlayerSearch(bool Arg_);
-
+    void fSetLaunchDissolve();
     //--------------------<ƒQƒbƒ^[ŠÖ”>--------------------//
     [[nodiscard]] bool fGetAttack() const;
     [[nodiscard]] const Capsule& fGetBodyCapsule();
