@@ -10,15 +10,15 @@ PlayerConfig::PlayerConfig(GraphicsPipeline& graphics)
     hp_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_hp_back.png", 1);
     hp_body_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_hp_gage.png", 1);
 
-    hp_body.position = { 140.0f, 438.0f };
-    hp_body.scale    = { 0.9f, 0.9f };
+    hp_body.position = { 120.0f, 60.0f };
+    hp_body.scale    = { 0.8f, 0.8f };
     hp_body.texsize  = { static_cast<float>(hp_body_sprite->get_texture2d_desc().Width), static_cast<float>(hp_body_sprite->get_texture2d_desc().Height) };
     hp_body.pivot    = hp_body.texsize * DirectX::XMFLOAT2(0.5f, 1.0f);
     hp_body.texpos   = hp_body.texsize * DirectX::XMFLOAT2(0, 1.0f);
     hp_body.angle = 180.0f;
 
-    hp_gauge.position = { 140.0f, 695.0f };
-    hp_gauge.scale    = { 0.9f, 0.9f };
+    hp_gauge.position = { 120.0f, 285.0f };
+    hp_gauge.scale    = { 0.8f, 0.8f };
     hp_gauge.texsize  = { static_cast<float>(hp_frame->get_texture2d_desc().Width), static_cast<float>(hp_frame->get_texture2d_desc().Height) };
     hp_gauge.pivot    = hp_gauge.texsize * DirectX::XMFLOAT2(0.5f, 1.0f);
     //----mp----//
@@ -26,23 +26,23 @@ PlayerConfig::PlayerConfig(GraphicsPipeline& graphics)
     mp_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_mp_back.png", 1);
     mp_body_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_mp_gage.png", 1);
 
-    mp_body.position = { 220.0f, 453.0f };
-    mp_body.scale = { 0.9f, 0.9f };
+    mp_body.position = { 190.0f, 60.0f };
+    mp_body.scale = { 0.8f, 0.8f };
     mp_body.texsize = { static_cast<float>(mp_body_sprite->get_texture2d_desc().Width), static_cast<float>(mp_body_sprite->get_texture2d_desc().Height) };
     mp_body.pivot  = mp_body.texsize * DirectX::XMFLOAT2(0.5f, 1.0f);
     mp_body.texpos = mp_body.texsize * DirectX::XMFLOAT2(0, 1.0f);
     mp_body.angle = 180.0f;
 
-    mp_gauge.position = { 220.0f, 560.0f };
-    mp_gauge.scale = { 0.9f, 0.9f };
+    mp_gauge.position = { 190.0f, 160.0f };
+    mp_gauge.scale = { 0.8f, 0.8f };
     mp_gauge.texsize = { static_cast<float>(mp_frame->get_texture2d_desc().Width), static_cast<float>(mp_frame->get_texture2d_desc().Height) };
     mp_gauge.pivot = mp_gauge.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
     //----mp----//
     base_sprite  = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_gage_base_1.png", 1);
     base2_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_gage_base_2.png", 1);
 
-    base.position = { 140.0f, 555.0f };
-    base.scale = { 1.0f, 1.0f };
+    base.position = { 125.0f, 160.0f };
+    base.scale = { 0.9f, 0.9f };
     base.texsize = { static_cast<float>(base_sprite->get_texture2d_desc().Width), static_cast<float>(base_sprite->get_texture2d_desc().Height) };
     base.pivot = base.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 }
