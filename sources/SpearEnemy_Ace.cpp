@@ -102,6 +102,18 @@ void SpearEnemy_Ace::fRegisterFunctions()
         auto tuple = std::make_tuple(ini, up);
         mFunctionMap.insert(std::make_pair(DivideState::WipeAttack, tuple));
     }
+    {
+        InitFunc ini = [=]()->void
+        {
+            fStunInit();
+        };
+        UpdateFunc up = [=](float elapsedTime_, GraphicsPipeline& Graphics_)->void
+        {
+            fStunUpdate(elapsedTime_);
+        };
+        auto tuple = std::make_tuple(ini, up);
+        mFunctionMap.insert(std::make_pair(DivideState::Stun, tuple));
+    }
     fChangeState(DivideState::Start);
 }
 
@@ -183,6 +195,10 @@ void SpearEnemy_Ace::fWipeAttackUpdate( float elapsedTime, GraphicsPipeline& Gra
 void SpearEnemy_Ace::fStunInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::stun);
+    DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
+    mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mWaitTimer = mStunTime;
     mIsAttack = false;
 }
@@ -192,6 +208,8 @@ void SpearEnemy_Ace::fStunUpdate(float elapsedTime_)
     if(mWaitTimer<=0.0f)
     {
         fChangeState(DivideState::Idle);
+        mStunEffect->stop(effect_manager->get_effekseer_manager());
+
         mIsStun = false;
     }
 }

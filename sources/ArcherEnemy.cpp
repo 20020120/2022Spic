@@ -350,6 +350,8 @@ void ArcherEnemy::fMoveLeaveUpdate(float elapsedTime_, GraphicsPipeline& Graphic
 void ArcherEnemy::fAttackBeginInit()
 {
     mpModel->play_animation(mAnimPara, AnimationName::attack_ready);
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
     mStayTimer = 0.0f;
 }
 
@@ -427,6 +429,8 @@ void ArcherEnemy::fStunInit()
     mpModel->play_animation(mAnimPara, AnimationName::damage, false);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mStayTimer = 0;
 
 }

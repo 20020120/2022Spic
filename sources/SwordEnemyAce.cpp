@@ -253,6 +253,8 @@ void SwordEnemy_Ace::fStunInit()
     mpModel->play_animation(AnimationName::stun, true);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mWaitTimer = mStunTime;
     mIsAttack = false;
 }

@@ -248,6 +248,8 @@ void ShieldEnemy::fStunInit()
     mpModel->play_animation(mAnimPara, AnimationName::stun);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mWaitTimer = 0.0f;
     is_shield = false;
 }

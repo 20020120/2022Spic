@@ -128,7 +128,7 @@ private:
     //プレイヤーに攻撃を開始する最短距離
     const float AT_SHORTEST_DISTANCE = 30.0f;
     //プレイヤーに攻撃を開始する最長距離
-    const float AT_LONGEST_DISTANCE = 40.0f;
+    const float AT_LONGEST_DISTANCE = 80.0f;
     //アイドル状態になった時の待機時間
     const float IDLE_STAY_TIME = 2.0f;
     //移動時間（一定時間移動したらアイドル状態に）

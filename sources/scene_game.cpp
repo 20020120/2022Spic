@@ -115,6 +115,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 
 void SceneGame::uninitialize()
 {
+	audio_manager->stop_all_se();
+	audio_manager->stop_all_bgm();
+
 	BulletManager& mBulletManager = BulletManager::Instance();
 
 	mWaveManager.fFinalize();
@@ -675,7 +678,7 @@ void SceneGame::render(GraphicsPipeline& graphics, float elapsed_time)
 	}
 	//--------<ui>--------//
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
-	if (mIsBossCamera == false)
+	if (mIsBossCamera == false && is_game_clear == false)
 	{
 		// enemy_hp_gauge
 		enemy_hp_gauge->render(graphics.get_dc().Get());

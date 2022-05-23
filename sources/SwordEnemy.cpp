@@ -203,6 +203,8 @@ void SwordEnemy::fAttackBeginUpdate(float elapsedTime_, GraphicsPipeline& Graphi
 void SwordEnemy::fAttackRunInit()
 {
     mMoveTimer = 0;
+    audio_manager->play_se(SE_INDEX::ENEMY_EMERGENCE);
+
 }
 
 void SwordEnemy::fAttackRunUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -273,6 +275,8 @@ void SwordEnemy::fStunInit()
     mpModel->play_animation(mAnimPara, AnimationName::damage, false, false);
     DirectX::XMFLOAT3 effecPos = { mPosition.x,mPosition.y + 2,mPosition.z };
     mStunEffect->play(effect_manager->get_effekseer_manager(), effecPos);
+    audio_manager->play_se(SE_INDEX::STAN);
+
     mWaitTimer = mStunTime ;
     mIsAttack = false;
 }
