@@ -334,6 +334,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 is_chain_attack_aftertaste_timer = 0;
             }
         }
+        if (avoidance_buttun)
+        {
+            if (game_pad->get_trigger_R() < 0.1f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
+            {
+                avoidance_buttun = false;
+            }
+        }
 
         switch (behavior_state)
         {
@@ -514,6 +521,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
             ImGui::Text("behind_test_timer,%.2f", behind_test_timer);
             ImGui::Text("behind_speed,%.2f", behind_speed);
+            ImGui::InputInt("avoidance_direction_count", &avoidance_direction_count);
             ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
             ImGui::Checkbox("is_block", &is_block);
             ImGui::End();

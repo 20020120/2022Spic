@@ -87,7 +87,7 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
             if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
@@ -129,7 +129,7 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         //回避に遷移
         float length{ Math::calc_vector_AtoB_length(position, target) };
-        if (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+        if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
         {
             //ジャスト回避なら
             if (is_lock_on && is_just_avoidance_capsul && length < BEHIND_LANGE_MAX)
@@ -160,13 +160,6 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    if (avoidance_buttun)
-    {
-        if (game_pad->get_trigger_R() < 0.5f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))
-        {
-            avoidance_buttun = false;
-        }
-    }
     //エフェクトの位置，回転設定
     player_air_registance_effec->set_position(effect_manager->get_effekseer_manager(),position);
     player_air_registance_effec->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
@@ -197,7 +190,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         if (avoidance_direction_count > 0)
         {
-            if (avoidance_buttun == false && game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER)
+            if (avoidance_buttun == false && (game_pad->get_trigger_R() || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
             {
                 avoidance_direction_count--;
                 avoidance_buttun = true;
@@ -213,10 +206,10 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                     ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
-                ////覚醒状態の時の回避アニメーションの設定
-                //if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
-                ////通常状態の時のアニメーションの設定
-                //else model->play_animation(AnimationClips::Avoidance, false, true);
+                //覚醒状態の時の回避アニメーションの設定
+                if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
+                //通常状態の時のアニメーションの設定
+                else model->play_animation(AnimationClips::Avoidance, false, true);
                 avoidance_boost_time = 0.0f;
             }
         }
