@@ -80,14 +80,14 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		L".\\resources\\Sprites\\mask\\dissolve_mask1.png", 1);
 	check_box = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\CheckBox.png", 1);
 	arrow_mark = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\arrow_mark.png", 1);
-	arrow_mark_pram.position = { 300.8f,288.6f };
+	arrow_mark_pram.position = { 397.4f,216.9f };
 	arrow_mark_pram.scale = { 0.5f,0.5f };
-	arrow_mark_pram.angle = 45.0f;
+	arrow_mark_pram.angle = 108.0f;
 	arrow_mark_pram.texsize = { static_cast<float>(arrow_mark->get_texture2d_desc().Width),static_cast<float>(arrow_mark->get_texture2d_desc().Height) };
 
 	sprite_tutorial_frame = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\option\\back.png", 1);
-	frame_pram.position = { 0.0f,0.0f };
-	frame_pram.scale = { 0.75f,0.3f };
+	frame_pram.position = { 249.9f,19.6f };
+	frame_pram.scale = { 0.65f,0.35f };
 	frame_pram.texsize = { static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Width),static_cast<float>(sprite_tutorial_frame->get_texture2d_desc().Height) };
 
 	brack_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\mask\\black_mask.png", 1);
@@ -154,6 +154,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 		controller_back_button_pram.texsize = { static_cast<float>(controller_keys[ControllerSprite::Back2]->get_texture2d_desc().Width),
 										static_cast<float>(controller_keys[ControllerSprite::Back2]->get_texture2d_desc().Height) };
 		controller_back_button_pram.scale = { 0.8f,0.8f };
+		controller_back_button_pram.position = { -52.6f,194.0f };
 		controller_back_pram.position = { -156.3f,145.0f };
 		controller_back_pram.scale = { 0.3f,0.3f };
 
@@ -163,19 +164,19 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
 	tutorial_text_element[2].tutorial_text = L"敵が視界に入っている時にLTボタンを押している間\nロックオンすることができます";
 	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
-	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると回り込み,スタンさせます";
-	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けるとカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
+	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると\n回り込み,スタンさせます";
+	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けると\nカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
 	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります\nチェイン攻撃ではゲージはたまりません";
 	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
 
-	tutorial_text_element[0].position = { 166.0f,44.0f };
-	tutorial_text_element[1].position = { 124.0f,69.0f };
-	tutorial_text_element[2].position = { 124.0f,50.0f };
-	tutorial_text_element[3].position = { 68.0f,53.0f };
-	tutorial_text_element[4].position = { 22.0f,72.0f };
-	tutorial_text_element[5].position = { 30.0f,49.0f };
-	tutorial_text_element[6].position = { 121.0f,34.0f };
-	tutorial_text_element[7].position = { 297.0f,69.0f };
+	tutorial_text_element[0].position = { 376.0f,72.0f };
+	tutorial_text_element[1].position = { 337.0f,97.0f };
+	tutorial_text_element[2].position = { 341.0f,75.0f };
+	tutorial_text_element[3].position = { 252.0f,86.0f };
+	tutorial_text_element[4].position = { 360.0f,72.0f };
+	tutorial_text_element[5].position = { 362.0f,55.0f };
+	tutorial_text_element[6].position = { 320.0f,65.0f };
+	tutorial_text_element[7].position = { 479.0f,102.0f };
 
 	tutorial_count_text.s = L"あと３回";
 
@@ -738,7 +739,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
-		tutorial_count_text.position = { 800.0f,120.0f };
+		tutorial_count_text.position = { 835.0f,143.0f };
 		//画像のチュートリアルのパラメータ設定
 		sprite_tutorial_text.position = { 265.0f,430.0f };
 		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます\nジャスト回避をするとHPが少量回復します";
@@ -861,7 +862,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 			else
 			{
-				arrow_mark_pram.position = Math::lerp({ 339.5f,255.0f }, { 300.8f,288.6f }, arrow_rate);
+				arrow_mark_pram.position = Math::lerp({ 397.4f,216.0f }, { 467.2f,236.6f }, arrow_rate);
 			}
 		}
 		else
@@ -873,7 +874,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 			}
 			else
 			{
-				arrow_mark_pram.position = Math::lerp({ 300.8f,288.6f }, { 339.5f,255.0f }, arrow_rate);
+				arrow_mark_pram.position = Math::lerp({ 467.2f,236.6f }, { 397.4f,216.0f }, arrow_rate);
 			}
 		}
 		if (is_next)
@@ -921,7 +922,6 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		end_tutorial_text_timer += 1.0f * elapsed_time;
 		tutorial_check_text = L"自由に練習する";
-		change_scene_txt.color = { 1.0f,1.0f,1.0f,1.0f };
 		//チュートリアル終了の文字の位置を再設定
 		check_mark_parm.threshold = 1.0f;
 
@@ -933,7 +933,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	default:
 		break;
 	}
-	back_button_rate += 1.0f * elapsed_time;
+	back_button_rate += 0.5f * elapsed_time;
 	if (back_button_move_change)
 	{
 		if (back_button_rate > 1.0f)
@@ -943,7 +943,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		else
 		{
-			controller_back_button_pram.position = Math::lerp({ -134.8f,119.1f }, { -134.8f,136.5f }, back_button_rate);
+			controller_back_button_pram.color.w = Math::lerp(1.0f, 0.0f, back_button_rate);
 		}
 	}
 	else
@@ -955,7 +955,7 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		}
 		else
 		{
-			controller_back_button_pram.position = Math::lerp({ -134.8f,136.5f }, { -134.8f,119.1f }, back_button_rate);
+			controller_back_button_pram.color.w = Math::lerp(0.0f, 1.0f, back_button_rate);
 		}
 	}
 
@@ -1089,6 +1089,7 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 		{
 			ImGui::DragFloat2("pos", &change_scene_txt.position.x, 0.1f);
 			ImGui::DragFloat2("scale", &change_scene_txt.scale.x, 0.1f);
+			ImGui::DragFloat4("color", &change_scene_txt.color.x, 0.1f);
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -1099,11 +1100,12 @@ void TutorialScene::TutorialRender(GraphicsPipeline& graphics, float elapsed_tim
 	change_scene_gauge->render(graphics.get_dc().Get(), change_gauge_parm.pos, change_gauge_parm.scale,change_gauge_parm.threshold);
 	change_scene_gauge->end(graphics.get_dc().Get());
 
+	sprite_render("controller_back_button_pram", controller_on_keys[ControllerSprite::Back].get(), controller_back_button_pram, 0, 0);
+
 	fonts->yu_gothic->Begin(graphics.get_dc().Get());
 	fonts->yu_gothic->Draw(tutorial_skip_text, change_scene_txt.position, change_scene_txt.scale, change_scene_txt.color, change_scene_txt.angle, TEXT_ALIGN::UPPER_LEFT);
 	fonts->yu_gothic->End(graphics.get_dc().Get());
 
-	sprite_render("controller_back_button_pram", controller_on_keys[ControllerSprite::Back].get(), controller_back_button_pram, 0, 0);
 
 	check_box->begin(graphics.get_dc().Get());
 	check_box->render(graphics.get_dc().Get(), check_mark_parm.pos, check_mark_parm.scale);

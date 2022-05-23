@@ -196,7 +196,7 @@ private:
 
     struct TutorialCheckText
     {
-        DirectX::XMFLOAT2 position{ 103.0f,192.5f };
+        DirectX::XMFLOAT2 position{ 103.0f,332.3f };
         DirectX::XMFLOAT2 scale{ 0.7f,0.7f };
         float angle;
         DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
@@ -208,7 +208,7 @@ private:
     //チェックボックスの画像
     struct CheckMarkParm
     {
-        DirectX::XMFLOAT2 pos{ 32.0f,190.2f };
+        DirectX::XMFLOAT2 pos{ 16.1f,329.5f };
         DirectX::XMFLOAT2 scale{ 0.2f,0.2f };
         float threshold{1.0f};
         bool is_threshold{ false };
@@ -262,7 +262,7 @@ private:
     std::unique_ptr<SpriteDissolve> change_scene_gauge{ nullptr };
     struct ChangeSceneGauge
     {
-        DirectX::XMFLOAT2 pos{ -13.9f,276.0f };
+        DirectX::XMFLOAT2 pos{ -13.9f,439.6f };
         DirectX::XMFLOAT2 scale{ 3.8f,2.9f };
         float threshold{ 1.0f };
     };
@@ -270,10 +270,10 @@ private:
     std::wstring tutorial_skip_text = L"バックボタン長押しでチュートリアルスキップ";
     struct ChangeSceneTxt
     {
-        DirectX::XMFLOAT2 position{ 19.0f,282.8f };
+        DirectX::XMFLOAT2 position{ 19.0f,445.1f };
         DirectX::XMFLOAT2 scale{ 0.5f,0.5f };
         float angle;
-        DirectX::XMFLOAT4 color{ 1.0f,1.0f,1.0f,1.0f };
+        DirectX::XMFLOAT4 color{ 1.0f,1.0f,0.0f,1.0f };
     };
     ChangeSceneTxt change_scene_txt;
 
