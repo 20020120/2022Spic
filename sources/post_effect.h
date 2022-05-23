@@ -29,6 +29,7 @@ public:
 	static void boss_awakening_effect(const DirectX::XMFLOAT2& screen_pos, float power, float wipe_threshold = 0);
 	static void wipe_effect(float threshold);
 	static void color_filter(float hueShift, float saturation, float brightness);
+	static void chronostasis_effect(float scope, float saturation);
 
 	//--------<getter/setter>--------//
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& get_color_map() { return framebuffers[static_cast<int>(FRAME_BUFER_SLOT::OFF_SCREEN)]->get_color_map(); }

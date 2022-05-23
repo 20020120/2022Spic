@@ -540,3 +540,16 @@ void PostEffect::color_filter(float hueShift, float saturation, float brightness
 	post_effect_count = 1;
 	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::COLOR_FILTER);
 }
+
+void PostEffect::chronostasis_effect(float scope, float saturation)
+{
+	effect_constants_for_preservation.hueShift = 1;
+	effect_constants_for_preservation.saturation = saturation;
+	effect_constants_for_preservation.brightness = 1;
+
+	effect_constants_for_preservation.vignetting_scope = scope;
+
+	post_effect_count = 2;
+	effect_type[0] = static_cast<int>(POST_EFFECT_TYPE::COLOR_FILTER);
+	effect_type[1] = static_cast<int>(POST_EFFECT_TYPE::VIGNETTING);
+}

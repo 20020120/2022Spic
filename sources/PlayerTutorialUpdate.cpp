@@ -16,16 +16,36 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
     if (awaiking_event == false)
     {
+        if (during_chain_attack())
+        {
+            if (is_chain_attack_aftertaste_timer < CHRONOSTASIS_TIME)
+            {
+                chronostasis_scope = Math::lerp(chronostasis_scope, 0.3f, 1 / CHRONOSTASIS_TIME * elapsed_time);
+                chronostasis_saturation = Math::lerp(chronostasis_saturation, 0.8f, 1 / CHRONOSTASIS_TIME * elapsed_time);
+            }
+            if (is_chain_attack_aftertaste_timer > (BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer) - CHRONOSTASIS_TIME)
+            {
+                chronostasis_scope = Math::lerp(chronostasis_scope, 0.8f, 1 / CHRONOSTASIS_TIME * elapsed_time);
+                chronostasis_saturation = Math::lerp(chronostasis_saturation, 1.0f, 1 / CHRONOSTASIS_TIME * elapsed_time);
+            }
+
+            PostEffect::chronostasis_effect(chronostasis_scope, chronostasis_saturation);
+        }
         // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
         if (during_chain_attack() && !during_chain_attack_end())
         {
             is_chain_attack_aftertaste_timer += elapsed_time;
             if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
             {
+                chronostasis_scope = 0.8f;
+                chronostasis_saturation = 1.0f;
+
                 is_chain_attack_aftertaste = false;
                 is_chain_attack_aftertaste_timer = 0;
+                PostEffect::clear_post_effect();
             }
         }
+
         if (avoidance_buttun)
         {
             if (game_pad->get_trigger_R() < 0.1f && !(game_pad->get_button() & GamePad::BTN_RIGHT_SHOULDER))

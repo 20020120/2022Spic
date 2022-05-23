@@ -3,6 +3,8 @@
 #include "SwordTrail.h"
 #include "Player.h"
 
+#include "BaseCamera.h"
+
 bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
 	const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
@@ -741,6 +743,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			{
 				if (!enemy->fIsLockOnOfChain()) continue; // ダメージを与えるのはロックオンされた敵のみ
 				enemy->fDamaged(25, 0.3f, Graphics_, elapsed_time);
+				enemy->fSetLaunchDissolve();
 				enemy->fSetIsLockOnOfChain(false);
 			}
 
@@ -751,7 +754,7 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 			}
 
 			is_chain_attack = false;
-			change_normal_timer = 1.5f;
+			change_normal_timer = BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer;
 
 			transition_chain_search(); /* リセット */
 			transition_normal_behavior();
