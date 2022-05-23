@@ -693,6 +693,8 @@ private:
         bool detection = false;
     };
     static constexpr int STEPS = 3;
+    static constexpr float AddAttackEndCameraTimer = 1.0f;
+
     float SEARCH_TIME = 0.5f;
     bool setup_search_time = false;
     float search_time = SEARCH_TIME;

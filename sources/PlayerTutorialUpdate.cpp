@@ -19,7 +19,6 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         // ロックオン完了から攻撃終了後カメラが追いついたあとちょっと待ってtrue
         if (during_chain_attack() && !during_chain_attack_end())
         {
-            static const float AddAttackEndCameraTimer = 1.0f;
             is_chain_attack_aftertaste_timer += elapsed_time;
             if (is_chain_attack_aftertaste_timer > BaseCamera::AttackEndCameraTimer + AddAttackEndCameraTimer)
             {
