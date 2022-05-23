@@ -62,6 +62,22 @@ enum class SE_INDEX
     DRAW_PEN,               //クリア、ゲームオーバーの音
     BOSS_EXPLOSION,         //ボス爆破音
     GAUGE_MAX,              //覚醒ゲージMAX
+    BOSS_SMALL_ROAR,//ボスの咆哮(小)
+    DOCKING_1,//合体音1
+    DOCKING_2,//合体音2
+    FOOT_TRANSFORM,//足変形
+    REVERBERATION,//余韻
+    ROAR_1,//咆哮1
+    ROAR_2,//咆哮2
+    SABER,//剣振り下ろし
+    SPLINTERS,//ボスがバラバラになる
+    TEARING,//ボスが体を引きちぎる
+    THROW,//ボスが頭投げる
+    DISC,//ボスの足骨展開
+    GRAB,//大剣掴む
+    SHOULDER_ARMOR,//プレイヤーの肩のアーマー
+    TRANSFORM_FAST,//ボス足回転
+    BOSS_READY_FAST,//頭回転完了
 
     SE_COUNT
 };

@@ -209,6 +209,22 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/draw_pen.wav", SE_INDEX::DRAW_PEN, 0.1f);
 	register_se(L"resources/Audios/SE/boss_explosion.wav", SE_INDEX::BOSS_EXPLOSION, 0.1f);
 	register_se(L"resources/Audios/SE/gauge_max.wav", SE_INDEX::GAUGE_MAX, 0.1f);
+	register_se(L"resources/Audios/SE/boss_ready.wav", SE_INDEX::BOSS_SMALL_ROAR, 0.1f);
+	register_se(L"resources/Audios/SE/docking_1.wav", SE_INDEX::DOCKING_1, 0.1f);
+	register_se(L"resources/Audios/SE/docking_2.wav", SE_INDEX::DOCKING_2, 0.1f);
+	register_se(L"resources/Audios/SE/foot_transform.wav", SE_INDEX::FOOT_TRANSFORM, 0.1f);
+	register_se(L"resources/Audios/SE/reverberation.wav", SE_INDEX::REVERBERATION, 0.1f);
+	register_se(L"resources/Audios/SE/roar_1.wav", SE_INDEX::ROAR_1, 0.1f);
+	register_se(L"resources/Audios/SE/roar_2.wav", SE_INDEX::ROAR_2, 0.1f);
+	register_se(L"resources/Audios/SE/saber.wav", SE_INDEX::SABER, 0.1f);
+	register_se(L"resources/Audios/SE/splinters.wav", SE_INDEX::SPLINTERS, 0.1f);
+	register_se(L"resources/Audios/SE/tearing.wav", SE_INDEX::TEARING, 0.1f);
+	register_se(L"resources/Audios/SE/throw.wav", SE_INDEX::THROW, 0.1f);
+	register_se(L"resources/Audios/SE/disc.wav", SE_INDEX::DISC, 0.1f);
+	register_se(L"resources/Audios/SE/grab.wav", SE_INDEX::GRAB, 0.1f);
+	register_se(L"resources/Audios/SE/shoulder_armor.wav", SE_INDEX::SHOULDER_ARMOR, 0.1f);
+	register_se(L"resources/Audios/SE/transform_fast.wav", SE_INDEX::TRANSFORM_FAST, 0.1f);
+	register_se(L"resources/Audios/SE/boss_ready_fast.wav", SE_INDEX::BOSS_READY_FAST, 0.1f);
 
 }
 
