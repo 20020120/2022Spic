@@ -62,6 +62,7 @@ void BossUnit::fSetStun(bool Arg_, bool IsJust_)
     {
         mIsStun = Arg_;
         fChangeState(DivideState::Stun);
+        mpBeamEffect->stop(effect_manager->get_effekseer_manager());
     }
 }
 

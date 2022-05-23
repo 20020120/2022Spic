@@ -7,11 +7,10 @@
 
 #include"LastBoss.h"
 
-
 LastBoss::Turret::Turret(GraphicsPipeline& Graphics_)
 {
    // ƒ‚ƒfƒ‹‚Ì‰Šú‰»
-    mpModel = std::make_unique<SkinnedMesh>(Graphics_.get_device().Get(),
+    mpModel =  resource_manager->load_model_resource(Graphics_.get_device().Get(),
         "./resources/Models/Enemy/boss_turret.fbx");
 
 }
@@ -55,7 +54,7 @@ DirectX::XMFLOAT3 LastBoss::Turret::fGetPosition() const
 LastBoss::SecondGun::SecondGun(GraphicsPipeline& Graphics_)
 {
     // ƒ‚ƒfƒ‹‚Ì‰Šú‰»
-    mpModel = std::make_unique<SkinnedMesh>(Graphics_.get_device().Get(),
+    mpModel = resource_manager->load_model_resource(Graphics_.get_device().Get(),
         "./resources/Models/Enemy/boss_secondarygun.fbx");
 }
 

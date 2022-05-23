@@ -147,7 +147,7 @@ private:
     };
 
     //--------------------<砲身のクラス>--------------------//
-    class Turret final
+    class Turret final : public PracticalEntities
     {
     public:
         Turret(GraphicsPipeline& Graphics_);
@@ -160,14 +160,14 @@ private:
         DirectX::XMFLOAT3 fGetPosition()const;
     private:
         DirectX::XMFLOAT4 mOrientation{0.0f,0.0f,0.0f,1.0f}; // 角度
-        std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
+        std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
         DirectX::XMFLOAT3 mPosition;
         float mDissolve{};
     };
   
     //--------------------<第二砲身のクラス>--------------------//
-    class SecondGun final
+    class SecondGun final : public PracticalEntities
     {
     public :
         SecondGun(GraphicsPipeline& Graphics_);
@@ -178,11 +178,29 @@ private:
 
         void fSetDissolve(float Dissolve_);
     private:
-        std::unique_ptr<SkinnedMesh> mpModel{ nullptr };
+        std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
         SkinnedMesh::anim_Parameters mAnimPara{};
         float mDissolve;
     };
 
+
+     struct BossParamJson
+     {
+         int BossStateNumber{}; // ボスの現在のステート（タイトルに戻るとリセットする）
+         bool mShowMovie_ShipToHuman{};
+         bool mShowMovie_HumanToDragon{};
+         bool mShowMovie_DragonDie{};
+
+         template<class Archive>
+         void serialize(Archive& archive, std::uint32_t const version)
+         {
+             archive(
+                 cereal::make_nvp("BossStateNumber", BossStateNumber),
+                 cereal::make_nvp("mShowMovie_ShipToHuman", mShowMovie_ShipToHuman),
+                 cereal::make_nvp("mShowMovie_HumanToDragon", mShowMovie_HumanToDragon),
+                 cereal::make_nvp("mShowMovie_DragonDie", mShowMovie_DragonDie));
+         }
+     };
 
 public:
     LastBoss(GraphicsPipeline& Graphics_, 
@@ -321,6 +339,12 @@ private:
     bool mIsSpawnEnemy{};
     float mDragonBeamLength{};
     float mPerformThresold{};
+
+    //--------------------<ボスのパラメーター>--------------------//
+    BossParamJson mBossParam;
+    void fLoadParam();
+    void fSaveParam();
+
     //****************************************************************
     // 
     // 定数
