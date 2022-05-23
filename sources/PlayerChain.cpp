@@ -3,8 +3,6 @@
 #include "SwordTrail.h"
 #include "Player.h"
 
-
-
 bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position, float speed,
 	const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
@@ -424,6 +422,8 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 void Player::transition_chain_lockon_begin()
 {
 	is_chain_attack = true;
+	is_chain_attack_aftertaste = true;
+	is_chain_attack_aftertaste_timer = 0;
 
 	if (is_awakening) { model->play_animation(AwakingChargeInit, false, true, 0.1f, 3.0f); }
 	else { model->play_animation(ChargeInit, false, true, 0.1f, 3.0f); }
@@ -744,15 +744,16 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 				enemy->fSetIsLockOnOfChain(false);
 			}
 
-
 			if (tutorial_state == TutorialState::ChainAttackTutorial)
 			{
 				tutorial_action_count--;
 				if (tutorial_action_count <= 0)is_next_tutorial = true;
 			}
+
 			is_chain_attack = false;
 			change_normal_timer = 1.5f;
-			transition_chain_search(); /*リセット*/
+
+			transition_chain_search(); /* リセット */
 			transition_normal_behavior();
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
