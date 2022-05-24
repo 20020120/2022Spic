@@ -39,6 +39,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
     player_slash_hit_effec      = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
     player_awaiking_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_kakusei1.efk");
+    just_stun = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\just_stun.efk");
 }
 
 Player::~Player()

@@ -223,7 +223,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
             ImGui::DragFloat("execution_timer", &execution_timer);
             ImGui::Checkbox("is_next", &is_next_tutorial);
             ImGui::DragFloat3("slash_effec_pos", &slash_effec_pos.x,0.1f);
-
+            ImGui::Text("anime_time%d",model->get_anim_para().frame_index);
             ImGui::End();
         }
     }
@@ -676,6 +676,7 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
                     ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
+                audio_manager->play_se(SE_INDEX::AVOIDANCE);
                 //覚醒状態の時の回避アニメーションの設定
                 if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
                 //通常状態の時のアニメーションの設定
@@ -720,9 +721,11 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
+    just_stun->set_position(effect_manager->get_effekseer_manager(), position);
 
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {
+        just_stun->stop(effect_manager->get_effekseer_manager());
         if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else         behaind_avoidance_cool_time = 1.0f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
@@ -1104,10 +1107,36 @@ void Player::TutorialDamageUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
 
 void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
-    if (awaiking_se == false && model->get_anim_para().animation_tick > 8.1f)
-    {
-        awaiking_se = true;
-        audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+    //if (awaiking_se == false && model->get_anim_para().animation_tick > 8.1f)
+    //{
+    //    awaiking_se = true;
+    //    audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+    //}
+
+
+    if (model->get_anim_para().frame_index == 40) {
+        audio_manager->play_se(SE_INDEX::DOCKING_2);
+    }
+
+    if (model->get_anim_para().frame_index == 60) {
+        audio_manager->play_se(SE_INDEX::DOCKING_2);
+    }
+
+    if (model->get_anim_para().frame_index == 80) {
+        audio_manager->play_se(SE_INDEX::DOCKING_2);
+    }
+
+    if (model->get_anim_para().frame_index == 105) {
+        audio_manager->play_se(SE_INDEX::FOOT_TRANSFORM);
+    }
+    if (model->get_anim_para().frame_index == 173) {
+        audio_manager->play_se(SE_INDEX::SHOULDER_ARMOR);
+    }
+    if (model->get_anim_para().frame_index == 417) {
+        audio_manager->play_se(SE_INDEX::GRAB);
+    }
+    if (model->get_anim_para().frame_index == 485) {
+        audio_manager->play_se(SE_INDEX::SABER);
     }
 
     //非表示にしてるものは表示
@@ -1280,6 +1309,14 @@ void Player::TransitionTutorialJustBehindAvoidance()
     if (target_enemy != nullptr)
     {
         target_enemy->fSetStun(true, true);
+    }
+    if (is_awakening)
+    {
+        just_stun->play(effect_manager->get_effekseer_manager(), position, 6.0f);
+    }
+    else
+    {
+        just_stun->play(effect_manager->get_effekseer_manager(), position, 3.0f);
     }
     is_just_avoidance = true;
     //HP回復する

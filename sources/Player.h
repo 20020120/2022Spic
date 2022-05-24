@@ -13,6 +13,31 @@
 #include"game_icon.h"
 #include "effect.h"
 #include "reticle.h"
+enum class SePriset : uint16_t
+{
+    None = (0 << 0),
+    First = (1 << 0),
+    Second = (2 << 0),
+    Third = (3 << 0),
+    Forth = (4 << 0),
+    Fifth = (5 << 0),
+    Sixth = (6 << 0),
+    Seventh = (7 << 0),
+
+    Se0 = None,
+    Se1 = First,
+    Se2 = First | Second,
+    Se3 = First | Second | Third,
+    Se4 = First | Second | Third | Forth,
+    Se5 = First | Second | Third | Forth | Fifth,
+    Se6 = First | Second | Third | Forth | Fifth | Sixth,
+    Se7 = First | Second | Third | Forth | Fifth | Sixth | Seventh,
+
+};
+inline bool operator&(SePriset lhs, SePriset rhs)
+{
+    return static_cast<uint16_t>(lhs) & static_cast<uint16_t>(rhs);
+}
 
 class Player :public BasePlayer, private PlayerMove
 {
@@ -86,6 +111,7 @@ private:
     std::unique_ptr<Effect> player_slash_hit_effec;
     DirectX::XMFLOAT3 slash_effec_pos{};
     std::unique_ptr<Effect> player_awaiking_effec;
+    std::unique_ptr<Effect> just_stun;
 
     //USE_IMGUI
 private:
@@ -812,7 +838,7 @@ private:
     //ダメージ受けたときに遷移
     void TransitionTutorialDamage();
 
-
+    SePriset se_priset = SePriset::Se0;
     void TutorialAwaiking();//覚醒状態のON,OFF
 public:
     bool GetTutorialEvent() { return awaiking_event; }

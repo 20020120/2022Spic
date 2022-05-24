@@ -226,6 +226,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
                     ChargeTurn(elapsed_time, forward, turn_speed, position, orientation);
                     charge_point = Math::calc_designated_point(position, forward, 200.0f);
                 }
+                audio_manager->play_se(SE_INDEX::AVOIDANCE);
                 //覚醒状態の時の回避アニメーションの設定
                 if (is_awakening)model->play_animation(AnimationClips::AwakingAvoidance, false, true);
                 //通常状態の時のアニメーションの設定
@@ -239,12 +240,14 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    just_stun->set_position(effect_manager->get_effekseer_manager(), position);
     behind_test_timer += 1.0f * elapsed_time;
     //behind_timer += 2.0f * elapsed_time;
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     //BehindAvoidanceMove(elapsed_time);
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position, behind_speed, behind_interpolated_way_points,1.5f))
     {
+        just_stun->stop(effect_manager->get_effekseer_manager());
         if (is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
         else   behaind_avoidance_cool_time = 1.0f;
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
@@ -993,6 +996,14 @@ void Player::TransitionJustBehindAvoidance()
     if (target_enemy != nullptr)
     {
         target_enemy->fSetStun(true, true);
+    }
+    if (is_awakening)
+    {
+        just_stun->play(effect_manager->get_effekseer_manager(), position, 6.0f);
+    }
+    else
+    {
+        just_stun->play(effect_manager->get_effekseer_manager(), position, 3.0f);
     }
     //HP回復する
     player_health += JUST_AVOIDANCE_HEALTH;
