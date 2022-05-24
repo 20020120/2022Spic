@@ -7,7 +7,6 @@
 #include "sprite_batch.h"
 #include "practical_entities.h"
 
-
 class WaveFile
 {
 private:
@@ -51,7 +50,6 @@ public:
     int get_stage_to_start() const { return source.stage_to_start; }
     void set_stage_to_start(int s) { source.stage_to_start = s; }
 };
-
 
 
 //****************************************************************
@@ -136,6 +134,7 @@ private:
     {
         REDUCTION,    // 縮小
         SELECTION,    // ステージ選択
+        MOVE,         // 移動
         ENLARGEMENT,  // 拡大
     };
     CLEAR_STATE clear_state = CLEAR_STATE::REDUCTION;
@@ -145,12 +144,23 @@ private:
     // selection
     void transition_selection();
     void update_selection(float elapsed_time);
+    // move
+    void transition_move();
+    void update_move(float elapsed_time);
     // enlargement
     void transition_enlargement();
     void update_enlargement(float elapsed_time);
 
     bool close = false;
     float wait_timer = 1.0f;
+
+    DirectX::XMFLOAT2 middle_point;
+    DirectX::XMFLOAT2 terminus_point;
+    DirectX::XMFLOAT2 interpolated_point;
+    bool can_moves[2] = { false, false };
+
+    DirectX::XMFLOAT2 view_middle_point;
+
 public:
     enum STAGE_IDENTIFIER /*S_到達数_左からの数*/
     {
@@ -253,8 +263,6 @@ public:
     const bool get_game_clear() const { return game_clear; }
 
     //---ここまで--//
-
-    \
 };
 
 

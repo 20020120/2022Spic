@@ -409,17 +409,20 @@ void WaveManager::fClearUpdate(float elapsedTime_)
     case CLEAR_STATE::SELECTION:   // 選択
         update_selection(elapsedTime_);
         break;
+    case CLEAR_STATE::MOVE:   // 選択
+        update_move(elapsedTime_);
+        break;
     case CLEAR_STATE::ENLARGEMENT: // 拡大
         update_enlargement(elapsedTime_);
         break;
     }
     // 矢印の位置
     {
-        DirectX::XMFLOAT2 offset = player_icon.arg.texsize * player_icon.arg.scale * 1.0f;
-        if (arrows.count(StageDetails::ROUTE::LEFT)) { arrows.at(StageDetails::ROUTE::LEFT).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(-offset.x, 0); }
+        DirectX::XMFLOAT2 offset = player_icon.arg.texsize * player_icon.arg.scale * 0.8f;
+        if (arrows.count(StageDetails::ROUTE::LEFT))  { arrows.at(StageDetails::ROUTE::LEFT).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(-offset.x, 0); }
         if (arrows.count(StageDetails::ROUTE::RIGHT)) { arrows.at(StageDetails::ROUTE::RIGHT).arg.pos = player_icon.arg.pos + DirectX::XMFLOAT2(offset.x, 0); }
-        if (arrows.count(StageDetails::ROUTE::UP)) { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
-        if (arrows.count(StageDetails::ROUTE::DOWN)) { arrows.at(StageDetails::ROUTE::DOWN).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(0, offset.y); }
+        if (arrows.count(StageDetails::ROUTE::UP))    { arrows.at(StageDetails::ROUTE::UP).arg.pos       = player_icon.arg.pos + DirectX::XMFLOAT2(0, -offset.y); }
+        if (arrows.count(StageDetails::ROUTE::DOWN))  { arrows.at(StageDetails::ROUTE::DOWN).arg.pos   = player_icon.arg.pos + DirectX::XMFLOAT2(0, offset.y); }
     }
 #ifdef USE_IMGUI
     ImGui::Begin("ClearProto");
@@ -467,7 +470,10 @@ void WaveManager::transition_reduction()
     wait_timer = 1.5f;
 
     float ratio = (stage_details[current_stage].position.y / map.arg.texsize.y);
-    arrival_viewpoint = { 640.0f, ratio > 0.8f ? 700.0f * ratio : 360.0f };
+
+    arrival_viewpoint = { 640.0f,  360.0f };
+    if (ratio > 0.8f) { arrival_viewpoint.y = 700.0f * ratio; }
+
     arrival_scale = { 1.0f,1.0f };
     // map
     map.threshold = 10.0f;
@@ -597,7 +603,7 @@ void WaveManager::update_selection(float elapsed_time)
     if (game_pad->get_button_down() & GamePad::BTN_B)
     {
         next_stage = stage_details[current_stage].journeys.at(route_state);
-        transition_enlargement();
+        transition_move();
     }
 
     DirectX::XMFLOAT2 min_point = map.arg.pos;
@@ -652,14 +658,100 @@ void WaveManager::update_selection(float elapsed_time)
 #endif // USE_IMGUI
 }
 
+void WaveManager::transition_move()
+{
+    clear_state = CLEAR_STATE::MOVE;
+
+    for (auto& can_move : can_moves) { can_move = false; }
+
+    DirectX::XMFLOAT2 current_position = stage_details[current_stage].position;
+    DirectX::XMFLOAT2 next_position    = stage_details[next_stage].position;
+
+    if (current_stage == STAGE_IDENTIFIER::S_3_1 || current_stage == STAGE_IDENTIFIER::S_3_2 || current_stage == STAGE_IDENTIFIER::S_3_3)
+    {
+        middle_point = { current_position.x, next_position.y };
+    }
+    else
+    {
+        middle_point = { next_position.x, current_position.y };
+    }
+
+    terminus_point     = next_position;
+    interpolated_point = current_position;
+
+    view_middle_point = { arrival_viewpoint.x,  stage_details[next_stage].position.y * map.arg.scale.y };
+}
+
+void WaveManager::update_move(float elapsed_time)
+{
+    // 移動
+    if (Math::equal_check(viewpoint, arrival_viewpoint, 0.5f)) { can_moves[0] = true; }
+    if (!can_moves[0])
+    {
+        float lerp_rate = 2.0f;
+        viewpoint = Math::lerp(viewpoint, arrival_viewpoint, lerp_rate * elapsed_time);
+
+        player_icon.arg.pos = viewpoint;
+        map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
+    }
+
+    if (interpolated_point.y < 335.0f)
+    {
+        if (!can_moves[1] && Math::equal_check(viewpoint, view_middle_point, 0.5f))
+        {
+            can_moves[1] = true;
+            terminus_point.y -= 20.0f;
+            interpolated_point.y = terminus_point.y;
+        }
+        if (can_moves[0] && !can_moves[1])
+        {
+            float lerp_rate = 2.0f;
+            viewpoint = Math::lerp(viewpoint, view_middle_point, lerp_rate * elapsed_time);
+
+            player_icon.arg.pos = viewpoint;
+        }
+    }
+    else
+    {
+        if (Math::equal_check(interpolated_point, middle_point, 0.5f)) { can_moves[1] = true; }
+        if (can_moves[0] && !can_moves[1])
+        {
+            float lerp_rate = 2.0f;
+            interpolated_point = Math::lerp(interpolated_point, middle_point, lerp_rate * elapsed_time);
+
+            map.arg.pos = viewpoint - interpolated_point * map.arg.scale;
+        }
+    }
+
+    if (Math::equal_check(interpolated_point, terminus_point, 0.5f)) { transition_enlargement(); }
+    if (can_moves[1])
+    {
+        float lerp_rate = 2.0f;
+        interpolated_point = Math::lerp(interpolated_point, terminus_point, lerp_rate * elapsed_time);
+
+        map.arg.pos = viewpoint - interpolated_point * map.arg.scale;
+    }
+
+#ifdef USE_IMGUI
+    ImGui::Begin("ClearProto");
+    {
+        ImGui::Separator();
+        ImGui::DragFloat2("interpolated_point", &interpolated_point.x, 0.1f);
+        ImGui::Separator();
+    }
+    ImGui::End();
+#endif // USE_IMGUI
+}
+
 void WaveManager::transition_enlargement()
 {
     clear_state = CLEAR_STATE::ENLARGEMENT;
 
-    wait_timer = 2.0f;
+    wait_timer = 0.5f;
+    arrival_scale = { 6.0f, 6.0f };
+
     if (next_stage == STAGE_IDENTIFIER::BOSS) arrival_viewpoint = { 640.0f, 175.0f };
     else  arrival_viewpoint = { 640.0f, 360.0f };
-    arrival_scale     = { 6.0f, 6.0f };
 }
 
 void WaveManager::update_enlargement(float elapsed_time)
@@ -669,14 +761,14 @@ void WaveManager::update_enlargement(float elapsed_time)
     wait_timer -= elapsed_time;
     wait_timer = (std::max)(wait_timer, 0.0f);
 
-    // viewpointの移動
+    if (wait_timer > 0.0f) return;
+
     float lerp_rate = 1.5f;
     viewpoint = Math::lerp(viewpoint, arrival_viewpoint, lerp_rate * elapsed_time);
-    // positionの移動
-    map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
-    player_icon.arg.pos = viewpoint;
 
-    if (wait_timer > 0.0f) return;
+    player_icon.arg.pos = viewpoint;
+    map.arg.pos = viewpoint - stage_details[current_stage].position * map.arg.scale;
+
     // scaleの変更
     map.arg.scale = Math::lerp(map.arg.scale, arrival_scale, lerp_rate * elapsed_time);
     player_icon.arg.scale = DirectX::XMFLOAT2(0.4f, 0.4f) * map.arg.scale;

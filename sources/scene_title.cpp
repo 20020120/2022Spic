@@ -568,23 +568,6 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 	effect_manager->update(elapsed_time);
 
 	post_effect->title_post_effect(slashing_power);
-	static float hueShift = 1;
-	static float saturation = 1;
-	static float brightness = 1;
-
-	std::string ss = "filteraaa";
-
-	ImGui::Begin("pst efc para");
-	if (ImGui::TreeNode(ss.c_str()))
-	{
-		ImGui::DragFloat("hueShift", &hueShift, 0.1f);
-		ImGui::DragFloat("saturation", &saturation, 0.1f);
-		ImGui::DragFloat("brightness", &brightness, 0.1f);
-		ImGui::TreePop();
-	}
-	ImGui::End();
-
-	post_effect->color_filter(hueShift, saturation, brightness);
 }
 
 void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)

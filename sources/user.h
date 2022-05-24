@@ -23,9 +23,13 @@ namespace Math
     //--------------------------------------------------------------
     //  実数値のイコール判定
     //--------------------------------------------------------------
-    inline float equal_check(float value1, float value2, float ep = FLT_EPSILON)
+    inline bool equal_check(float value1, float value2, float ep = FLT_EPSILON)
     {
         return (value1 >= value2 - ep) && (value1 < value2 + ep);
+    }
+    inline bool equal_check(const DirectX::XMFLOAT2& value1, const DirectX::XMFLOAT2& value2, float ep = FLT_EPSILON)
+    {
+        return ((value1.x >= value2.x - ep) && (value1.x < value2.x + ep)) && ((value1.y >= value2.y - ep) && (value1.y < value2.y + ep));
     }
     //--------------------------------------------------------------
     //  値を範囲内に収める関数
@@ -260,7 +264,7 @@ namespace Math
         return lerp;
     }
 
-    inline DirectX::XMFLOAT4 lerp(const DirectX::XMFLOAT4& begin, 
+    inline DirectX::XMFLOAT4 lerp(const DirectX::XMFLOAT4& begin,
         const DirectX::XMFLOAT4& end,float thread)
     {
         auto res = DirectX::XMVectorLerp(DirectX::XMLoadFloat4(&begin),
