@@ -268,7 +268,12 @@ void WaveManager::render(ID3D11DeviceContext* dc, float elapsed_time)
     if (mWaveState == WaveState::Clear)
     {
         r_dissolve("Map", map.sprite.get(), map.arg, map.threshold);
-        r_dissolve("player icon", player_icon.sprite.get(), player_icon.arg, player_icon.threshold);
+
+        player_icon.sprite->begin(dc);
+        player_icon.sprite->render(dc, player_icon.arg.pos + DirectX::XMFLOAT2(0,-0.5f), player_icon.arg.scale,
+            player_icon.arg.pivot, player_icon.arg.color, player_icon.arg.angle, player_icon.arg.texpos, player_icon.arg.texsize, player_icon.threshold);
+        player_icon.sprite->end(dc);
+
         for (auto& arrow : arrows)
         {
             for (const auto& journey : stage_details[current_stage].journeys)

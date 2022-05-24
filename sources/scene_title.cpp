@@ -120,8 +120,8 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 		tutorial_tab.headline.position = { 465, 235 };
 		tutorial_tab.headline.scale = { 0.7f,0.7f };
 
-		tutorial_tab.back.s = L"Aƒ{ƒ^ƒ“‚Å–ß‚é";
-		tutorial_tab.back.position = { 685, 435 };
+		tutorial_tab.back.s = L"–ß‚é";
+		tutorial_tab.back.position = { 790, 520 };
 		tutorial_tab.back.scale = { 0.6f,0.6f };
 
 		tutorial_tab.yes.s = L"‚Í‚¢";
@@ -177,9 +177,26 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 		config_b.texsize       = { static_cast<float>(sprite_config_b->get_texture2d_desc().Width), static_cast<float>(sprite_config_b->get_texture2d_desc().Height) };
 		config_b.color         = { 1,1,1,1 };
 
+		config_b2.position      = { 370,320 };
+		config_b2.scale         = { 0.6f,0.6f };
+		config_b2.texsize       = { static_cast<float>(sprite_config_b->get_texture2d_desc().Width), static_cast<float>(sprite_config_b->get_texture2d_desc().Height) };
+		config_b2.color         = { 1,1,1,1 };
+
 		config_b_font.s        = L"Œˆ’è";
 		config_b_font.position = { 1200, 675 };
 		config_b_font.scale    = { 0.6f,0.6f };
+
+		config_b_font2.s        = L"Œˆ’è";
+		config_b_font2.position = { 785, 470 };
+		config_b_font2.scale    = { 0.6f,0.6f };
+
+
+		sprite_config_a = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\controller\\a.png", 1);
+
+		config_a.position = { 393,345 };
+		config_a.scale = { 0.6f,0.6f };
+		config_a.texsize = { static_cast<float>(sprite_config_a->get_texture2d_desc().Width), static_cast<float>(sprite_config_a->get_texture2d_desc().Height) };
+		config_a.color = { 1,1,1,1 };
 	}
 
 	//--audio--//
@@ -705,7 +722,13 @@ void SceneTitle::render(GraphicsPipeline& graphics, float elapsed_time)
 		r_font_render("back", tutorial_tab.back);
 		r_font_render("yes", tutorial_tab.yes);
 		r_font_render("no", tutorial_tab.no);
+
+		r_font_render("config_b_font2", config_b_font2);
 		fonts->yu_gothic->End(graphics.get_dc().Get());
+
+		r_sprite_render("config b2", sprite_config_b.get(), config_b2);
+
+		r_sprite_render("config a", sprite_config_a.get(), config_a);
 	}
 }
 
