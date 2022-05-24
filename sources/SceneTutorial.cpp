@@ -962,9 +962,9 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 	//バックボタンを長押しして3秒たったらチュートリアルスキップ
 	if (game_pad->get_button() & GamePad::BTN_BACK)
 	{
-		change_scene_timer += 1.0f * elapsed_time;
-		change_gauge_parm.threshold -=(1.0f * elapsed_time) / 3.0f;
-		if (change_scene_timer > 3.4f)
+		change_scene_timer += 1.0f * elapsed_time ;
+		change_gauge_parm.threshold -=(2.0f * elapsed_time) / 2.0f;
+		if (change_scene_timer > 1.4f)
 		{
 			SceneManager::scene_switching(new SceneLoading(new SceneGame()), DISSOLVE_TYPE::DOT, 2.0f);
 		}
