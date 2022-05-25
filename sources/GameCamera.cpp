@@ -45,7 +45,7 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	DirectX::XMStoreFloat3(&eyeCenter, EyeCenter);
 
     DirectX::XMVECTOR EyeVector = -PlayerForward * 10 + PlayerUp * 1;
-	radius = 25;
+	radius = 20;
 	EyeVector = DirectX::XMVector3Normalize(EyeVector);
 	DirectX::XMStoreFloat3(&eyeVector, EyeVector);
 
@@ -56,7 +56,7 @@ void GameCamera::gameInitialize(GraphicsPipeline& graphics)
 	DirectX::XMStoreFloat3(&eye, Eye);
 
 	up = 12;
-	up1 = 12;
+	up1 = 8.5f;
 }
 
 void GameCamera::gameUpdate(float elapsedTime)
@@ -398,7 +398,7 @@ void GameCamera::UpdateTarget(DirectX::XMVECTOR PlayerPosition, DirectX::XMVECTO
 {
 	using namespace DirectX;
 
-	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * up;
+	DirectX::XMVECTOR Target = PlayerPosition + PlayerUp * up1;
 	DirectX::XMStoreFloat3(&target, Target);
 
 	//DirectX::XMVECTOR CameraForward = DirectX::XMLoadFloat3(&forward);
