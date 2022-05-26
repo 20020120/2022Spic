@@ -20,6 +20,12 @@ Player::Player(GraphicsPipeline& graphics)
     mSwordTrail[1].fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
+    mSwordTrail[2].fInitialize(graphics.get_device().Get(),
+        L"./resources/TexMaps/SwordTrail/warp_cut.png",
+        L"./resources/TexMaps/SwordTrail/SwordTrail.png");
+    mSwordTrail[3].fInitialize(graphics.get_device().Get(),
+        L"./resources/TexMaps/SwordTrail/warp_cut.png",
+        L"./resources/TexMaps/SwordTrail/SwordTrail.png");
     player_config = std::make_unique<PlayerConfig>(graphics);
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
@@ -34,6 +40,10 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
     player_bones[8] = model->get_bone_by_name("camera_joint");
     player_bones[9] = model->get_bone_by_name("camera_focus_joint");
+    player_bones[10] = model->get_bone_by_name("shortsword_top_joint");
+    player_bones[11] = model->get_bone_by_name("shortsword_top_joint");
+    player_bones[12] = model->get_bone_by_name("shortsword_top_joint");
+    player_bones[13] = model->get_bone_by_name("shortsword_top_joint");
     //エフェクト
     player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
@@ -405,6 +415,18 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             mSwordTrail[0].fUpdate(elapsed_time, 10);
             mSwordTrail[0].fEraseTrailPoint(elapsed_time);
         }
+
+
+        //足元の軌跡
+        mSwordTrail[2].fAddTrailPoint(step_capsule[0].start, step_capsule[0].end);
+        mSwordTrail[3].fAddTrailPoint(step_capsule[1].start, step_capsule[1].end);
+
+
+        mSwordTrail[2].fUpdate(elapsed_time, 10);
+        mSwordTrail[2].fEraseTrailPoint(elapsed_time);
+        mSwordTrail[3].fUpdate(elapsed_time, 10);
+        mSwordTrail[3].fEraseTrailPoint(elapsed_time);
+
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
         if (is_dying_update == false)
@@ -587,6 +609,10 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     {
         mSwordTrail[0].fRender(graphics.get_dc().Get());
     }
+
+    mSwordTrail[2].fRender(graphics.get_dc().Get());
+    mSwordTrail[3].fRender(graphics.get_dc().Get());
+
 }
 
 void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
@@ -825,6 +851,8 @@ void Player::InflectionParameters(float elapsed_time)
     player_config->set_mp_percent(combo_count / MAX_COMBO_COUNT);
     //攻撃力の変動
     InflectionPower(elapsed_time);
+    //足元のカプセル
+    //StepCapsule();
     //コンボの変動
     InflectionCombo(elapsed_time);
     //体の大きさのカプセルパラメータ設定
@@ -849,6 +877,8 @@ void Player::TutorialInflectionParameters(float elpased_time)
     InflectionPower(elpased_time);
     //コンボの変動
     InflectionCombo(elpased_time);
+    //足元のカプセル
+    //StepCapsule();
     //体の大きさのカプセルパラメータ設定
     BodyCapsule();
     //剣の大きさのカプセルのパラメータ
@@ -927,6 +957,36 @@ void Player::TutorialPlayerAlive()
             condition_state = ConditionState::Alive;
         }
     }
+}
+
+void Player::StepCapsule()
+{
+
+    {
+        DirectX::XMFLOAT3 pos = {}, up = {};
+        DirectX::XMFLOAT3 end = {}, e_up = {};
+
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[10], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[11], end, e_up);
+
+        step_capsule[0].start = pos;
+        step_capsule[0].end = end;
+        step_capsule[0].rasius = 0.5f;
+        debug_figure->create_capsule(pos, end, 0.5f, {1.0f,1.0f,1.0f,1.0f});
+    }
+    {
+        DirectX::XMFLOAT3 pos = {}, up = {};
+        DirectX::XMFLOAT3 end = {}, e_up = {};
+
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[12], pos, up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[13], end, e_up);
+
+        step_capsule[1].start = pos;
+        step_capsule[1].end = end;
+        step_capsule[1].rasius = 1.5f;
+        debug_figure->create_capsule(pos, end, 0.5f, { 1.0f,1.0f,1.0f,1.0f });
+    }
+
 }
 
 void Player::BodyCapsule()
