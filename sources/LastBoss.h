@@ -6,9 +6,9 @@
 #include"LaserBeam.h"
 #include"BossRushUnit.h"
 //****************************************************************
-// 
+//
 // ラストボス
-// 
+//
 //****************************************************************
 
   // 前方宣言
@@ -152,7 +152,7 @@ private:
     public:
         Turret(GraphicsPipeline& Graphics_);
         void fUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
-        void fRender(GraphicsPipeline& graphics_, 
+        void fRender(GraphicsPipeline& graphics_,
                      const DirectX::XMFLOAT4X4& ParentWorld_,
                      const DirectX::XMFLOAT3& Position_);
         void fSetDissolve(float Dissolve_);
@@ -165,7 +165,7 @@ private:
         DirectX::XMFLOAT3 mPosition;
         float mDissolve{};
     };
-  
+
     //--------------------<第二砲身のクラス>--------------------//
     class SecondGun final : public PracticalEntities
     {
@@ -183,7 +183,7 @@ private:
         float mDissolve;
     };
 
-
+public:
      struct BossParamJson
      {
          int BossStateNumber{}; // ボスの現在のステート（タイトルに戻るとリセットする）
@@ -203,7 +203,7 @@ private:
      };
 
 public:
-    LastBoss(GraphicsPipeline& Graphics_, 
+    LastBoss(GraphicsPipeline& Graphics_,
              const DirectX::XMFLOAT3& EmitterPoint_,
              const EnemyParamPack& ParamPack_,
              EnemyManager* pEnemyManager_);
@@ -212,7 +212,7 @@ public:
     ~LastBoss() override;
     void fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_) override;
     void fUpdateAttackCapsule() override;
-    
+
     void fSetStun(bool Arg_, bool IsJust_) override;
 
 
@@ -231,9 +231,9 @@ private:
     bool fLimitStageHuman(float elapsedTime_);
 private:
     //****************************************************************
-    // 
+    //
     // 変数
-    // 
+    //
     //****************************************************************
     float mTimer{}; // 汎用タイマー
 
@@ -308,7 +308,7 @@ private:
     float mPointerLength{};
 
     //--------------------<レーザーポインターのボーン>--------------------//
-    skeleton::bone mShipFace{}; 
+    skeleton::bone mShipFace{};
 
     //--------------------<人型ビームのターゲット>--------------------//
     DirectX::XMFLOAT3 mHumanBeamTarget{};
@@ -343,14 +343,14 @@ private:
     //--------------------<ボスのパラメーター>--------------------//
     inline  static BossParamJson mBossParam;
 public:
-    static void fLoadParam();
+    static BossParamJson fLoadParam();
     static void fResetLoadRaram();
     static void fSaveParam();
 private:
     //****************************************************************
-    // 
+    //
     // 定数
-    // 
+    //
     //****************************************************************
     const float mkRotSpeed { 20.0f }; // 回転速度
     const float  mkShipBeamChargeSec{ 4.0f }; // 戦艦のビームをチャージする長さ
@@ -363,7 +363,7 @@ private:
     const float mkHumanAllShotDelay{ 0.1f };
     const float mkHumanAllShotEnd{ 1.3f };
     const float mkHumanAllShotBegin{ 0.3f };
-   
+
     const float mkHumanSpWaitTime{ 15.0f };
     const float mkHumanSpBeamTime{ 10.0f };
     const float mkSpChargeTime = 7.0f;
@@ -376,9 +376,9 @@ private:
 private:
 
     //****************************************************************
-    // 
+    //
     // ステートマシン
-    // 
+    //
     //****************************************************************
     // 戦艦の最初の動き（演出）
     void fShipStartInit();
@@ -388,24 +388,24 @@ private:
     void fShipIdleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
     // 戦艦の攻撃
     void fShipAttackInit();
-    void fShipAttackUpdate(float elapsedTime_, 
+    void fShipAttackUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     // 戦艦の最後の攻撃（これを耐えれば次へ）
     void fShipBeamStartInit();
-    void fShipBeamStartUpdate(float elapsedTime_, 
+    void fShipBeamStartUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     void fShipBeamChargeInit();
-    void fShipBeamChargeUpdate(float elapsedTime_, 
+    void fShipBeamChargeUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     void fShipBeamShootInit();
-    void fShipBeamShootUpdate(float elapsedTime_, 
+    void fShipBeamShootUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     void fShipBeamEndInit();
-    void fShipBeamEndUpdate(float elapsedTime_, 
+    void fShipBeamEndUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     void fChangeShipToHumanInit();
@@ -445,16 +445,16 @@ private:
     void fHumanSpAttackCancelUpdate(float elapsedTime_, GraphicsPipeline& Graphics_);
 
     void fHumanSpAttackTimeOverInit(); // 制限時間を超えたら攻撃
-    void fHumanSpAttackTimeOverUpdate(float elapsedTime_, 
+    void fHumanSpAttackTimeOverUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
 
     void fHumanSpAttackChargeInit();
     void fHumanSpAttackChargeUpdate(float elapsedTime_,GraphicsPipeline& Graphics_);
 
     void fHumanSpBeamShootInit();
-    void fHumanSpBeamShootUpdate(float elapsedTime_, 
+    void fHumanSpBeamShootUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);
-    
+
     void fHumanSpDamageInit();
     void fHumanSpDamageUpdate(float elapsedTime_,
         GraphicsPipeline& Graphics_);

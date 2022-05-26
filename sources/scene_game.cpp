@@ -14,6 +14,7 @@
 
 #include "user.h"
 #include "volume_icon.h"
+#include "LastBoss.h"
 
 void SceneGame::initialize(GraphicsPipeline& graphics)
 {
@@ -32,10 +33,8 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//--------------------<弾の管理クラスを初期化>--------------------//
 	BulletManager& mBulletManager = BulletManager::Instance();
 	mBulletManager.fInitialize();
-	//--------------------<敵の管理クラスを初期化>--------------------//
-	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
-
-    player = std::make_unique<Player>(graphics);
+	// player
+	player = std::make_unique<Player>(graphics);
 	// カメラ
 	//camera = std::make_unique<Camera>(graphics,player.get());
 	//std::vector<int> cameraType{};
@@ -51,6 +50,52 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
+	//--------------------<敵の管理クラスを初期化>--------------------//
+	purple_threshold = 0; red_threshold = 0;
+	sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
+	Camera* c = cameraManager->GetCurrentCamera();
+
+	LastBoss::BossParamJson param;
+	param = LastBoss::fLoadParam();
+	if (param.BossStateNumber == 0) // 戦艦
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
+	}
+	if (param.BossStateNumber == 1) // 人
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+		purple_threshold = 0.01f;
+	}
+	if (param.BossStateNumber == 2) // ドラゴン
+	{
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+		red_threshold = 0.01f;
+	}
+
+	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
+
+	const auto enemyManager = mWaveManager.fGetEnemyManager();
+	last_boss_mode = enemyManager->fGetBossMode();
+	old_last_boss_mode = last_boss_mode;
+
+	if (last_boss_mode == LastBoss::Mode::None)
+	{
+		purple_threshold = 0; red_threshold = 0;
+		sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::GAME);
+	}
+	else
+	{
+		c->boss_animation = true;
+
+		player->SetPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更
+		player->ChangePlayerJustificationLength();
+	}
 
 	// enemy_hp_gauge
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
@@ -98,19 +143,6 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	again.scale = { 1.0f,1.0f };
 	game_clear_text.s = L"ゲームクリア";
 	game_clear_text.position = { 552.0f,127.0f };
-
-	old_last_boss_mode = LastBoss::Mode::None;
-	last_boss_mode     = LastBoss::Mode::None;
-
-	purple_threshold = 0;
-	red_threshold = 0;
-
-
-	sky_dome->set_purple_threshold(0);
-	sky_dome->set_red_threshold(0);
-
-	audio_manager->stop_all_bgm();
-	audio_manager->play_bgm(BGM_INDEX::GAME);
 }
 
 void SceneGame::uninitialize()
