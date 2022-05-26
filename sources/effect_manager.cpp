@@ -4,9 +4,9 @@ void EffectManager::initialize(GraphicsPipeline& graphics)
 {
     std::lock_guard<std::mutex> lock(graphics.get_mutex());
     //Effekseerレンダラ生成
-    effekseer_renderer = EffekseerRendererDX11::Renderer::Create(graphics.get_device().Get(), graphics.get_dc().Get(), 1024);
+    effekseer_renderer = EffekseerRendererDX11::Renderer::Create(graphics.get_device().Get(), graphics.get_dc().Get(), 2048);
     //Effekseerマネージャー生成
-    effekseer_manager = Effekseer::Manager::Create(1024);
+    effekseer_manager = Effekseer::Manager::Create(2048);
     //Effekseerレンダラの各種設定(特別なカスタマイズをしない場合は定期的に以下の設定)
     effekseer_manager->SetSpriteRenderer(effekseer_renderer->CreateSpriteRenderer());
     effekseer_manager->SetRibbonRenderer(effekseer_renderer->CreateRibbonRenderer());
