@@ -19,6 +19,7 @@ Player::Player(GraphicsPipeline& graphics)
     player_move_effec_r = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
     player_move_effec_l = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
     just_stun = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\just_stun.efk");
+    player_behaind_effec_2 = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind2.efk");
 
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };

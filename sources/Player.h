@@ -114,6 +114,7 @@ private:
     std::unique_ptr<Effect> just_stun;
     std::unique_ptr<Effect> player_move_effec_r;
     std::unique_ptr<Effect> player_move_effec_l;
+    std::unique_ptr<Effect> player_behaind_effec_2;
 
     //USE_IMGUI
 private:
