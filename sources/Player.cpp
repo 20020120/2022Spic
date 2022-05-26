@@ -11,6 +11,15 @@ Player::Player(GraphicsPipeline& graphics)
     :BasePlayer()
 {
     model = resource_manager->load_model_resource(graphics.get_device().Get(), ".\\resources\\Models\\Player\\player_twentyfource.fbx",false,60.0f);
+    //エフェクト
+    player_behind_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
+    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
+    player_slash_hit_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
+    player_awaiking_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_kakusei1.efk");
+    player_move_effec_r = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
+    player_move_effec_l = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
+    just_stun = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\just_stun.efk");
+
     TransitionIdle();
     scale = { 0.06f,0.06f,0.06f };
     GetPlayerDirections();
@@ -42,14 +51,6 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[9] = model->get_bone_by_name("camera_focus_joint");
     player_bones[10] = model->get_bone_by_name("foot_L_top_joint");
     player_bones[11] = model->get_bone_by_name("foot_R_top_joint");
-    //エフェクト
-    player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
-    player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
-    player_slash_hit_effec      = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
-    player_awaiking_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_kakusei1.efk");
-    player_move_effec_r = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
-    player_move_effec_l = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
-    just_stun = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\just_stun.efk");
 }
 
 Player::~Player()
@@ -296,6 +297,27 @@ void Player::PlayerClearUpdate(float elapsed_time, GraphicsPipeline& graphics, S
 }
 void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+
+    if (condition_state == ConditionState::Die)
+    {
+        if (is_dying_update == false)
+        {
+            //覚醒状態の時は
+            if (is_awakening)
+            {
+                //モデルを映す
+                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            }
+            else
+            {
+                //モデルを消す
+                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            }
+        }
+        if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
+        ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
+        return;
+    }
     if (boss_camera)
     {
         velocity = {};
@@ -429,20 +451,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
-        if (is_dying_update == false)
-        {
-            //覚醒状態の時は
-            if (is_awakening)
-            {
-                //モデルを映す
-                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-            }
-            else
-            {
-                //モデルを消す
-                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
-            }
-        }
 
     }
 
@@ -937,6 +945,9 @@ void Player::PlayerAlive()
     player_health = Math::clamp(player_health, 0, MAX_HEALTH);
     if (player_health <= 0 && condition_state == ConditionState::Alive)
     {
+        player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
+        player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
+        condition_state = ConditionState::Die;
         TransitionDie();
     }
 }

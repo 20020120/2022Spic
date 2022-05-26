@@ -443,6 +443,9 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
 
 void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
+    player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
+
     //移動入力がなくなったら待機に遷移
     if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
@@ -1195,6 +1198,9 @@ void Player::TutorialAwaikingEventIdleUpdate(float elapsed_time, SkyDome* sky_do
 
 void Player::TransitionTutoriaIdle(float blend_second)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //覚醒状態の時の待機アニメーションにセット
     if (is_awakening)model->play_animation(AnimationClips::AwakingIdle, true, true, blend_second);
     //通常状態の待機アニメーションにセット
@@ -1210,6 +1216,9 @@ void Player::TransitionTutoriaIdle(float blend_second)
 
 void Player::TransitionTutorialMove(float blend_second)
 {
+    //エフェクト再生
+    player_move_effec_r->play(effect_manager->get_effekseer_manager(), step_pos_r);
+    player_move_effec_l->play(effect_manager->get_effekseer_manager(), step_pos_l);
     //覚醒状態の時の移動アニメーションの設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingMove, true, true, blend_second);
     //通常状態の時に移動アニメーションの設定
@@ -1226,6 +1235,9 @@ void Player::TransitionTutorialMove(float blend_second)
 
 void Player::TransitionTutorialAvoidance(float blend_second)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z },0.3f);
@@ -1282,6 +1294,9 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
 
     if (target_enemy != nullptr)
@@ -1319,6 +1334,8 @@ void Player::TransitionTutorialBehindAvoidance()
 void Player::TransitionTutorialJustBehindAvoidance()
 {
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
         //ロックオンしている敵をスタンさせる
     if (target_enemy != nullptr)
@@ -1367,6 +1384,8 @@ void Player::TransitionTutorialJustBehindAvoidance()
 
 void Player::TransitionTutorialChargeInit()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
     //覚醒状態の時の突進の始まりのアニメーションに設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false, true);
     //通常状態の時の突進の始まりのアニメーションに設定
@@ -1534,6 +1553,9 @@ void Player::TransitionTutorialAttack3(float blend_second)
 
 void Player::TransitionTutorialAwaiking()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position);
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
@@ -1565,6 +1587,9 @@ void Player::TransitionTutorialInvAwaiking()
 
 void Player::TransitionTutorialAwaikingEvent()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     PostEffect::clear_post_effect();
     is_lock_on = false;
     DirectX::XMFLOAT3 up = {};
@@ -1634,7 +1659,11 @@ void Player::TutorialAwaiking()
         //ボタン入力
         if (game_pad->get_button() & GamePad::BTN_A)
         {
-            if (combo_count >= MAX_COMBO_COUNT - 5.0f)TransitionTutorialAwaikingEvent();//イベントの覚醒
+            if (tutorial_awaiking == false && combo_count >= MAX_COMBO_COUNT - 5.0f)
+            {
+                tutorial_awaiking = true;
+                TransitionTutorialAwaikingEvent();//イベントの覚醒
+            }
         }
         if (is_awakening && combo_count <= 0)
         {
