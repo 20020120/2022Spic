@@ -135,6 +135,7 @@ void LastBoss::fShipAttackUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
 
 void LastBoss::fShipBeamStartInit()
 {
+    mpEnemyManager->fReserveDeleteEnemies();
     mMoveBegin = mPosition;
     mMoveEnd = { 0.0f,0.0f,600.0f };
     mMoveThreshold = 0.0f;
@@ -892,8 +893,8 @@ void LastBoss::fHumanSpBeamShootUpdate(float elapsedTime_,
             audio_manager->stop_se(SE_INDEX::BOSS_BEAM);
             mpBeamRightEffect->stop(effect_manager->get_effekseer_manager());
             mpBeamLeftEffect->stop(effect_manager->get_effekseer_manager());
+            mIsAttack = false;
         }
-        mIsAttack = false;
         mPosition = Math::lerp(mAwayBegin, { 0.0f,0.0f,0.0f }, mAwayLerp);
         mAwayLerp += elapsedTime_ * 2.0f;
     }
@@ -1295,7 +1296,6 @@ void LastBoss::fDragonBreathShotUpdate(float elapsedTime_, GraphicsPipeline& Gra
         {
             fChangeState(DivideState::DragonIdle);
         }
-
     }
 }
 

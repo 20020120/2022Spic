@@ -981,3 +981,11 @@ void EnemyManager::fReserveDeleteEnemies()
 {
     mIsReserveDelete = true;
 }
+
+void EnemyManager::fLimitEnemies()
+{
+    for(auto enemy: mEnemyVec)
+    {
+        enemy->fLimitPosition();
+    }
+}
