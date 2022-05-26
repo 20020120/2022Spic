@@ -300,20 +300,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
     if (condition_state == ConditionState::Die)
     {
-        if (is_dying_update == false)
-        {
-            //覚醒状態の時は
-            if (is_awakening)
-            {
-                //モデルを映す
-                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
-            }
-            else
-            {
-                //モデルを消す
-                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
-            }
-        }
         if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
         ExecFuncUpdate(elapsed_time, sky_dome, enemies, graphics);
         return;
@@ -446,6 +432,20 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
 
 
+        if (is_dying_update == false)
+        {
+            //覚醒状態の時は
+            if (is_awakening)
+            {
+                //モデルを映す
+                if (threshold_mesh > 0) threshold_mesh -= 2.0f * elapsed_time;
+            }
+            else
+            {
+                //モデルを消す
+                if (threshold_mesh < 1) threshold_mesh += 2.0f * elapsed_time;
+            }
+        }
 
 
 

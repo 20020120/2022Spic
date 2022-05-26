@@ -1553,6 +1553,8 @@ void Player::TransitionTutorialAttack3(float blend_second)
 
 void Player::TransitionTutorialAwaiking()
 {
+    invincible_timer = 2.0f;
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
