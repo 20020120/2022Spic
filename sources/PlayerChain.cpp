@@ -282,8 +282,10 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 					for (int i = 0; i < enemies.size(); ++i)
 					{
 						if (enemies.at(i)->fIsLockOnOfChain()) continue;
+						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
+						if (enemies.at(i)->fGetInnerCamera()) continue;
 
-						if (enemies.at(i)->fGetPosition().y < 5.0f && enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
+						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン(スタン関係なし)
 						{
 							chain_lockon_enemy_indexes.emplace_back(i); // 登録
 							LockOnSuggest enemy_suggest; // サジェスト登録
@@ -376,9 +378,11 @@ void Player::chain_search_update(float elapsed_time, std::vector<BaseEnemy*> ene
 					for (int i = 0; i < enemies.size(); ++i)
 					{
 						if (enemies.at(i)->fIsLockOnOfChain()) continue;
+						if (enemies.at(i)->fGetPosition().y > 5.0f) continue;
+						if (!enemies.at(i)->fGetStun()) continue;
+						if (enemies.at(i)->fGetInnerCamera()) continue;
 
-						if (enemies.at(i)->fGetPosition().y < 5.0f && enemies.at(i)->fGetStun()
-							&& enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
+						if (enemies.at(i)->fComputeAndGetIntoCamera()) // 索敵時間内に一度でも視錐台に映ればロックオン
 						{
 							chain_lockon_enemy_indexes.emplace_back(i); // 登録
 							LockOnSuggest enemy_suggest; // サジェスト登録

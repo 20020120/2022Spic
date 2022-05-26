@@ -26,7 +26,7 @@ PlayerConfig::PlayerConfig(GraphicsPipeline& graphics)
     mp_back = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_mp_back.png", 1);
     mp_body_sprite = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\player\\player_mp_gage.png", 1);
 
-    mp_body.position = { 190.0f, 60.0f };
+    mp_body.position = { 190.0f, 65.0f };
     mp_body.scale = { 0.8f, 0.8f };
     mp_body.texsize = { static_cast<float>(mp_body_sprite->get_texture2d_desc().Width), static_cast<float>(mp_body_sprite->get_texture2d_desc().Height) };
     mp_body.pivot  = mp_body.texsize * DirectX::XMFLOAT2(0.5f, 1.0f);
@@ -85,6 +85,7 @@ void PlayerConfig::update(GraphicsPipeline& graphics, float elapsed_time)
         {
             ImGui::DragFloat2("pos", &mp_body.position.x);
             ImGui::DragFloat2("scale", &mp_body.scale.x, 0.01f);
+            ImGui::ColorEdit3("color", &mp_body.color.x);
             ImGui::TreePop();
         }
         ImGui::End();
