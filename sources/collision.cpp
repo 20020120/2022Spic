@@ -1,6 +1,7 @@
 #include "collision.h"
 #include "user.h"
 #include "camera.h"
+#include "framework.h"
 
 bool Collision::hit_check_circle(const DirectX::XMFLOAT2& pos1, float r1, const DirectX::XMFLOAT2& pos2, float r2)
 {
@@ -277,6 +278,155 @@ bool Collision::frustum_vs_cuboid(const DirectX::XMFLOAT3& cuboid_min_pos, const
     XMMATRIX view_mat = XMLoadFloat4x4(&view);
     XMFLOAT4X4 proj = Camera::get_keep_projection();
     XMMATRIX proj_mat = XMLoadFloat4x4(&proj);
+    matrix = view_mat * proj_mat;
+    //ビュープロジェクション行列の逆行列
+    XMMATRIX inv_matrix = XMMatrixInverse(nullptr, matrix);
+    //ビュープロジェクション内の頂点算出用位置ベクトル
+    XMVECTOR verts[8] =
+    {
+        // near plane corners
+        { -1, -1, 0 },	// [0]:左下
+        {  1, -1, 0 },	// [1]:右下
+        {  1,  1, 0 },	// [2]:右上
+        { -1,  1 ,0 },	// [3]:左上
+
+        // far plane corners.
+        { -1, -1, 1 },	// [4]:左下
+        {  1, -1, 1 },	// [5]:右下
+        {  1,  1, 1 },	// [6]:右上
+        { -1,  1, 1 } 	// [7]:左上
+    };
+    // ビュープロジェクション行列の逆行列を用いて、各頂点を算出する
+    XMFLOAT3 near_p[4] = {};	// Nearの四角形の４頂点の座標
+    XMFLOAT3 far_p[4] = {}; 	// Farの四角形の４頂点の座標
+    for (int i = 0; i < 4; ++i) // near
+    {
+        verts[i] = XMVector3TransformCoord(verts[i], inv_matrix);
+        XMStoreFloat3(&near_p[i], verts[i]);
+    }
+    for (int i = 4; i < 8; ++i) // far
+    {
+        verts[i] = XMVector3TransformCoord(verts[i], inv_matrix);
+        XMStoreFloat3(&far_p[i - 4], verts[i]);
+    }
+    // 視錐台（フラスタム）を構成する６平面を算出する
+    XMFLOAT4X4 matrix4X4 = {};
+    XMStoreFloat4x4(&matrix4X4, matrix);
+    // 0:左側面, 1:右側面, 2:下側面, 3:上側面, 4:奥側面, 5:手前側面
+    // 全ての面の法線は内側を向くように設定すること
+    XMFLOAT3 normals[6];	// 法線
+    float	 distances[6];	// 原点からの最短距離
+    // 左側面
+    {
+        normals[0].x = { matrix4X4._14 + matrix4X4._11 };
+        normals[0].y = { matrix4X4._24 + matrix4X4._21 };
+        normals[0].z = { matrix4X4._34 + matrix4X4._31 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[0]));
+        XMStoreFloat3(&normals[0], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&near_p[0]);
+        XMStoreFloat(&distances[0], XMVector3Dot(p_vec, n_vec));
+    }
+    // 右側面
+    {
+        normals[1].x = { matrix4X4._14 - matrix4X4._11 };
+        normals[1].y = { matrix4X4._24 - matrix4X4._21 };
+        normals[1].z = { matrix4X4._34 - matrix4X4._31 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[1]));
+        XMStoreFloat3(&normals[1], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&near_p[1]);
+        XMStoreFloat(&distances[1], XMVector3Dot(p_vec, n_vec));
+    }
+    // 下側面
+    {
+        normals[2].x = { matrix4X4._14 + matrix4X4._12 };
+        normals[2].y = { matrix4X4._24 + matrix4X4._22 };
+        normals[2].z = { matrix4X4._34 + matrix4X4._32 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[2]));
+        XMStoreFloat3(&normals[2], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&near_p[1]);
+        XMStoreFloat(&distances[2], XMVector3Dot(p_vec, n_vec));
+    }
+    // 上側面
+    {
+        normals[3].x = { matrix4X4._14 - matrix4X4._12 };
+        normals[3].y = { matrix4X4._24 - matrix4X4._22 };
+        normals[3].z = { matrix4X4._34 - matrix4X4._32 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[3]));
+        XMStoreFloat3(&normals[3], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&near_p[2]);
+        XMStoreFloat(&distances[3], XMVector3Dot(p_vec, n_vec));
+    }
+    // 奥側面
+    {
+        normals[4].x = { -matrix4X4._14 - matrix4X4._13 };
+        normals[4].y = { -matrix4X4._24 - matrix4X4._23 };
+        normals[4].z = { -matrix4X4._34 - matrix4X4._33 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[4]));
+        XMStoreFloat3(&normals[4], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&far_p[0]);
+        XMStoreFloat(&distances[4], XMVector3Dot(p_vec, n_vec));
+    }
+    // 手前側面
+    {
+        normals[5].x = { -matrix4X4._14 + matrix4X4._13 };
+        normals[5].y = { -matrix4X4._24 + matrix4X4._23 };
+        normals[5].z = { -matrix4X4._34 + matrix4X4._33 };
+        XMVECTOR n_vec = XMVector3Normalize(XMLoadFloat3(&normals[5]));
+        XMStoreFloat3(&normals[5], n_vec);
+
+        XMVECTOR p_vec = XMLoadFloat3(&near_p[0]);
+        XMStoreFloat(&distances[5], XMVector3Dot(p_vec, n_vec));
+    }
+    //-----交差判定-----//
+    for (int i = 0; i < 6; i++)
+    {
+        // 各平面の法線の成分を用いてAABBの８頂点の中から最近点と最遠点を求める
+        // 最遠点
+        XMFLOAT3 posi_pos = cuboid_center;
+        posi_pos.x += cuboid_radius.x * (normals[i].x / fabsf(normals[i].x + FLT_EPSILON));
+        posi_pos.y += cuboid_radius.y * (normals[i].y / fabsf(normals[i].y + FLT_EPSILON));
+        posi_pos.z += cuboid_radius.z * (normals[i].z / fabsf(normals[i].z + FLT_EPSILON));
+        // 最近点
+        XMFLOAT3 nega_pos = cuboid_center;
+        nega_pos.x -= cuboid_radius.x * (normals[i].x / fabsf(normals[i].x + FLT_EPSILON));
+        nega_pos.y -= cuboid_radius.y * (normals[i].y / fabsf(normals[i].y + FLT_EPSILON));
+        nega_pos.z -= cuboid_radius.z * (normals[i].z / fabsf(normals[i].z + FLT_EPSILON));
+        // 各平面との内積を計算し、交差・内外判定(表裏判定)を行う
+        float posi_dot;
+        XMStoreFloat(&posi_dot, XMVector3Dot(XMLoadFloat3(&normals[i]),
+            XMLoadFloat3(&posi_pos)));
+        float nega_dot;
+        XMStoreFloat(&nega_dot, XMVector3Dot(XMLoadFloat3(&normals[i]),
+            XMLoadFloat3(&nega_pos)));
+        if (posi_dot >= distances[i] && nega_dot >= distances[i]) /*内部*/ {}
+        else if (posi_dot < distances[i] && nega_dot < distances[i]) /*外部*/ { return false; }
+        else /*交差*/ {}
+    }
+    return true;
+}
+
+bool Collision::forefront_frustum_vs_cuboid(const DirectX::XMFLOAT3& cuboid_min_pos, const DirectX::XMFLOAT3& cuboid_max_pos)
+{
+    using namespace DirectX;
+    //----- 直方体のパラメーター -----//
+    XMFLOAT3 cuboid_radius = { (cuboid_max_pos.x - cuboid_min_pos.x) / 2, (cuboid_max_pos.y - cuboid_min_pos.y) / 2, (cuboid_max_pos.z - cuboid_min_pos.z) / 2 };
+    XMFLOAT3 cuboid_center = { cuboid_max_pos.x - cuboid_radius.x, cuboid_max_pos.y - cuboid_radius.y, cuboid_max_pos.z - cuboid_radius.z };
+    debug_figure->create_cuboid(cuboid_center, cuboid_radius, { 1,1,0,1 });
+    //----- 視錐台のパラメーター -----//
+    // ビュープロジェクション行列を取得する
+    XMMATRIX matrix = {};
+    XMFLOAT4X4 view = Camera::get_keep_view();
+    XMMATRIX view_mat = XMLoadFloat4x4(&view);
+
+    float width = static_cast<float>(SCREEN_WIDTH);
+    float height = static_cast<float>(SCREEN_HEIGHT);
+    float aspect_ratio{ width / height };
+    XMMATRIX proj_mat = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(45), aspect_ratio, 0.1f, Camera::get_keep_range() * 0.9f); // P
     matrix = view_mat * proj_mat;
     //ビュープロジェクション行列の逆行列
     XMMATRIX inv_matrix = XMMatrixInverse(nullptr, matrix);

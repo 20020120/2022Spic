@@ -67,6 +67,7 @@ public:
     }
     //--視錐台と直方体の交差判定--//
     static bool frustum_vs_cuboid(const DirectX::XMFLOAT3& cuboid_min_pos, const DirectX::XMFLOAT3& cuboid_max_pos);
+    static bool forefront_frustum_vs_cuboid(const DirectX::XMFLOAT3& cuboid_min_pos, const DirectX::XMFLOAT3& cuboid_max_pos); // プレイヤーとカメラの間の視錐台
     //--球とカプセルの交差判定--//
     static bool sphere_vs_capsule(
         const DirectX::XMFLOAT3& sphere_center, float sphere_radius,

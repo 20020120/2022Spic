@@ -42,6 +42,8 @@ public:
     static const DirectX::XMFLOAT4X4& get_keep_view() { return keep_view; }
     // projection
     static const DirectX::XMFLOAT4X4& get_keep_projection() { return keep_projection; }
+    // projection
+    static const float get_keep_range() { return keep_range; }
 
 protected:
     //--------< ’è”/\‘¢‘Ì >--------//
@@ -84,6 +86,8 @@ protected:
     static DirectX::XMFLOAT4X4 keep_projection;
     static DirectX::XMFLOAT3 keep_eye;
     static DirectX::XMFLOAT3 keep_target;
+    static float keep_range;
+
     bool is_mouse_operation{ false };
 
     float up{};
