@@ -216,6 +216,8 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             //回避ボタンを押したら入力方向に方向転換
             if (avoidance_buttun == false && (game_pad->get_trigger_R() > 0.5f || game_pad->get_button_down() & GamePad::BTN_RIGHT_SHOULDER))
             {
+                player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+                player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 avoidance_direction_count--;
                 avoidance_buttun = true;
                 velocity = {};
@@ -355,6 +357,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             if (game_pad->get_button_down() & GamePad::BTN_ATTACK_B)
             {
+                player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 //エフェクト再生
                 player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
@@ -902,7 +905,6 @@ void Player::TransitionMove(float blend_second)
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
-
     //エフェクト再生
     player_move_effec_r->play(effect_manager->get_effekseer_manager(), step_pos_r);
     player_move_effec_l->play(effect_manager->get_effekseer_manager(), step_pos_l);
@@ -984,6 +986,7 @@ void Player::TransitionBehindAvoidance()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position,2.0f);
 
     behind_test_timer = 0.0f;
@@ -1047,6 +1050,8 @@ void Player::TransitionJustBehindAvoidance()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+
     player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position,2.0f);
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
         //ロックオンしている敵をスタンさせる
