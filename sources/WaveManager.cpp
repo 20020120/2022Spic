@@ -188,6 +188,13 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
 #endif // USE_IMGUI
             }
         }
+        else // ゲームクリア
+        {
+            audio_manager->stop_all_bgm();
+            game_clear = true;
+
+            return;
+        }
         // クリア演出orゲームクリア
         if (clear_wait_timer < 0)
         {
@@ -205,13 +212,6 @@ void WaveManager::fUpdate(GraphicsPipeline& Graphics_ ,float elapsedTime_, AddBu
                 effect_manager->initialize(Graphics_);
 
                 //---ここまで--//
-            }
-            else // ゲームクリア
-            {
-                audio_manager->stop_all_bgm();
-                game_clear = true;
-
-                return;
             }
         }
     }

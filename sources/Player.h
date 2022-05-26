@@ -703,6 +703,8 @@ private:
     // behaviorの遷移関数
     void transition_chain_behavior()
     {
+        player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+        player_move_effec_l->stop(effect_manager->get_effekseer_manager());
         behavior_state = Behavior::Chain;
         transition_chain_search();
     }
@@ -841,6 +843,8 @@ private:
     //イベントシーンの覚醒
     void TransitionTutorialAwaikingEvent();
     void TransitionTutorialAwaikingEventIdle();
+    //チュートリアルの覚醒イベントが始まったらtrue(１回だけ)
+    bool tutorial_awaiking{ false };
     bool awaiking_event{ false };
     bool awaiking_se{ false };
     //ダメージ受けたときに遷移

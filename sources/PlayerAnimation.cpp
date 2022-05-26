@@ -124,8 +124,6 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
     //移動入力がなくなったら待機に遷移
     if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
-        player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-        player_move_effec_l->stop(effect_manager->get_effekseer_manager());
         TransitionIdle();
     }
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
@@ -149,7 +147,10 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
                     TransitionBehindAvoidance();
                 }
                 //そうじゃなかったら普通の回避
-                else TransitionAvoidance();
+                else
+                {
+                    TransitionAvoidance();
+                }
             }
         }
         //突進開始に遷移
@@ -809,9 +810,6 @@ void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
         PostEffect::wipe_effect(wipe_parm);
     }
 
-    //ImGui::Begin("frame");
-    //ImGui::DragFloat("frame",&model->get_anim_para().frame_index);
-   // ImGui::End();
     if (model->get_anim_para().animation_tick > 0.3f && nameless_motion_se_state == 0)
     {
         audio_manager->play_se(SE_INDEX::SWING_SWORD1);
@@ -863,7 +861,10 @@ void Player::Awaiking()
         //ボタン入力
         if (game_pad->get_button() & GamePad::BTN_A)
         {
-            if (combo_count >= MAX_COMBO_COUNT - 5.0f && is_awakening == false)TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+            if (combo_count >= MAX_COMBO_COUNT - 5.0f && is_awakening == false)
+            {
+                TransitionAwaking();//コンボカウントが最大のときは覚醒状態になる
+            }
         }
         if (is_awakening && combo_count <= 0)
         {
@@ -876,6 +877,9 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
     //覚醒状態の時の待機アニメーションにセット
@@ -915,6 +919,9 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position,0.3f);
@@ -970,6 +977,9 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     behind_test_timer = 0.0f;
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
     player_behind_effec->play(effect_manager->get_effekseer_manager(), {position.x,position.y + air_registance_offset_y ,position.z});
@@ -1029,6 +1039,9 @@ void Player::TransitionBehindAvoidance()
 
 void Player::TransitionJustBehindAvoidance()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
         //ロックオンしている敵をスタンさせる
     if (target_enemy != nullptr)
@@ -1078,6 +1091,9 @@ void Player::TransitionJustBehindAvoidance()
 
 void Player::TransitionChargeInit()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //覚醒状態の時の突進の始まりのアニメーションに設定
    if(is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false,true);
    //通常状態の時の突進の始まりのアニメーションに設定
@@ -1333,6 +1349,9 @@ void Player::TransitionTransformWing()
 
 void Player::TransitionAwaking()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,5.0f);
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
@@ -1390,7 +1409,6 @@ void Player::TransitionWingDashEnd()
 }
 void Player::TransitionDie()
 {
-    condition_state = ConditionState::Die;
     //攻撃中かどうかの設定
     is_attack = false;
     velocity = {};
