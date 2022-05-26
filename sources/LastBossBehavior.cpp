@@ -1007,7 +1007,7 @@ void LastBoss::fHumanToDragonInit()
     mpModel->play_animation(mAnimPara,AnimationName::human_to_dragon);
     mDissolve = 0.0f;
     mCurrentMode = Mode::HumanToDragon;
-    mPosition = {};
+    mPosition = { 0.0f,40.0f,0.0f };
     for (int i = 0; i < ARRAYSIZE(mSeArrayHumanToDragon); ++i)
     {
         mSeArrayHumanToDragon[i] = false;
@@ -1503,7 +1503,7 @@ void LastBoss::fDragonDieStartInit()
 {
     audio_manager->stop_all_se();
     // 位置をリセット
-    mPosition = { 0.0f,0.0f,50.0f };
+    mPosition = { 0.0f,40.0f,50.0f };
     mpModel->play_animation(mAnimPara, AnimationName::dragon_die);
     // TODO カメラをボスに注目させる
     mCurrentMode = Mode::DragonDie;
@@ -1639,6 +1639,8 @@ bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Gr
         }
         mCurrentHitPoint -= Damage_;
         mInvincibleTime = InvincibleTime_;
+        mDamageEffect->play(effect_manager->get_effekseer_manager(),
+            mPosition, 10.0f);
         ret = true;
     }
 
