@@ -29,12 +29,6 @@ Player::Player(GraphicsPipeline& graphics)
     mSwordTrail[1].fInitialize(graphics.get_device().Get(),
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
-    mSwordTrail[2].fInitialize(graphics.get_device().Get(),
-        L"./resources/TexMaps/SwordTrail/warp_cut.png",
-        L"./resources/TexMaps/SwordTrail/SwordTrail.png");
-    mSwordTrail[3].fInitialize(graphics.get_device().Get(),
-        L"./resources/TexMaps/SwordTrail/warp_cut.png",
-        L"./resources/TexMaps/SwordTrail/SwordTrail.png");
     player_config = std::make_unique<PlayerConfig>(graphics);
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
@@ -342,6 +336,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     //クリア演出中じゃないとき
     else
     {
+        player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
+        player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
+
         if (during_chain_attack())
         {
             if (is_chain_attack_aftertaste_timer < CHRONOSTASIS_TIME)
@@ -609,18 +606,18 @@ void Player::Render(GraphicsPipeline& graphics, float elapsed_time)
     model->render(graphics.get_dc().Get(), Math::calc_world_matrix(scale, orientation, position), { 1.0f,1.0f,1.0f,1.0f }, threshold, glow_time, emissive_color, 0.8f, armor_r_mdl, armor_l_mdl, wing_r_mdl, wing_l_mdl, largeblade_r_mdl, largeblade_l_mdl, prestarmor_mdl, backpack_mdl, camera_mdl);
 
     graphics.set_pipeline_preset(RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEON_DWON, SHADER_TYPES::PBR);
-    if (is_awakening)
+    if (is_start_cleear_motion == false)
     {
-        mSwordTrail[0].fRender(graphics.get_dc().Get());
-        mSwordTrail[1].fRender(graphics.get_dc().Get());
+        if (is_awakening)
+        {
+            mSwordTrail[0].fRender(graphics.get_dc().Get());
+            mSwordTrail[1].fRender(graphics.get_dc().Get());
+        }
+        else
+        {
+            mSwordTrail[0].fRender(graphics.get_dc().Get());
+        }
     }
-    else
-    {
-        mSwordTrail[0].fRender(graphics.get_dc().Get());
-    }
-
-    mSwordTrail[2].fRender(graphics.get_dc().Get());
-    mSwordTrail[3].fRender(graphics.get_dc().Get());
 
 }
 

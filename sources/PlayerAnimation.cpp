@@ -118,8 +118,6 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
-    player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
-    player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
 
     //移動入力がなくなったら待機に遷移
     if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
@@ -898,6 +896,9 @@ void Player::TransitionIdle(float blend_second)
 
 void Player::TransitionMove(float blend_second)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //エフェクト再生
     player_move_effec_r->play(effect_manager->get_effekseer_manager(), step_pos_r);
     player_move_effec_l->play(effect_manager->get_effekseer_manager(), step_pos_l);
@@ -919,8 +920,8 @@ void Player::TransitionMove(float blend_second)
 
 void Player::TransitionAvoidance()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
@@ -977,8 +978,8 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     behind_test_timer = 0.0f;
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
@@ -1039,8 +1040,8 @@ void Player::TransitionBehindAvoidance()
 
 void Player::TransitionJustBehindAvoidance()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
         //ロックオンしている敵をスタンさせる
@@ -1091,8 +1092,8 @@ void Player::TransitionJustBehindAvoidance()
 
 void Player::TransitionChargeInit()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     //覚醒状態の時の突進の始まりのアニメーションに設定
    if(is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false,true);
@@ -1116,8 +1117,8 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge(float blend_seconds)
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //エフェクト再生
@@ -1500,6 +1501,9 @@ void Player::TransitionNamelessMotion()
 
 void Player::TransitionStageMove()
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //ステージ遷移の時に回復する
     const float health = static_cast<float>(player_health) /static_cast<float>(MAX_HEALTH);
     if (health < 0.7f) player_health = static_cast<int>(MAX_HEALTH * 0.7);
