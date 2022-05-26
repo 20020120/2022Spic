@@ -1161,6 +1161,9 @@ void Player::AwakingAddCombo(int hit_count1, int hit_count2, bool& block)
 
 void Player::DamagedCheck(int damage, float InvincibleTime)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     if (during_chain_attack()) return;
     //チュートリアル中ステートが死ならダメージを食らわない
     if (condition_state == ConditionState::Die) return;
@@ -1196,6 +1199,9 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 
 void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     if (during_chain_attack()) return;
     //チュートリアル中ステートが死ならダメージを食らわない
     if (condition_state == ConditionState::Die) return;
