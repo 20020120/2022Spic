@@ -33,6 +33,9 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//--------------------<弾の管理クラスを初期化>--------------------//
 	BulletManager& mBulletManager = BulletManager::Instance();
 	mBulletManager.fInitialize();
+	//--------------------<敵の管理クラスを初期化>--------------------//
+	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
+
 	// player
 	player = std::make_unique<Player>(graphics);
 	// カメラ
@@ -50,8 +53,6 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//cameraManager->SetCamera(static_cast<int>(CameraTypes::Game));
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
-	//--------------------<敵の管理クラスを初期化>--------------------//
-	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
 
 	last_boss_mode     = LastBoss::Mode::None;
 	old_last_boss_mode = LastBoss::Mode::None;
