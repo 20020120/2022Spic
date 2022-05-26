@@ -51,51 +51,15 @@ void SceneGame::initialize(GraphicsPipeline& graphics)
 	//cameraManager->Initialize(graphics);
 	cameraManager->ChangeCamera(graphics, static_cast<int>(CameraTypes::Game));
 	//--------------------<敵の管理クラスを初期化>--------------------//
-	purple_threshold = 0; red_threshold = 0;
-	sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
-	Camera* c = cameraManager->GetCurrentCamera();
-
-	LastBoss::BossParamJson param;
-	param = LastBoss::fLoadParam();
-	if (param.BossStateNumber == 0) // 戦艦
-	{
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_BATTLESHIP);
-	}
-	if (param.BossStateNumber == 1) // 人
-	{
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
-		purple_threshold = 0.01f;
-	}
-	if (param.BossStateNumber == 2) // ドラゴン
-	{
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
-		red_threshold = 0.01f;
-	}
-
 	mWaveManager.fInitialize(graphics,mBulletManager.fGetAddFunction());
 
-	const auto enemyManager = mWaveManager.fGetEnemyManager();
-	last_boss_mode = enemyManager->fGetBossMode();
-	old_last_boss_mode = last_boss_mode;
+	last_boss_mode     = LastBoss::Mode::None;
+	old_last_boss_mode = LastBoss::Mode::None;
 
-	if (last_boss_mode == LastBoss::Mode::None)
-	{
-		purple_threshold = 0; red_threshold = 0;
-		sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
-		audio_manager->stop_all_bgm();
-		audio_manager->play_bgm(BGM_INDEX::GAME);
-	}
-	else
-	{
-		c->boss_animation = true;
-
-		player->SetPosition({ 0,0,-120.0f });
-		//プレイヤーの行動範囲変更
-		player->ChangePlayerJustificationLength();
-	}
+	audio_manager->stop_all_bgm();
+	audio_manager->play_bgm(BGM_INDEX::GAME);
+	purple_threshold = 0; red_threshold = 0;
+	sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
 
 	// enemy_hp_gauge
 	enemy_hp_gauge = std::make_unique<EnemyHpGauge>(graphics);
@@ -343,6 +307,29 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	//--------------------< ボスのBGM切り替え&スカイボックスの色変える >--------------------//
 	last_boss_mode = enemyManager->fGetBossMode();
+
+	// 再挑戦
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipToHuman)
+	{
+		c->boss_animation = true;
+		player->SetPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更
+		player->ChangePlayerJustificationLength();
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_HUMANOID);
+		purple_threshold = 0.01f;
+	}
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::HumanToDragon)
+	{
+		c->boss_animation = true;
+		player->SetPosition({ 0,0,-120.0f });
+		//プレイヤーの行動範囲変更
+		player->ChangePlayerJustificationLength();
+		audio_manager->stop_all_bgm();
+		audio_manager->play_bgm(BGM_INDEX::BOSS_DRAGON);
+		red_threshold = 0.01f;
+	}
+	// 通常時
 	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::Ship)
 	{
 		c->boss_animation = true;
