@@ -211,6 +211,11 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//スレッドの管理を放棄
 	thread.detach();
 
+
+	// ボスの状態をリセット
+	LastBoss::fLoadParam();
+	LastBoss::fResetLoadRaram();
+	LastBoss::fSaveParam();
 }
 
 void SceneTitle::uninitialize()

@@ -25,6 +25,11 @@ void LastBoss::fLoadParam()
     }
 }
 
+void LastBoss::fResetLoadRaram()
+{
+    mBossParam.BossStateNumber = 0;
+}
+
 void LastBoss::fSaveParam()
 {
     // Jsonファイルから値を取得

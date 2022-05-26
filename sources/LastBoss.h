@@ -341,10 +341,12 @@ private:
     float mPerformThresold{};
 
     //--------------------<ボスのパラメーター>--------------------//
-    BossParamJson mBossParam;
-    void fLoadParam();
-    void fSaveParam();
-
+    inline  static BossParamJson mBossParam;
+public:
+    static void fLoadParam();
+    static void fResetLoadRaram();
+    static void fSaveParam();
+private:
     //****************************************************************
     // 
     // 定数
