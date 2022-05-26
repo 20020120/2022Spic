@@ -375,6 +375,12 @@ bool BaseEnemy::fGetIsBoss() const
     return mIsBoss;
 }
 
+bool BaseEnemy::fGetInnerCamera()
+{
+    return mIsInCamera;
+}
+
+
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {

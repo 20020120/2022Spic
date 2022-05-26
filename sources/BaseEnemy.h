@@ -62,6 +62,7 @@ public:
     [[nodiscard]] bool fIsLockOnOfChain()const;
     [[nodiscard]] float fGetDissolve()const;
     bool fGetIsBoss()const;
+    bool fGetInnerCamera();
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
