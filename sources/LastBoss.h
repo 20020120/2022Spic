@@ -329,6 +329,7 @@ private:
 
     std::unique_ptr<Effect> mpBeamRightEffect{ nullptr };
     std::unique_ptr<Effect> mpBeamLeftEffect{ nullptr };
+    std::unique_ptr<Effect> mpDieEffect{ nullptr };
 
     // ƒr[ƒ€‚Ì”­ËˆÊ’u
     DirectX::XMFLOAT3 mBeamEffectPosition{};

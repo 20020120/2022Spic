@@ -152,6 +152,8 @@ void LastBoss::fShipBeamStartUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     // アニメーション終了と同時に遷移
     if (mpModel->end_of_animation(mAnimPara) && mMoveThreshold >= 1.0f)
     {
+        effect_manager->finalize();
+        effect_manager->initialize(Graphics_);
         fChangeState(DivideState::ShipBeamCharge);
     }
 }
@@ -313,6 +315,13 @@ void LastBoss::fChangeShipToHumanInit()
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
+    bool end{ false };
+
+    if (game_pad->get_button_down() & GamePad::BTN_B)
+    {
+        end = true;
+    }
+
     mTimer += elapsedTime_;
     // SEを鳴らす
     if (mTimer >= 0.9f && mSeArrayShipToHuman[0] == false) // 57
@@ -341,7 +350,11 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         mSeArrayShipToHuman[4] = true;
     }
 
-    if(mpModel->end_of_animation(mAnimPara))
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        end = true;
+    }
+    if (end)
     {
         PostEffect::clear_post_effect();
         fChangeState(DivideState::HumanIdle);
@@ -945,9 +958,18 @@ void LastBoss::fHumanDieStartInit()
 
 void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    bool end{ false };
+    if (game_pad->get_button() & GamePad::BTN_B)
+    {
+        end = true;
+    }
 
     mPosition = Math::lerp(mPosition, { 0.0f,80.0f,0.0f }, 10.0f * elapsedTime_);
    if(mpModel->end_of_animation(mAnimPara))
+   {
+       end = true;
+   }
+   if (end)
    {
        effect_manager->finalize();
        effect_manager->initialize(Graphics_);
@@ -966,12 +988,19 @@ void LastBoss::fHumanDieMiddleInit()
 
 void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    bool end{ false };
+    if (game_pad->get_button() & GamePad::BTN_B)
+    {
+        end = true;
+    }
+
+
     // RGBずらしで心臓のどくどくを演出する
     mTimer -= elapsedTime_;
     mPerformThresold += elapsedTime_ * 0.5f;
     mPerformThresold = (std::min)(0.15f, mPerformThresold);
     PostEffect::boss_awakening_effect({ 0.5f,0.5f }, mRgbColorPower, mPerformThresold);
-    if(mHeartTimer<=0.0f)
+    if (mHeartTimer <= 0.0f)
     {
         mRgbColorPower += mRgbColorSpeed * elapsedTime_;
         if (mRgbColorPower > 1.0f)
@@ -991,8 +1020,13 @@ void LastBoss::fHumanDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Graph
         mHeartTimer -= elapsedTime_;
     }
 
-    if(mTimer<=0.0f)
+    if (mTimer <= 0.0f)
     {
+        end = true;
+    }
+    if (end)
+    {
+
         effect_manager->finalize();
         effect_manager->initialize(Graphics_);
         fChangeState(DivideState::HumanToDragon);
@@ -1019,6 +1053,13 @@ void LastBoss::fHumanToDragonInit()
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    bool end{ false };
+    if (game_pad->get_button() & GamePad::BTN_B)
+    {
+        end = true;
+    }
+
+
     mTimer += elapsedTime_;
     int i = 0;
 
@@ -1094,8 +1135,13 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         mSeArrayHumanToDragon[i] = true;
     }
 
-    if(mpModel->end_of_animation(mAnimPara))
+    if (mpModel->end_of_animation(mAnimPara))
     {
+        end = true;
+    }
+    if (end)
+    {
+
         fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
@@ -1532,6 +1578,7 @@ void LastBoss::fDragonDieMiddleUpdate(float elapsedTime_, GraphicsPipeline& Grap
         BaseEnemy::fDie(Graphics_);
         mCurrentMode = Mode::BossDieEnd;
         mpEnemyManager->fSetBossMode(mCurrentMode);
+        mpDieEffect->play(effect_manager->get_effekseer_manager(), mPosition, 10.0f);
     }
 }
 

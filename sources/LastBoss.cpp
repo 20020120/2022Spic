@@ -73,6 +73,9 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
 
     mpBeamRightEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
     mpBeamLeftEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), "./resources/Effect/boss_beam_big.efk");
+    mpDieEffect = std::make_unique<Effect>(Graphics_,
+        effect_manager->get_effekseer_manager(),
+        "./resources/Effect/boss_death.efk");
 
 
    // ƒ{[ƒ“‚ğæ“¾
