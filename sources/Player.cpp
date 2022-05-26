@@ -40,10 +40,8 @@ Player::Player(GraphicsPipeline& graphics)
     player_bones[7] = model->get_bone_by_name("shortsword_top_joint");
     player_bones[8] = model->get_bone_by_name("camera_joint");
     player_bones[9] = model->get_bone_by_name("camera_focus_joint");
-    player_bones[10] = model->get_bone_by_name("shortsword_top_joint");
-    player_bones[11] = model->get_bone_by_name("shortsword_top_joint");
-    player_bones[12] = model->get_bone_by_name("shortsword_top_joint");
-    player_bones[13] = model->get_bone_by_name("shortsword_top_joint");
+    player_bones[10] = model->get_bone_by_name("foot_L_top_joint");
+    player_bones[11] = model->get_bone_by_name("foot_R_top_joint");
     //エフェクト
     player_behind_effec         = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_behind.efk");
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
@@ -422,10 +420,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         mSwordTrail[3].fAddTrailPoint(step_capsule[1].start, step_capsule[1].end);
 
 
-        mSwordTrail[2].fUpdate(elapsed_time, 10);
-        mSwordTrail[2].fEraseTrailPoint(elapsed_time);
-        mSwordTrail[3].fUpdate(elapsed_time, 10);
-        mSwordTrail[3].fEraseTrailPoint(elapsed_time);
 
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
@@ -852,7 +846,7 @@ void Player::InflectionParameters(float elapsed_time)
     //攻撃力の変動
     InflectionPower(elapsed_time);
     //足元のカプセル
-    //StepCapsule();
+    StepCapsule();
     //コンボの変動
     InflectionCombo(elapsed_time);
     //体の大きさのカプセルパラメータ設定
@@ -878,7 +872,7 @@ void Player::TutorialInflectionParameters(float elpased_time)
     //コンボの変動
     InflectionCombo(elpased_time);
     //足元のカプセル
-    //StepCapsule();
+    StepCapsule();
     //体の大きさのカプセルパラメータ設定
     BodyCapsule();
     //剣の大きさのカプセルのパラメータ
@@ -965,26 +959,16 @@ void Player::StepCapsule()
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
         DirectX::XMFLOAT3 end = {}, e_up = {};
-
         model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[10], pos, up);
-        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[11], end, e_up);
-
-        step_capsule[0].start = pos;
-        step_capsule[0].end = end;
-        step_capsule[0].rasius = 0.5f;
-        debug_figure->create_capsule(pos, end, 0.5f, {1.0f,1.0f,1.0f,1.0f});
+        step_pos_r = pos;
     }
     {
         DirectX::XMFLOAT3 pos = {}, up = {};
         DirectX::XMFLOAT3 end = {}, e_up = {};
 
-        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[12], pos, up);
-        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[13], end, e_up);
+        model->fech_by_bone(Math::calc_world_matrix(scale, orientation, position), player_bones[11], pos, up);
+        step_pos_l = pos;
 
-        step_capsule[1].start = pos;
-        step_capsule[1].end = end;
-        step_capsule[1].rasius = 1.5f;
-        debug_figure->create_capsule(pos, end, 0.5f, { 1.0f,1.0f,1.0f,1.0f });
     }
 
 }

@@ -340,7 +340,7 @@ private:
     SwordTrail mSwordTrail[4]{};
     float mTrailEraseTimer{};
 
-    skeleton::bone player_bones[14];
+    skeleton::bone player_bones[12];
 private:
     //プレイヤーのパラメータの変化
     void InflectionParameters(float elpased_time);
@@ -367,8 +367,8 @@ private:
     CapsuleParam charge_capsule_param{};
     CapsuleParam body_capsule_param{};
     CapsuleParam just_avoidance_capsule_param{};
-    CapsuleParam step_capsule[2]{};
-
+    DirectX::XMFLOAT3 step_pos_r{};
+    DirectX::XMFLOAT3 step_pos_l{};
     DirectX::XMFLOAT3 capsule_body_start{ 0,2.6f,0 };
     DirectX::XMFLOAT3 capsule_body_end{ 0,0.2f,0 };
     //足元のカプセル
