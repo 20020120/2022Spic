@@ -794,6 +794,8 @@ void LastBoss::fGuiMenu()
     ImGui::Checkbox("Stun", &mIsStun);
     ImGui::DragFloat("Timer", &mTimer);
 
+    ImGui::InputInt("AttackPower", &mAttackPower);
+
     ImGui::End();
 #endif
 }

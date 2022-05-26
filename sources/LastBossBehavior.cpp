@@ -570,13 +570,11 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
         mAttackCapsule.mRadius += elapsedTime_ * 80.0f;
         mAttackCapsule.mTop = mPosition + capsuleLength;
         mAttackCapsule.mBottom = mPosition - capsuleLength;
-        mAttackPower *= 2;
     }
 
 
     if(mpModel->end_of_animation(mAnimPara))
     {
-        mAttackPower /= 2;
         const std::uniform_int_distribution<int> RandTargetAdd(0, 9);
         if (const auto num = RandTargetAdd(mt); num < 4)
         {
@@ -1015,6 +1013,8 @@ void LastBoss::fHumanToDragonInit()
     }
     mAnimationSpeed = 1.0f;
     mTimer = 0.0f;
+    mIsStun = false;
+    mStunEffect->stop(effect_manager->get_effekseer_manager());
 }
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

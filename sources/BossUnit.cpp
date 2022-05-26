@@ -372,6 +372,7 @@ void BossUnit::fAttackBeamInit()
 void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
+    mBeamThreshold += elapsedTime_;
     DirectX::XMFLOAT3 pos = mPosition;
     pos.y += 5.0f;
     mAttackCapsule.mTop = pos;
