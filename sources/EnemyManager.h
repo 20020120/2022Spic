@@ -115,6 +115,7 @@ public:
 
     bool fGetBossClear()const;
 
+    void fReserveDeleteEnemies();
 private:
     //--------------------<敵と関連する処理>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // 敵の生成を管理
@@ -168,6 +169,8 @@ private:
     // チュートリアル
     float mTutorialTimer{};
     const float mkSeparateTutorial{ 1.0f };
+
+    bool mIsReserveDelete{};
 
     // ボスがユニットを召喚
     bool mIsReserveBossUnit{};

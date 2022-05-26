@@ -117,6 +117,7 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbx_filename, bool tr
         std::ifstream ifs(cereal_filename.c_str(), std::ios::binary);
         cereal::BinaryInputArchive deserialization(ifs);
         deserialization(scene_view, meshes, materials, animation_clips);
+        
     }
     else
     {

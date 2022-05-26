@@ -50,20 +50,44 @@ void LastBoss::fSaveParam()
 }
 
 //****************************************************************
-//
-// 戦艦モード
+// 
+// 戦艦モード 
 //
 //****************************************************************
 void LastBoss::fShipStartInit()
 {
-    mDissolve = 1.0f;
-    mPosition = { 0.0f,80.0f,600.0f };
+    // アニメーションを再生
+    mpModel->play_animation(mAnimPara, AnimationName::ship_appearing_scene);
+    mDissolve = 0.0f;
+    mPosition = { 0.0f,40.0f,250.0f };
+    mCurrentMode = Mode::ShipAppear;
+    mTimer = 0.0f;
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
-    mDissolve -= elapsedTime_ * 2.0f;
-    fChangeState(DivideState::ShipIdle);
+    mTimer += elapsedTime_;
+    if(mTimer>15.0f&& mTimer < 18.0f)
+    {
+        const int t = static_cast<int>(mTimer * 30);
+        if (!mIsSpawnEnemy && t % 10 == 0)
+        {
+            // ランダムな敵を出現させる
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
+            mIsSpawnEnemy = true;
+        }
+        if (mIsSpawnEnemy && t % 10 == 9)
+        {
+            mIsSpawnEnemy = false;
+        }
+    }
+    if (mpModel->end_of_animation(mAnimPara))
+    {
+        mCurrentMode = Mode::Ship;
+        fChangeState(DivideState::ShipIdle);
+    }
 }
 
 void LastBoss::fShipIdleInit()
@@ -271,11 +295,48 @@ void LastBoss::fChangeShipToHumanInit()
     mCurrentMode = Mode::ShipToHuman;
     mPosition = { 0.0f,20.0f,0.0f };
     PostEffect::boss_awakening_effect({ 0.0f,0.0f }, 0.0f, 0.25f);
+
+    mpEnemyManager->fReserveDeleteEnemies();
+
+    // フラグの配列を初期化
+    for (int i = 0; i < ARRAYSIZE(mSeArrayShipToHuman); ++i)
+    {
+        mSeArrayShipToHuman[i] = false;
+    }
+    mTimer = 0.0f;
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
     GraphicsPipeline& Graphics_)
 {
+    mTimer += elapsedTime_;
+    // SEを鳴らす
+    if (mTimer >= 0.9f && mSeArrayShipToHuman[0] == false) // 57
+    {
+        audio_manager->play_se(SE_INDEX::BOSS_SMALL_ROAR);
+        mSeArrayShipToHuman[0] = true;
+    }
+    if (mTimer >= 2.9f && mSeArrayShipToHuman[1] == false) // 
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_1);
+        mSeArrayShipToHuman[1] = true;
+    }
+    if (mTimer >= 3.5f && mSeArrayShipToHuman[2] == false) // 
+    {
+        audio_manager->play_se(SE_INDEX::FOOT_TRANSFORM);
+        mSeArrayShipToHuman[2] = true;
+    }
+    if (mTimer >= 5.08f && mSeArrayShipToHuman[3] == false) // 
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_2);
+        mSeArrayShipToHuman[3] = true;
+    }
+    if (mTimer >= 5.2f && mSeArrayShipToHuman[4] == false) // 
+    {
+        audio_manager->play_se(SE_INDEX::REVERBERATION);
+        mSeArrayShipToHuman[4] = true;
+    }
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         PostEffect::clear_post_effect();
@@ -502,7 +563,7 @@ void LastBoss::fHumanBlowAttackUpdate(float elapsedTime_,
     if (mTimer > mkTimerBlow)
     {
         constexpr DirectX::XMFLOAT3 capsuleLength{ 0.0f,20.0f,0.0f };
-        mAttackCapsule.mRadius += elapsedTime_ * 50.0f;
+        mAttackCapsule.mRadius += elapsedTime_ * 80.0f;
         mAttackCapsule.mTop = mPosition + capsuleLength;
         mAttackCapsule.mBottom = mPosition - capsuleLength;
         mAttackPower *= 2;

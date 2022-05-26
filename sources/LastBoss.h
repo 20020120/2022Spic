@@ -20,6 +20,7 @@ public:
     enum class Mode // ボスのモード
     {
         None,          // 何もなし（存在しない）
+        ShipAppear,    // 戦艦登場アニメーション
         Ship,          // 戦艦（ダメージは受けない）
         ShipToHuman,   // 戦艦から人に変換
         Human,         // 人型（体力の100%~20%）
@@ -137,6 +138,7 @@ private:
         human_to_ship_quick,
         human_to_dragon_quick,
         dragon_to_human_quick,
+        ship_appearing_scene,
     };
     enum class AttackKind // 乱数から抽出する攻撃の種類
     {
@@ -346,6 +348,10 @@ public:
     static BossParamJson fLoadParam();
     static void fResetLoadRaram();
     static void fSaveParam();
+
+private:
+    bool mSeArrayShipToHuman[5]{}; // 船から人のSE
+
 private:
     //****************************************************************
     //

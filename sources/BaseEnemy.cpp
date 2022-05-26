@@ -31,6 +31,8 @@ BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_,
     mBombEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkBombPath);
     mStunEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkStunPath);
     mDamageEffect = std::make_unique<Effect>(Graphics_, effect_manager->get_effekseer_manager(), mkDamagePath);
+
+    mIsBoss = false;
 }
 
 BaseEnemy::BaseEnemy(GraphicsPipeline& Graphics_, const char* FileName_)
@@ -329,6 +331,11 @@ bool BaseEnemy::fIsLockOnOfChain() const
 float BaseEnemy::fGetDissolve() const
 {
     return mDissolve;
+}
+
+bool BaseEnemy::fGetIsBoss() const
+{
+    return mIsBoss;
 }
 
 

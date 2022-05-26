@@ -13,12 +13,14 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
         "./resources/Models/Enemy/boss_animation_sixth.fbx",
         ParamPack_, EmitterPoint_,L"./resources/Sprites/ui/minimap/minimap_lastboss.png"), mpEnemyManager(pEnemyManager_)
 {
+    mIsBoss = true;
+    
+    // ボーンを初期化
+    mShipFace = mpModel->get_bone_by_name("shipface_top_joint");
+
     // タレットのモデルを初期化
     fRegisterFunctions();
    
-    // ボーンを初期化
-    mShipFace = mpModel->get_bone_by_name("shipface_top_joint");
-    mCurrentMode = Mode::Ship;
 
     // laserを初期化
     mShipPointer.fInitialize(Graphics_.get_device().Get(),  L"");
@@ -94,7 +96,6 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
    {
        fChangeState(DivideState::HumanToDragon);
    }
-
 }
 
 LastBoss::LastBoss(GraphicsPipeline& Graphics_)

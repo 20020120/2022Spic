@@ -59,7 +59,7 @@ public:
     [[nodiscard]] bool fGetStun()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;
     [[nodiscard]] float fGetDissolve()const;
-
+    bool fGetIsBoss()const;
 protected:
     std::shared_ptr<SkinnedMesh> mpModel{ nullptr };
 
@@ -92,6 +92,9 @@ private:
 protected:
     // StateMachine
     std::map<std::string, FunctionTuple> mFunctionMap{};
+
+    // É{ÉXÇ©Ç«Ç§Ç©
+    bool mIsBoss{};
 private:
     FunctionTuple mCurrentTuple{};
 protected:
@@ -115,7 +118,7 @@ protected:
     std::unique_ptr<Effect> mStunEffect{ nullptr };
     inline static const char* mkStunPath = "./resources/Effect/stun.efk";
     
-private:
+protected:
     std::unique_ptr<Effect> mBombEffect{ nullptr };
     inline static const char* mkBombPath = "./resources/Effect/enemy_die.efk";
 

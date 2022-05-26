@@ -102,6 +102,20 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
     {
         mReserveVec.clear();
     }
+
+    // ザコ的だけを全消しする
+    if(mIsReserveDelete)
+    {
+        for (const auto enemy : mEnemyVec)
+        {
+            if (enemy->fGetIsBoss() == false)
+            {
+                mRemoveVec.emplace_back(enemy);
+            }
+        }
+        fDeleteEnemies();
+        mIsReserveDelete = false;
+    }
 }
 
 void EnemyManager::fRender(GraphicsPipeline& graphics_)
@@ -928,6 +942,10 @@ bool EnemyManager::fGetIsEventCamera() const
     case LastBoss::Mode::DragonDie:
         result = true;
         break;
+    case LastBoss::Mode::BossDieEnd: break;
+    case LastBoss::Mode::ShipAppear:
+        result = true;
+        break;
     default: ;
     }
 
@@ -957,4 +975,9 @@ void EnemyManager::fSetBossFocus(DirectX::XMFLOAT3 Focus_)
 bool EnemyManager::fGetBossClear() const
 {
     return mCurrentMode == LastBoss::Mode::BossDieEnd;
+}
+
+void EnemyManager::fReserveDeleteEnemies()
+{
+    mIsReserveDelete = true;
 }
