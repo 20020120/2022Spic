@@ -97,6 +97,8 @@ LastBoss::LastBoss(GraphicsPipeline& Graphics_,
        fChangeState(DivideState::HumanToDragon);
    }
 
+   auto a = this;
+
    mVernierEffect->stop(effect_manager->get_effekseer_manager());
 }
 
