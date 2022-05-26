@@ -94,7 +94,7 @@ BossHpGauge::BossHpGauge(GraphicsPipeline& graphics)
     body = std::make_unique<SpriteBatch>(graphics.get_device().Get(), L".\\resources\\Sprites\\ui\\boss_hp_gauge.png", 1);
 
     gauge.position = { 640,40 };
-    gauge.scale = { 0.8f, 0.4f };
+    gauge.scale = { 0.7f, 0.4f };
     gauge.texsize = { static_cast<float>(frame->get_texture2d_desc().Width), static_cast<float>(frame->get_texture2d_desc().Height) };
     gauge.pivot = gauge.texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
     gauge.color.w = 0.0f;
