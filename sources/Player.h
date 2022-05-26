@@ -234,6 +234,8 @@ private:
     bool is_behind_avoidance{ false };
     //回り込み回避のクールタイム
     float behaind_avoidance_cool_time{ 0 };
+    //クールタイムが解除されたかどうか true :解除されていない
+    bool behaind_avoidance_recharge{ false };
     //ジャスト回避しているかどうか
     bool is_just_avoidance{ false };
     //ジャスト回避できるカプセルに入っているかどうか

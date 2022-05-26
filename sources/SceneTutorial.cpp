@@ -164,7 +164,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます\nもう一度ボタンを押すと入力方向に方向転換できます";
 	tutorial_text_element[2].tutorial_text = L"敵が視界に入っている時にLTボタンを押している間\nロックオンすることができます";
 	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
-	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると\n回り込み,スタンさせます";
+	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると\n回り込み,スタンさせます\n回り込み回避を成功させるとクールタイムが発生します";
 	tutorial_text_element[5].tutorial_text = L"LBボタンを押し続けると\nカメラ内にいるスタンしている敵をロックオンして\n一度に攻撃することができます";
 	tutorial_text_element[6].tutorial_text = L"敵に攻撃するとゲージがたまっていき\n満タンの状態でAボタンを押すと覚醒状態になります\nチェイン攻撃ではゲージはたまりません";
 	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
@@ -173,7 +173,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[1].position = { 297.0f,76.0f };
 	tutorial_text_element[2].position = { 341.0f,75.0f };
 	tutorial_text_element[3].position = { 252.0f,86.0f };
-	tutorial_text_element[4].position = { 360.0f,72.0f };
+	tutorial_text_element[4].position = { 276.0f,53.0f };
 	tutorial_text_element[5].position = { 362.0f,55.0f };
 	tutorial_text_element[6].position = { 320.0f,65.0f };
 	tutorial_text_element[7].position = { 479.0f,102.0f };
@@ -739,7 +739,8 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		player->ChangeTutorialState(static_cast<int>(tutorial_state));
 		tutorial_check_text = L"回り込み回避をする";
 		tutorial_count_text.s = count_text_first + count_text_count + count_text_last;
-		tutorial_count_text.position = { 835.0f,143.0f };
+		tutorial_count_text.position = { 955.0f,173.0f };
+		tutorial_count_text.color = { 1.0f,1.0f,0.0f,1.0f };
 		//画像のチュートリアルのパラメータ設定
 		sprite_tutorial_text.position = { 265.0f,430.0f };
 		sprite_tutorial_text.s = L"敵の攻撃が当たりそうなときに回避するとジャスト回避ができます\nジャスト回避は近くの範囲内の敵をスタンさせることができます\nジャスト回避をするとHPが少量回復します";

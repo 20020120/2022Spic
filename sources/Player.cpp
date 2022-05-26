@@ -368,7 +368,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 avoidance_buttun = false;
             }
         }
-
+        //‰ñ‚è‚İ‰ñ”ğ‚ÌƒŠƒLƒƒƒXƒg‚Ì‰¹
+        if (behaind_avoidance_recharge == true && behaind_avoidance_cool_time < 0.0f)
+        {
+            audio_manager->play_se(SE_INDEX::BEHAIND_RECHARGE);
+            behaind_avoidance_recharge = false;
+        }
+        if(behaind_avoidance_recharge == false && behaind_avoidance_cool_time < -1.0f) audio_manager->stop_se(SE_INDEX::BEHAIND_RECHARGE);
         switch (behavior_state)
         {
         case Player::Behavior::Normal:
@@ -387,6 +393,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 {
                     PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
                 }
+
             }
             break;
         case Player::Behavior::Chain:
@@ -439,6 +446,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
     if (is_update_animation)model->update_animation(elapsed_time * animation_speed);
     threshold_mesh = Math::clamp(threshold_mesh, 0.0f, 1.0f);
+
 
 #if 0
     if (is_lock_on)

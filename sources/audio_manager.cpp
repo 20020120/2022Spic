@@ -225,6 +225,7 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/shoulder_armor.wav", SE_INDEX::SHOULDER_ARMOR, 0.1f);
 	register_se(L"resources/Audios/SE/transform_fast.wav", SE_INDEX::TRANSFORM_FAST, 0.1f);
 	register_se(L"resources/Audios/SE/boss_ready_fast.wav", SE_INDEX::BOSS_READY_FAST, 0.1f);
+	register_se(L"resources/Audios/SE/behaind_avoidanvce_recharge.wav", SE_INDEX::BEHAIND_RECHARGE, 0.1f);
 
 }
 

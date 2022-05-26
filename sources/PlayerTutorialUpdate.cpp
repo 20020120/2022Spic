@@ -53,6 +53,13 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                 avoidance_buttun = false;
             }
         }
+        //‰ñ‚è‚İ‰ñ”ğ‚ÌƒŠƒLƒƒƒXƒg‚Ì‰¹
+        if (behaind_avoidance_recharge == true && behaind_avoidance_cool_time < 0.0f)
+        {
+            audio_manager->play_se(SE_INDEX::BEHAIND_RECHARGE);
+            behaind_avoidance_recharge = false;
+        }
+        if (behaind_avoidance_recharge == false && behaind_avoidance_cool_time < -1.0f) audio_manager->stop_se(SE_INDEX::BEHAIND_RECHARGE);
 
         switch (behavior_state)
         {
@@ -726,8 +733,16 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {
         just_stun->stop(effect_manager->get_effekseer_manager());
-        if(is_just_avoidance)behaind_avoidance_cool_time = 0.0f;
-        else         behaind_avoidance_cool_time = 1.0f;
+        if (is_just_avoidance)
+        {
+            behaind_avoidance_recharge = false;
+            behaind_avoidance_cool_time = 0.0f;
+        }
+        else
+        {
+            behaind_avoidance_recharge = true;
+            behaind_avoidance_cool_time = 1.0f;
+        }
         player_behind_effec->stop(effect_manager->get_effekseer_manager());
         //‰ñ”ğ’†‚©‚Ç‚¤‚©‚Ìİ’è
         is_avoidance = false;
