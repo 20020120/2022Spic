@@ -112,6 +112,8 @@ private:
     DirectX::XMFLOAT3 slash_effec_pos{};
     std::unique_ptr<Effect> player_awaiking_effec;
     std::unique_ptr<Effect> just_stun;
+    std::unique_ptr<Effect> player_move_effec_r;
+    std::unique_ptr<Effect> player_move_effec_l;
 
     //USE_IMGUI
 private:
@@ -638,6 +640,8 @@ private:
     void NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome);
     void NamelessMotionIdleUpdate(float elapsed_time, SkyDome* sky_dome);
     void TransitionNamelessMotionIdle();
+    //クリアモーションの時の音
+    int nameless_motion_se_state = 0;
     //クリアモーションに遷移
     void TransitionNamelessMotion();
     //クリア用モーションが終わったらtrue

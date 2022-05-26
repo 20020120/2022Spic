@@ -172,7 +172,8 @@ void AudioManager::initialize_se()
 	register_se(L"resources/Audios/SE/decision.wav", SE_INDEX::DECISION, 0.1f);
 	register_se(L"resources/Audios/SE/draw_sword.wav", SE_INDEX::DRAW_SWORD, 0.1f);
 	register_se(L"resources/Audios/SE/return_sword.wav", SE_INDEX::RETURN_SWORD, 0.1f);
-	register_se(L"resources/Audios/SE/swing_sword.wav", SE_INDEX::SWING_SWORD, 0.1f);
+	register_se(L"resources/Audios/SE/swing_sword.wav", SE_INDEX::SWING_SWORD1, 0.1f);
+	register_se(L"resources/Audios/SE/swing_sword.wav", SE_INDEX::SWING_SWORD2, 0.1f);
 	register_se(L"resources/Audios/SE/attack_sword.wav", SE_INDEX::ATTACK_SWORD, 0.1f);
 	register_se(L"resources/Audios/SE/enemy_emergence.wav", SE_INDEX::ENEMY_EMERGENCE, 0.1f);
 	register_se(L"resources/Audios/SE/shot_bow.wav", SE_INDEX::SHOT_BOW, 0.1f);

@@ -118,9 +118,14 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
+    player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
+
     //移動入力がなくなったら待機に遷移
     if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
+        player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+        player_move_effec_l->stop(effect_manager->get_effekseer_manager());
         TransitionIdle();
     }
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
@@ -803,6 +808,28 @@ void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
         wipe_parm += 0.2f * elapsed_time;
         PostEffect::wipe_effect(wipe_parm);
     }
+
+    //ImGui::Begin("frame");
+    //ImGui::DragFloat("frame",&model->get_anim_para().frame_index);
+   // ImGui::End();
+    if (model->get_anim_para().animation_tick > 0.3f && nameless_motion_se_state == 0)
+    {
+        audio_manager->play_se(SE_INDEX::SWING_SWORD1);
+        nameless_motion_se_state = 1;
+    }
+    if (model->get_anim_para().animation_tick > 0.56f && nameless_motion_se_state == 1)
+    {
+        audio_manager->play_se(SE_INDEX::SWING_SWORD2);
+        nameless_motion_se_state = 2;
+    }
+    if (model->get_anim_para().animation_tick > 4.16f && nameless_motion_se_state == 2)
+    {
+        audio_manager->play_se(SE_INDEX::RETURN_SWORD);
+        nameless_motion_se_state = 3;
+    }
+
+
+
     if (model->end_of_animation())
     {
         TransitionNamelessMotionIdle();
@@ -867,6 +894,9 @@ void Player::TransitionIdle(float blend_second)
 
 void Player::TransitionMove(float blend_second)
 {
+    //エフェクト再生
+    player_move_effec_r->play(effect_manager->get_effekseer_manager(), step_pos_r);
+    player_move_effec_l->play(effect_manager->get_effekseer_manager(), step_pos_l);
     //ダッシュエフェクトの終了
     //end_dash_effect = true;
     //覚醒状態の時の移動アニメーションの設定
@@ -1429,6 +1459,8 @@ void Player::TransitionStartMothin()
 
 void Player::TransitionNamelessMotion()
 {
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     //クリア用モーションが始まったらからtrueにする
     is_start_cleear_motion = true;
     //攻撃中かどうかの設定

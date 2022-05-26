@@ -25,7 +25,8 @@ enum class SE_INDEX
     DECISION,               //Œˆ’è‰¹
     DRAW_SWORD,             //Œ•‚ð”²‚­‰¹
     RETURN_SWORD,           //Œ•‚ðâ‚É–ß‚·
-    SWING_SWORD,            //UŒ‚(“–‚½‚Á‚Ä‚¢‚È‚¢)
+    SWING_SWORD1,            //UŒ‚(“–‚½‚Á‚Ä‚¢‚È‚¢)
+    SWING_SWORD2,            //UŒ‚(“–‚½‚Á‚Ä‚¢‚È‚¢)
     ATTACK_SWORD,           //UŒ‚(“–‚½‚Á‚Ä‚¢‚é)
     ENEMY_EMERGENCE,        //“GoŒ»
     SHOT_BOW,               //‹|UŒ‚

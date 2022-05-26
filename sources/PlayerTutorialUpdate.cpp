@@ -83,7 +83,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                     PlayerJustification(elapsed_time, position);
                     if (target_enemy != nullptr)
                     {
-                        PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                        PlayerEnemyJustification(elapsed_time, position, 1.6f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
                     }
                 }
             }

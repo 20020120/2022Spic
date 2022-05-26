@@ -47,6 +47,8 @@ Player::Player(GraphicsPipeline& graphics)
     player_air_registance_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\air_registance.efk");
     player_slash_hit_effec      = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_slash_hit.efk");
     player_awaiking_effec = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_kakusei1.efk");
+    player_move_effec_r = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
+    player_move_effec_l = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\player_move.efk");
     just_stun = std::make_unique<Effect>(graphics, effect_manager->get_effekseer_manager(), ".\\resources\\Effect\\just_stun.efk");
 }
 
@@ -391,7 +393,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
                 PlayerJustification(elapsed_time, position);
                 if (target_enemy != nullptr)
                 {
-                    PlayerEnemyJustification(elapsed_time, position, 1.2f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
+                    PlayerEnemyJustification(elapsed_time, position, 1.6f, target_enemy->fGetPosition(), target_enemy->fGetBodyCapsule().mRadius);
                 }
 
             }
@@ -912,7 +914,7 @@ void Player::InflectionCombo(float elapsed_time)
     duration_combo_timer += 1.0f * elapsed_time;
     if (is_awakening)
     {
-        combo_count -= elapsed_time * 2.0f;
+        combo_count -= elapsed_time * 5.0f;
     }
     if (combo_max_se == false && combo_count >= MAX_COMBO_COUNT - 5.0f)
     {
