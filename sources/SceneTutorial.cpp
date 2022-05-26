@@ -161,7 +161,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	}
 	//チュートリアル文の初期化
 	tutorial_text_element[0].tutorial_text = L"Lスティックでプレイヤーを動かすことができ\nRスティックでカメラを動かすことができます";
-	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます";
+	tutorial_text_element[1].tutorial_text = L"RBボタンかRTボタンを押すと回避することができます\nもう一度ボタンを押すと入力方向に方向転換できます";
 	tutorial_text_element[2].tutorial_text = L"敵が視界に入っている時にLTボタンを押している間\nロックオンすることができます";
 	tutorial_text_element[3].tutorial_text = L"Bボタンを押すと攻撃でき,ロックオン中は自動で敵を攻撃します\n敵に当たったらもう一度Bボタンを押して連続攻撃できます";
 	tutorial_text_element[4].tutorial_text = L"ロックオン中に一定の近さの時に回避をすると\n回り込み,スタンさせます";
@@ -170,7 +170,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	tutorial_text_element[7].tutorial_text = L"チュートリアルを終了します";
 
 	tutorial_text_element[0].position = { 376.0f,72.0f };
-	tutorial_text_element[1].position = { 337.0f,97.0f };
+	tutorial_text_element[1].position = { 297.0f,76.0f };
 	tutorial_text_element[2].position = { 341.0f,75.0f };
 	tutorial_text_element[3].position = { 252.0f,86.0f };
 	tutorial_text_element[4].position = { 360.0f,72.0f };

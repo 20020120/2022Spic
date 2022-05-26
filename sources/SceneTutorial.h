@@ -45,7 +45,7 @@ enum class BottunPriset : uint16_t
     Back_ = (1 << 12),
 
     MoveTutorialPriset = RightStick_ | LeftStick_,
-    AvoidanceTutorialPriset = RB_ | RT_,
+    AvoidanceTutorialPriset = RB_ | RT_ | LeftStick_,
     LockOnTutorialPriset = LT_,
     AttackTutorialPriset = B_,
     BehindAvoidanceTutorialPriset = RB_ | RT_,
