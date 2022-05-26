@@ -244,6 +244,9 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 
 void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
 {
+    player_behaind_effec_2->set_position(effect_manager->get_effekseer_manager(), position);
+    player_behaind_effec_2->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
+
     just_stun->set_position(effect_manager->get_effekseer_manager(), position);
     behind_test_timer += 1.0f * elapsed_time;
     //behind_timer += 2.0f * elapsed_time;
@@ -252,6 +255,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index,position, behind_speed, behind_interpolated_way_points,1.5f))
     {
         just_stun->stop(effect_manager->get_effekseer_manager());
+        player_behaind_effec_2->stop(effect_manager->get_effekseer_manager());
         if (is_just_avoidance)
         {
             behaind_avoidance_recharge = false;
@@ -978,8 +982,9 @@ void Player::TransitionAvoidance()
 
 void Player::TransitionBehindAvoidance()
 {
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position,2.0f);
 
     behind_test_timer = 0.0f;
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
@@ -1040,9 +1045,9 @@ void Player::TransitionBehindAvoidance()
 
 void Player::TransitionJustBehindAvoidance()
 {
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
-
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position,2.0f);
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
         //ロックオンしている敵をスタンさせる
     if (target_enemy != nullptr)
