@@ -1116,6 +1116,9 @@ void Player::TransitionChargeInit()
 
 void Player::TransitionCharge(float blend_seconds)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
@@ -1353,7 +1356,7 @@ void Player::TransitionAwaking()
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
-    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,5.0f);
+    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::Awaking, false,true);
