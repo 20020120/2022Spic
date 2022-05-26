@@ -73,9 +73,12 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         if (!mIsSpawnEnemy && t % 10 == 0)
         {
             // ƒ‰ƒ“ƒ_ƒ€‚È“G‚ðoŒ»‚³‚¹‚é
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
-            mpEnemyManager->fCreateRandomEnemy(Graphics_, { 0.0f,0.0f,200.0f });
+            auto vec = Math::GetFront(mOrientation);
+            DirectX::XMFLOAT3 pos = mPosition;
+            pos.y = 0.0f;
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
+            mpEnemyManager->fCreateRandomEnemy(Graphics_, pos + (vec * 40.0f));
             mIsSpawnEnemy = true;
         }
         if (mIsSpawnEnemy && t % 10 == 9)
@@ -1005,10 +1008,91 @@ void LastBoss::fHumanToDragonInit()
     mDissolve = 0.0f;
     mCurrentMode = Mode::HumanToDragon;
     mPosition = {};
+    for (int i = 0; i < ARRAYSIZE(mSeArrayHumanToDragon); ++i)
+    {
+        mSeArrayHumanToDragon[i] = false;
+    }
+    mAnimationSpeed = 1.0f;
+    mTimer = 0.0f;
 }
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
+    mTimer += elapsedTime_;
+    int i = 0;
+
+    if (mTimer >= 9.76f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::TEARING);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 11.0f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::THROW);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 14.66f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::ROAR_1);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 21.63f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_1);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 21.89f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_1);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 22.10f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::BOSS_READY_FAST);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 22.63f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_2);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 23.18f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::DOCKING_1);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 23.38f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::DISC);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 24.00f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::SPLINTERS);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 26.23f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::BOSS_READY_FAST);
+        mSeArrayHumanToDragon[i] = true;
+    }
+    ++i;
+    if (mTimer >= 27.28f && mSeArrayHumanToDragon[i] == false)
+    {
+        audio_manager->play_se(SE_INDEX::ROAR_2);
+        mSeArrayHumanToDragon[i] = true;
+    }
+
     if(mpModel->end_of_animation(mAnimPara))
     {
         fChangeState(DivideState::DragonHideStart);
