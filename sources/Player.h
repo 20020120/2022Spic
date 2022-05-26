@@ -341,7 +341,7 @@ private:
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
-    SwordTrail mSwordTrail[4]{};
+    SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
 
     skeleton::bone player_bones[12];

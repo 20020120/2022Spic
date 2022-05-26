@@ -1216,6 +1216,9 @@ void Player::TransitionTutoriaIdle(float blend_second)
 
 void Player::TransitionTutorialMove(float blend_second)
 {
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+
     //エフェクト再生
     player_move_effec_r->play(effect_manager->get_effekseer_manager(), step_pos_r);
     player_move_effec_l->play(effect_manager->get_effekseer_manager(), step_pos_l);
@@ -1235,8 +1238,8 @@ void Player::TransitionTutorialMove(float blend_second)
 
 void Player::TransitionTutorialAvoidance(float blend_second)
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
@@ -1294,8 +1297,8 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
 
@@ -1334,8 +1337,8 @@ void Player::TransitionTutorialBehindAvoidance()
 void Player::TransitionTutorialJustBehindAvoidance()
 {
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
         //ロックオンしている敵をスタンさせる
     if (target_enemy != nullptr)
@@ -1384,8 +1387,8 @@ void Player::TransitionTutorialJustBehindAvoidance()
 
 void Player::TransitionTutorialChargeInit()
 {
-    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
     //覚醒状態の時の突進の始まりのアニメーションに設定
     if (is_awakening)model->play_animation(AnimationClips::AwakingChargeInit, false, true);
     //通常状態の時の突進の始まりのアニメーションに設定
@@ -1558,7 +1561,7 @@ void Player::TransitionTutorialAwaiking()
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
-    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position);
+    player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
     invincible_timer = 2.0f;
     //覚醒状態になるアニメーションに設定
     model->play_animation(AnimationClips::Awaking, false, true);

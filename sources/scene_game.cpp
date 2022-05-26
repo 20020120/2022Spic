@@ -330,7 +330,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		red_threshold = 0.01f;
 	}
 	// �ʏ펞
-	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::Ship)
+	if (old_last_boss_mode == LastBoss::Mode::None && last_boss_mode == LastBoss::Mode::ShipAppear)
 	{
 		c->boss_animation = true;
 		player->SetPosition({ 0,0,-120.0f });
