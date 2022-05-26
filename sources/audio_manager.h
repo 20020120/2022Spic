@@ -78,7 +78,7 @@ enum class SE_INDEX
     SHOULDER_ARMOR,//プレイヤーの肩のアーマー
     TRANSFORM_FAST,//ボス足回転
     BOSS_READY_FAST,//頭回転完了
-
+    BEHAIND_RECHARGE,//回り込みリチャージ
     SE_COUNT
 };
 
