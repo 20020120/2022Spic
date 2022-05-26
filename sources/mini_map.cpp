@@ -35,7 +35,7 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 	mini_map_icon->render(graphics.get_dc().Get(), {  minimap_icon_param.position.x, minimap_icon_param.position.y }, { minimap_icon_param.scale });
 	mini_map_icon->end(graphics.get_dc().Get());
 
-	//player_icon_param.position = { center_pos.x,center_pos.y   };
+	player_icon_param.position = { center_pos.x,center_pos.y   };
 #if USE_IMGUI
 	ImGui::Begin("minimapp");
 	ImGui::DragFloat2("minimap", &player_icon_param.position.x);
