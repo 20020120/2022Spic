@@ -407,7 +407,6 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 		player->SetTarget(enemy);
 		player->SetCameraTarget(c->get_target());
 		if (player->GetStartDashEffect()) post_effect->dash_post_effect(graphics.get_dc().Get(), player->GetPosition());
-
 	enemy_hp_gauge->update(graphics, elapsed_time);
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 	boss_hp_gauge->update(graphics, elapsed_time);
@@ -415,6 +414,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	else { boss_hp_gauge->set_animation(true); }
 
 	reticle->update(graphics, elapsed_time);
+	reticle->SetAvoidanceCharge(player->GetBehaindCharge());
 	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 	{
 		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };

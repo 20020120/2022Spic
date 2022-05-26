@@ -379,6 +379,7 @@ void TutorialScene::update(GraphicsPipeline& graphics, float elapsed_time)
 	enemy_hp_gauge->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 
 	reticle->update(graphics, elapsed_time);
+	reticle->SetAvoidanceCharge(player->GetBehaindCharge());
 	reticle->focus(player->GetPlayerTargetEnemy(), player->GetEnemyLockOn());
 	{
 		static DirectX::XMFLOAT2 pos{ 950.0f, 90.0f };
