@@ -11,7 +11,7 @@ MiniMap::MiniMap(GraphicsPipeline& graphics)
 	//パラメーター初期値設定
 	//ミニマップ下地
 	minimap_icon_param =
-	{ {1080,32},{1,1} };
+	{ {1018,7},{1,1} };
 	//プレイヤー
 	player_icon_param =
 	{ {128,128},{1,1} };
@@ -30,12 +30,12 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 {
 	//レーダーあいこん
 
-	DirectX::XMFLOAT2 center_pos = { 1177,130.0f };//アイコンの基準位置
+	DirectX::XMFLOAT2 center_pos = { 1147.0f,136.0f };//アイコンの基準位置
 	mini_map_icon->begin(graphics.get_dc().Get());
 	mini_map_icon->render(graphics.get_dc().Get(), {  minimap_icon_param.position.x, minimap_icon_param.position.y }, { minimap_icon_param.scale });
 	mini_map_icon->end(graphics.get_dc().Get());
 
-	player_icon_param.position = { center_pos.x,center_pos.y   };
+	//player_icon_param.position = { center_pos.x,center_pos.y   };
 #if USE_IMGUI
 	ImGui::Begin("minimapp");
 	ImGui::DragFloat2("minimap", &player_icon_param.position.x);
@@ -81,11 +81,11 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 		dot = cross < 0 ? -dot : dot;
 
 		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(player_pos, e_pos);
-		enemy_icon_pos.x =  (center_pos.x - 32.0f) + length_p_to_e_vec * sinf(dot);
-		enemy_icon_pos.y =  (center_pos.y - 32.0f) - length_p_to_e_vec * cosf(dot);
+		enemy_icon_pos.x =  (center_pos.x - 32.0f) + length_p_to_e_vec /2 * sinf(dot);
+		enemy_icon_pos.y =  (center_pos.y - 32.0f) - length_p_to_e_vec /2 * cosf(dot);
 		enemy_icon_param.position = enemy_icon_pos;
 
-		if(length_p_to_e_vec < 90.0f)
+		if(length_p_to_e_vec < 205.0f)
 		{
 			enemy->mpIcon->begin(graphics.get_dc().Get());
 			if(enemy->fGetStun()) // スタンしてる敵のアイコンの色変える
