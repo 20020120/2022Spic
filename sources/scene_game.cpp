@@ -382,6 +382,9 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	    // カメラがEnemyManagerを経由し555たボスによって更新される
 		cameraManager->GetCurrentCamera()->set_eye(eye);
 		cameraManager->GetCurrentCamera()->set_target(focus);
+
+		// 敵の移動を制限
+		enemyManager->fLimitEnemies();
 	}
 	if (!enemyManager->fGetIsEventCamera() && mIsBossCamera)
 	{

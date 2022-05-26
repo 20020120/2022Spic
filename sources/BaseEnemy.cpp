@@ -217,6 +217,22 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     mPosition += (velocity * elapsedTime_);
 }
 
+void BaseEnemy::fLimitPosition()
+{
+    if(mIsBoss)
+    {
+        return;
+    }
+    constexpr float length = 70.0f;
+    DirectX::XMFLOAT3 v = mPosition - mPlayerPosition;
+    //ボスの演出時に敵を近づけない
+    if(Math::Length(v)<=length)
+    {
+        v = Math::Normalize(v);
+        mPosition = mPlayerPosition + (v * length);
+    }
+}
+
 void BaseEnemy::fSetStun(bool Arg_, bool IsJust_)
 {
     mIsStun = Arg_;
@@ -341,6 +357,15 @@ bool BaseEnemy::fGetIsBoss() const
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {
+    logStr.emplace_back(Tag_);
+    // 見つからなかったらストップ
+    if (mFunctionMap.find(Tag_) != mFunctionMap.end())
+    {
+        std::string str = "KEY IS NOT FIND    ";
+        str += Tag_;
+        OutputDebugStringA(str.c_str());
+    }
+
     mCurrentTuple = mFunctionMap.at(Tag_);
     std::get<0>(mCurrentTuple)();
 }

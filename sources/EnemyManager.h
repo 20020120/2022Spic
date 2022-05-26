@@ -116,6 +116,8 @@ public:
     bool fGetBossClear()const;
 
     void fReserveDeleteEnemies();
+
+    void fLimitEnemies();
 private:
     //--------------------<“G‚ÆŠÖ˜A‚·‚éˆ—>--------------------//
     void fSpawn(GraphicsPipeline& graphics); // “G‚Ì¶¬‚ğŠÇ—

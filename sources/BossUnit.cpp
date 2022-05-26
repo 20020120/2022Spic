@@ -372,10 +372,11 @@ void BossUnit::fAttackBeamInit()
 void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
-
-    mAttackCapsule.mTop = mBeam.fGetStart();
-    mAttackCapsule.mBottom = Math::lerp(mBeam.fGetStart(),
-        mBeam.fGetEnd(), mBeamThreshold);
+    DirectX::XMFLOAT3 pos = mPosition;
+    pos.y += 5.0f;
+    mAttackCapsule.mTop = pos;
+    mAttackCapsule.mBottom = Math::lerp(pos,
+        pos + (Math::GetFront(mOrientation) * 200.0f), mBeamThreshold);
 
     mpBeamEffect->set_quaternion(effect_manager->get_effekseer_manager(), mOrientation);
     if(mTimer>mkChargeTime)

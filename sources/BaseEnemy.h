@@ -37,7 +37,9 @@ public:
     void fTurnToTarget(float elapsedTime_,float RotSpeed_,DirectX::XMFLOAT3 Target_);
     void fTurnToPlayerXYZ(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
-    
+
+    void fLimitPosition();
+
     //--------------------<セッター関数>--------------------//
     virtual void fSetStun(bool Arg_, bool IsJust_ = false);
     void fSetPlayerPosition(const DirectX::XMFLOAT3& PlayerPosition_);
@@ -126,6 +128,8 @@ protected:
     inline static const char* mkDeathPath = "./resources/Effect/Bomb2.efk";
     std::unique_ptr<Effect> mDamageEffect{ nullptr };
     inline static const char* mkDamagePath = "./resources/Effect/enemy_hit.efk";
-   
+
+
+    std::vector<std::string> logStr{};
 };
 
