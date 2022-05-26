@@ -133,11 +133,11 @@ private:
     static constexpr float LOCK_ON_LANGE = 100.0f;
 public:
     //後ろに回り込める距離
-    static constexpr float  BEHIND_LANGE_MAX = 55.0f;
+    static constexpr float  BEHIND_LANGE_MAX = 45.0f;
     static constexpr float  BEHIND_LANGE_MIN = 5.0f;
 private:
     //コンボの最大数
-    static constexpr float MAX_COMBO_COUNT = 30.0f;
+    static constexpr float MAX_COMBO_COUNT = 80.0f;
     //回避の時のアニメーションスピード
     static constexpr float AVOIDANCE_ANIMATION_SPEED = 1.5f;
     //突進開始の時のアニメーションスピード
@@ -157,7 +157,7 @@ private:
     //飛行機モードになるときのアニメーションスピード
     static constexpr float TRANSFORM_WING_ANIMATION_SPEED = 2.0f;
     //チェイン攻撃の時にコンボゲージが減る量
-    static constexpr float COMBO_COUNT_SUB = 2.0f;
+    static constexpr float COMBO_COUNT_SUB = 7.0f;
     //プレイヤーが攻撃中にダメージを受けたときの減少量
     static constexpr int ATTACK_DAMAGE_INV = 1;
     //プレイヤーが回避中にダメージを受けたときの減少量

@@ -415,9 +415,6 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         }
 
 
-        //‘«Œ³‚Ì‹OÕ
-        mSwordTrail[2].fAddTrailPoint(step_capsule[0].start, step_capsule[0].end);
-        mSwordTrail[3].fAddTrailPoint(step_capsule[1].start, step_capsule[1].end);
 
 
 
