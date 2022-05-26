@@ -56,7 +56,7 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
     fUpdateVernierEffectPos();
     std::get<1>(mCurrentTuple)(elapsedTime_, Graphics_);
     mpModel->update_animation(mAnimPara, elapsedTime_ );
-
+    fComputeInCamera();
     
     if (mCurrentHitPoint <= 0.0f)
     {
@@ -67,6 +67,11 @@ float BaseEnemy::fBaseUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 
 void BaseEnemy::fRender(GraphicsPipeline& Graphics_)
 {
+    if(mIsInCamera)
+    {
+        return;
+    }
+
     Graphics_.set_pipeline_preset(SHADER_TYPES::PBR);
     mDissolve = (std::max)(0.0f, mDissolve);
     const DirectX::XMFLOAT4X4 world = Math::calc_world_matrix(mScale, mOrientation, mPosition);
@@ -217,6 +222,22 @@ void BaseEnemy::fMoveFront(float elapsedTime_, float MoveSpeed_)
     mPosition += (velocity * elapsedTime_);
 }
 
+void BaseEnemy::fComputeInCamera()
+{
+    DirectX::XMFLOAT3 maxPos{
+        mPosition.x + mCubeHalfSize,
+        mPosition.y + mCubeHalfSize,
+        mPosition.z + mCubeHalfSize
+    };
+    DirectX::XMFLOAT3 minPos{
+        mPosition.x - mCubeHalfSize,
+        mPosition.y - mCubeHalfSize,
+        mPosition.z - mCubeHalfSize
+    };
+
+    mIsInCamera = Collision::forefront_frustum_vs_cuboid(minPos, maxPos);
+}
+
 void BaseEnemy::fLimitPosition()
 {
     if(mIsBoss)
@@ -357,7 +378,6 @@ bool BaseEnemy::fGetIsBoss() const
 
 void BaseEnemy::fChangeState(const char* Tag_)
 {
-    logStr.emplace_back(Tag_);
     // 見つからなかったらストップ
     if (mFunctionMap.find(Tag_) != mFunctionMap.end())
     {

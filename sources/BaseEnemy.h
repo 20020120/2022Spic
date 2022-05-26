@@ -37,7 +37,7 @@ public:
     void fTurnToTarget(float elapsedTime_,float RotSpeed_,DirectX::XMFLOAT3 Target_);
     void fTurnToPlayerXYZ(float elapsedTime_,float RotSpeed_);
     void fMoveFront(float elapsedTime_, float MoveSpeed_);
-
+    void fComputeInCamera();
     void fLimitPosition();
 
     //--------------------<セッター関数>--------------------//
@@ -129,7 +129,6 @@ protected:
     std::unique_ptr<Effect> mDamageEffect{ nullptr };
     inline static const char* mkDamagePath = "./resources/Effect/enemy_hit.efk";
 
-
-    std::vector<std::string> logStr{};
+    bool mIsInCamera{};
 };
 
