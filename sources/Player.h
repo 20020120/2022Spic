@@ -414,7 +414,7 @@ public:
     bool GetIsAwakening() { return is_awakening; }
     bool GetIsAlive() { return is_alive; }
     bool GetIsJustAvoidance() { return is_just_avoidance; }
-
+    bool GetBehaindCharge() { return behaind_avoidance_recharge;}
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
@@ -844,6 +844,7 @@ private:
     //イベントシーンの覚醒
     void TransitionTutorialAwaikingEvent();
     void TransitionTutorialAwaikingEventIdle();
+    int awaiking_event_state = 0;
     //チュートリアルの覚醒イベントが始まったらtrue(１回だけ)
     bool tutorial_awaiking{ false };
     bool awaiking_event{ false };

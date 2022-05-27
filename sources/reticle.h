@@ -15,6 +15,7 @@ public:
     void render(ID3D11DeviceContext* dc) override;
     //--------<getter/setter>--------//
     void focus(const BaseEnemy* target_enemy, bool lockon);
+    void SetAvoidanceCharge(bool a) { recharge = a; }
 private:
     static constexpr float BASE_RATE_LENGTH = 25.0f; // ƒJƒƒ‰‚Æ“G‚Ì‹——£‚É‰‚¶‚ÄUI‚ğ¬‚³‚­‚·‚éŠ„‡‚ÌŠî€
     //--------< •Ï” >--------//
@@ -25,4 +26,5 @@ private:
     DirectX::XMFLOAT2 offset{};
     bool animation = false;
     float length_player_to_enemy = 0;
+    bool recharge{ false };
 };
