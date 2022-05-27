@@ -174,6 +174,7 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     float length{ Math::calc_vector_AtoB_length(position, target) };
     if (is_lock_on && length < 15.0f)
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         //UŒ‚‚É‘JˆÚ
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;

@@ -636,6 +636,7 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
         velocity.x *= 0.2f;
         velocity.y *= 0.2f;
         velocity.z *= 0.2f;
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         TransitionTutorialAttack1();
     }
     if (avoidance_boost_time > 1.0f)
