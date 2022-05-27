@@ -370,6 +370,14 @@ float BaseEnemy::fGetDissolve() const
     return mDissolve;
 }
 
+DirectX::XMFLOAT3 BaseEnemy::fGetForward() const
+{
+    DirectX::XMFLOAT3 forward = Math::GetFront(mOrientation);
+    const DirectX::XMVECTOR Forward = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&forward));
+    DirectX::XMStoreFloat3(&forward, Forward);
+    return forward;
+}
+
 bool BaseEnemy::fGetIsBoss() const
 {
     return mIsBoss;

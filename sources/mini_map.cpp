@@ -42,10 +42,10 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 	ImGui::End();
 #endif
 	{
+		//プレイヤーのアイコンの向きを回転（カメラの前を正面とする）
 		DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(XMLoadFloat2(&player_forward), XMLoadFloat2(&camera_forward));
 		float dot = DirectX::XMVectorGetX(Dot);
 		dot = acosf(dot);
-
 
 		const float cross{ (player_forward.x * camera_forward.y) - (player_forward.y * camera_forward.x) };
 		dot = cross < 0 ? -dot : dot;
@@ -69,32 +69,45 @@ void MiniMap::render(GraphicsPipeline& graphics,const DirectX::XMFLOAT2& player_
 		//プレイヤーから敵へのベクトル
 		const DirectX::XMVECTOR Normal_P_To_E_Vec = Math::calc_vector_AtoB_normalize(player_pos, e_pos);
 		//プレイヤーの正面ベクトルと敵までのベクトルとの内積で間の角を出す
-		const DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(P_Normal, Normal_P_To_E_Vec);
+		 DirectX::XMVECTOR Dot = DirectX::XMVector2Dot(P_Normal, Normal_P_To_E_Vec);
 		float dot = DirectX::XMVectorGetX(Dot);
 		dot = acosf(dot);
 		//正規化
 		DirectX::XMFLOAT2 normal_p_to_e_vec{};
 		DirectX::XMStoreFloat2(&normal_p_to_e_vec, Normal_P_To_E_Vec);
 		DirectX::XMFLOAT2 enemy_icon_pos;
-		const float cross{ (normal_p_to_e_vec.x * camera_forward.y) - (normal_p_to_e_vec.y * camera_forward.x) };
+		 float cross{ (normal_p_to_e_vec.x * camera_forward.y) - (normal_p_to_e_vec.y * camera_forward.x) };
 		//回転方向を指定
 		dot = cross < 0 ? -dot : dot;
 
 		const float length_p_to_e_vec = Math::calc_vector_AtoB_length(player_pos, e_pos);
-		enemy_icon_pos.x =  (center_pos.x - 32.0f) + length_p_to_e_vec /2 * sinf(dot);
-		enemy_icon_pos.y =  (center_pos.y - 32.0f) - length_p_to_e_vec /2 * cosf(dot);
+		enemy_icon_pos.x =  center_pos.x + length_p_to_e_vec /2 * sinf(dot);
+		enemy_icon_pos.y =  center_pos.y - length_p_to_e_vec /2 * cosf(dot);
 		enemy_icon_param.position = enemy_icon_pos;
 
 		if(length_p_to_e_vec < 205.0f)
 		{
+			float angle = 0.0f;
+			if(enemy->fGetIsBoss())
+			{
+				DirectX::XMFLOAT2 boss_front = { enemy->fGetForward().x,enemy->fGetForward().z };
+				DirectX::XMVECTOR Boss_Dot = DirectX::XMVector2Dot(XMLoadFloat2(&boss_front), XMLoadFloat2(&camera_forward));
+				float boss_dot = DirectX::XMVectorGetX(Boss_Dot);
+				boss_dot = acosf(boss_dot);
+
+				const float cross{ (boss_front.x * camera_forward.y) - (boss_front.y * camera_forward.x) };
+				boss_dot = cross < 0 ? -boss_dot : boss_dot;
+				angle = DirectX::XMConvertToDegrees(boss_dot);
+			}
+
 			enemy->mpIcon->begin(graphics.get_dc().Get());
 			if(enemy->fGetStun()) // スタンしてる敵のアイコンの色変える
 			{
-				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale }, { 0,0 }, { 1,1,0,1 }, 0);
+				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale }, { 32,32 }, { 1,1,0,1 }, angle);
 			}
 			else
 			{
-				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale });
+				enemy->mpIcon->render(graphics.get_dc().Get(), { enemy_icon_param.position }, { enemy_icon_param.scale }, { 32,32 }, { 1,1,1,1 }, angle);
 			}
 			enemy->mpIcon->end(graphics.get_dc().Get());
 

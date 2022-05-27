@@ -61,6 +61,7 @@ public:
     [[nodiscard]] bool fGetStun()const;
     [[nodiscard]] bool fIsLockOnOfChain()const;
     [[nodiscard]] float fGetDissolve()const;
+    [[nodiscard]] DirectX::XMFLOAT3 fGetForward()const;
     bool fGetIsBoss()const;
     bool fGetInnerCamera();
 protected:
