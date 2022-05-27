@@ -31,6 +31,7 @@ public:
     void fRender(GraphicsPipeline& graphics_);
     void fFinalize();
 
+    bool fGetSlow()const;
 public:
     //--------------------<ìñÇΩÇËîªíË>--------------------//
 
@@ -188,6 +189,9 @@ private:
     bool mIsTutorial{ false };
 
     float mDelay{};
+
+    float mSloeTime{};
+
     //****************************************************************
     //
     // íËêî
