@@ -227,6 +227,12 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 	old_last_boss_mode = last_boss_mode;
 
     const auto enemyManager = mWaveManager.fGetEnemyManager();
+
+	if(enemyManager->fGetSlow())
+	{
+		elapsed_time *= 0.5f;
+	}
+
 	enemyManager->fSetPlayerPosition(player->GetPosition());
 	enemyManager->fSetPlayerSearch(player->during_search_time());
 	mBulletManager.fUpdate(elapsed_time);
@@ -237,7 +243,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if (player->GetIsAlive() == false)	is_game_over = true;
 
-
+	
 	// “G‚Æ‚Ì‚ ‚½‚è”»’è(“–‚½‚Á‚½‚çƒRƒ“ƒ{‰ÁŽZ)
 	if (player->GetIsPlayerAttack())
 	{

@@ -53,6 +53,8 @@ void EnemyManager::fUpdate(GraphicsPipeline& graphics_, float elapsedTime_,AddBu
 {
     //--------------------<管理クラス自体の更新処理>--------------------//
 
+    mSloeTime -= elapsedTime_;
+
     // ウェーブ開始からの時間を更新
     mDelay-=elapsedTime_;
     if (!mDebugMode && !mIsTutorial && mDelay <= 0.0f)
@@ -130,9 +132,14 @@ void EnemyManager::fFinalize()
     fDeleteCash();
 }
 
+bool EnemyManager::fGetSlow() const
+{
+    return mSloeTime > 0.0f;
+}
+
 int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePointA_,
-    DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_,
-    GraphicsPipeline& Graphics_,float elapsedTime_,bool& is_shield)
+                                             DirectX::XMFLOAT3 PlayerCapsulePointB_, float PlayerCapsuleRadius_, int PlayerAttackPower_,
+                                             GraphicsPipeline& Graphics_,float elapsedTime_,bool& is_shield)
 {
     //--------------------<プレイヤーの攻撃と敵の当たり判定>--------------------//
       // 攻撃が何体の敵に当たったか
@@ -158,6 +165,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
 
                     //攻撃を防がれたら即リターン
                     hitCounts++;
+                    mSloeTime = 1.0f;
                 }
                 else
                 {
@@ -745,6 +753,10 @@ void EnemyManager::fGuiMenu(GraphicsPipeline& Graphics_, AddBulletFunc Func_)
                 enemy->fSetStun(true);
             }
         }
+
+
+        ImGui::InputFloat("SlowTime", &mSloeTime);
+
         ImGui::End();
     }
 #endif
