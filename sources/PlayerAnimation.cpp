@@ -249,7 +249,7 @@ void Player::BehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
     player_behaind_effec_2->set_position(effect_manager->get_effekseer_manager(), position);
     player_behaind_effec_2->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
 
-    just_stun->set_position(effect_manager->get_effekseer_manager(), position);
+    just_stun->set_position(effect_manager->get_effekseer_manager(), target);
     behind_test_timer += 1.0f * elapsed_time;
     //behind_timer += 2.0f * elapsed_time;
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
@@ -341,6 +341,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         if (is_enemy_hit)
         {
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             PostEffect::clear_post_effect();
             //敵に当たって攻撃ボタン(突進ボタン)を押したら一撃目
@@ -825,7 +826,7 @@ void Player::NamelessMotionUpdate(float elapsed_time, SkyDome* sky_dome)
         audio_manager->play_se(SE_INDEX::SWING_SWORD2);
         nameless_motion_se_state = 2;
     }
-    if (model->get_anim_para().animation_tick > 4.16f && nameless_motion_se_state == 2)
+    if (model->get_anim_para().animation_tick > 4.0f && nameless_motion_se_state == 2)
     {
         audio_manager->play_se(SE_INDEX::RETURN_SWORD);
         nameless_motion_se_state = 3;
@@ -1017,7 +1018,6 @@ void Player::TransitionBehindAvoidance()
     }
 
 #endif // 0
-    player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;
@@ -1061,18 +1061,17 @@ void Player::TransitionJustBehindAvoidance()
     }
     if (is_awakening)
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 6.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 6.0f);
     }
     else
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 3.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 3.0f);
     }
     //HP回復する
     player_health += JUST_AVOIDANCE_HEALTH;
     //コンボゲージ増やす
     combo_count += JUST_AVOIDANCE_COMBO;
     is_just_avoidance = true;
-    player_behind_effec->play(effect_manager->get_effekseer_manager(), { position.x,position.y + air_registance_offset_y ,position.z });
     velocity = {};
     //回避中かどうかの設定
     is_avoidance = true;

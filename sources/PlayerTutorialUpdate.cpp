@@ -737,7 +737,7 @@ void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome
     player_behaind_effec_2->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
 
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
-    just_stun->set_position(effect_manager->get_effekseer_manager(), position);
+    just_stun->set_position(effect_manager->get_effekseer_manager(), target);
 
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {
@@ -826,6 +826,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     {
         if (is_enemy_hit)
         {
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             PostEffect::clear_post_effect();
             end_dash_effect = true;
@@ -1246,7 +1247,6 @@ void Player::TransitionTutorialMove(float blend_second)
     is_update_animation = true;
     //攻撃中かどうかの設定
     is_attack = false;
-
     player_tutorial_activity = &Player::TutorialMoveUpdate;
 }
 
@@ -1318,7 +1318,6 @@ void Player::TransitionTutorialBehindAvoidance()
     player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position, 2.0f);
 
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
-
     if (target_enemy != nullptr)
     {
         //ロックオンしている敵をスタンさせる
@@ -1364,13 +1363,15 @@ void Player::TransitionTutorialJustBehindAvoidance()
     {
         target_enemy->fSetStun(true, true);
     }
+    DirectX::XMFLOAT3 pos{};
+        pos = Math::calc_designated_point(position, forward, 5.0f);
     if (is_awakening)
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 6.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 6.0f);
     }
     else
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 3.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 3.0f);
     }
     is_just_avoidance = true;
     //HP回復する
@@ -1576,9 +1577,9 @@ void Player::TransitionTutorialAttack3(float blend_second)
 void Player::TransitionTutorialAwaiking()
 {
     invincible_timer = 2.0f;
-
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
     player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
     invincible_timer = 2.0f;

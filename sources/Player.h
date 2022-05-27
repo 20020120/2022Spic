@@ -13,6 +13,7 @@
 #include"game_icon.h"
 #include "effect.h"
 #include "reticle.h"
+#include"player_condition.h"
 enum class SePriset : uint16_t
 {
     None = (0 << 0),
@@ -341,6 +342,7 @@ private:
     bool boss_camera{ false };
     //ƒvƒŒƒCƒ„[‚Ìƒpƒ‰ƒ[ƒ^
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
+    std::unique_ptr<PlayerCondition> player_condition{ nullptr };
     //--------------------<SwordTrail`Œ•‚Ì‹OÕ`>--------------------//
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
@@ -706,6 +708,7 @@ private:
     {
         player_move_effec_r->stop(effect_manager->get_effekseer_manager());
         player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         behavior_state = Behavior::Chain;
         transition_chain_search();
     }
