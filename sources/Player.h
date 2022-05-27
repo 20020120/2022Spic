@@ -13,6 +13,7 @@
 #include"game_icon.h"
 #include "effect.h"
 #include "reticle.h"
+#include"player_condition.h"
 enum class SePriset : uint16_t
 {
     None = (0 << 0),
@@ -341,6 +342,7 @@ private:
     bool boss_camera{ false };
     //プレイヤーのパラメータ
     std::unique_ptr<PlayerConfig> player_config{ nullptr };
+    std::unique_ptr<PlayerCondition> player_condition{ nullptr };
     //--------------------<SwordTrail～剣の軌跡～>--------------------//
     SwordTrail mSwordTrail[2]{};
     float mTrailEraseTimer{};
@@ -414,7 +416,7 @@ public:
     bool GetIsAwakening() { return is_awakening; }
     bool GetIsAlive() { return is_alive; }
     bool GetIsJustAvoidance() { return is_just_avoidance; }
-
+    bool GetBehaindCharge() { return behaind_avoidance_recharge;}
     CapsuleParam GetBodyCapsuleParam() { return body_capsule_param; }
     CapsuleParam GetJustAvoidanceCapsuleParam() { return just_avoidance_capsule_param; }
     CapsuleParam GetSwordCapsuleParam(int i)
@@ -706,6 +708,7 @@ private:
     {
         player_move_effec_r->stop(effect_manager->get_effekseer_manager());
         player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         behavior_state = Behavior::Chain;
         transition_chain_search();
     }
@@ -844,6 +847,7 @@ private:
     //イベントシーンの覚醒
     void TransitionTutorialAwaikingEvent();
     void TransitionTutorialAwaikingEventIdle();
+    int awaiking_event_state = 0;
     //チュートリアルの覚醒イベントが始まったらtrue(１回だけ)
     bool tutorial_awaiking{ false };
     bool awaiking_event{ false };

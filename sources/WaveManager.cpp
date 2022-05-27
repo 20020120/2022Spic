@@ -710,7 +710,7 @@ void WaveManager::update_move(float elapsed_time)
         }
         if (can_moves[0] && !can_moves[1])
         {
-            float lerp_rate = 2.0f;
+            float lerp_rate = 5.0f;
             viewpoint = Math::lerp(viewpoint, view_middle_point, lerp_rate * elapsed_time);
 
             player_icon.arg.pos = viewpoint;
@@ -721,7 +721,7 @@ void WaveManager::update_move(float elapsed_time)
         if (Math::equal_check(interpolated_point, middle_point, 0.5f)) { can_moves[1] = true; }
         if (can_moves[0] && !can_moves[1])
         {
-            float lerp_rate = 2.0f;
+            float lerp_rate = 5.0f;
             interpolated_point = Math::lerp(interpolated_point, middle_point, lerp_rate * elapsed_time);
 
             map.arg.pos = viewpoint - interpolated_point * map.arg.scale;
@@ -731,7 +731,7 @@ void WaveManager::update_move(float elapsed_time)
     if (Math::equal_check(interpolated_point, terminus_point, 0.5f)) { transition_enlargement(); }
     if (can_moves[1])
     {
-        float lerp_rate = 2.0f;
+        float lerp_rate = 5.0f;
         interpolated_point = Math::lerp(interpolated_point, terminus_point, lerp_rate * elapsed_time);
 
         map.arg.pos = viewpoint - interpolated_point * map.arg.scale;

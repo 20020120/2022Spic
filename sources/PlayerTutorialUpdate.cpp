@@ -16,6 +16,9 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
     wipe_parm = Math::clamp(wipe_parm, 0.0f, 0.15f);
     if (awaiking_event == false)
     {
+        player_move_effec_r->set_position(effect_manager->get_effekseer_manager(), step_pos_r);
+        player_move_effec_l->set_position(effect_manager->get_effekseer_manager(), step_pos_l);
+
         if (during_chain_attack())
         {
             if (is_chain_attack_aftertaste_timer < CHRONOSTASIS_TIME)
@@ -730,12 +733,16 @@ void Player::TutorialAvoidanvceUpdate(float elapsed_time, SkyDome* sky_dome, std
 
 void Player::TutorialBehindAvoidanceUpdate(float elapsed_time, SkyDome* sky_dome, std::vector<BaseEnemy*> enemies)
 {
+    player_behaind_effec_2->set_position(effect_manager->get_effekseer_manager(), position);
+    player_behaind_effec_2->set_quaternion(effect_manager->get_effekseer_manager(), orientation);
+
     player_behind_effec->set_position(effect_manager->get_effekseer_manager(), position);
-    just_stun->set_position(effect_manager->get_effekseer_manager(), position);
+    just_stun->set_position(effect_manager->get_effekseer_manager(), target);
 
     if (BehindAvoidanceMove(elapsed_time, behind_transit_index, position, behind_speed, behind_interpolated_way_points, 1.5f))
     {
         just_stun->stop(effect_manager->get_effekseer_manager());
+        player_behaind_effec_2->stop(effect_manager->get_effekseer_manager());
         if (is_just_avoidance)
         {
             behaind_avoidance_recharge = false;
@@ -819,6 +826,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     {
         if (is_enemy_hit)
         {
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
             PostEffect::clear_post_effect();
             end_dash_effect = true;
@@ -1132,29 +1140,36 @@ void Player::TutorialAwaikingEventUpdate(float elapsed_time, SkyDome* sky_dome, 
     //}
 
 
-    if (model->get_anim_para().frame_index == 40) {
+    if (model->get_anim_para().animation_tick >= 0.66f && awaiking_event_state == 0) {
         audio_manager->play_se(SE_INDEX::DOCKING_2);
+        awaiking_event_state = 1;
     }
 
-    if (model->get_anim_para().frame_index == 60) {
+    if (model->get_anim_para().animation_tick >= 1.0f && awaiking_event_state == 1) {
         audio_manager->play_se(SE_INDEX::DOCKING_2);
+        awaiking_event_state = 2;
     }
 
-    if (model->get_anim_para().frame_index == 80) {
+    if (model->get_anim_para().animation_tick >= 1.33f && awaiking_event_state == 2) {
         audio_manager->play_se(SE_INDEX::DOCKING_2);
+        awaiking_event_state = 3;
     }
 
-    if (model->get_anim_para().frame_index == 105) {
+    if (model->get_anim_para().animation_tick  >= 1.75f  &&awaiking_event_state == 3) {
         audio_manager->play_se(SE_INDEX::FOOT_TRANSFORM);
+        awaiking_event_state = 4;
     }
-    if (model->get_anim_para().frame_index == 173) {
+    if (model->get_anim_para().animation_tick >= 2.88f && awaiking_event_state == 4) {
         audio_manager->play_se(SE_INDEX::SHOULDER_ARMOR);
+        awaiking_event_state = 5;
     }
-    if (model->get_anim_para().frame_index == 417) {
+    if (model->get_anim_para().animation_tick >= 6.31f && awaiking_event_state == 5) {
         audio_manager->play_se(SE_INDEX::GRAB);
+        awaiking_event_state = 6;
     }
-    if (model->get_anim_para().frame_index == 485) {
+    if (model->get_anim_para().animation_tick >= 8.08f && awaiking_event_state == 6) {
         audio_manager->play_se(SE_INDEX::SABER);
+        awaiking_event_state = 7;
     }
 
     //非表示にしてるものは表示
@@ -1232,7 +1247,6 @@ void Player::TransitionTutorialMove(float blend_second)
     is_update_animation = true;
     //攻撃中かどうかの設定
     is_attack = false;
-
     player_tutorial_activity = &Player::TutorialMoveUpdate;
 }
 
@@ -1240,6 +1254,7 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 {
     //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
@@ -1297,11 +1312,12 @@ void Player::TransitionTutorialAvoidance(float blend_second)
 
 void Player::TransitionTutorialBehindAvoidance()
 {
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+    player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position, 2.0f);
 
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
-
     if (target_enemy != nullptr)
     {
         //ロックオンしている敵をスタンさせる
@@ -1337,21 +1353,25 @@ void Player::TransitionTutorialBehindAvoidance()
 void Player::TransitionTutorialJustBehindAvoidance()
 {
     audio_manager->play_se(SE_INDEX::WRAPAROUND_AVOIDANCE);
-    //player_move_effec_r->stop(effect_manager->get_effekseer_manager());
-    //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+    player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+    player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position, 2.0f);
 
         //ロックオンしている敵をスタンさせる
     if (target_enemy != nullptr)
     {
         target_enemy->fSetStun(true, true);
     }
+    DirectX::XMFLOAT3 pos{};
+        pos = Math::calc_designated_point(position, forward, 5.0f);
     if (is_awakening)
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 6.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 6.0f);
     }
     else
     {
-        just_stun->play(effect_manager->get_effekseer_manager(), position, 3.0f);
+        just_stun->play(effect_manager->get_effekseer_manager(), target, 3.0f);
     }
     is_just_avoidance = true;
     //HP回復する
@@ -1557,9 +1577,9 @@ void Player::TransitionTutorialAttack3(float blend_second)
 void Player::TransitionTutorialAwaiking()
 {
     invincible_timer = 2.0f;
-
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
     player_awaiking_effec->play(effect_manager->get_effekseer_manager(), position,2.0f);
     invincible_timer = 2.0f;

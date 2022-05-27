@@ -519,6 +519,9 @@
     <ClCompile Include="sources\BossRushUnit.cpp">
       <Filter>Sources\character\enemy\07_BossRushUnit</Filter>
     </ClCompile>
+    <ClCompile Include="sources\player_condition.cpp">
+      <Filter>Sources\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imgui\imconfig.h">
@@ -856,6 +859,9 @@
     </ClInclude>
     <ClInclude Include="sources\BossRushUnit.h">
       <Filter>Sources\character\enemy\07_BossRushUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="sources\player_condition.h">
+      <Filter>Sources\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

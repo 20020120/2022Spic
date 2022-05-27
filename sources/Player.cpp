@@ -31,6 +31,7 @@ Player::Player(GraphicsPipeline& graphics)
         L"./resources/TexMaps/SwordTrail/warp_cut.png",
         L"./resources/TexMaps/SwordTrail/SwordTrail.png");
     player_config = std::make_unique<PlayerConfig>(graphics);
+    player_condition = std::make_unique<PlayerCondition>(graphics);
     //ダメージを受ける関数を関数ポインタに格納
     damage_func = [=](int damage, float invincible)->void {DamagedCheck(damage, invincible); };
 
@@ -301,6 +302,9 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
     }
     if (boss_camera)
     {
+        player_move_effec_r->stop(effect_manager->get_effekseer_manager());
+        player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         velocity = {};
         position = { 1.0f,0.0f,-160.0f };
         is_lock_on = false;
@@ -449,6 +453,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
 
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
+        player_condition->update(graphics, elapsed_time);
 
     }
 
@@ -629,6 +634,7 @@ void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
     if (during_clear == false && is_start_cleear_motion == false)
     {
         player_config->render(graphics.get_dc().Get());
+        player_condition->render(graphics.get_dc().Get());
     }
 
     for (const auto& reticle : reticles)
@@ -1161,6 +1167,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
     if (during_chain_attack()) return;
     //チュートリアル中ステートが死ならダメージを食らわない
@@ -1185,6 +1192,7 @@ void Player::DamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ダメージ処理
     player_health -= damage;
+    player_condition->set_is_damage(true);
     audio_manager->play_se(SE_INDEX::PLAYER_DAMAGED);
     if(GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
@@ -1199,6 +1207,7 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
     if (during_chain_attack()) return;
     //チュートリアル中ステートが死ならダメージを食らわない
@@ -1228,6 +1237,7 @@ void Player::TutorialDamagedCheck(int damage, float InvincibleTime)
     invincible_timer = InvincibleTime;
     //ダメージ処理
     player_health -= damage;
+    player_condition->set_is_damage(true);
     if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 1.0f, 0.2f);
 
 }
