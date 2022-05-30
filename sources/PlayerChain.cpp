@@ -439,6 +439,9 @@ void Player::transition_chain_lockon_begin()
 	velocity = {};
 
 	audio_manager->play_se(SE_INDEX::PLAYER_AWAKING);
+
+	if (GameFile::get_instance().get_vibration())game_pad->set_vibration(0.0f, 1.0f, 0.3f);
+
 }
 
 void Player::chain_lockon_begin_update(float elapsed_time, std::vector<BaseEnemy*> enemies,
@@ -762,6 +765,9 @@ void Player::chain_attack_update(float elapsed_time, std::vector<BaseEnemy*> ene
 
 			transition_chain_search(); /* リセット */
 			transition_normal_behavior();
+
+			if (GameFile::get_instance().get_vibration())game_pad->set_vibration(1.0f, 0.0f, 0.3f);
+
 		}
 		else // ロックオンステートの初期化を通らず更新処理へ
 		{
