@@ -307,6 +307,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //ブロックされていたら剣をふって怯む
     if (is_block)
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         TransitionAttackType1(attack_animation_blends_speeds.y);
     }
     //突進時間を超えたらそれぞれの遷移にとぶ
