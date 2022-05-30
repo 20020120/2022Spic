@@ -9,7 +9,14 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 	const std::vector<DirectX::XMFLOAT3>& points, float play)
 {
 	assert(!points.empty() && "ポイントのサイズが0です");
-	if (index >= points.size() - 1) return true;
+	if (index >= points.size() - 1)
+	{
+		// 完全に重ねるとバグるかもなのですこしずらす
+		position.x = points.at(index).x + 0.05f;
+		position.y = 0;
+		position.z = points.at(index).z + 0.05f;
+		return true;
+	}
 
 	using namespace DirectX;
 	XMFLOAT3 velocity{};
@@ -27,9 +34,9 @@ bool Player::transit(float elapsed_time, int& index, DirectX::XMFLOAT3& position
 	{
 		++index;
 		// 完全に重ねるとバグるかもなのですこしずらす
-		position.x = points.at(index).x + 0.01f;
+		position.x = points.at(index).x + 0.05f;
 		position.y = 0;
-		position.z = points.at(index).z + 0.01f;
+		position.z = points.at(index).z + 0.05f;
 
 		if (index != 0 && index % (STEPS * 2) == 0) // 敵のポイントについた
 		{
