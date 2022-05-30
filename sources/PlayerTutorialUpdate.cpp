@@ -806,6 +806,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
     //突進時間を超えたらそれぞれの遷移にとぶ
     if (charge_time > CHARGE_MAX_TIME)
     {
+        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         PostEffect::clear_post_effect();
@@ -859,6 +860,7 @@ void Player::TutorialChargeUpdate(float elapsed_time, SkyDome* sky_dome, std::ve
             {
                 audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
                 audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+                player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 //エフェクト再生
                 player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
                 charge_change_direction_count--;
@@ -1224,6 +1226,8 @@ void Player::TutorialAwaikingEventIdleUpdate(float elapsed_time, SkyDome* sky_do
 
 void Player::TransitionTutoriaIdle(float blend_second)
 {
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
@@ -1242,6 +1246,8 @@ void Player::TransitionTutoriaIdle(float blend_second)
 
 void Player::TransitionTutorialMove(float blend_second)
 {
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
@@ -1446,6 +1452,7 @@ void Player::TransitionTutorialChargeInit()
 void Player::TransitionTutorialCharge(float blend_second)
 {
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
     //ダッシュポストエフェクトをかける
@@ -1485,6 +1492,7 @@ void Player::TransitionTutorialCharge(float blend_second)
 
 void Player::TransitionTutorialAttack1(float blend_second)
 {
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     //覚醒状態の時の１撃目のアニメーションに設定
     if (is_awakening)
     {

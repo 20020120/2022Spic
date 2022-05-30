@@ -316,7 +316,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //ブロックされていたら剣をふって怯む
     if (is_block)
     {
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
         TransitionAttackType1(attack_animation_blends_speeds.y);
     }
     //突進時間を超えたらそれぞれの遷移にとぶ
@@ -335,7 +334,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             charge_time = 0;
             is_charge = false;
-            charge_change_direction_count = CHARGE_DIRECTION_COUNT;
             TransitionMove();
         }
         //移動入力がなかったら待機に遷移
@@ -894,6 +892,8 @@ void Player::Awaiking()
 
 void Player::TransitionIdle(float blend_second)
 {
+    charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
@@ -915,6 +915,8 @@ void Player::TransitionIdle(float blend_second)
 
 void Player::TransitionMove(float blend_second)
 {
+    charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
     //エフェクト再生
@@ -943,6 +945,7 @@ void Player::TransitionAvoidance()
 
     audio_manager->play_se(SE_INDEX::AVOIDANCE);
     //エフェクト再生
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position,0.3f);
     player_air_registance_effec->set_speed(effect_manager->get_effekseer_manager(), AVOIDANCE_ANIMATION_SPEED);
     //回避中かどうかの設定
@@ -1141,6 +1144,7 @@ void Player::TransitionCharge(float blend_seconds)
     //player_move_effec_l->stop(effect_manager->get_effekseer_manager());
 
     audio_manager->play_se(SE_INDEX::PLAYER_RUSH);
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     //エフェクト再生
     player_air_registance_effec->play(effect_manager->get_effekseer_manager(), position, 0.3f);
     //ダッシュポストエフェクトをかける
@@ -1183,6 +1187,8 @@ void Player::TransitionCharge(float blend_seconds)
 }
 void Player::TransitionAttackType1(float blend_seconds)
 {
+    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
+
     //覚醒状態の時の１撃目のアニメーションに設定
     if (is_awakening)
     {
