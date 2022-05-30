@@ -203,7 +203,7 @@ void PlayerConfig::render(ID3D11DeviceContext* dc)
     if (mp_max)
     {
         const int FRAME_COUNT = 3;
-        static constexpr float ELECTRIC_RATE = 0.1f;
+        static constexpr float ELECTRIC_RATE = 0.05f;
         int frame = static_cast<int>(electric_timer / ELECTRIC_RATE) % FRAME_COUNT + 1;
 
         if (frame == FRAME_COUNT) { end_of_anim = true; }
