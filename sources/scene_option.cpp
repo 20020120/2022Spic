@@ -74,7 +74,7 @@ Option::Option(GraphicsPipeline& graphics)
 	cursor.pivot = { cursor.texsize * DirectX::XMFLOAT2(0.5f, 0.5f) };
 	cursor.position = { 1280.0f / 2.0f, 720.0f / 2.0f };
 	cursor.scale = { 0.5f, 0.5f };
-	cursor.color = { 0.0f,0.0f,0.0f,1.0f };
+	cursor.color = { 1.0f,1.0f,1.0f,1.0f };
 
 	cursor_velocity = {};
 }

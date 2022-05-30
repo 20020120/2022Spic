@@ -83,7 +83,7 @@ VolumeIcon::VolumeIcon(ID3D11Device* device)
 			scales[i].at(o).texsize = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
 			scales[i].at(o).pivot = scales[i].at(o).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 			scales[i].at(o).scale = { 0.5f, 0.6f };
-			scales[i].at(o).color = { 1,1,1,1 };
+			scales[i].at(o).color = { 1,1,1,0.7f };
 			scales[i].at(o).position = { 565.0f + 20.0f * o, positions[i] };
 		}
 		for (int o = 0; o < MAX_SCALE_COUNT; ++o)
@@ -149,7 +149,7 @@ void VolumeIcon::update(GraphicsPipeline& graphics, float elapsed_time)
 				scales[type].at(index).texsize  = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
 				scales[type].at(index).pivot    = scales[type].at(index).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 				scales[type].at(index).scale    = { 0.5f, 0.6f };
-				scales[type].at(index).color    = { 1,1,1,1 };
+				scales[type].at(index).color    = { 1,1,1,0.7f };
 				scales[type].at(index).position = { 565.0f + 20.0f * index, positions[type] };
 			}
 			save_volumes();
@@ -331,7 +331,7 @@ void VolumeIcon::vs_cursor(const DirectX::XMFLOAT2& cursor_pos)
 					scales[o].at(i).texsize  = { static_cast<float>(sprite_scale->get_texture2d_desc().Width), static_cast<float>(sprite_scale->get_texture2d_desc().Height) };
 					scales[o].at(i).pivot    = scales[o].at(i).texsize * DirectX::XMFLOAT2(0.5f, 0.5f);
 					scales[o].at(i).scale    = { 0.5f, 0.6f };
-					scales[o].at(i).color    = { 1,1,1,1 };
+					scales[o].at(i).color    = { 1,1,1,0.7f };
 					scales[o].at(i).position = { 565.0f + 20.0f * i, positions[o] };
 				}
 
