@@ -278,6 +278,11 @@ void Player::TutorialIdleUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     {
         TransitionTutorialMove();
     }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    {
+        TransitionTutorialMove();
+    }
+
     if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         switch (tutorial_state)
@@ -454,6 +459,11 @@ void Player::TutorialMoveUpdate(float elapsed_time, SkyDome* sky_dome, std::vect
     {
         TransitionTutoriaIdle();
     }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        TransitionTutoriaIdle();
+    }
+
     if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
     {
         switch (tutorial_state)

@@ -326,4 +326,7 @@ private:
     bool slow{ false };
     float slow_timer{ 0.0f };
     float slow_rate{ 0.05f };
+private:
+    //ƒtƒŠ[‚Ì—ûK‚©‚Ç‚¤‚©
+    bool free_practice{ false };
 };

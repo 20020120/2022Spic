@@ -537,7 +537,10 @@ void TutorialScene::render(GraphicsPipeline& graphics, float elapsed_time)
 		graphics.set_pipeline_preset(BLEND_STATE::ADD, RASTERIZER_STATE::CULL_NONE, DEPTH_STENCIL::DEOFF_DWOFF);
 		bloom_effect->blit(graphics.get_dc().Get());
 	}
-	if(player->GetTutorialEvent() == false)player->ConfigRender(graphics, elapsed_time);
+	if (player->GetTutorialEvent() == false)
+	{
+		player->TutorialConfigRender(graphics, elapsed_time, free_practice);
+	}
 	graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
 	mWaveManager.render(graphics.get_dc().Get(), elapsed_time);
 	if (player->GetTutorialEvent() == false)TutorialRender(graphics, elapsed_time);
@@ -930,7 +933,11 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		enemyManager->fSpawnTutorial(elapsed_time, graphics);
 
 		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
-		if (end_tutorial_text_timer > 10.0f) end_tutorial_text = true;
+		if (end_tutorial_text_timer > 10.0f)
+		{
+			end_tutorial_text = true;
+			free_practice = true;
+		}
 		break;
 	default:
 		break;

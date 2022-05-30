@@ -651,6 +651,24 @@ void Player::ConfigRender(GraphicsPipeline& graphics, float elapsed_time)
     }
 }
 
+void Player::TutorialConfigRender(GraphicsPipeline& graphics, float elapsed_time, bool condition)
+{
+    graphics.set_pipeline_preset(BLEND_STATE::ALPHA, RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+    //ƒNƒŠƒA‰‰o’†‚¶‚á‚È‚¢‚Æ‚«
+    if (during_clear == false && is_start_cleear_motion == false)
+    {
+        player_config->render(graphics.get_dc().Get());
+        if(condition)player_condition->render(graphics.get_dc().Get());
+    }
+
+    for (const auto& reticle : reticles)
+    {
+        if (reticle.first == nullptr || reticle.second == nullptr) continue;
+        reticle.first->render(graphics.get_dc().Get());
+    }
+
+}
+
 void Player::TitleRender(GraphicsPipeline& graphics, float elapsed_time)
 {
     glow_time += 1.0f * elapsed_time;
