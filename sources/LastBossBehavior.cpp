@@ -62,12 +62,13 @@ void LastBoss::fShipStartInit()
     mPosition = { 0.0f,40.0f,250.0f };
     mCurrentMode = Mode::ShipAppear;
     mTimer = 0.0f;
+    mShipRoar = false;
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
 {
     mTimer += elapsedTime_;
-    if(mTimer>15.0f&& mTimer < 18.0f)
+    if(mTimer>14.5f&& mTimer < 18.0f)
     {
         const int t = static_cast<int>(mTimer * 30);
         if (!mIsSpawnEnemy && t % 10 == 0)
@@ -86,6 +87,14 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
             mIsSpawnEnemy = false;
         }
     }
+
+    if(mTimer>15.0f&&mShipRoar==false)
+    {
+        audio_manager->play_se(SE_INDEX::ROAR_3);
+        mShipRoar = true;
+    }
+
+
     if (mpModel->end_of_animation(mAnimPara))
     {
         mCurrentMode = Mode::Ship;
@@ -1554,7 +1563,7 @@ void LastBoss::fDragonDieStartInit()
     // TODO ƒJƒƒ‰‚ğƒ{ƒX‚É’–Ú‚³‚¹‚é
     mCurrentMode = Mode::DragonDie;
     mAnimationSpeed = 1.0f;
-    mDissolve = 1.0f;
+    mDissolve = 0.0f;
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

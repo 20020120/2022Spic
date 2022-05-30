@@ -147,7 +147,7 @@ private:
         HumanAllShot,       // 乱射
         HumanSpecialAttack  // 必殺技
     };
-
+    
     //--------------------<砲身のクラス>--------------------//
     class Turret final : public PracticalEntities
     {
@@ -353,7 +353,7 @@ public:
 private:
     bool mSeArrayShipToHuman[5]{}; // 船から人のSE
     bool mSeArrayHumanToDragon[12]{}; // 人からドラゴンのSE
-
+    bool mShipRoar{};
 private:
     //****************************************************************
     //

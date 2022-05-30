@@ -14,10 +14,7 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_,
     fRegisterFunctions();
 
     mWarningLine.fInitialize(Graphics_.get_device().Get(),L"");
-    mBeam.fInitialize(Graphics_.get_device().Get(),L"");
     mWarningLine.fSetColor({ 1.0f,0.0f,0.0f,1.0f });
-    mBeam.fSetColor({ 0.0f,0.0f,1.0f,1.0f });
-    mBeam.fSetRadius(2.0f);
     mWarningLine.fSetRadius(0.05f);
     mLifeTimer = mkLifeTime;
 
@@ -32,7 +29,6 @@ BossUnit::BossUnit(GraphicsPipeline& Graphics_)
 void BossUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)
 {
     elapsedTime_=fBaseUpdate(elapsedTime_, Graphics_);
-    mBeam.fUpdate();
     mWarningLine.fUpdate();
 
     if (!mIsPlayerSearch && !mIsStun)
@@ -174,10 +170,9 @@ void BossUnit::fSelectWonderOrAttack()
 
 void BossUnit::fResetLaser()
 {
-    mBeam.fSetAlpha(1.0f);
     mWarningLine.fSetAlpha(1.0f);
 
-    mBeam.fSetLengthThreshold(0.0f);
+
     mWarningLine.fSetLengthThreshold(0.0f);
 
     mBeamThreshold = 0.0f;
@@ -305,7 +300,6 @@ void BossUnit::fAttackChargeInit()
    if(mOnPlayer)
    {
        mWarningLine.fSetPosition(mPosition, mPlayerPosition);
-       mBeam.fSetPosition(mPosition, mPlayerPosition);
    }
    else
    {
@@ -332,7 +326,6 @@ void BossUnit::fAttackChargeUpdate(float elapsedTime_,
         fTurnToTarget(elapsedTime_, 1.0f, TargetPos);
         const DirectX::XMFLOAT3 front = Math::GetFront(mOrientation);
         mWarningLine.fSetPosition(mPosition, mPosition + front * 100.0f);
-        mBeam.fSetPosition(mPosition, mPosition + front * 100.0f);
     }
     else
     {
@@ -341,7 +334,7 @@ void BossUnit::fAttackChargeUpdate(float elapsedTime_,
 
             fTurnToPlayer(elapsedTime_, 20.0f);
             mWarningLine.fSetPosition(mPosition, mPlayerPosition);
-            mBeam.fSetPosition(mPosition, mPlayerPosition);
+         
         }
     }
    
@@ -387,7 +380,7 @@ void BossUnit::fAttackBeamUpdate(float elapsedTime_, GraphicsPipeline& Graphics_
         fChangeState(DivideState::Idle);
         mIsAttack = false;
     }
-    mBeam.fSetLengthThreshold(mBeamThreshold);
+   
 
     if (mpModel->end_of_animation(mAnimPara))
     {
@@ -420,5 +413,4 @@ void BossUnit::fRender(GraphicsPipeline& graphics)
 {
     BaseEnemy::fRender(graphics);
     mWarningLine.fRender(graphics);
-    mBeam.fRender(graphics);
 }

@@ -60,7 +60,6 @@ private:
 
     //--------------------<ƒr[ƒ€ —\‘ªü>--------------------//
     LaserBeam mWarningLine{};
-    LaserBeam mBeam{};
     float mWarningThreshold{};
     float mBeamThreshold{};
     inline static bool msOnPlayer{ true };
