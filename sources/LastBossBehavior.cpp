@@ -63,6 +63,7 @@ void LastBoss::fShipStartInit()
     mCurrentMode = Mode::ShipAppear;
     mTimer = 0.0f;
     mShipRoar = false;
+    mSkipTimer = 0.0f;
 }
 
 void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -93,7 +94,6 @@ void LastBoss::fShipStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
         audio_manager->play_se(SE_INDEX::ROAR_3);
         mShipRoar = true;
     }
-
 
     if (mpModel->end_of_animation(mAnimPara))
     {
@@ -319,6 +319,7 @@ void LastBoss::fChangeShipToHumanInit()
         mSeArrayShipToHuman[i] = false;
     }
     mTimer = 0.0f;
+    mSkipTimer = 0.0f;
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
@@ -326,11 +327,11 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 {
     bool end{ false };
 
-    if (game_pad->get_button_down() & GamePad::BTN_B)
+    if (game_pad->get_button() & GamePad::BTN_B)
     {
-        end = true;
+        mSkipTimer += elapsedTime_ * 0.3f;
     }
-
+    
     mTimer += elapsedTime_;
     // SE‚ğ–Â‚ç‚·
     if (mTimer >= 0.9f && mSeArrayShipToHuman[0] == false) // 57
@@ -359,7 +360,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
         mSeArrayShipToHuman[4] = true;
     }
 
-    if (mpModel->end_of_animation(mAnimPara))
+    if (mpModel->end_of_animation(mAnimPara)||mSkipTimer>=1.0f)
     {
         end = true;
     }
@@ -1058,6 +1059,7 @@ void LastBoss::fHumanToDragonInit()
     mTimer = 0.0f;
     mIsStun = false;
     mStunEffect->stop(effect_manager->get_effekseer_manager());
+    mSkipTimer = 0.0f;
 }
 
 void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1065,8 +1067,9 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     bool end{ false };
     if (game_pad->get_button() & GamePad::BTN_B)
     {
-        end = true;
+        mSkipTimer += elapsedTime_ * 0.3f;
     }
+
 
 
     mTimer += elapsedTime_;
@@ -1144,7 +1147,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
         mSeArrayHumanToDragon[i] = true;
     }
 
-    if (mpModel->end_of_animation(mAnimPara))
+    if (mpModel->end_of_animation(mAnimPara) || mSkipTimer >= 1.0f)
     {
         end = true;
     }
