@@ -1554,6 +1554,7 @@ void LastBoss::fDragonDieStartInit()
     // TODO ƒJƒƒ‰‚ğƒ{ƒX‚É’–Ú‚³‚¹‚é
     mCurrentMode = Mode::DragonDie;
     mAnimationSpeed = 1.0f;
+    mDissolve = 1.0f;
 }
 
 void LastBoss::fDragonDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)

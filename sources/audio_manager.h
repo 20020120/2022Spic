@@ -70,6 +70,7 @@ enum class SE_INDEX
     REVERBERATION,//余韻
     ROAR_1,//咆哮1
     ROAR_2,//咆哮2
+    ROAR_3,//咆哮3
     SABER,//剣振り下ろし
     SPLINTERS,//ボスがバラバラになる
     TEARING,//ボスが体を引きちぎる

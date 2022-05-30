@@ -801,6 +801,8 @@ void LastBoss::fGuiMenu()
 
     ImGui::InputInt("AttackPower", &mAttackPower);
 
+    ImGui::DragFloat("Dissolve", &mDissolve, 0.0f, 1.0f);
+
     ImGui::End();
 #endif
 }

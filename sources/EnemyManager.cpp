@@ -165,7 +165,7 @@ int EnemyManager::fCalcPlayerAttackVsEnemies(DirectX::XMFLOAT3 PlayerCapsulePoin
 
                     //UŒ‚‚ğ–h‚ª‚ê‚½‚ç‘¦ƒŠƒ^[ƒ“
                     hitCounts++;
-                    mSloeTime = 1.0f;
+                    mSloeTime = 0.1f;
                 }
                 else
                 {
