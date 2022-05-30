@@ -15,6 +15,7 @@ BossRushUnit::BossRushUnit(GraphicsPipeline& Graphics_, const DirectX::XMFLOAT3&
     mAttackPower = 7.0f;
     mAttackInvTime = 2.0f;
     mIsBoss = true;
+
 }
 
 void BossRushUnit::fUpdate(GraphicsPipeline& Graphics_, float elapsedTime_)

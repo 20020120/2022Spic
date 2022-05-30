@@ -929,12 +929,15 @@ void TutorialScene::TutorialUpdate(GraphicsPipeline& graphics, float elapsed_tim
 		tutorial_check_text = L"自由に練習する";
 		//チュートリアル終了の文字の位置を再設定
 		check_mark_parm.threshold = 1.0f;
-
 		enemyManager->fSpawnTutorial(elapsed_time, graphics);
 
 		//チュートリアルが最後までいったら何秒間かは上のフレームにチュートリアル終了を表示させておくため
 		if (end_tutorial_text_timer > 10.0f)
 		{
+			change_gauge_parm.pos = { 62.3f,439.6f };
+			change_scene_txt.position = { 88.0f,445.1f };
+			check_mark_parm.pos = { 80.5f,329.5f };
+			tutorial_check_text_parm.position = { 151.4f,332.3f };
 			end_tutorial_text = true;
 			free_practice = true;
 		}

@@ -118,6 +118,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
         }
         LerpCameraTarget(elapsed_time);
         player_config->update(graphics, elapsed_time);
+        player_condition->update(graphics, elapsed_time);
 
         if (is_dying_update == false)
         {
