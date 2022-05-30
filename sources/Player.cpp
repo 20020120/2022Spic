@@ -392,7 +392,7 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
         case Player::Behavior::Normal:
             if (is_behind_avoidance == false)
             {
-                if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+                if (change_normal_timer < 0 && game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
                 {
                     transition_chain_behavior();
                 }
@@ -953,7 +953,7 @@ void Player::InflectionCombo(float elapsed_time)
     {
         combo_count -= elapsed_time * 5.0f;
     }
-    if (combo_max_se == false && combo_count >= MAX_COMBO_COUNT - 5.0f)
+    if (combo_max_se == false && combo_count >= MAX_COMBO_COUNT)
     {
         audio_manager->play_se(SE_INDEX::GAUGE_MAX);
         combo_max_se = true;

@@ -72,7 +72,7 @@ void Player::UpdateTutorial(float elapsed_time, GraphicsPipeline& graphics, SkyD
                 //回り込み回避よりも進んでいたら切り替えれる
                 if (tutorial_state > TutorialState::BehindAvoidanceTutorial)
                 {
-                    if (game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
+                    if (change_normal_timer < 0 && game_pad->get_button_down() & GamePad::BTN_LEFT_SHOULDER)
                     {
                         transition_chain_behavior();
                     }
@@ -1695,7 +1695,7 @@ void Player::TutorialAwaiking()
         //ボタン入力
         if (game_pad->get_button() & GamePad::BTN_A)
         {
-            if (tutorial_awaiking == false && combo_count >= MAX_COMBO_COUNT - 5.0f)
+            if (tutorial_awaiking == false && combo_count >= MAX_COMBO_COUNT)
             {
                 tutorial_awaiking = true;
                 TransitionTutorialAwaikingEvent();//イベントの覚醒
