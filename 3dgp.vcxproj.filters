@@ -863,6 +863,7 @@
     <ClInclude Include="sources\player_condition.h">
       <Filter>Sources\UI</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="sources\memo.txt">
@@ -1085,5 +1086,15 @@
     <None Include="HLSL\debug_2D.hlsli">
       <Filter>Shaders\debug\debug_2D</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="3dgp.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Sprites\clear_wave\player_icon.ico">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>
