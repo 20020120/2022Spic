@@ -198,18 +198,19 @@ void Player::AvoidanceUpdate(float elapsed_time, SkyDome* sky_dome)
             velocity.x *= 0.2f;
             velocity.y *= 0.2f;
             velocity.z *= 0.2f;
-            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             //‰ñ”ð’†‚©‚Ç‚¤‚©‚ÌÝ’è
             is_avoidance = false;
             is_behind_avoidance = false;
             //ˆÚ“®“ü—Í‚ª‚ ‚Á‚½‚çˆÚ“®‚É‘JˆÚ
             if (sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
             {
+                player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 TransitionMove();
             }
             //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
             else
             {
+                player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
                 TransitionIdle();
             }
         }
@@ -321,7 +322,6 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
     //“ËiŽžŠÔ‚ð’´‚¦‚½‚ç‚»‚ê‚¼‚ê‚Ì‘JˆÚ‚É‚Æ‚Ô
     if (charge_time > CHARGE_MAX_TIME)
     {
-        player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
 
         audio_manager->stop_se(SE_INDEX::PLAYER_RUSH);
         PostEffect::clear_post_effect();
@@ -334,6 +334,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
         {
             charge_time = 0;
             is_charge = false;
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             TransitionMove();
         }
         //ˆÚ“®“ü—Í‚ª‚È‚©‚Á‚½‚ç‘Ò‹@‚É‘JˆÚ
@@ -342,6 +343,7 @@ void Player::ChargeUpdate(float elapsed_time, SkyDome* sky_dome)
             charge_time = 0;
             is_charge = false;
             charge_change_direction_count = CHARGE_DIRECTION_COUNT;
+            player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
             TransitionIdle();
         }
         Awaiking();
@@ -1001,7 +1003,6 @@ void Player::TransitionBehindAvoidance()
 {
     player_move_effec_r->stop(effect_manager->get_effekseer_manager());
     player_move_effec_l->stop(effect_manager->get_effekseer_manager());
-    player_air_registance_effec->stop(effect_manager->get_effekseer_manager());
     player_behaind_effec_2->play(effect_manager->get_effekseer_manager(), position,2.0f);
 
     behind_test_timer = 0.0f;
