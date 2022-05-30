@@ -81,6 +81,11 @@ void Player::IdleUpdate(float elapsed_time, SkyDome* sky_dome)
     {
         TransitionMove();
     }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) > 0)
+    {
+        TransitionMove();
+    }
+
     //チェイン攻撃から戻ってきて数秒間は移動しかできない
     //チェイン攻撃の状態では移動以外の操作は受け付けない
     if (change_normal_timer < 0 && behavior_state == Behavior::Normal)
@@ -121,6 +126,10 @@ void Player::MoveUpdate(float elapsed_time, SkyDome* sky_dome)
 
     //移動入力がなくなったら待機に遷移
     if (during_chain_attack() == false && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
+    {
+        TransitionIdle();
+    }
+    else if (during_chain_attack() && change_normal_timer > 0 && sqrtf((velocity.x * velocity.x) + (velocity.z * velocity.z)) <= 0)
     {
         TransitionIdle();
     }

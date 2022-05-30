@@ -577,6 +577,13 @@ void Player::Update(float elapsed_time, GraphicsPipeline& graphics,SkyDome* sky_
             ImGui::InputInt("avoidance_direction_count", &avoidance_direction_count);
             ImGui::Checkbox("is_just_avoidance_capsul", &is_just_avoidance_capsul);
             ImGui::Checkbox("is_block", &is_block);
+
+            int a = static_cast<int>(behavior_state);
+            ImGui::Text("behavior_state%d", a);
+            ImGui::Text("change_normal_timer%f", change_normal_timer);
+            bool b = during_chain_attack();
+            ImGui::Checkbox("during_chain_attack", &b);
+
             ImGui::End();
         }
     }

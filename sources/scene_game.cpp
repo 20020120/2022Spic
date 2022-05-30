@@ -230,7 +230,7 @@ void SceneGame::update(GraphicsPipeline& graphics, float elapsed_time)
 
 	if(enemyManager->fGetSlow())
 	{
-		elapsed_time *= 0.5f;
+		//elapsed_time *= 0.5f;
 	}
 
 	enemyManager->fSetPlayerPosition(player->GetPosition());
