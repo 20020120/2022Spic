@@ -357,7 +357,7 @@ private:
     bool mSeArrayShipToHuman[5]{}; // 船から人のSE
     bool mSeArrayHumanToDragon[12]{}; // 人からドラゴンのSE
     bool mShipRoar{};
-
+    bool mDrawSkip{};
 
 private:
     //****************************************************************

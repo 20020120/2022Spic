@@ -320,6 +320,10 @@ void LastBoss::fChangeShipToHumanInit()
     }
     mTimer = 0.0f;
     mSkipTimer = 0.0f;
+    if (mBossParam.mShowMovie_ShipToHuman)
+    {
+        mDrawSkip = true;
+    }
 }
 
 void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
@@ -381,6 +385,7 @@ void LastBoss::fChangeShipToHumanUpdate(float elapsedTime_,
 
 void LastBoss::fHumanIdleInit()
 {
+    mDrawSkip = false;
     mpModel->play_animation(mAnimPara, AnimationName::human_idle, true, true, 0.3f, 1.5f);
     mAnimationSpeed = 1.5f;
     mTimer = 2.0f;
@@ -963,7 +968,10 @@ void LastBoss::fHumanDieStartInit()
     // TODO : エフェクトの類をすべてリセットする
 
     // TODO : カメラをボスの方に向ける
-
+    if (mBossParam.mShowMovie_HumanToDragon)
+    {
+        mDrawSkip = true;
+    }
 }
 
 void LastBoss::fHumanDieStartUpdate(float elapsedTime_, GraphicsPipeline& Graphics_)
@@ -1153,7 +1161,7 @@ void LastBoss::fHumanToDragonUpdate(float elapsedTime_, GraphicsPipeline& Graphi
     }
     if (end)
     {
-
+        mDrawSkip = false;
         fChangeState(DivideState::DragonHideStart);
         mCurrentMode = Mode::Dragon;
         // 体力の値をドラゴンモードの初期値にしておく
@@ -1681,6 +1689,14 @@ void LastBoss::fRender(GraphicsPipeline& graphics)
     mRightPointer.fRender(graphics);
     mLeftPointer.fRender(graphics);
 
+    if (mDrawSkip)
+    {
+        graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID, DEPTH_STENCIL::DEOFF_DWOFF);
+        fonts->yu_gothic->Begin(graphics.get_dc().Get());
+        fonts->yu_gothic->Draw(L"Bボタン長押しでスキップ", { 800.0f,600.0f }, { 0.7,0.7f }, { 1.0f,1.0f,1.0f,1.0f });
+        fonts->yu_gothic->End(graphics.get_dc().Get());
+        graphics.set_pipeline_preset(RASTERIZER_STATE::SOLID_COUNTERCLOCKWISE,DEPTH_STENCIL::DEON_DWON);
+    }
 }
 
 bool LastBoss::fDamaged(int Damage_, float InvincibleTime_, GraphicsPipeline& Graphics_, float elapsed_time)
