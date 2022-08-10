@@ -183,6 +183,7 @@ void TutorialScene::initialize(GraphicsPipeline& graphics)
 	audio_manager->stop_all_bgm();
 	audio_manager->play_bgm(BGM_INDEX::TUTORIAL);
 
+	sky_dome->set_purple_threshold(0); sky_dome->set_red_threshold(0);
 }
 
 void TutorialScene::uninitialize()
