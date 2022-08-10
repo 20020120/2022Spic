@@ -51,9 +51,13 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 	//-------<2Dパート>--------//
 	// has_stageNo_json
 	{
+#if 0
 		std::filesystem::path path = "./resources/Data/stage_to_start.json";
 		if (std::filesystem::exists(path.c_str())) /*ウェーブデータあり*/ { has_stageNo_json = true; }
 		else /*ウェーブデータなし*/ { has_stageNo_json = false; }
+#else
+		has_stageNo_json = false;
+#endif
 	}
 
 	//--flash--//
@@ -97,9 +101,14 @@ void SceneTitle::initialize(GraphicsPipeline& graphics)
 
 	//--state--//
 	state = 0;
+
+#if 0
 	std::filesystem::path path = "./resources/Data/tutorial.json";
 	if (std::filesystem::exists(path.c_str())) /*チュートリアルデータあり*/ { have_tutorial_state = 0; }
 	else /*チュートリアルデータなし*/ { have_tutorial_state = -1; }
+#else
+	have_tutorial_state = -1;
+#endif
 
 	//--tutorial tab--//
 	{
@@ -412,8 +421,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 				// 決定
 				if (is_load_ready && game_pad->get_button_down() & GamePad::BTN_B)
 				{
+#if 0
 					// ステージ番号0から
 					WaveFile::get_instance().set_stage_to_start(0);
+#else
+					// ステージ番号ボス手前から
+					WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+#endif
 					WaveFile::get_instance().save();
 
 					audio_manager->play_se(SE_INDEX::DECISION);
@@ -436,8 +450,13 @@ void SceneTitle::update(GraphicsPipeline& graphics, float elapsed_time)
 					}
 					else
 					{
+#if 0
 						// ステージ番号0から
 						WaveFile::get_instance().set_stage_to_start(0);
+#else
+						// ステージ番号ボス手前から
+						WaveFile::get_instance().set_stage_to_start(WaveManager::STAGE_IDENTIFIER::S_3_1);
+#endif
 						WaveFile::get_instance().save();
 
 						audio_manager->play_se(SE_INDEX::DECISION);
