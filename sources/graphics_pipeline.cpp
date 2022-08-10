@@ -41,7 +41,7 @@ void GraphicsPipeline::initialize(HWND hwnd)
 		// 第一引数の NULL はGPUの種類を指定する(NULLは何が動くか分からない)
 		hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, create_device_flags,
 			&feature_levels, 1, D3D11_SDK_VERSION, &swap_chain_desc,
-			swap_chain.GetAddressOf(), device.GetAddressOf(), NULL, immediate_context.GetAddressOf());
+			swap_chain.GetAddressOf(), device.GetAddressOf(), NULL, device_context.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), hr_trace(hr));
 		// レンダーターゲットビューの作成
 		ID3D11Texture2D* back_buffer{};
